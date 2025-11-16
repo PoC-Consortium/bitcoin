@@ -21,7 +21,12 @@ constexpr size_t REDOWNLOAD_BUFFER_SIZE{15009}; // 15009/632 = ~23.7 commitments
 
 // Our memory analysis assumes 48 bytes for a CompressedHeader (so we should
 // re-calculate parameters if we compress further)
+#ifdef ENABLE_POCX
+static_assert(sizeof(CompressedHeader) == 264,
+              "CompressedHeader size changed - update memory analysis");
+#else
 static_assert(sizeof(CompressedHeader) == 48);
+#endif
 
 HeadersSyncState::HeadersSyncState(NodeId id, const Consensus::Params& consensus_params,
         const CBlockIndex* chain_start, const arith_uint256& minimum_required_work) :
@@ -187,11 +192,13 @@ bool HeadersSyncState::ValidateAndProcessSingleHeader(const CBlockHeader& curren
     // work chain if they compress the work into as few blocks as possible,
     // so don't let anyone give a chain that would violate the difficulty
     // adjustment maximum.
+#ifndef ENABLE_POCX
     if (!PermittedDifficultyTransition(m_consensus_params, next_height,
                 m_last_header_received.nBits, current.nBits)) {
         LogDebug(BCLog::NET, "Initial headers sync aborted with peer=%d: invalid difficulty transition at height=%i (presync phase)\n", m_id, next_height);
         return false;
     }
+#endif
 
     if (next_height % HEADER_COMMITMENT_PERIOD == m_commit_offset) {
         // Add a commitment.
@@ -227,6 +234,7 @@ bool HeadersSyncState::ValidateAndStoreRedownloadedHeader(const CBlockHeader& he
         return false;
     }
 
+#ifndef ENABLE_POCX
     // Check that the difficulty adjustments are within our tolerance:
     uint32_t previous_nBits{0};
     if (!m_redownloaded_headers.empty()) {
@@ -240,6 +248,7 @@ bool HeadersSyncState::ValidateAndStoreRedownloadedHeader(const CBlockHeader& he
         LogDebug(BCLog::NET, "Initial headers sync aborted with peer=%d: invalid difficulty transition at height=%i (redownload phase)\n", m_id, next_height);
         return false;
     }
+#endif
 
     // Track work on the redownloaded chain
     m_redownload_chain_work += GetBlockProof(CBlockIndex(header));

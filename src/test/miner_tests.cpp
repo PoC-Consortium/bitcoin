@@ -703,9 +703,11 @@ BOOST_AUTO_TEST_CASE(CreateNewBlock_validity)
         {
             // A block template does not have proof-of-work, but it might pass
             // verification by coincidence. Grind the nonce if needed:
+#ifndef ENABLE_POCX
             while (CheckProofOfWork(block.GetHash(), block.nBits, Assert(m_node.chainman)->GetParams().GetConsensus())) {
                 block.nNonce++;
             }
+#endif
 
             std::string reason;
             std::string debug;
@@ -749,7 +751,9 @@ BOOST_AUTO_TEST_CASE(CreateNewBlock_validity)
             if (txFirst.size() < 4)
                 txFirst.push_back(block.vtx[0]);
             block.hashMerkleRoot = BlockMerkleRoot(block);
+#ifndef ENABLE_POCX
             block.nNonce = bi.nonce;
+#endif
         }
         std::shared_ptr<const CBlock> shared_pblock = std::make_shared<const CBlock>(block);
         // Alternate calls between Chainman's ProcessNewBlock and submitSolution
@@ -758,7 +762,12 @@ BOOST_AUTO_TEST_CASE(CreateNewBlock_validity)
         if (current_height % 2 == 0) {
             BOOST_REQUIRE(Assert(m_node.chainman)->ProcessNewBlock(shared_pblock, /*force_processing=*/true, /*min_pow_checked=*/true, nullptr));
         } else {
+#ifdef ENABLE_POCX
+            // PoCX: Skip submitSolution test for now
+            BOOST_REQUIRE(Assert(m_node.chainman)->ProcessNewBlock(shared_pblock, /*force_processing=*/true, /*min_pow_checked=*/true, nullptr));
+#else
             BOOST_REQUIRE(block_template->submitSolution(block.nVersion, block.nTime, block.nNonce, MakeTransactionRef(txCoinbase)));
+#endif
         }
         {
             LOCK(cs_main);

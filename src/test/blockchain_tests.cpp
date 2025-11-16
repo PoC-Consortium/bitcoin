@@ -28,7 +28,12 @@ static CBlockIndex* CreateBlockIndexWithNbits(uint32_t nbits)
     CBlockIndex* block_index = new CBlockIndex();
     block_index->nHeight = 46367;
     block_index->nTime = 1269211443;
+#ifndef ENABLE_POCX
     block_index->nBits = nbits;
+#else
+    // In POCX mode, use nBaseTarget instead of nBits
+    block_index->nBaseTarget = nbits;
+#endif
     return block_index;
 }
 

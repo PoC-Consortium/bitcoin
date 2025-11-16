@@ -56,6 +56,15 @@ std::vector<std::shared_ptr<CBlock>> CreateBlockChain(size_t total_height, const
         block.hashPrevBlock = (height >= 1 ? *ret.at(height - 1) : params.GenesisBlock()).GetHash();
         block.hashMerkleRoot = BlockMerkleRoot(block);
         block.nTime = ++time;
+#ifdef ENABLE_POCX
+        // PoCX mode: Create a minimal valid block without PoW mining
+        std::string error;
+        block.pocxProof.SetAccountId("1234567890abcdef1234567890abcdef12345678", error);
+        block.pocxProof.nonce = height + 1; // Use height as simple nonce
+        block.pocxProof.quality = 4398046511104ULL; // Quality for ~240s poc_time with default base target
+        block.pocxProof.compression = 1; // Minimum compression for tests
+        block.nBaseTarget = 18325193796; // Default base target
+#else
         block.nBits = params.GenesisBlock().nBits;
         block.nNonce = 0;
 
@@ -63,6 +72,7 @@ std::vector<std::shared_ptr<CBlock>> CreateBlockChain(size_t total_height, const
             ++block.nNonce;
             assert(block.nNonce);
         }
+#endif
     }
     return ret;
 }
@@ -93,10 +103,21 @@ protected:
 
 COutPoint MineBlock(const NodeContext& node, std::shared_ptr<CBlock>& block)
 {
+#ifndef ENABLE_POCX
     while (!CheckProofOfWork(block->GetHash(), block->nBits, Params().GetConsensus())) {
         ++block->nNonce;
         assert(block->nNonce);
     }
+#else
+    // PoCX mode: Block is already "mined" (no PoW required)
+    if (block->pocxProof.IsNull()) {
+        std::string error;
+        block->pocxProof.SetAccountId("1234567890abcdef1234567890abcdef12345678", error);
+        block->pocxProof.nonce = 123456789;
+        block->pocxProof.quality = 4398046511104ULL; // Quality for ~240s poc_time with default base target
+        block->pocxProof.compression = 1; // Minimum compression for tests
+    }
+#endif
 
     return ProcessBlock(node, block);
 }

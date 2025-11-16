@@ -58,13 +58,46 @@ public:
     SERIALIZE_METHODS(CTxUndo, obj) { READWRITE(Using<VectorFormatter<TxInUndoFormatter>>(obj.vprevout)); }
 };
 
+#ifdef ENABLE_POCX
+/** Undo information for PoCX forging assignments (OP_RETURN-only architecture) */
+struct ForgingUndo
+{
+    enum class UndoType : uint8_t {
+        ADDED = 0,      // Assignment was added (delete on undo)
+        MODIFIED = 1,   // Assignment was modified (restore on undo)
+        REVOKED = 2     // Assignment was revoked (un-revoke on undo)
+    };
+
+    UndoType type;
+    ForgingAssignment assignment;  // Full assignment state before change
+
+    ForgingUndo() : type(UndoType::ADDED) {}
+    ForgingUndo(UndoType t, const ForgingAssignment& a) : type(t), assignment(a) {}
+
+    SERIALIZE_METHODS(ForgingUndo, obj) {
+        uint8_t type_byte = static_cast<uint8_t>(obj.type);
+        READWRITE(type_byte, obj.assignment);
+        SER_READ(obj, obj.type = static_cast<UndoType>(type_byte));
+    }
+};
+#endif
+
 /** Undo information for a CBlock */
 class CBlockUndo
 {
 public:
     std::vector<CTxUndo> vtxundo; // for all but the coinbase
 
-    SERIALIZE_METHODS(CBlockUndo, obj) { READWRITE(obj.vtxundo); }
+#ifdef ENABLE_POCX
+    std::vector<ForgingUndo> vforgingundo; // PoCX assignment changes
+#endif
+
+    SERIALIZE_METHODS(CBlockUndo, obj) {
+        READWRITE(obj.vtxundo);
+#ifdef ENABLE_POCX
+        READWRITE(obj.vforgingundo);
+#endif
+    }
 };
 
 #endif // BITCOIN_UNDO_H

@@ -109,8 +109,30 @@ static bool HTTPReq_JSONRPC(const std::any& context, HTTPRequest* req)
         return false;
     }
     // Check authorization
-    std::pair<bool, std::string> authHeader = req->GetHeader("authorization");
+    std::pair<bool, std::string> authHeader = req->GetHeader("authorization"); 
+#ifdef ENABLE_POCX
+    // Check if this is a mining method that can bypass authentication
+    bool skip_auth = false;
+    std::string saved_body;
+    bool miningserver_enabled = gArgs.GetBoolArg("-miningserver", false);
+    if (!authHeader.first && miningserver_enabled) {
+        // Parse request to check if it's a mining method
+        saved_body = req->ReadBody();
+        UniValue valRequest;
+        if (valRequest.read(saved_body) && valRequest.isObject()) {
+            if (valRequest.exists("method") && valRequest["method"].isStr()) {
+                std::string method = valRequest["method"].get_str();
+                if (method == "get_mining_info" || method == "submit_nonce") {
+                    skip_auth = true;
+                }
+            }
+        }
+    }
+    
+    if (!skip_auth && !authHeader.first) {
+#else
     if (!authHeader.first) {
+#endif
         req->WriteHeader("WWW-Authenticate", WWW_AUTH_HEADER_DATA);
         req->WriteReply(HTTP_UNAUTHORIZED);
         return false;
@@ -119,7 +141,15 @@ static bool HTTPReq_JSONRPC(const std::any& context, HTTPRequest* req)
     JSONRPCRequest jreq;
     jreq.context = context;
     jreq.peerAddr = req->GetPeer().ToStringAddrPort();
+    
+#ifdef ENABLE_POCX
+    // Set mining user for unauthenticated mining requests
+    if (skip_auth) {
+        jreq.authUser = "mining";
+    } else if (!RPCAuthorized(authHeader.second, jreq.authUser)) {
+#else
     if (!RPCAuthorized(authHeader.second, jreq.authUser)) {
+#endif
         LogPrintf("ThreadRPCServer incorrect password attempt from %s\n", jreq.peerAddr);
 
         /* Deter brute-forcing
@@ -135,7 +165,13 @@ static bool HTTPReq_JSONRPC(const std::any& context, HTTPRequest* req)
     try {
         // Parse request
         UniValue valRequest;
+#ifdef ENABLE_POCX
+        // Use saved body if we already read it for auth bypass check
+        std::string request_body = saved_body.empty() ? req->ReadBody() : saved_body;
+        if (!valRequest.read(request_body))
+#else
         if (!valRequest.read(req->ReadBody()))
+#endif
             throw JSONRPCError(RPC_PARSE_ERROR, "Parse error");
 
         // Set the URI

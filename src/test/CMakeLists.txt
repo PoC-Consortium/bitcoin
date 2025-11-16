@@ -71,6 +71,7 @@ add_executable(test_bitcoin
   pcp_tests.cpp
   peerman_tests.cpp
   pmt_tests.cpp
+  $<$<BOOL:${ENABLE_POCX}>:pocx_tests.cpp>
   policy_fee_tests.cpp
   policyestimator_tests.cpp
   pool_tests.cpp

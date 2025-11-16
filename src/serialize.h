@@ -491,6 +491,9 @@ static inline Wrapper<Formatter, T&> Using(T&& t) { return Wrapper<Formatter, T&
 #define VARINT(obj) Using<VarIntFormatter<VarIntMode::DEFAULT>>(obj)
 #define COMPACTSIZE(obj) Using<CompactSizeFormatter<true>>(obj)
 #define LIMITED_STRING(obj,n) Using<LimitedStringFormatter<n>>(obj)
+#ifdef ENABLE_POCX
+#define LIMITED_VECTOR(obj,n) Using<LimitedVectorFormatter<n>>(obj)
+#endif
 
 /** Serialization wrapper class for integers in VarInt format. */
 template<VarIntMode Mode>
@@ -631,6 +634,36 @@ struct LimitedStringFormatter
         s << v;
     }
 };
+
+#ifdef ENABLE_POCX
+/** Formatter for vectors with size limits */
+template<size_t Limit>
+struct LimitedVectorFormatter
+{
+    template<typename Stream, typename V>
+    void Unser(Stream& s, V& v)
+    {
+        v.clear();
+        size_t size = ReadCompactSize(s);
+        if (size > Limit) {
+            throw std::ios_base::failure("Vector length limit exceeded");
+        }
+        v.resize(size);
+        if (size != 0) {
+            s.read(MakeWritableByteSpan(v));
+        }
+    }
+
+    template<typename Stream, typename V>
+    void Ser(Stream& s, const V& v)
+    {
+        WriteCompactSize(s, v.size());
+        if (!v.empty()) {
+            s.write(MakeByteSpan(v));
+        }
+    }
+};
+#endif
 
 /** Formatter to serialize/deserialize vector elements using another formatter
  *

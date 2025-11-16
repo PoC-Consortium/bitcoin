@@ -34,6 +34,26 @@ bool CCoinsViewBacked::BatchWrite(CoinsViewCacheCursor& cursor, const uint256 &h
 std::unique_ptr<CCoinsViewCursor> CCoinsViewBacked::Cursor() const { return base->Cursor(); }
 size_t CCoinsViewBacked::EstimateSize() const { return base->EstimateSize(); }
 
+#ifdef ENABLE_POCX
+// CCoinsViewBacked assignment methods - delegate to base view
+std::optional<ForgingAssignment> CCoinsViewBacked::GetForgingAssignment(
+    const std::array<uint8_t, 20>& plotAddress, int height) const {
+    return base->GetForgingAssignment(plotAddress, height);
+}
+
+std::vector<ForgingAssignment> CCoinsViewBacked::GetForgingAssignmentHistory(
+    const std::array<uint8_t, 20>& plotAddress) const {
+    return base->GetForgingAssignmentHistory(plotAddress);
+}
+
+bool CCoinsViewBacked::BatchWriteAssignments(
+    const ForgingAssignmentsMap& assignments,
+    const PlotAddressAssignmentMap& currentAssignments,
+    const DeletedAssignmentsSet& deletedAssignments) {
+    return base->BatchWriteAssignments(assignments, currentAssignments, deletedAssignments);
+}
+#endif
+
 CCoinsViewCache::CCoinsViewCache(CCoinsView* baseIn, bool deterministic) :
     CCoinsViewBacked(baseIn), m_deterministic(deterministic),
     cacheCoins(0, SaltedOutpointHasher(/*deterministic=*/deterministic), CCoinsMap::key_equal{}, &m_cache_coins_memory_resource)
@@ -42,7 +62,15 @@ CCoinsViewCache::CCoinsViewCache(CCoinsView* baseIn, bool deterministic) :
 }
 
 size_t CCoinsViewCache::DynamicMemoryUsage() const {
+#ifdef ENABLE_POCX
+    return memusage::DynamicUsage(cacheCoins) + cachedCoinsUsage +
+           memusage::DynamicUsage(pendingAssignments) +
+           memusage::DynamicUsage(deletedAssignments) +
+           memusage::DynamicUsage(dirtyPlots) +
+           cachedAssignmentsUsage;
+#else
     return memusage::DynamicUsage(cacheCoins) + cachedCoinsUsage;
+#endif
 }
 
 CCoinsMap::iterator CCoinsViewCache::FetchCoin(const COutPoint &outpoint) const {
@@ -250,9 +278,46 @@ bool CCoinsViewCache::BatchWrite(CoinsViewCacheCursor& cursor, const uint256 &ha
 bool CCoinsViewCache::Flush() {
     auto cursor{CoinsViewCacheCursor(cachedCoinsUsage, m_sentinel, cacheCoins, /*will_erase=*/true)};
     bool fOk = base->BatchWrite(cursor, hashBlock);
+
+#ifdef ENABLE_POCX
+    // Flush pending assignments and deletions to base
+    if (fOk && !dirtyPlots.empty()) {
+        // Flatten pending assignments into ForgingAssignmentsMap format for DB write
+        ForgingAssignmentsMap assignmentsToWrite;
+        PlotAddressAssignmentMap currentToWrite;  // Empty - unused
+        DeletedAssignmentsSet deletedToWrite;
+
+        for (const auto& plotAddr : dirtyPlots) {
+            auto it = pendingAssignments.find(plotAddr);
+            if (it != pendingAssignments.end()) {
+                for (const auto& assignment : it->second) {
+                    auto key = std::make_pair(plotAddr, assignment.assignment_txid);
+                    assignmentsToWrite[key] = assignment;
+                }
+            }
+        }
+
+        // Add deleted assignments to assignmentsToWrite (needed for height lookup in WriteAssignmentsToBatch)
+        // and build deletedToWrite set
+        for (const auto& [key, assignment] : deletedAssignments) {
+            assignmentsToWrite[key] = assignment;  // Provide assignment data for height
+            deletedToWrite.insert(key);            // Mark for deletion
+        }
+
+        fOk = base->BatchWriteAssignments(assignmentsToWrite, currentToWrite, deletedToWrite);
+    }
+#endif
+
     if (fOk) {
         cacheCoins.clear();
         ReallocateCache();
+#ifdef ENABLE_POCX
+        // Clear assignment cache
+        pendingAssignments.clear();
+        deletedAssignments.clear();
+        dirtyPlots.clear();
+        cachedAssignmentsUsage = 0;
+#endif
     }
     cachedCoinsUsage = 0;
     return fOk;
@@ -262,6 +327,42 @@ bool CCoinsViewCache::Sync()
 {
     auto cursor{CoinsViewCacheCursor(cachedCoinsUsage, m_sentinel, cacheCoins, /*will_erase=*/false)};
     bool fOk = base->BatchWrite(cursor, hashBlock);
+
+#ifdef ENABLE_POCX
+    // Flush pending assignments and deletions atomically (critical for consistency!)
+    // Without this, assignments can remain in cache indefinitely on low-traffic networks
+    if (fOk && !dirtyPlots.empty()) {
+        // Flatten pending assignments for DB write
+        ForgingAssignmentsMap assignmentsToWrite;
+        PlotAddressAssignmentMap currentToWrite;  // Empty - unused
+        DeletedAssignmentsSet deletedToWrite;
+
+        for (const auto& plotAddr : dirtyPlots) {
+            auto it = pendingAssignments.find(plotAddr);
+            if (it != pendingAssignments.end()) {
+                for (const auto& assignment : it->second) {
+                    auto key = std::make_pair(plotAddr, assignment.assignment_txid);
+                    assignmentsToWrite[key] = assignment;
+                }
+            }
+        }
+
+        // Add deleted assignments to assignmentsToWrite and build deletedToWrite set
+        for (const auto& [key, assignment] : deletedAssignments) {
+            assignmentsToWrite[key] = assignment;
+            deletedToWrite.insert(key);
+        }
+
+        fOk = base->BatchWriteAssignments(assignmentsToWrite, currentToWrite, deletedToWrite);
+
+        if (fOk) {
+            // Clear tracking after successful write (but keep cache)
+            deletedAssignments.clear();
+            dirtyPlots.clear();
+        }
+    }
+#endif
+
     if (fOk) {
         if (m_sentinel.second.Next() != &m_sentinel) {
             /* BatchWrite must clear flags of all entries */
@@ -386,3 +487,170 @@ bool CCoinsViewErrorCatcher::HaveCoin(const COutPoint& outpoint) const
 {
     return ExecuteBackedWrapper<bool>([&]() { return CCoinsViewBacked::HaveCoin(outpoint); }, m_err_callbacks);
 }
+
+#ifdef ENABLE_POCX
+// ============================================================================
+// Forging Assignment Cache Methods (OP_RETURN-only architecture)
+// ============================================================================
+
+std::optional<ForgingAssignment> CCoinsViewCache::GetForgingAssignment(
+    const std::array<uint8_t, 20>& plotAddress, int height) const
+{
+    // Query base only - pending assignments not active yet (they activate after delay)
+    // Cache is only for duplicate detection, not state queries
+    return base->GetForgingAssignment(plotAddress, height);
+}
+
+std::vector<ForgingAssignment> CCoinsViewCache::GetForgingAssignmentHistory(
+    const std::array<uint8_t, 20>& plotAddress) const
+{
+    // Get base history
+    auto result = base->GetForgingAssignmentHistory(plotAddress);
+
+    // Append pending assignments from cache
+    auto it = pendingAssignments.find(plotAddress);
+    if (it != pendingAssignments.end()) {
+        result.insert(result.end(), it->second.begin(), it->second.end());
+    }
+
+    return result;
+}
+
+void CCoinsViewCache::AddForgingAssignment(const ForgingAssignment& assignment)
+{
+    // Append to plot's pending assignments (always at end - chronological order)
+    pendingAssignments[assignment.plotAddress].push_back(assignment);
+    dirtyPlots.insert(assignment.plotAddress);
+    cachedAssignmentsUsage += sizeof(ForgingAssignment);
+}
+
+bool CCoinsViewCache::HasPendingAssignment(const std::array<uint8_t, 20>& plotAddress) const
+{
+    auto it = pendingAssignments.find(plotAddress);
+    if (it == pendingAssignments.end() || it->second.empty()) {
+        return false;
+    }
+    // Check if most recent pending entry is a non-revoked assignment
+    return !it->second.back().revoked;
+}
+
+bool CCoinsViewCache::HasPendingRevocation(const std::array<uint8_t, 20>& plotAddress) const
+{
+    auto it = pendingAssignments.find(plotAddress);
+    if (it == pendingAssignments.end() || it->second.empty()) {
+        return false;
+    }
+    // Check if most recent pending entry is revoked
+    return it->second.back().revoked;
+}
+
+void CCoinsViewCache::UpdateForgingAssignment(const ForgingAssignment& assignment)
+{
+    // For revocation: find matching assignment in pending and update it
+    auto it = pendingAssignments.find(assignment.plotAddress);
+    if (it != pendingAssignments.end()) {
+        for (auto& pending : it->second) {
+            if (pending.assignment_txid == assignment.assignment_txid) {
+                pending = assignment;
+                dirtyPlots.insert(assignment.plotAddress);
+                return;
+            }
+        }
+    }
+
+    // Not in pending - add it (revocation of existing DB assignment)
+    pendingAssignments[assignment.plotAddress].push_back(assignment);
+    dirtyPlots.insert(assignment.plotAddress);
+    cachedAssignmentsUsage += sizeof(ForgingAssignment);
+}
+
+void CCoinsViewCache::RemoveForgingAssignment(
+    const std::array<uint8_t, 20>& plotAddress,
+    const uint256& assignment_txid)
+{
+    // First try to remove from pending assignments (if in current block)
+    auto it = pendingAssignments.find(plotAddress);
+    if (it != pendingAssignments.end()) {
+        auto& vec = it->second;
+        auto before_size = vec.size();
+        vec.erase(std::remove_if(vec.begin(), vec.end(),
+            [&](const ForgingAssignment& a) { return a.assignment_txid == assignment_txid; }),
+            vec.end());
+
+        if (vec.size() < before_size) {
+            // Found and removed from pending
+            if (vec.empty()) {
+                pendingAssignments.erase(it);
+            } else {
+                dirtyPlots.insert(plotAddress);
+            }
+
+            if (cachedAssignmentsUsage >= sizeof(ForgingAssignment)) {
+                cachedAssignmentsUsage -= sizeof(ForgingAssignment);
+            }
+            return;  // Done - was in pending
+        }
+    }
+
+    // Not in pending - must be in base (LevelDB), query it to get height for deletion
+    auto history = base->GetForgingAssignmentHistory(plotAddress);
+    for (const auto& assignment : history) {
+        if (assignment.assignment_txid == assignment_txid) {
+            // Mark for deletion from base during flush
+            auto key = std::make_pair(plotAddress, assignment_txid);
+            deletedAssignments[key] = assignment;
+            dirtyPlots.insert(plotAddress);
+            cachedAssignmentsUsage += sizeof(ForgingAssignment);
+            return;
+        }
+    }
+
+    // Assignment not found - this can happen if it was already deleted, log for debugging
+    LogPrintf("PoCX: RemoveForgingAssignment - assignment not found: plot=%s txid=%s\n",
+             HexStr(plotAddress), assignment_txid.ToString());
+}
+
+void CCoinsViewCache::RestoreForgingAssignment(const ForgingAssignment& assignment)
+{
+    // Restore assignment (for reorg undo)
+    pendingAssignments[assignment.plotAddress].push_back(assignment);
+    dirtyPlots.insert(assignment.plotAddress);
+    cachedAssignmentsUsage += sizeof(ForgingAssignment);
+}
+
+bool CCoinsViewCache::BatchWriteAssignments(
+    const ForgingAssignmentsMap& assignments,
+    const PlotAddressAssignmentMap& currentAssignments,
+    const DeletedAssignmentsSet& deletedAssignments)
+{
+    // Merge incoming assignments into pending cache
+    for (const auto& [key, assignment] : assignments) {
+        pendingAssignments[assignment.plotAddress].push_back(assignment);
+        dirtyPlots.insert(assignment.plotAddress);
+        cachedAssignmentsUsage += sizeof(ForgingAssignment);
+    }
+
+    // Remove deleted assignments from cache
+    for (const auto& [plotAddress, txid] : deletedAssignments) {
+        auto it = pendingAssignments.find(plotAddress);
+        if (it != pendingAssignments.end()) {
+            auto& vec = it->second;
+            vec.erase(std::remove_if(vec.begin(), vec.end(),
+                [&](const ForgingAssignment& a) { return a.assignment_txid == txid; }),
+                vec.end());
+
+            if (vec.empty()) {
+                pendingAssignments.erase(it);
+            }
+
+            if (cachedAssignmentsUsage >= sizeof(ForgingAssignment)) {
+                cachedAssignmentsUsage -= sizeof(ForgingAssignment);
+            }
+        }
+    }
+
+    // Pass to base
+    return base->BatchWriteAssignments(assignments, currentAssignments, deletedAssignments);
+}
+
+#endif // ENABLE_POCX

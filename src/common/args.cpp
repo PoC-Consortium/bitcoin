@@ -732,18 +732,18 @@ bool HasTestOption(const ArgsManager& args, const std::string& test_option)
 fs::path GetDefaultDataDir()
 {
     // Windows:
-    //   old: C:\Users\Username\AppData\Roaming\Bitcoin
-    //   new: C:\Users\Username\AppData\Local\Bitcoin
-    // macOS: ~/Library/Application Support/Bitcoin
-    // Unix-like: ~/.bitcoin
+    //   old: C:\Users\Username\AppData\Roaming\Bitcoin-PocX
+    //   new: C:\Users\Username\AppData\Local\Bitcoin-PocX
+    // macOS: ~/Library/Application Support/Bitcoin-PocX
+    // Unix-like: ~/.bitcoin-pocx
 #ifdef WIN32
     // Windows
     // Check for existence of datadir in old location and keep it there
-    fs::path legacy_path = GetSpecialFolderPath(CSIDL_APPDATA) / "Bitcoin";
+    fs::path legacy_path = GetSpecialFolderPath(CSIDL_APPDATA) / "Bitcoin-PocX";
     if (fs::exists(legacy_path)) return legacy_path;
 
     // Otherwise, fresh installs can start in the new, "proper" location
-    return GetSpecialFolderPath(CSIDL_LOCAL_APPDATA) / "Bitcoin";
+    return GetSpecialFolderPath(CSIDL_LOCAL_APPDATA) / "Bitcoin-PocX";
 #else
     fs::path pathRet;
     char* pszHome = getenv("HOME");
@@ -753,10 +753,10 @@ fs::path GetDefaultDataDir()
         pathRet = fs::path(pszHome);
 #ifdef __APPLE__
     // macOS
-    return pathRet / "Library/Application Support/Bitcoin";
+    return pathRet / "Library/Application Support/Bitcoin-PocX";
 #else
     // Unix-like
-    return pathRet / ".bitcoin";
+    return pathRet / ".bitcoin-pocx";
 #endif
 #endif
 }
@@ -815,7 +815,15 @@ std::variant<ChainType, std::string> ArgsManager::GetChainArg() const
         throw std::runtime_error("Invalid combination of -regtest, -signet, -testnet, -testnet4 and -chain. Can use at most one.");
     }
     if (chain_arg) {
-        if (auto parsed = ChainTypeFromString(*chain_arg)) return *parsed;
+        if (auto parsed = ChainTypeFromString(*chain_arg)) {
+#ifdef ENABLE_POCX
+            // #POCXTODO: Remove this before mainnet launch!
+            if (*parsed == ChainType::MAIN) {
+                throw std::runtime_error("PoCX mainnet is not available yet. Use -testnet or -regtest for testing.");
+            }
+#endif
+            return *parsed;
+        }
         // Not a known string, so return original string
         return *chain_arg;
     }
@@ -823,7 +831,12 @@ std::variant<ChainType, std::string> ArgsManager::GetChainArg() const
     if (fSigNet) return ChainType::SIGNET;
     if (fTestNet) return ChainType::TESTNET;
     if (fTestNet4) return ChainType::TESTNET4;
+#ifdef ENABLE_POCX
+    // #POCXTODO: Remove this before mainnet launch!
+    throw std::runtime_error("PoCX mainnet is not available yet. Use -testnet or -regtest for testing.");
+#else
     return ChainType::MAIN;
+#endif
 }
 
 bool ArgsManager::UseDefaultSection(const std::string& arg) const

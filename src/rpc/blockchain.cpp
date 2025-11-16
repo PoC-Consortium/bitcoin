@@ -24,6 +24,7 @@
 #include <index/coinstatsindex.h>
 #include <interfaces/mining.h>
 #include <kernel/coinstats.h>
+#include <key_io.h>
 #include <logging/timer.h>
 #include <net.h>
 #include <net_processing.h>
@@ -32,6 +33,11 @@
 #include <node/transaction.h>
 #include <node/utxo_snapshot.h>
 #include <node/warnings.h>
+#ifdef ENABLE_POCX
+#include <pocx/consensus/params.h>
+#include <pocx/consensus/proof.h>
+#include <pocx/algorithms/time_bending.h>
+#endif
 #include <primitives/transaction.h>
 #include <rpc/server.h>
 #include <rpc/server_util.h>
@@ -92,6 +98,22 @@ UniValue WriteUTXOSnapshot(
  */
 double GetDifficulty(const CBlockIndex& blockindex)
 {
+#ifdef ENABLE_POCX
+    // For PoCX, difficulty is inversely proportional to base target
+    // Higher base target = easier to find blocks = lower difficulty
+    // Use the standard genesis base target calculation (1 TiB reference)
+    const Consensus::Params& consensusParams = Params().GetConsensus();
+    const uint64_t reference_base_target = pocx::consensus::CalculateGenesisBaseTarget(consensusParams.nPowTargetSpacing);
+
+    if (blockindex.nBaseTarget > 0) {
+        // Difficulty = reference_base_target / current_base_target
+        double difficulty = static_cast<double>(reference_base_target) / static_cast<double>(blockindex.nBaseTarget);
+        return difficulty;
+    } else {
+        // Return 0 for invalid base target to avoid infinity
+        return 0.0;
+    }
+#else
     int nShift = (blockindex.nBits >> 24) & 0xff;
     double dDiff =
         (double)0x0000ffff / (double)(blockindex.nBits & 0x00ffffff);
@@ -108,6 +130,7 @@ double GetDifficulty(const CBlockIndex& blockindex)
     }
 
     return dDiff;
+#endif
 }
 
 static int ComputeNextBlockAndDepth(const CBlockIndex& tip, const CBlockIndex& blockindex, const CBlockIndex*& next)
@@ -163,10 +186,62 @@ UniValue blockheaderToJSON(const CBlockIndex& tip, const CBlockIndex& blockindex
     result.pushKV("versionHex", strprintf("%08x", blockindex.nVersion));
     result.pushKV("merkleroot", blockindex.hashMerkleRoot.GetHex());
     result.pushKV("time", blockindex.nTime);
+#ifdef ENABLE_POCX
+    // Time since last block (more relevant than mediantime for PoCX)
+    if (blockindex.pprev) {
+        int64_t time_since_last = blockindex.nTime - blockindex.pprev->nTime;
+        result.pushKV("time_since_last_block", time_since_last);
+    } else {
+        result.pushKV("time_since_last_block", 0);  // Genesis block
+    }
+
+    // Calculate PoC time directly from stored quality (no re-validation needed)
+    const Consensus::Params& consensusParams = Params().GetConsensus();
+    uint64_t poc_time = pocx::algorithms::CalculateTimeBendedDeadline(
+        blockindex.pocxProof.quality,
+        blockindex.nBaseTarget,
+        consensusParams.nPowTargetSpacing
+    );
+    result.pushKV("poc_time", poc_time);
+#else
     result.pushKV("mediantime", blockindex.GetMedianTimePast());
+#endif
+#ifdef ENABLE_POCX
+    // PoCX consensus fields
+    result.pushKV("base_target", blockindex.nBaseTarget);
+    result.pushKV("generation_signature", blockindex.generationSignature.GetHex());
+    
+    // PoCX proof fields
+    UniValue pocx_proof(UniValue::VOBJ);
+
+    // Convert account_id to bech32 address
+    CKeyID account_keyid{uint160(blockindex.pocxProof.account_id)};
+    WitnessV0KeyHash account_wit_keyhash(account_keyid);
+    pocx_proof.pushKV("account_id", EncodeDestination(account_wit_keyhash));
+
+    pocx_proof.pushKV("seed", blockindex.pocxProof.GetSeedHex());
+    pocx_proof.pushKV("nonce", blockindex.pocxProof.nonce);
+    pocx_proof.pushKV("quality", blockindex.pocxProof.quality);
+    pocx_proof.pushKV("compression", (int)blockindex.pocxProof.compression);
+    result.pushKV("pocx_proof", pocx_proof);
+
+    // Block signature fields (stored in CBlockIndex)
+    result.pushKV("pubkey", HexStr(blockindex.vchPubKey));
+
+    // Derive bech32 address from pubkey (if valid)
+    CPubKey pubkey(blockindex.vchPubKey.begin(), blockindex.vchPubKey.end());
+    if (pubkey.IsValid()) {
+        CKeyID keyid = pubkey.GetID();  // HASH160 of pubkey
+        WitnessV0KeyHash wit_keyhash(keyid);
+        result.pushKV("signer_address", EncodeDestination(wit_keyhash));
+    }
+
+    result.pushKV("signature", HexStr(blockindex.vchSignature));
+#else
     result.pushKV("nonce", blockindex.nNonce);
     result.pushKV("bits", strprintf("%08x", blockindex.nBits));
     result.pushKV("target", GetTarget(blockindex, pow_limit).GetHex());
+#endif
     result.pushKV("difficulty", GetDifficulty(blockindex));
     result.pushKV("chainwork", blockindex.nChainWork.GetHex());
     result.pushKV("nTx", blockindex.nTx);
@@ -467,12 +542,20 @@ static RPCHelpMan syncwithvalidationinterfacequeue()
 
 static RPCHelpMan getdifficulty()
 {
-    return RPCHelpMan{
-        "getdifficulty",
-        "Returns the proof-of-work difficulty as a multiple of the minimum difficulty.\n",
+    return RPCHelpMan{"getdifficulty",
+#ifdef ENABLE_POCX
+                "Returns the mining difficulty as estimated network capacity in terabytes (TiB).\n"
+                "Examples: 1.0 = ~1 TiB network capacity, 1024.0 = ~1 PiB network capacity.\n",
+#else
+                "Returns the proof-of-work difficulty as a multiple of the minimum difficulty.\n",
+#endif
                 {},
                 RPCResult{
+#ifdef ENABLE_POCX
+                    RPCResult::Type::NUM, "", "estimated network storage capacity in TiB"},
+#else
                     RPCResult::Type::NUM, "", "the proof-of-work difficulty as a multiple of the minimum difficulty."},
+#endif
                 RPCExamples{
                     HelpExampleCli("getdifficulty", "")
             + HelpExampleRpc("getdifficulty", "")
@@ -592,10 +675,29 @@ static RPCHelpMan getblockheader()
                             {RPCResult::Type::STR_HEX, "versionHex", "The block version formatted in hexadecimal"},
                             {RPCResult::Type::STR_HEX, "merkleroot", "The merkle root"},
                             {RPCResult::Type::NUM_TIME, "time", "The block time expressed in " + UNIX_EPOCH_TIME},
+#ifdef ENABLE_POCX
+                            {RPCResult::Type::NUM, "time_since_last_block", "Time in seconds since the previous block"},
+                            {RPCResult::Type::NUM, "poc_time", "PoCX solution time in seconds"},
+#else
                             {RPCResult::Type::NUM_TIME, "mediantime", "The median block time expressed in " + UNIX_EPOCH_TIME},
+#endif
+#ifdef ENABLE_POCX
+                            {RPCResult::Type::NUM, "base_target", "The PoCX difficulty base target"},
+                            {RPCResult::Type::STR_HEX, "generation_signature", "The PoCX generation signature"},
+                            {RPCResult::Type::OBJ, "pocx_proof", "The PoCX proof information",
+                            {
+                                {RPCResult::Type::STR_HEX, "account_id", "The miner's account ID (20 bytes hex)"},
+                                {RPCResult::Type::STR_HEX, "seed", "The plot seed (32 bytes hex)"},
+                                {RPCResult::Type::NUM, "nonce", "The mining nonce"},
+                            }},
+                            {RPCResult::Type::STR_HEX, "pubkey", "The block signer's public key"},
+                            {RPCResult::Type::STR, "signer_address", "The block signer's address"},
+                            {RPCResult::Type::STR_HEX, "signature", "The block signature"},
+#else
                             {RPCResult::Type::NUM, "nonce", "The nonce"},
                             {RPCResult::Type::STR_HEX, "bits", "nBits: compact representation of the block difficulty target"},
                             {RPCResult::Type::STR_HEX, "target", "The difficulty target"},
+#endif
                             {RPCResult::Type::NUM, "difficulty", "The difficulty"},
                             {RPCResult::Type::STR_HEX, "chainwork", "Expected number of hashes required to produce the current chain"},
                             {RPCResult::Type::NUM, "nTx", "The number of transactions in the block"},
@@ -768,10 +870,29 @@ static RPCHelpMan getblock()
                     {RPCResult::Type::ARR, "tx", "The transaction ids",
                         {{RPCResult::Type::STR_HEX, "", "The transaction id"}}},
                     {RPCResult::Type::NUM_TIME, "time",       "The block time expressed in " + UNIX_EPOCH_TIME},
+#ifdef ENABLE_POCX
+                    {RPCResult::Type::NUM, "time_since_last_block", "Time in seconds since the previous block"},
+                    {RPCResult::Type::NUM, "poc_time", "PoCX solution time in seconds"},
+#else
                     {RPCResult::Type::NUM_TIME, "mediantime", "The median block time expressed in " + UNIX_EPOCH_TIME},
+#endif
+#ifdef ENABLE_POCX
+                    {RPCResult::Type::NUM, "base_target", "The PoCX difficulty base target"},
+                    {RPCResult::Type::STR_HEX, "generation_signature", "The PoCX generation signature"},
+                    {RPCResult::Type::OBJ, "pocx_proof", "The PoCX proof information",
+                    {
+                        {RPCResult::Type::STR_HEX, "account_id", "The miner's account ID (20 bytes hex)"},
+                        {RPCResult::Type::STR_HEX, "seed", "The plot seed (32 bytes hex)"},
+                        {RPCResult::Type::NUM, "nonce", "The mining nonce"},
+                    }},
+                    {RPCResult::Type::STR_HEX, "pubkey", /*optional=*/true, "The block signer's public key"},
+                    {RPCResult::Type::STR, "signer_address", /*optional=*/true, "The block signer's address"},
+                    {RPCResult::Type::STR_HEX, "signature", /*optional=*/true, "The block signature"},
+#else
                     {RPCResult::Type::NUM, "nonce", "The nonce"},
                     {RPCResult::Type::STR_HEX, "bits", "nBits: compact representation of the block difficulty target"},
                     {RPCResult::Type::STR_HEX, "target", "The difficulty target"},
+#endif
                     {RPCResult::Type::NUM, "difficulty", "The difficulty"},
                     {RPCResult::Type::STR_HEX, "chainwork", "Expected number of hashes required to produce the chain up to this block (in hex)"},
                     {RPCResult::Type::NUM, "nTx", "The number of transactions in the block"},
@@ -1345,11 +1466,18 @@ RPCHelpMan getblockchaininfo()
                 {RPCResult::Type::NUM, "blocks", "the height of the most-work fully-validated chain. The genesis block has height 0"},
                 {RPCResult::Type::NUM, "headers", "the current number of headers we have validated"},
                 {RPCResult::Type::STR, "bestblockhash", "the hash of the currently best block"},
+#ifdef ENABLE_POCX
+                {RPCResult::Type::NUM, "base_target", "Current PoCX difficulty base target"},
+                {RPCResult::Type::STR_HEX, "generation_signature", "Current generation signature for next block"},
+#else
                 {RPCResult::Type::STR_HEX, "bits", "nBits: compact representation of the block difficulty target"},
                 {RPCResult::Type::STR_HEX, "target", "The difficulty target"},
+#endif
                 {RPCResult::Type::NUM, "difficulty", "the current difficulty"},
                 {RPCResult::Type::NUM_TIME, "time", "The block time expressed in " + UNIX_EPOCH_TIME},
+#ifndef ENABLE_POCX
                 {RPCResult::Type::NUM_TIME, "mediantime", "The median block time expressed in " + UNIX_EPOCH_TIME},
+#endif
                 {RPCResult::Type::NUM, "verificationprogress", "estimate of verification progress [0..1]"},
                 {RPCResult::Type::BOOL, "initialblockdownload", "(debug information) estimate of whether this node is in Initial Block Download mode"},
                 {RPCResult::Type::STR_HEX, "chainwork", "total amount of work in active chain, in hexadecimal"},
@@ -1385,11 +1513,18 @@ RPCHelpMan getblockchaininfo()
     obj.pushKV("blocks", height);
     obj.pushKV("headers", chainman.m_best_header ? chainman.m_best_header->nHeight : -1);
     obj.pushKV("bestblockhash", tip.GetBlockHash().GetHex());
+#ifdef ENABLE_POCX
+    obj.pushKV("base_target", tip.nBaseTarget);
+    obj.pushKV("generation_signature", tip.generationSignature.GetHex());
+#else
     obj.pushKV("bits", strprintf("%08x", tip.nBits));
     obj.pushKV("target", GetTarget(tip, chainman.GetConsensus().powLimit).GetHex());
+#endif
     obj.pushKV("difficulty", GetDifficulty(tip));
     obj.pushKV("time", tip.GetBlockTime());
+#ifndef ENABLE_POCX
     obj.pushKV("mediantime", tip.GetMedianTimePast());
+#endif
     obj.pushKV("verificationprogress", chainman.GuessVerificationProgress(&tip));
     obj.pushKV("initialblockdownload", chainman.IsInitialBlockDownload());
     obj.pushKV("chainwork", tip.nChainWork.GetHex());
@@ -1812,7 +1947,11 @@ static RPCHelpMan getchaintxstats()
     }
 
     const CBlockIndex& past_block{*CHECK_NONFATAL(pindex->GetAncestor(pindex->nHeight - blockcount))};
+#ifdef ENABLE_POCX
+    const int64_t nTimeDiff{pindex->GetBlockTime() - past_block.GetBlockTime()};
+#else
     const int64_t nTimeDiff{pindex->GetMedianTimePast() - past_block.GetMedianTimePast()};
+#endif
 
     UniValue ret(UniValue::VOBJ);
     ret.pushKV("time", (int64_t)pindex->nTime);
@@ -3390,8 +3529,13 @@ static RPCHelpMan loadtxoutset()
 const std::vector<RPCResult> RPCHelpForChainstate{
     {RPCResult::Type::NUM, "blocks", "number of blocks in this chainstate"},
     {RPCResult::Type::STR_HEX, "bestblockhash", "blockhash of the tip"},
+#ifdef ENABLE_POCX
+    {RPCResult::Type::NUM, "base_target", "PoCX difficulty base target"},
+    {RPCResult::Type::STR_HEX, "generation_signature", "PoCX generation signature"},
+#else
     {RPCResult::Type::STR_HEX, "bits", "nBits: compact representation of the block difficulty target"},
     {RPCResult::Type::STR_HEX, "target", "The difficulty target"},
+#endif
     {RPCResult::Type::NUM, "difficulty", "difficulty of the tip"},
     {RPCResult::Type::NUM, "verificationprogress", "progress towards the network tip"},
     {RPCResult::Type::STR_HEX, "snapshot_blockhash", /*optional=*/true, "the base block of the snapshot this chainstate is based on, if any"},
@@ -3434,8 +3578,13 @@ return RPCHelpMan{
 
         data.pushKV("blocks",                (int)chain.Height());
         data.pushKV("bestblockhash",         tip->GetBlockHash().GetHex());
+#ifdef ENABLE_POCX
+        data.pushKV("base_target", tip->nBaseTarget);
+        data.pushKV("generation_signature", tip->generationSignature.GetHex());
+#else
         data.pushKV("bits", strprintf("%08x", tip->nBits));
         data.pushKV("target", GetTarget(*tip, chainman.GetConsensus().powLimit).GetHex());
+#endif
         data.pushKV("difficulty", GetDifficulty(*tip));
         data.pushKV("verificationprogress", chainman.GuessVerificationProgress(tip));
         data.pushKV("coins_db_cache_bytes",  cs.m_coinsdb_cache_size_bytes);

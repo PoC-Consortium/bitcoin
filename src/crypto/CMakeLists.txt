@@ -21,6 +21,13 @@ add_library(bitcoin_crypto STATIC EXCLUDE_FROM_ALL
   siphash.cpp
   ../support/cleanse.cpp
 )
+# Add PoCX crypto sources when enabled
+if(ENABLE_POCX)
+  target_sources(bitcoin_crypto PRIVATE
+    ../pocx/crypto/shabal256.cpp
+    ../pocx/crypto/shabal256_lite.cpp
+  )
+endif()
 
 target_link_libraries(bitcoin_crypto
   PRIVATE

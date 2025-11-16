@@ -24,7 +24,11 @@ private:
     //! Maximum number of timeoffsets stored.
     static constexpr size_t MAX_SIZE{50};
     //! Minimum difference between system and network time for a warning to be raised.
+#ifdef ENABLE_POCX
+    static constexpr std::chrono::seconds WARN_THRESHOLD{10};
+#else
     static constexpr std::chrono::minutes WARN_THRESHOLD{10};
+#endif
 
     mutable Mutex m_mutex;
     /** The observed time differences between our local clock and those of our outbound peers. A

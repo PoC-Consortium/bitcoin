@@ -28,9 +28,11 @@ struct HeadersGeneratorSetup : public RegTestingSetup {
 
 void HeadersGeneratorSetup::FindProofOfWork(CBlockHeader& starting_header)
 {
+#ifndef ENABLE_POCX
     while (!CheckProofOfWork(starting_header.GetHash(), starting_header.nBits, Params().GetConsensus())) {
         ++(starting_header.nNonce);
     }
+#endif
 }
 
 void HeadersGeneratorSetup::GenerateHeaders(std::vector<CBlockHeader>& headers,
@@ -46,7 +48,9 @@ void HeadersGeneratorSetup::GenerateHeaders(std::vector<CBlockHeader>& headers,
         next_header.hashPrevBlock = prev_hash;
         next_header.hashMerkleRoot = merkle_root;
         next_header.nTime = prev_time+1;
+#ifndef ENABLE_POCX
         next_header.nBits = nBits;
+#endif
 
         FindProofOfWork(next_header);
         prev_hash = next_header.GetHash();
@@ -79,11 +83,19 @@ BOOST_AUTO_TEST_CASE(headers_sync_state)
     // to ensure the headers are different).
     GenerateHeaders(first_chain, target_blocks-1, Params().GenesisBlock().GetHash(),
             Params().GenesisBlock().nVersion, Params().GenesisBlock().nTime,
+#ifdef ENABLE_POCX
+            ArithToUint256(0), 0x207fffff);
+#else
             ArithToUint256(0), Params().GenesisBlock().nBits);
+#endif
 
     GenerateHeaders(second_chain, target_blocks-2, Params().GenesisBlock().GetHash(),
             Params().GenesisBlock().nVersion, Params().GenesisBlock().nTime,
+#ifdef ENABLE_POCX
+            ArithToUint256(1), 0x207fffff);
+#else
             ArithToUint256(1), Params().GenesisBlock().nBits);
+#endif
 
     const CBlockIndex* chain_start = WITH_LOCK(::cs_main, return m_node.chainman->m_blockman.LookupBlockIndex(Params().GenesisBlock().GetHash()));
     std::vector<CBlockHeader> headers_batch;

@@ -380,9 +380,15 @@ TestChain100Setup::TestChain100Setup(
 
     {
         LOCK(::cs_main);
+#ifdef ENABLE_POCX
+        assert(
+            m_node.chainman->ActiveChain().Tip()->GetBlockHash().ToString() ==
+            "a1842065309ae7f8156d9d0e7808e56e2cfa09a8be439736106e5e9700c97d5b");
+#else
         assert(
             m_node.chainman->ActiveChain().Tip()->GetBlockHash().ToString() ==
             "0c8c5f79505775a0f6aed6aca2350718ceb9c6f2c878667864d5c7a6d8ffa2a6");
+#endif
     }
 }
 
@@ -412,7 +418,11 @@ CBlock TestChain100Setup::CreateBlock(
     }
     RegenerateCommitments(block, *Assert(m_node.chainman));
 
+#ifdef ENABLE_POCX
+    // PoCX: Skip PoW mining in tests, blocks are validated differently
+#else
     while (!CheckProofOfWork(block.GetHash(), block.nBits, m_node.chainman->GetConsensus())) ++block.nNonce;
+#endif
 
     return block;
 }

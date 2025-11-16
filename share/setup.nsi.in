@@ -52,7 +52,7 @@ Var StartMenuGroup
 !insertmacro MUI_LANGUAGE English
 
 # Installer attributes
-InstallDir $PROGRAMFILES64\Bitcoin
+InstallDir $PROGRAMFILES64\Bitcoin-PocX
 CRCCheck force
 XPStyle on
 BrandingText " "
@@ -96,9 +96,11 @@ Section -post SEC0001
     !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
     CreateDirectory $SMPROGRAMS\$StartMenuGroup
     CreateShortcut "$SMPROGRAMS\$StartMenuGroup\$(^Name).lnk" $INSTDIR\@BITCOIN_GUI_NAME@@EXEEXT@
-    CreateShortcut "$SMPROGRAMS\$StartMenuGroup\@CLIENT_NAME@ (testnet).lnk" "$INSTDIR\@BITCOIN_GUI_NAME@@EXEEXT@" "-testnet" "$INSTDIR\@BITCOIN_GUI_NAME@@EXEEXT@" 1
-    CreateShortcut "$SMPROGRAMS\$StartMenuGroup\@CLIENT_NAME@ (test signet).lnk" "$INSTDIR\@BITCOIN_GUI_NAME@@EXEEXT@" "-signet" "$INSTDIR\@BITCOIN_GUI_NAME@@EXEEXT@" 2
-    CreateShortcut "$SMPROGRAMS\$StartMenuGroup\@CLIENT_NAME@ (testnet4).lnk" "$INSTDIR\@BITCOIN_GUI_NAME@@EXEEXT@" "-testnet4" "$INSTDIR\@BITCOIN_GUI_NAME@@EXEEXT@" 3
+    CreateShortcut "$SMPROGRAMS\$StartMenuGroup\@CLIENT_NAME@ (Mining).lnk" "$INSTDIR\@BITCOIN_GUI_NAME@@EXEEXT@" "-server -miningserver" "$INSTDIR\@BITCOIN_GUI_NAME@@EXEEXT@" 1
+    CreateShortcut "$SMPROGRAMS\$StartMenuGroup\@CLIENT_NAME@ (testnet).lnk" "$INSTDIR\@BITCOIN_GUI_NAME@@EXEEXT@" "-testnet" "$INSTDIR\@BITCOIN_GUI_NAME@@EXEEXT@" 2
+    CreateShortcut "$SMPROGRAMS\$StartMenuGroup\@CLIENT_NAME@ (testnet, Mining).lnk" "$INSTDIR\@BITCOIN_GUI_NAME@@EXEEXT@" "-testnet -server -miningserver" "$INSTDIR\@BITCOIN_GUI_NAME@@EXEEXT@" 3
+    #CreateShortcut "$SMPROGRAMS\$StartMenuGroup\@CLIENT_NAME@ (test signet).lnk" "$INSTDIR\@BITCOIN_GUI_NAME@@EXEEXT@" "-signet" "$INSTDIR\@BITCOIN_GUI_NAME@@EXEEXT@" 4
+    #CreateShortcut "$SMPROGRAMS\$StartMenuGroup\@CLIENT_NAME@ (testnet4).lnk" "$INSTDIR\@BITCOIN_GUI_NAME@@EXEEXT@" "-testnet4" "$INSTDIR\@BITCOIN_GUI_NAME@@EXEEXT@" 5
     CreateShortcut "$SMPROGRAMS\$StartMenuGroup\Uninstall $(^Name).lnk" $INSTDIR\uninstall.exe
     !insertmacro MUI_STARTMENU_WRITE_END
     WriteRegStr HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" DisplayName "$(^Name)"
@@ -110,7 +112,7 @@ Section -post SEC0001
     WriteRegDWORD HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" NoModify 1
     WriteRegDWORD HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" NoRepair 1
     WriteRegStr HKCR "@CLIENT_TARNAME@" "URL Protocol" ""
-    WriteRegStr HKCR "@CLIENT_TARNAME@" "" "URL:Bitcoin"
+    WriteRegStr HKCR "@CLIENT_TARNAME@" "" "URL:Bitcoin PoCX"
     WriteRegStr HKCR "@CLIENT_TARNAME@\DefaultIcon" "" $INSTDIR\@BITCOIN_GUI_NAME@@EXEEXT@
     WriteRegStr HKCR "@CLIENT_TARNAME@\shell\open\command" "" '"$INSTDIR\@BITCOIN_GUI_NAME@@EXEEXT@" "%1"'
 
@@ -157,9 +159,11 @@ Section -un.post UNSEC0001
     DeleteRegKey HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)"
     Delete /REBOOTOK "$SMPROGRAMS\$StartMenuGroup\Uninstall $(^Name).lnk"
     Delete /REBOOTOK "$SMPROGRAMS\$StartMenuGroup\$(^Name).lnk"
+    Delete /REBOOTOK "$SMPROGRAMS\$StartMenuGroup\@CLIENT_NAME@ (Mining).lnk"
     Delete /REBOOTOK "$SMPROGRAMS\$StartMenuGroup\@CLIENT_NAME@ (testnet).lnk"
-    Delete /REBOOTOK "$SMPROGRAMS\$StartMenuGroup\@CLIENT_NAME@ (testnet4).lnk"
-    Delete /REBOOTOK "$SMPROGRAMS\$StartMenuGroup\@CLIENT_NAME@ (test signet).lnk"
+    Delete /REBOOTOK "$SMPROGRAMS\$StartMenuGroup\@CLIENT_NAME@ (testnet, Mining).lnk"
+    #Delete /REBOOTOK "$SMPROGRAMS\$StartMenuGroup\@CLIENT_NAME@ (testnet4).lnk"
+    #Delete /REBOOTOK "$SMPROGRAMS\$StartMenuGroup\@CLIENT_NAME@ (test signet).lnk"
     Delete /REBOOTOK "$SMSTARTUP\Bitcoin.lnk"
     Delete /REBOOTOK $INSTDIR\uninstall.exe
     Delete /REBOOTOK $INSTDIR\debug.log

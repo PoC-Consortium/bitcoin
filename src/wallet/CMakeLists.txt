@@ -26,6 +26,9 @@ add_library(bitcoin_wallet STATIC EXCLUDE_FROM_ALL
   rpc/transactions.cpp
   rpc/util.cpp
   rpc/wallet.cpp
+  $<$<BOOL:${ENABLE_POCX}>:../pocx/assignments/transactions.cpp>
+  $<$<BOOL:${ENABLE_POCX}>:../pocx/rpc/assignments_wallet.cpp>
+  $<$<BOOL:${ENABLE_POCX}>:../pocx/mining/wallet_signing.cpp>
   scriptpubkeyman.cpp
   spend.cpp
   sqlite.cpp

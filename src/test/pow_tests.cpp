@@ -11,6 +11,9 @@
 
 #include <boost/test/unit_test.hpp>
 
+// PoW tests are not applicable when PoCX is enabled
+#ifndef ENABLE_POCX
+
 BOOST_FIXTURE_TEST_SUITE(pow_tests, BasicTestingSetup)
 
 /* Test calculation of next difficulty target with no constraints applying */
@@ -209,3 +212,5 @@ BOOST_AUTO_TEST_CASE(ChainParams_SIGNET_sanity)
 }
 
 BOOST_AUTO_TEST_SUITE_END()
+
+#endif // !ENABLE_POCX

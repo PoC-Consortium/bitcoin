@@ -25,6 +25,11 @@ static constexpr uint8_t DB_HEAD_BLOCKS{'H'};
 // Keys used in previous version that might still be found in the DB:
 static constexpr uint8_t DB_COINS{'c'};
 
+#ifdef ENABLE_POCX
+// PoCX forging assignment database keys (OP_RETURN-only architecture)
+static constexpr uint8_t DB_ASSIGNMENT_HISTORY{'A'};    // (plotAddress, txid) -> ForgingAssignment
+#endif
+
 bool CCoinsViewDB::NeedsUpgrade()
 {
     std::unique_ptr<CDBIterator> cursor{m_db->NewIterator()};
@@ -231,3 +236,155 @@ void CCoinsViewDBCursor::Next()
         keyTmp.first = entry.key;
     }
 }
+
+#ifdef ENABLE_POCX
+// ============================================================================
+// PoCX Forging Assignment Database Implementation (OP_RETURN-only architecture)
+// ============================================================================
+
+namespace {
+
+// Serialization structures for database keys
+// Key format: (prefix, plotAddress, height, txid)
+// Sorted by height for efficient "current assignment" queries
+struct AssignmentHistoryKey {
+    uint8_t prefix;
+    std::array<uint8_t, 20> plotAddress;
+    int assignment_height;
+    uint256 assignment_txid;
+
+    AssignmentHistoryKey(const std::array<uint8_t, 20>& plot, int height, const uint256& txid)
+        : prefix(DB_ASSIGNMENT_HISTORY), plotAddress(plot), assignment_height(height), assignment_txid(txid) {}
+
+    SERIALIZE_METHODS(AssignmentHistoryKey, obj) {
+        READWRITE(obj.prefix, obj.plotAddress, obj.assignment_height, obj.assignment_txid);
+    }
+};
+
+} // namespace
+
+std::optional<ForgingAssignment> CCoinsViewDB::GetForgingAssignment(
+    const std::array<uint8_t, 20>& plotAddress, int height) const
+{
+    // Iterate assignments for this plot using height-indexed keys
+    // Keys are sorted: (prefix, plot, height, txid)
+    // We can stop early when height exceeds target
+    std::unique_ptr<CDBIterator> pcursor(m_db->NewIterator());
+
+    // Seek to first assignment for this plot (height=0)
+    AssignmentHistoryKey seek_key(plotAddress, 0, uint256());
+    pcursor->Seek(seek_key);
+
+    std::optional<ForgingAssignment> result;
+    int mostRecentHeight = -1;
+
+    while (pcursor->Valid()) {
+        AssignmentHistoryKey key(plotAddress, 0, uint256());
+        if (!pcursor->GetKey(key)) break;
+
+        // Stop if we've moved past this plot's assignments
+        if (key.prefix != DB_ASSIGNMENT_HISTORY || key.plotAddress != plotAddress) {
+            break;
+        }
+
+        // Stop if we've exceeded target height (optimization: entries sorted by height)
+        if (key.assignment_height > height) {
+            break;
+        }
+
+        // Track most recent assignment at or before target height
+        if (key.assignment_height > mostRecentHeight) {
+            ForgingAssignment assignment;
+            if (pcursor->GetValue(assignment)) {
+                result = assignment;
+                mostRecentHeight = key.assignment_height;
+            }
+        }
+
+        pcursor->Next();
+    }
+
+    return result;
+}
+
+std::vector<ForgingAssignment> CCoinsViewDB::GetForgingAssignmentHistory(
+    const std::array<uint8_t, 20>& plotAddress) const
+{
+    std::vector<ForgingAssignment> history;
+    std::unique_ptr<CDBIterator> pcursor(m_db->NewIterator());
+
+    // Seek to first assignment for this plot (height=0)
+    AssignmentHistoryKey seek_key(plotAddress, 0, uint256());
+    pcursor->Seek(seek_key);
+
+    while (pcursor->Valid()) {
+        AssignmentHistoryKey key(plotAddress, 0, uint256());
+        if (!pcursor->GetKey(key)) break;
+
+        // Stop if we've moved past this plot's assignments
+        if (key.prefix != DB_ASSIGNMENT_HISTORY || key.plotAddress != plotAddress) {
+            break;
+        }
+
+        ForgingAssignment assignment;
+        if (pcursor->GetValue(assignment)) {
+            history.push_back(assignment);
+        }
+
+        pcursor->Next();
+    }
+
+    return history;
+}
+
+void CCoinsViewDB::WriteAssignmentsToBatch(
+    CDBBatch& batch,
+    const ForgingAssignmentsMap& assignments,
+    const PlotAddressAssignmentMap& currentAssignments,
+    const DeletedAssignmentsSet& deletedAssignments)
+{
+    // Write all assignment history entries with new key format (includes height)
+    for (const auto& [key, assignment] : assignments) {
+        const auto& [plot_addr, txid] = key;
+        batch.Write(AssignmentHistoryKey(plot_addr, assignment.assignment_height, txid), assignment);
+    }
+
+    // Erase deleted assignments from history
+    // Note: deletedAssignments still uses old key format (plot, txid)
+    // We need height for the new key - reconstruct from assignment data
+    for (const auto& [plot_addr, txid] : deletedAssignments) {
+        // Find the assignment in the map to get its height
+        auto it = std::find_if(assignments.begin(), assignments.end(),
+            [&](const auto& entry) {
+                return entry.first.first == plot_addr && entry.first.second == txid;
+            });
+
+        if (it != assignments.end()) {
+            batch.Erase(AssignmentHistoryKey(plot_addr, it->second.assignment_height, txid));
+        } else {
+            // Deletion without corresponding assignment - should not happen in normal operation
+            // For safety, we'd need to query the DB to get the height, but this is an error case
+            LogPrintf("PoCX: ERROR - Cannot delete assignment %s for plot %s without height information\n",
+                     txid.ToString(), HexStr(plot_addr));
+        }
+    }
+}
+
+bool CCoinsViewDB::BatchWriteAssignments(
+    const ForgingAssignmentsMap& assignments,
+    const PlotAddressAssignmentMap& currentAssignments,
+    const DeletedAssignmentsSet& deletedAssignments)
+{
+    CDBBatch batch(*m_db);
+    WriteAssignmentsToBatch(batch, assignments, currentAssignments, deletedAssignments);
+
+    bool ret = m_db->WriteBatch(batch);
+    if (ret) {
+        LogPrintf("PoCX: Successfully committed %zu assignment updates and %zu deletions to database\n",
+                 assignments.size(), deletedAssignments.size());
+    } else {
+        LogPrintf("PoCX: ERROR - Failed to commit assignments to database!\n");
+    }
+    return ret;
+}
+#endif

@@ -527,6 +527,8 @@ std::vector<RPCResult> ScriptPubKeyDoc();
  *
  * @return  the target
  */
+#ifndef ENABLE_POCX
 uint256 GetTarget(const CBlockIndex& blockindex, const uint256 pow_limit);
+#endif
 
 #endif // BITCOIN_RPC_UTIL_H

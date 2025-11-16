@@ -10,6 +10,11 @@
 
 #include <cstdint>
 
+#ifdef ENABLE_POCX
+#include <pocx/assignments/opcodes.h>
+#include <hash.h>
+#endif
+
 #include <QDateTime>
 
 /* Return positive answer if transaction should be shown in list.
@@ -33,6 +38,36 @@ QList<TransactionRecord> TransactionRecord::decomposeTransaction(const interface
     CAmount nNet = nCredit - nDebit;
     Txid hash = wtx.tx->GetHash();
     std::map<std::string, std::string> mapValue = wtx.value_map;
+
+#ifdef ENABLE_POCX
+    bool isPoCXAssignment = false;
+    bool isPoCXRevocation = false;
+    std::string pocxPlotAddress;
+
+    for (const CTxOut& txout : wtx.tx->vout) {
+        if (pocx::assignments::IsAssignmentOpReturn(txout)) {
+            auto parsed = pocx::assignments::ParseAssignmentOpReturn(txout);
+            if (parsed.has_value()) {
+                isPoCXAssignment = true;
+                const auto& [plot_addr_bytes, forge_addr_bytes] = parsed.value();
+                uint160 plot_hash;
+                std::copy(plot_addr_bytes.begin(), plot_addr_bytes.end(), plot_hash.begin());
+                pocxPlotAddress = EncodeDestination(WitnessV0KeyHash(plot_hash));
+            }
+            break;
+        } else if (pocx::assignments::IsRevocationOpReturn(txout)) {
+            auto parsed = pocx::assignments::ParseRevocationOpReturn(txout);
+            if (parsed.has_value()) {
+                isPoCXRevocation = true;
+                const auto& plot_addr_bytes = parsed.value();
+                uint160 plot_hash;
+                std::copy(plot_addr_bytes.begin(), plot_addr_bytes.end(), plot_hash.begin());
+                pocxPlotAddress = EncodeDestination(WitnessV0KeyHash(plot_hash));
+            }
+            break;
+        }
+    }
+#endif
 
     bool all_from_me = true;
     bool any_from_me = false;
@@ -79,6 +114,16 @@ QList<TransactionRecord> TransactionRecord::decomposeTransaction(const interface
                     sub.type = TransactionRecord::SendToOther;
                     sub.address = mapValue["to"];
                 }
+
+#ifdef ENABLE_POCX
+                if (isPoCXAssignment) {
+                    sub.type = TransactionRecord::PoCXAssignment;
+                    sub.address = pocxPlotAddress;
+                } else if (isPoCXRevocation) {
+                    sub.type = TransactionRecord::PoCXRevocation;
+                    sub.address = pocxPlotAddress;
+                }
+#endif
 
                 CAmount nValue = txout.nValue;
                 /* Add fee to first output */
@@ -144,6 +189,12 @@ void TransactionRecord::updateStatus(const interfaces::WalletTxStatus& wtx, cons
         typesort = 2; break;
     case RecvWithAddress: case RecvFromOther:
         typesort = 3; break;
+#ifdef ENABLE_POCX
+    case PoCXAssignment:
+        typesort = 4; break;
+    case PoCXRevocation:
+        typesort = 5; break;
+#endif
     default:
         typesort = 9;
     }

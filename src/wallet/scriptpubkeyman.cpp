@@ -18,6 +18,9 @@
 #include <util/time.h>
 #include <util/translation.h>
 #include <wallet/scriptpubkeyman.h>
+#ifdef ENABLE_POCX
+#include <pocx/consensus/signature.h>
+#endif
 
 #include <optional>
 
@@ -1302,6 +1305,77 @@ SigningResult DescriptorScriptPubKeyMan::SignMessage(const std::string& message,
     }
     return SigningResult::OK;
 }
+
+#ifdef ENABLE_POCX
+bool DescriptorScriptPubKeyMan::GetPoCXPubKey(const CScript& script, CPubKey& pubkey) const
+{
+    // Check if we can spend from this script
+    if (!IsMine(script)) {
+        return false;
+    }
+
+    // Get signing provider with private keys
+    std::unique_ptr<FlatSigningProvider> keys = GetSigningProvider(script, true);
+    if (!keys) {
+        return false;
+    }
+
+    // Extract key ID from P2WPKH script (PoCX only supports P2WPKH)
+    if (script.size() != 22 || script[0] != 0x00 || script[1] != 0x14) {
+        return false; // Not P2WPKH
+    }
+
+    CKeyID keyid(uint160(std::vector<unsigned char>(script.begin() + 2, script.begin() + 22)));
+
+    CKey key;
+    if (!keys->GetKey(keyid, key)) {
+        return false;
+    }
+
+    // Get public key
+    pubkey = key.GetPubKey();
+    if (!pubkey.IsValid() || !pubkey.IsCompressed()) {
+        return false;
+    }
+
+    return true;
+}
+
+bool DescriptorScriptPubKeyMan::SignPoCXHash(const uint256& hash, const CScript& script, std::vector<unsigned char>& signature) const
+{
+    // Check if we can spend from this script
+    if (!IsMine(script)) {
+        return false;
+    }
+
+    // Get signing provider with private keys
+    std::unique_ptr<FlatSigningProvider> keys = GetSigningProvider(script, true);
+    if (!keys) {
+        return false;
+    }
+
+    // Extract key ID from P2WPKH script (PoCX only supports P2WPKH)
+    if (script.size() != 22 || script[0] != 0x00 || script[1] != 0x14) {
+        return false; // Not P2WPKH
+    }
+
+    CKeyID keyid(uint160(std::vector<unsigned char>(script.begin() + 2, script.begin() + 22)));
+
+    CKey key;
+    if (!keys->GetKey(keyid, key)) {
+        return false;
+    }
+
+    // Use existing PoCX function for consistent magic prefix handling
+    uint256 prefixed_hash = pocx::consensus::PoCXBlockSignatureHash(hash);
+
+    if (!key.SignCompact(prefixed_hash, signature)) {
+        return false;
+    }
+
+    return true;
+}
+#endif // ENABLE_POCX
 
 std::optional<PSBTError> DescriptorScriptPubKeyMan::FillPSBT(PartiallySignedTransaction& psbtx, const PrecomputedTransactionData& txdata, std::optional<int> sighash_type, bool sign, bool bip32derivs, int* n_signed, bool finalize) const
 {

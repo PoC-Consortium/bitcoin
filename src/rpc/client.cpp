@@ -314,6 +314,9 @@ static const CRPCConvertParam vRPCConvertParams[] =
     { "stop", 0, "wait" },
     { "addnode", 2, "v2transport" },
     { "addconnection", 2, "v2transport" },
+    #ifdef ENABLE_POCX
+    { "get_assignment", 1, "height" },
+    #endif
 };
 // clang-format on
 

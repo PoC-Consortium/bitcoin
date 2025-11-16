@@ -26,6 +26,9 @@
 #include <qt/walletframe.h>
 #include <qt/walletmodel.h>
 #include <qt/walletview.h>
+#ifdef ENABLE_POCX
+#include <qt/forgingassignmentdialog.h>
+#endif
 #endif // ENABLE_WALLET
 
 #ifdef Q_OS_MACOS
@@ -34,6 +37,7 @@
 
 #include <chain.h>
 #include <chainparams.h>
+#include <common/args.h>
 #include <common/system.h>
 #include <interfaces/handler.h>
 #include <interfaces/node.h>
@@ -270,6 +274,16 @@ void BitcoinGUI::createActions()
     receiveCoinsAction->setShortcut(QKeySequence(QStringLiteral("Alt+3")));
     tabGroup->addAction(receiveCoinsAction);
 
+#ifdef ENABLE_POCX
+    forgingAssignmentAction = new QAction(platformStyle->SingleColorIcon(":/icons/tx_mined"), tr("&Forging Assignment"), this);
+    forgingAssignmentAction->setStatusTip(tr("Manage forging rights assignments for your plots"));
+    forgingAssignmentAction->setToolTip(forgingAssignmentAction->statusTip());
+    forgingAssignmentAction->setCheckable(true);
+    // Only show forging assignment tab when running as mining server
+    forgingAssignmentAction->setVisible(gArgs.GetBoolArg("-miningserver", false));
+    tabGroup->addAction(forgingAssignmentAction);
+#endif
+
     historyAction = new QAction(platformStyle->SingleColorIcon(":/icons/history"), tr("&Transactions"), this);
     historyAction->setStatusTip(tr("Browse transaction history"));
     historyAction->setToolTip(historyAction->statusTip());
@@ -288,6 +302,10 @@ void BitcoinGUI::createActions()
     connect(receiveCoinsAction, &QAction::triggered, this, &BitcoinGUI::gotoReceiveCoinsPage);
     connect(historyAction, &QAction::triggered, [this]{ showNormalIfMinimized(); });
     connect(historyAction, &QAction::triggered, this, &BitcoinGUI::gotoHistoryPage);
+#ifdef ENABLE_POCX
+    connect(forgingAssignmentAction, &QAction::triggered, [this]{ showNormalIfMinimized(); });
+    connect(forgingAssignmentAction, &QAction::triggered, this, &BitcoinGUI::gotoForgingAssignmentPage);
+#endif
 #endif // ENABLE_WALLET
 
     quitAction = new QAction(tr("E&xit"), this);
@@ -600,6 +618,9 @@ void BitcoinGUI::createToolBars()
         toolbar->addAction(overviewAction);
         toolbar->addAction(sendCoinsAction);
         toolbar->addAction(receiveCoinsAction);
+#ifdef ENABLE_POCX
+        toolbar->addAction(forgingAssignmentAction);
+#endif
         toolbar->addAction(historyAction);
         overviewAction->setChecked(true);
 
@@ -994,6 +1015,14 @@ void BitcoinGUI::gotoSendCoinsPage(QString addr)
     sendCoinsAction->setChecked(true);
     if (walletFrame) walletFrame->gotoSendCoinsPage(addr);
 }
+
+#ifdef ENABLE_POCX
+void BitcoinGUI::gotoForgingAssignmentPage()
+{
+    forgingAssignmentAction->setChecked(true);
+    if (walletFrame) walletFrame->gotoForgingAssignmentPage();
+}
+#endif
 
 void BitcoinGUI::gotoSignMessageTab(QString addr)
 {

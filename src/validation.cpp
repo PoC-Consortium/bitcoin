@@ -17,6 +17,15 @@
 #include <consensus/tx_check.h>
 #include <consensus/tx_verify.h>
 #include <consensus/validation.h>
+#ifdef ENABLE_POCX
+#include <pocx/consensus/signature.h>
+#include <pocx/consensus/proof.h>
+#include <pocx/assignments/assignment_state.h>
+#include <pocx/consensus/params.h>
+#include <pocx/consensus/difficulty.h>
+#include <pocx/assignments/opcodes.h>
+#include <pocx/algorithms/time_bending.h>
+#endif
 #include <cuckoocache.h>
 #include <flatfile.h>
 #include <hash.h>
@@ -874,6 +883,104 @@ bool MemPoolAccept::PreChecks(ATMPArgs& args, Workspace& ws)
     // This is const, but calls into the back end CoinsViews. The CCoinsViewDB at the bottom of the
     // hierarchy brings the best block into scope. See CCoinsViewDB::GetBestBlock().
     m_view.GetBestBlock();
+
+#ifdef ENABLE_POCX
+    // PoCX: Validate assignment/revocation OP_RETURNs
+    // NOTE: Must be done BEFORE SetBackend(m_dummy) so we can access assignment state from database
+    for (const auto& output : tx.vout) {
+        // Check for assignment OP_RETURN
+        if (pocx::assignments::IsAssignmentOpReturn(output)) {
+            auto parsed = pocx::assignments::ParseAssignmentOpReturn(output);
+            if (!parsed.has_value()) {
+                return state.Invalid(TxValidationResult::TX_CONSENSUS,
+                                   "bad-assignment-opreturn",
+                                   "Invalid assignment OP_RETURN data");
+            }
+
+            auto [plot_addr, forge_addr] = *parsed;
+
+            // Check #3: Verify plot ownership
+            if (!pocx::assignments::VerifyPlotOwnership(tx, plot_addr, m_view)) {
+                return state.Invalid(TxValidationResult::TX_CONSENSUS,
+                                   "bad-assignment-ownership",
+                                   "Assignment not signed by plot owner");
+            }
+
+            // Check #4: Check assignment state
+            int current_height = m_active_chainstate.m_chain.Height() + 1;
+            ForgingState plotState = pocx::assignments::GetAssignmentState(
+                plot_addr, current_height, m_view);
+
+            if (plotState != ForgingState::UNASSIGNED &&
+                plotState != ForgingState::REVOKED) {
+                return state.Invalid(TxValidationResult::TX_CONSENSUS,
+                                   "plot-not-available-for-assignment",
+                                   strprintf("Plot cannot create assignment in state %s",
+                                           ForgingStateToString(plotState)));
+            }
+
+            // Check #5: Check mempool conflicts (assignment)
+            for (const auto& mempool_entry : m_pool.mapTx) {
+                for (const auto& mempool_output : mempool_entry.GetTx().vout) {
+                    if (pocx::assignments::IsAssignmentOpReturn(mempool_output)) {
+                        auto mempool_parsed = pocx::assignments::ParseAssignmentOpReturn(mempool_output);
+                        if (mempool_parsed.has_value() &&
+                            mempool_parsed->first == plot_addr) {
+                            return state.Invalid(TxValidationResult::TX_MEMPOOL_POLICY,
+                                               "assignment-conflict",
+                                               "Assignment for this plot already in mempool");
+                        }
+                    }
+                }
+            }
+        }
+        // Check for revocation OP_RETURN
+        else if (pocx::assignments::IsRevocationOpReturn(output)) {
+            auto plot_addr_opt = pocx::assignments::ParseRevocationOpReturn(output);
+            if (!plot_addr_opt.has_value()) {
+                return state.Invalid(TxValidationResult::TX_CONSENSUS,
+                                   "bad-revocation-opreturn",
+                                   "Invalid revocation OP_RETURN data");
+            }
+
+            auto plot_addr = *plot_addr_opt;
+
+            // Check #6: Verify plot ownership
+            if (!pocx::assignments::VerifyPlotOwnership(tx, plot_addr, m_view)) {
+                return state.Invalid(TxValidationResult::TX_CONSENSUS,
+                                   "bad-revocation-ownership",
+                                   "Revocation not signed by plot owner");
+            }
+
+            // Check #7: Check assignment is active (ASSIGNED only)
+            int current_height = m_active_chainstate.m_chain.Height() + 1;
+            ForgingState plotState = pocx::assignments::GetAssignmentState(
+                plot_addr, current_height, m_view);
+
+            if (plotState != ForgingState::ASSIGNED) {
+                return state.Invalid(TxValidationResult::TX_CONSENSUS,
+                                   "cannot-revoke-inactive",
+                                   strprintf("Can only revoke ASSIGNED plots, state is %s",
+                                           ForgingStateToString(plotState)));
+            }
+
+            // Check #8: Check mempool conflicts (revocation)
+            for (const auto& mempool_entry : m_pool.mapTx) {
+                for (const auto& mempool_output : mempool_entry.GetTx().vout) {
+                    if (pocx::assignments::IsRevocationOpReturn(mempool_output)) {
+                        auto mempool_parsed = pocx::assignments::ParseRevocationOpReturn(mempool_output);
+                        if (mempool_parsed.has_value() &&
+                            *mempool_parsed == plot_addr) {
+                            return state.Invalid(TxValidationResult::TX_MEMPOOL_POLICY,
+                                               "revocation-conflict",
+                                               "Revocation for this plot already in mempool");
+                        }
+                    }
+                }
+            }
+        }
+    }
+#endif // ENABLE_POCX
 
     // we have all inputs cached now, so switch back to dummy (to protect
     // against bugs where we pull more inputs from disk that miss being added
@@ -1926,8 +2033,13 @@ CAmount GetBlockSubsidy(int nHeight, const Consensus::Params& consensusParams)
     if (halvings >= 64)
         return 0;
 
+#ifdef ENABLE_POCX
+    CAmount nSubsidy = 10 * COIN;
+    // PoCX: Subsidy is cut in half every 1,050,000 blocks which will occur approximately every 4 years.
+#else
     CAmount nSubsidy = 50 * COIN;
     // Subsidy is cut in half every 210,000 blocks which will occur approximately every 4 years.
+#endif
     nSubsidy >>= halvings;
     return nSubsidy;
 }
@@ -2327,6 +2439,43 @@ DisconnectResult Chainstate::DisconnectBlock(const CBlock& block, const CBlockIn
     // move best block pointer to prevout block
     view.SetBestBlock(pindex->pprev->GetBlockHash());
 
+#ifdef ENABLE_POCX
+    // Undo forging assignment changes (OP_RETURN-only architecture)
+    // Process in reverse order (same as transactions)
+    for (auto it = blockUndo.vforgingundo.rbegin(); it != blockUndo.vforgingundo.rend(); ++it) {
+        const ForgingUndo& undo = *it;
+
+        switch (undo.type) {
+            case ForgingUndo::UndoType::ADDED:
+                // Assignment was added in this block - remove it
+                view.RemoveForgingAssignment(
+                    undo.assignment.plotAddress,
+                    undo.assignment.assignment_txid
+                );
+                LogPrintf("PoCX: Reorg - Removed assignment plot=%s txid=%s\n",
+                         HexStr(undo.assignment.plotAddress),
+                         undo.assignment.assignment_txid.ToString());
+                break;
+
+            case ForgingUndo::UndoType::REVOKED:
+                // Assignment was revoked in this block - restore unrevoked state
+                view.RestoreForgingAssignment(undo.assignment);
+                LogPrintf("PoCX: Reorg - Restored assignment plot=%s txid=%s (un-revoked)\n",
+                         HexStr(undo.assignment.plotAddress),
+                         undo.assignment.assignment_txid.ToString());
+                break;
+
+            case ForgingUndo::UndoType::MODIFIED:
+                // Assignment was modified - restore previous state
+                view.UpdateForgingAssignment(undo.assignment);
+                LogPrintf("PoCX: Reorg - Restored modified assignment plot=%s txid=%s\n",
+                         HexStr(undo.assignment.plotAddress),
+                         undo.assignment.assignment_txid.ToString());
+                break;
+        }
+    }
+#endif
+
     return fClean ? DISCONNECT_OK : DISCONNECT_UNCLEAN;
 }
 
@@ -2410,6 +2559,18 @@ bool Chainstate::ConnectBlock(const CBlock& block, BlockValidationState& state, 
         LogError("%s: Consensus::CheckBlock: %s\n", __func__, state.ToString());
         return false;
     }
+
+#ifdef ENABLE_POCX
+    // Additional PoCX validation with assignment support
+    // Skip signature validation during template creation (fJustCheck=true)
+    // The signature will be added after the template is created
+    if (pindex->nHeight > 0 && !fJustCheck) {
+        if (!pocx::consensus::VerifyPoCXBlockCompactSignature(block, view, pindex->nHeight)) {
+            return state.Invalid(BlockValidationResult::BLOCK_CONSENSUS, "bad-pocx-assignment-sig",
+                                "PoCX block signature validation failed with assignment check");
+        }
+    }
+#endif
 
     // verify that the view's current state corresponds to the previous block
     uint256 hashPrevBlock = pindex->pprev == nullptr ? uint256() : pindex->pprev->GetBlockHash();
@@ -2658,6 +2819,129 @@ bool Chainstate::ConnectBlock(const CBlock& block, BlockValidationState& state, 
                 break;
             }
         }
+
+#ifdef ENABLE_POCX
+        // Process forging assignment and revocation OP_RETURNs
+        // Scan all outputs for POCX/XCOP markers
+        for (size_t output_idx = 0; output_idx < tx.vout.size(); output_idx++) {
+            const CTxOut& output = tx.vout[output_idx];
+
+            // Check for assignment OP_RETURN (POCX marker)
+            if (pocx::assignments::IsAssignmentOpReturn(output)) {
+                auto parsed = pocx::assignments::ParseAssignmentOpReturn(output);
+                if (!parsed.has_value()) {
+                    return state.Invalid(BlockValidationResult::BLOCK_CONSENSUS,
+                                       "bad-assignment-opreturn",
+                                       "Invalid assignment OP_RETURN data");
+                }
+
+                auto [plot_addr, forge_addr] = *parsed;
+
+                LogPrintf("PoCX: Assignment OP_RETURN found - tx=%s plot=%s forge=%s\n",
+                         tx.GetHash().ToString(), HexStr(plot_addr), HexStr(forge_addr));
+
+                // Verify ownership: transaction must be signed by plot owner
+                if (!pocx::assignments::VerifyPlotOwnership(tx, plot_addr, view)) {
+                    return state.Invalid(BlockValidationResult::BLOCK_CONSENSUS,
+                                       "bad-assignment-ownership",
+                                       "Assignment not signed by plot owner");
+                }
+
+                // Check assignment state - only allow new assignment if UNASSIGNED or REVOKED
+                ForgingState plotState = pocx::assignments::GetAssignmentState(plot_addr, pindex->nHeight, view);
+                if (plotState != ForgingState::UNASSIGNED && plotState != ForgingState::REVOKED) {
+                    return state.Invalid(BlockValidationResult::BLOCK_CONSENSUS,
+                                       "plot-not-available-for-assignment",
+                                       strprintf("Plot %s cannot create new assignment in state %s (must be UNASSIGNED or REVOKED)",
+                                               HexStr(plot_addr), ForgingStateToString(plotState)));
+                }
+
+                // Check for duplicate assignment in same block
+                if (view.HasPendingAssignment(plot_addr)) {
+                    return state.Invalid(BlockValidationResult::BLOCK_CONSENSUS,
+                                       "duplicate-assignment-in-block",
+                                       strprintf("Plot %s already has pending assignment in this block", HexStr(plot_addr)));
+                }
+
+                // Create new assignment
+                int activation_height = pindex->nHeight + params.GetConsensus().nForgingAssignmentDelay;
+                ForgingAssignment assignment(plot_addr, forge_addr, tx.GetHash().ToUint256(),
+                                           pindex->nHeight, activation_height);
+
+                view.AddForgingAssignment(assignment);
+
+                // Capture for undo: this assignment was added
+                blockundo.vforgingundo.emplace_back(ForgingUndo::UndoType::ADDED, assignment);
+
+                LogPrintf("PoCX: Assignment created - plot=%s forge=%s txid=%s activates=%d\n",
+                         HexStr(plot_addr), HexStr(forge_addr),
+                         tx.GetHash().ToString(), activation_height);
+            }
+            // Check for revocation OP_RETURN (XCOP marker)
+            else if (pocx::assignments::IsRevocationOpReturn(output)) {
+                auto plot_addr_opt = pocx::assignments::ParseRevocationOpReturn(output);
+                if (!plot_addr_opt.has_value()) {
+                    return state.Invalid(BlockValidationResult::BLOCK_CONSENSUS,
+                                       "bad-revocation-opreturn",
+                                       "Invalid revocation OP_RETURN data");
+                }
+
+                auto plot_addr = *plot_addr_opt;
+
+                LogPrintf("PoCX: Revocation OP_RETURN found - tx=%s plot=%s\n",
+                         tx.GetHash().ToString(), HexStr(plot_addr));
+
+                // Verify ownership: transaction must be signed by plot owner
+                if (!pocx::assignments::VerifyPlotOwnership(tx, plot_addr, view)) {
+                    return state.Invalid(BlockValidationResult::BLOCK_CONSENSUS,
+                                       "bad-revocation-ownership",
+                                       "Revocation not signed by plot owner");
+                }
+
+                // Check assignment state - must be ASSIGNED to revoke
+                ForgingState plotState = pocx::assignments::GetAssignmentState(plot_addr, pindex->nHeight, view);
+                if (plotState != ForgingState::ASSIGNED) {
+                    return state.Invalid(BlockValidationResult::BLOCK_CONSENSUS,
+                                       "cannot-revoke-inactive",
+                                       strprintf("Can only revoke ASSIGNED plots, state is %s",
+                                               ForgingStateToString(plotState)));
+                }
+
+                // Check for duplicate revocation in same block
+                if (view.HasPendingRevocation(plot_addr)) {
+                    return state.Invalid(BlockValidationResult::BLOCK_CONSENSUS,
+                                       "duplicate-revocation-in-block",
+                                       strprintf("Plot %s already has pending revocation in this block", HexStr(plot_addr)));
+                }
+
+                // Check for pending assignment in same block (can't revoke and assign in same block)
+                if (view.HasPendingAssignment(plot_addr)) {
+                    return state.Invalid(BlockValidationResult::BLOCK_CONSENSUS,
+                                       "revoke-after-assign-in-block",
+                                       strprintf("Plot %s has pending assignment in this block, cannot revoke", HexStr(plot_addr)));
+                }
+
+                // Get current assignment (we know it exists and is ASSIGNED from state check)
+                auto existing = view.GetForgingAssignment(plot_addr, pindex->nHeight);
+
+                // Store old state for undo: capture state before revocation
+                blockundo.vforgingundo.emplace_back(ForgingUndo::UndoType::REVOKED, *existing);
+
+                // Mark assignment as revoked
+                ForgingAssignment revoked = *existing;
+                revoked.revoked = true;
+                revoked.revocation_txid = tx.GetHash().ToUint256();
+                revoked.revocation_height = pindex->nHeight;
+                revoked.revocation_effective_height = pindex->nHeight + params.GetConsensus().nForgingRevocationDelay;
+
+                view.UpdateForgingAssignment(revoked);
+
+                LogPrintf("PoCX: Assignment revoked - plot=%s txid=%s effective=%d\n",
+                         HexStr(plot_addr), tx.GetHash().ToString(),
+                         revoked.revocation_effective_height);
+            }
+        }
+#endif // ENABLE_POCX
 
         CTxUndo undoDummy;
         if (i > 0) {
@@ -3923,9 +4207,63 @@ void ChainstateManager::ReceivedBlockTransactions(const CBlock& block, CBlockInd
 
 static bool CheckBlockHeader(const CBlockHeader& block, BlockValidationState& state, const Consensus::Params& consensusParams, bool fCheckPOW = true)
 {
+#ifndef ENABLE_POCX
     // Check proof of work matches claimed amount
     if (fCheckPOW && !CheckProofOfWork(block.GetHash(), block.nBits, consensusParams))
         return state.Invalid(BlockValidationResult::BLOCK_INVALID_HEADER, "high-hash", "proof of work failed");
+#else
+    if (block.nHeight > 0) {
+        // Step 1: Verify compact block signature (only when fCheckPOW is true)
+        // Template blocks are intentionally unsigned, so skip signature check for templates
+        if (fCheckPOW) {
+            if (!pocx::consensus::VerifyPoCXBlockCompactSignature(block)) {
+                return state.Invalid(BlockValidationResult::BLOCK_INVALID_HEADER, "bad-pocx-sig",
+                                    "PoCX block signature validation failed");
+            }
+        
+
+            // Step 2: Validate compression is within valid range
+            auto compression_bounds = pocx::consensus::GetPoCXCompressionBounds(
+                block.nHeight,
+                consensusParams.nSubsidyHalvingInterval
+            );
+            uint32_t min_compression = compression_bounds.nPoCXMinCompression;
+            uint32_t max_compression = compression_bounds.nPoCXTargetCompression;
+
+            if (block.pocxProof.compression < min_compression ||
+                block.pocxProof.compression > max_compression) {
+                return state.Invalid(BlockValidationResult::BLOCK_INVALID_HEADER,
+                                    "bad-pocx-compression",
+                                    strprintf("compression %u out of range [%u, %u]",
+                                            block.pocxProof.compression,
+                                            min_compression, max_compression));
+            }
+
+            // Step 3: Perform full PoC validation (expensive - only when fCheckPOW is true)
+            auto result = pocx::consensus::ValidateProofOfCapacity(
+                block.generationSignature,
+                block.pocxProof,
+                block.nBaseTarget,
+                block.nHeight,
+                block.pocxProof.compression,
+                consensusParams.nPowTargetSpacing
+            );
+
+            if (!result.is_valid) {
+                return state.Invalid(BlockValidationResult::BLOCK_INVALID_HEADER,
+                                    "bad-pocx-proof", "PoCX proof validation failed");
+            }
+
+            // Step 4: Validate claimed quality matches calculated quality
+            if (block.pocxProof.quality != result.quality) {
+                return state.Invalid(BlockValidationResult::BLOCK_INVALID_HEADER,
+                                    "bad-pocx-quality-mismatch",
+                                    strprintf("Claimed quality %llu does not match calculated quality %llu",
+                                             block.pocxProof.quality, result.quality));
+            }
+        }
+    }
+#endif
 
     return true;
 }
@@ -4117,11 +4455,13 @@ std::vector<unsigned char> ChainstateManager::GenerateCoinbaseCommitment(CBlock&
     return commitment;
 }
 
+#ifndef ENABLE_POCX
 bool HasValidProofOfWork(const std::vector<CBlockHeader>& headers, const Consensus::Params& consensusParams)
 {
     return std::all_of(headers.cbegin(), headers.cend(),
             [&](const auto& header) { return CheckProofOfWork(header.GetHash(), header.nBits, consensusParams);});
 }
+#endif
 
 bool IsBlockMutated(const CBlock& block, bool check_witness_root)
 {
@@ -4185,8 +4525,63 @@ static bool ContextualCheckBlockHeader(const CBlockHeader& block, BlockValidatio
 
     // Check proof of work
     const Consensus::Params& consensusParams = chainman.GetConsensus();
+#ifdef ENABLE_POCX
+    // PoCX: Contextual validation (requires previous block)
+
+    // Step 1: Verify block height matches chain position
+    const int nExpectedHeight = pindexPrev->nHeight + 1;
+    if (block.nHeight != nExpectedHeight) {
+        return state.Invalid(BlockValidationResult::BLOCK_INVALID_HEADER,
+                            "bad-height",
+                            strprintf("Incorrect block height: expected %llu, got %llu",
+                                    nExpectedHeight, block.nHeight));
+    }
+
+    // Step 2: Verify generation signature matches expected value
+    uint256 expected_generation_signature = pocx::consensus::GetNextGenerationSignature(pindexPrev);
+
+    if (block.generationSignature != expected_generation_signature) {
+        return state.Invalid(BlockValidationResult::BLOCK_INVALID_HEADER, "bad-gensig", "incorrect generation signature");
+    }
+
+    // Step 3: Validate base target matches expected difficulty
+    uint64_t expected_base_target = pocx::consensus::GetNextBaseTarget(pindexPrev, consensusParams);
+
+    if (block.nBaseTarget != expected_base_target) {
+        LogPrintf("PoCX: Base target mismatch - block has %llu, expected %llu\n",
+                 block.nBaseTarget, expected_base_target);
+        return state.Invalid(BlockValidationResult::BLOCK_INVALID_HEADER, "bad-diff", "incorrect PoCX base target");
+    }
+
+    // Step 4: Validate timing constraints (skip for genesis block)
+    bool is_genesis = block.hashPrevBlock.IsNull();
+
+    if (!is_genesis) {
+        // Step 4a: Verify timestamp does not go backwards
+        if (block.nTime < pindexPrev->nTime) {
+            return state.Invalid(BlockValidationResult::BLOCK_INVALID_HEADER, "time-too-old",
+                                strprintf("block timestamp %u cannot be less than previous block timestamp %u",
+                                         block.nTime, pindexPrev->nTime));
+        }
+
+        // Step 4b: Verify deadline timing using stored quality
+        uint64_t poc_time = pocx::algorithms::CalculateTimeBendedDeadline(
+            block.pocxProof.quality,
+            block.nBaseTarget,
+            consensusParams.nPowTargetSpacing
+        );
+
+        uint32_t elapsed_time = block.nTime - pindexPrev->nTime;
+        if (poc_time > elapsed_time) {
+            return state.Invalid(BlockValidationResult::BLOCK_INVALID_HEADER, "bad-pocx-timing",
+                                strprintf("poc_time %llu exceeds elapsed time %u since previous block",
+                                         poc_time, elapsed_time));
+        }
+    }    
+#else
     if (block.nBits != GetNextWorkRequired(pindexPrev, &block, consensusParams))
         return state.Invalid(BlockValidationResult::BLOCK_INVALID_HEADER, "bad-diffbits", "incorrect proof of work");
+#endif
 
     // Check timestamp against prev
     if (block.GetBlockTime() <= pindexPrev->GetMedianTimePast())
@@ -4226,7 +4621,11 @@ static bool ContextualCheckBlockHeader(const CBlockHeader& block, BlockValidatio
  *  in ConnectBlock().
  *  Note that -reindex-chainstate skips the validation that happens here!
  */
+#ifdef ENABLE_POCX
+static bool ContextualCheckBlock(const CBlock& block, BlockValidationState& state, const ChainstateManager& chainman, const CBlockIndex* pindexPrev, bool fCheckPOW = true)
+#else
 static bool ContextualCheckBlock(const CBlock& block, BlockValidationState& state, const ChainstateManager& chainman, const CBlockIndex* pindexPrev)
+#endif
 {
     const int nHeight = pindexPrev == nullptr ? 0 : pindexPrev->nHeight + 1;
 
@@ -4257,6 +4656,25 @@ static bool ContextualCheckBlock(const CBlock& block, BlockValidationState& stat
             return state.Invalid(BlockValidationResult::BLOCK_CONSENSUS, "bad-cb-height", "block height mismatch in coinbase");
         }
     }
+
+#ifdef ENABLE_POCX
+    // PoCX: Verify that the coinbase output goes to the account that signed the block
+    // Skip templates (fCheckPOW=false) and genesis block (height 0)
+    // Templates are unsigned and validated separately after signing
+    if (fCheckPOW && nHeight > 0 && block.vtx.size() > 0 && block.vtx[0]->vout.size() > 0) {
+        // Extract account ID from the signature's public key
+        std::array<uint8_t, 20> signer_account = pocx::consensus::ExtractAccountIDFromPubKey(CPubKey(block.vchPubKey.begin(), block.vchPubKey.end()));
+
+        // Extract account ID from the coinbase output
+        std::array<uint8_t, 20> coinbase_account = pocx::consensus::ExtractAccountIDFromScript(block.vtx[0]->vout[0].scriptPubKey);
+
+        // Verify coinbase goes to the signer (only contextual check needed here)
+        if (!pocx::consensus::AccountIDsMatch(signer_account, coinbase_account)) {
+            return state.Invalid(BlockValidationResult::BLOCK_CONSENSUS, "bad-pocx-coinbase",
+                                "PoCX block coinbase must go to the account that signed the block");
+        }
+    }
+#endif
 
     // Validation for witness commitments.
     // * We compute the witness hash (which is the hash including witnesses) of all the block's transactions, except the
@@ -4606,7 +5024,11 @@ BlockValidationState TestBlockValidity(
         return state;
     }
 
+#ifdef ENABLE_POCX
+    if (!ContextualCheckBlock(block, state, chainstate.m_chainman, tip, check_pow)) {
+#else
     if (!ContextualCheckBlock(block, state, chainstate.m_chainman, tip)) {
+#endif
         if (state.IsValid()) NONFATAL_UNREACHABLE();
         return state;
     }

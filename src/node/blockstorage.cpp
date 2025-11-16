@@ -129,15 +129,25 @@ bool BlockTreeDB::LoadBlockIndexGuts(const Consensus::Params& consensusParams, s
                 pindexNew->nVersion       = diskindex.nVersion;
                 pindexNew->hashMerkleRoot = diskindex.hashMerkleRoot;
                 pindexNew->nTime          = diskindex.nTime;
+#ifdef ENABLE_POCX
+                pindexNew->generationSignature = diskindex.generationSignature;
+                pindexNew->nBaseTarget    = diskindex.nBaseTarget;
+                pindexNew->pocxProof      = diskindex.pocxProof;
+                pindexNew->vchPubKey      = diskindex.vchPubKey;
+                pindexNew->vchSignature   = diskindex.vchSignature;
+#else
                 pindexNew->nBits          = diskindex.nBits;
                 pindexNew->nNonce         = diskindex.nNonce;
+#endif
                 pindexNew->nStatus        = diskindex.nStatus;
                 pindexNew->nTx            = diskindex.nTx;
 
+#ifndef ENABLE_POCX
                 if (!CheckProofOfWork(pindexNew->GetBlockHash(), pindexNew->nBits, consensusParams)) {
                     LogError("%s: CheckProofOfWork failed: %s\n", __func__, pindexNew->ToString());
                     return false;
                 }
+#endif
 
                 pcursor->Next();
             } else {
@@ -226,7 +236,7 @@ CBlockIndex* BlockManager::AddToBlockIndex(const CBlockHeader& block, CBlockInde
         pindexNew->nHeight = pindexNew->pprev->nHeight + 1;
         pindexNew->BuildSkip();
     }
-    pindexNew->nTimeMax = (pindexNew->pprev ? std::max(pindexNew->pprev->nTimeMax, pindexNew->nTime) : pindexNew->nTime);
+    pindexNew->nTimeMax = (pindexNew->pprev ? std::max(pindexNew->pprev->nTimeMax, pindexNew->nTime) : pindexNew->nTime);    
     pindexNew->nChainWork = (pindexNew->pprev ? pindexNew->pprev->nChainWork : 0) + GetBlockProof(*pindexNew);
     pindexNew->RaiseValidity(BLOCK_VALID_TREE);
     if (best_header == nullptr || best_header->nChainWork < pindexNew->nChainWork) {
@@ -441,7 +451,7 @@ bool BlockManager::LoadBlockIndex(const std::optional<uint256>& snapshot_blockha
             return false;
         }
         previous_index = pindex;
-        pindex->nChainWork = (pindex->pprev ? pindex->pprev->nChainWork : 0) + GetBlockProof(*pindex);
+        pindex->nChainWork = (pindex->pprev ? pindex->pprev->nChainWork : 0) + GetBlockProof(*pindex);        
         pindex->nTimeMax = (pindex->pprev ? std::max(pindex->pprev->nTimeMax, pindex->nTime) : pindex->nTime);
 
         // We can link the chain of blocks for which we've received transactions at some point, or
@@ -1018,10 +1028,12 @@ bool BlockManager::ReadBlock(CBlock& block, const FlatFilePos& pos, const std::o
     const auto block_hash{block.GetHash()};
 
     // Check the header
+#ifndef ENABLE_POCX
     if (!CheckProofOfWork(block_hash, block.nBits, GetConsensus())) {
         LogError("Errors in block header at %s while reading block", pos.ToString());
         return false;
     }
+#endif
 
     // Signet only: check block solution
     if (GetConsensus().signet_blocks && !CheckSignetBlockSolution(block, GetConsensus())) {

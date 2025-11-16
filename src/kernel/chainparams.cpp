@@ -25,6 +25,9 @@
 #include <cstdint>
 #include <cstring>
 #include <type_traits>
+#ifdef ENABLE_POCX
+#include <pocx/consensus/params.h>
+#endif
 
 using namespace util::hex_literals;
 
@@ -37,7 +40,11 @@ auto consteval_ctor(auto&& input) { return input; }
 #define consteval_ctor(input) (input)
 #endif
 
+#ifdef ENABLE_POCX
+static CBlock CreateGenesisBlock(const char* pszTimestamp, const CScript& genesisOutputScript, uint32_t nTime, const PoCXProof& pocxProof, uint64_t nGenesisBaseTarget, int32_t nVersion, const CAmount& genesisReward)
+#else
 static CBlock CreateGenesisBlock(const char* pszTimestamp, const CScript& genesisOutputScript, uint32_t nTime, uint32_t nNonce, uint32_t nBits, int32_t nVersion, const CAmount& genesisReward)
+#endif
 {
     CMutableTransaction txNew;
     txNew.version = 1;
@@ -49,8 +56,15 @@ static CBlock CreateGenesisBlock(const char* pszTimestamp, const CScript& genesi
 
     CBlock genesis;
     genesis.nTime    = nTime;
+#ifdef ENABLE_POCX
+    genesis.nHeight = 0;
+    genesis.nBaseTarget = nGenesisBaseTarget;
+    genesis.generationSignature = Hash(MakeUCharSpan(std::string_view(pszTimestamp)));
+    genesis.pocxProof = pocxProof;
+#else
     genesis.nBits    = nBits;
     genesis.nNonce   = nNonce;
+#endif
     genesis.nVersion = nVersion;
     genesis.vtx.push_back(MakeTransactionRef(std::move(txNew)));
     genesis.hashPrevBlock.SetNull();
@@ -69,11 +83,21 @@ static CBlock CreateGenesisBlock(const char* pszTimestamp, const CScript& genesi
  *     CTxOut(nValue=50.00000000, scriptPubKey=0x5F1DF16B2B704C8A578D0B)
  *   vMerkleTree: 4a5e1e
  */
+#ifdef ENABLE_POCX
+static CBlock CreateGenesisBlock(const char* pszTimestamp, uint32_t nTime, const PoCXProof& pocxProof, uint64_t nGenesisBaseTarget, int32_t nVersion, const CAmount& genesisReward)
+#else
 static CBlock CreateGenesisBlock(uint32_t nTime, uint32_t nNonce, uint32_t nBits, int32_t nVersion, const CAmount& genesisReward)
+#endif
 {
+#ifndef ENABLE_POCX
     const char* pszTimestamp = "The Times 03/Jan/2009 Chancellor on brink of second bailout for banks";
+#endif
     const CScript genesisOutputScript = CScript() << "04678afdb0fe5548271967f1a67130b7105cd6a828e03909a67962e0ea1f61deb649f6bc3f4cef38c4f35504e51ec112de5c384df7ba0b8d578a4c702b6bf11d5f"_hex << OP_CHECKSIG;
+#ifdef ENABLE_POCX
+    return CreateGenesisBlock(pszTimestamp, genesisOutputScript, nTime, pocxProof, nGenesisBaseTarget, nVersion, genesisReward);
+#else
     return CreateGenesisBlock(pszTimestamp, genesisOutputScript, nTime, nNonce, nBits, nVersion, genesisReward);
+#endif
 }
 
 /**
@@ -85,11 +109,24 @@ public:
         m_chain_type = ChainType::MAIN;
         consensus.signet_blocks = false;
         consensus.signet_challenge.clear();
+#ifdef ENABLE_POCX
+        consensus.nSubsidyHalvingInterval = 1050000;
+#else
         consensus.nSubsidyHalvingInterval = 210000;
         consensus.script_flag_exceptions.emplace( // BIP16 exception
             uint256{"00000000000002dc756eebf4f49723ed8d30cc28a5f108eb94b1ba88ac4f9c22"}, SCRIPT_VERIFY_NONE);
         consensus.script_flag_exceptions.emplace( // Taproot exception
             uint256{"0000000000000000000f14c35b2d841e986ab5441de8c585d5ffe55ea1e395ad"}, SCRIPT_VERIFY_P2SH | SCRIPT_VERIFY_WITNESS);
+#endif
+#ifdef ENABLE_POCX
+        consensus.BIP34Height = 1;
+        consensus.BIP34Hash = uint256{};
+        consensus.BIP65Height = 1;
+        consensus.BIP66Height = 1;
+        consensus.CSVHeight = 1;
+        consensus.SegwitHeight = 0;
+        consensus.MinBIP9WarningHeight = 0;
+#else
         consensus.BIP34Height = 227931;
         consensus.BIP34Hash = uint256{"000000000000024b89b42a942fe0d9fea3bb44ab7bd1b19115dd6a759c0808b8"};
         consensus.BIP65Height = 388381; // 000000000000000004c2b624ed5d7756c508d90fd0da2c7c679febfa6c4735f0
@@ -97,9 +134,18 @@ public:
         consensus.CSVHeight = 419328; // 000000000000000004a1b34462cb8aeebd5799177f7a29cf28f2d1961716b5b5
         consensus.SegwitHeight = 481824; // 0000000000000000001c8018d9cb3b742ef25114f27563e3fc4a1902167f9893
         consensus.MinBIP9WarningHeight = 483840; // segwit activation height + miner confirmation window
+#endif
         consensus.powLimit = uint256{"00000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffff"};
         consensus.nPowTargetTimespan = 14 * 24 * 60 * 60; // two weeks
+#ifdef ENABLE_POCX
+        consensus.nPowTargetSpacing = 120; // 2 minutes for PoCX
+        consensus.nPoCXRollingWindowSize = 24; // 24-block rolling window for difficulty adjustment
+        consensus.nForgingAssignmentDelay = 30;  // 30 blocks (~1 hour) before assignment becomes active
+        consensus.nForgingRevocationDelay = 720; // 720 blocks (~1 day) before revocation becomes active
+        consensus.fPoCXLowCapacityCalibration = false;
+#else
         consensus.nPowTargetSpacing = 10 * 60;
+#endif
         consensus.fPowAllowMinDifficultyBlocks = false;
         consensus.enforce_BIP94 = false;
         consensus.fPowNoRetargeting = false;
@@ -112,6 +158,11 @@ public:
 
         // Deployment of Taproot (BIPs 340-342)
         consensus.vDeployments[Consensus::DEPLOYMENT_TAPROOT].bit = 2;
+#ifdef ENABLE_POCX
+        consensus.vDeployments[Consensus::DEPLOYMENT_TAPROOT].nStartTime = Consensus::BIP9Deployment::ALWAYS_ACTIVE;
+        consensus.vDeployments[Consensus::DEPLOYMENT_TAPROOT].nTimeout = Consensus::BIP9Deployment::NO_TIMEOUT;
+        consensus.vDeployments[Consensus::DEPLOYMENT_TAPROOT].min_activation_height = 0; // No activation delay
+#else
         consensus.vDeployments[Consensus::DEPLOYMENT_TAPROOT].nStartTime = 1619222400; // April 24th, 2021
         consensus.vDeployments[Consensus::DEPLOYMENT_TAPROOT].nTimeout = 1628640000; // August 11th, 2021
         consensus.vDeployments[Consensus::DEPLOYMENT_TAPROOT].min_activation_height = 709632; // Approximately November 12th, 2021
@@ -120,12 +171,33 @@ public:
 
         consensus.nMinimumChainWork = uint256{"0000000000000000000000000000000000000000dee8e2a309ad8a9820433c68"};
         consensus.defaultAssumeValid = uint256{"00000000000000000000611fd22f2df7c8fbd0688745c3a6c3bb5109cc2a12cb"}; // 912683
+#endif
+
+#ifdef ENABLE_POCX
+        // PoCX chain starts from scratch - no minimum chain work or assumed valid blocks
+        consensus.nMinimumChainWork = uint256{};  // Zero for new chain
+        consensus.defaultAssumeValid = uint256{}; // No assumed valid blocks
+#else
+        consensus.nMinimumChainWork = uint256{"0000000000000000000000000000000000000000dee8e2a309ad8a9820433c68"};
+        consensus.defaultAssumeValid = uint256{"00000000000000000000611fd22f2df7c8fbd0688745c3a6c3bb5109cc2a12cb"}; // 912683
+#endif
 
         /**
          * The message start string is designed to be unlikely to occur in normal data.
          * The characters are rarely used upper ASCII, not valid as UTF-8, and produce
          * a large 32-bit integer with any alignment.
          */
+#ifdef ENABLE_POCX
+        // PoCX mainnet magic bytes (random, separate from Bitcoin)
+        pchMessageStart[0] = 0xa7;
+        pchMessageStart[1] = 0x3c;
+        pchMessageStart[2] = 0x91;
+        pchMessageStart[3] = 0x5e;
+        nDefaultPort = 8888;
+        nPruneAfterHeight = 500000;
+        m_assumed_blockchain_size = 0;
+        m_assumed_chain_state_size = 0;
+#else
         pchMessageStart[0] = 0xf9;
         pchMessageStart[1] = 0xbe;
         pchMessageStart[2] = 0xb4;
@@ -135,16 +207,37 @@ public:
         m_assumed_blockchain_size = 810;
         m_assumed_chain_state_size = 14;
 
+#endif
+#ifdef ENABLE_POCX
+        // PoCX genesis: Use existing CalculateGenesisBaseTarget with correct formula (2^42 / block_time)
+        uint64_t genesis_base_target = pocx::consensus::CalculateGenesisBaseTarget(consensus.nPowTargetSpacing);
+        PoCXProof genesis_proof; // Empty proof for genesis (no predecessor to validate against)
+        genesis_proof.SetNull();
+        const char* mainnet_message = "The Times 03/Jan/2009 Chancellor on brink of second bailout for banks";
+        genesis = CreateGenesisBlock(mainnet_message, 1231006505, genesis_proof, genesis_base_target, 1, 10 * COIN);
+#else
+        // Bitcoin genesis: January 3, 2009
         genesis = CreateGenesisBlock(1231006505, 2083236893, 0x1d00ffff, 1, 50 * COIN);
+#endif
         consensus.hashGenesisBlock = genesis.GetHash();
+#ifdef ENABLE_POCX
+        // PoCX mainnet genesis block hash (with empty signature fields + quality/compression)
+        assert(consensus.hashGenesisBlock == uint256{"23ce719791691b22527f148bc454fdaf77228168d7757891ada83c893dd3259a"});
+        assert(genesis.hashMerkleRoot == uint256{"d54af763395fcb4b825b0f2b1e8ddc901acf6350277318306487fec22d5de70b"});
+#else
         assert(consensus.hashGenesisBlock == uint256{"000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f"});
         assert(genesis.hashMerkleRoot == uint256{"4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b"});
+#endif
 
         // Note that of those which support the service bits prefix, most only support a subset of
         // possible options.
         // This is fine at runtime as we'll fall back to using them as an addrfetch if they don't support the
         // service bits we want, but we should get them updated to support all service bits wanted by any
         // release ASAP to avoid it where possible.
+#ifdef ENABLE_POCX
+        // #POCXTODO PoCX: No DNS seeds for single wallet testing
+        vSeeds.clear();
+#else
         vSeeds.emplace_back("seed.bitcoin.sipa.be."); // Pieter Wuille, only supports x1, x5, x9, and xd
         vSeeds.emplace_back("dnsseed.bluematt.me."); // Matt Corallo, only supports x9
         vSeeds.emplace_back("dnsseed.bitcoin.dashjr-list-of-p2p-nodes.us."); // Luke Dashjr
@@ -155,19 +248,43 @@ public:
         vSeeds.emplace_back("seed.bitcoin.wiz.biz."); // Jason Maurice
         vSeeds.emplace_back("seed.mainnet.achownodes.xyz."); // Ava Chow, only supports x1, x5, x9, x49, x809, x849, xd, x400, x404, x408, x448, xc08, xc48, x40c
 
+#endif
+#ifdef ENABLE_POCX
+        // PoCX mainnet address prefixes (distinct from Bitcoin)
+        base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1,85);  // 0x55
+        base58Prefixes[SCRIPT_ADDRESS] = std::vector<unsigned char>(1,90);  // 0x5A (85+5)
+#else
         base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1,0);
         base58Prefixes[SCRIPT_ADDRESS] = std::vector<unsigned char>(1,5);
+#endif
         base58Prefixes[SECRET_KEY] =     std::vector<unsigned char>(1,128);
         base58Prefixes[EXT_PUBLIC_KEY] = {0x04, 0x88, 0xB2, 0x1E};
         base58Prefixes[EXT_SECRET_KEY] = {0x04, 0x88, 0xAD, 0xE4};
 
+#ifdef ENABLE_POCX
+        bech32_hrp = "pocx";
+        // #POCXTODO : No fixed seeds for single wallet testing     
+        vFixedSeeds.clear();
+#else
         bech32_hrp = "bc";
 
         vFixedSeeds = std::vector<uint8_t>(std::begin(chainparams_seed_main), std::end(chainparams_seed_main));
+#endif
 
         fDefaultConsistencyChecks = false;
         m_is_mockable_chain = false;
 
+#ifdef ENABLE_POCX
+        m_assumeutxo_data = {
+            {}
+        };
+
+        chainTxData = ChainTxData{
+            0,
+            0,
+            0
+        };
+#else
         m_assumeutxo_data = {
             {
                 .height = 840'000,
@@ -195,6 +312,7 @@ public:
             .tx_count = 1235299397,
             .dTxRate  = 5.456290459519495,
         };
+#endif
     }
 };
 
@@ -207,9 +325,22 @@ public:
         m_chain_type = ChainType::TESTNET;
         consensus.signet_blocks = false;
         consensus.signet_challenge.clear();
+#ifdef ENABLE_POCX
+        consensus.nSubsidyHalvingInterval = 1050000;
+#else
         consensus.nSubsidyHalvingInterval = 210000;
         consensus.script_flag_exceptions.emplace( // BIP16 exception
             uint256{"00000000dd30457c001f4095d208cc1296b0eed002427aa599874af7a432b105"}, SCRIPT_VERIFY_NONE);
+#endif
+#ifdef ENABLE_POCX
+        consensus.BIP34Height = 1;
+        consensus.BIP34Hash = uint256{};
+        consensus.BIP65Height = 1;
+        consensus.BIP66Height = 1;
+        consensus.CSVHeight = 1;
+        consensus.SegwitHeight = 0;
+        consensus.MinBIP9WarningHeight = 0;
+#else
         consensus.BIP34Height = 21111;
         consensus.BIP34Hash = uint256{"0000000023b3a96d3484e5abb3755c413e7d41500f8e2a5c3f0dd01299cd8ef8"};
         consensus.BIP65Height = 581885; // 00000000007f6655f22f98e72ed80d8b06dc761d5da09df0fa1dc4be4f861eb6
@@ -217,9 +348,18 @@ public:
         consensus.CSVHeight = 770112; // 00000000025e930139bac5c6c31a403776da130831ab85be56578f3fa75369bb
         consensus.SegwitHeight = 834624; // 00000000002b980fcd729daaa248fd9316a5200e9b367f4ff2c42453e84201ca
         consensus.MinBIP9WarningHeight = 836640; // segwit activation height + miner confirmation window
+#endif
         consensus.powLimit = uint256{"00000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffff"};
         consensus.nPowTargetTimespan = 14 * 24 * 60 * 60; // two weeks
+#ifdef ENABLE_POCX
+        consensus.nPowTargetSpacing = 120; // 2 minutes for PoCX
+        consensus.nPoCXRollingWindowSize = 24; // 24-block rolling window for difficulty adjustment
+        consensus.nForgingAssignmentDelay = 30;  // 30 blocks (~1 hour) before assignment becomes active
+        consensus.nForgingRevocationDelay = 720; // 720 blocks (~1 day) before revocation becomes active
+        consensus.fPoCXLowCapacityCalibration = false;
+#else
         consensus.nPowTargetSpacing = 10 * 60;
+#endif
         consensus.fPowAllowMinDifficultyBlocks = true;
         consensus.enforce_BIP94 = false;
         consensus.fPowNoRetargeting = false;
@@ -232,6 +372,11 @@ public:
 
         // Deployment of Taproot (BIPs 340-342)
         consensus.vDeployments[Consensus::DEPLOYMENT_TAPROOT].bit = 2;
+#ifdef ENABLE_POCX
+        consensus.vDeployments[Consensus::DEPLOYMENT_TAPROOT].nStartTime = Consensus::BIP9Deployment::ALWAYS_ACTIVE;
+        consensus.vDeployments[Consensus::DEPLOYMENT_TAPROOT].nTimeout = Consensus::BIP9Deployment::NO_TIMEOUT;
+        consensus.vDeployments[Consensus::DEPLOYMENT_TAPROOT].min_activation_height = 0; // No activation delay
+#else
         consensus.vDeployments[Consensus::DEPLOYMENT_TAPROOT].nStartTime = 1619222400; // April 24th, 2021
         consensus.vDeployments[Consensus::DEPLOYMENT_TAPROOT].nTimeout = 1628640000; // August 11th, 2021
         consensus.vDeployments[Consensus::DEPLOYMENT_TAPROOT].min_activation_height = 0; // No activation delay
@@ -240,23 +385,63 @@ public:
 
         consensus.nMinimumChainWork = uint256{"0000000000000000000000000000000000000000000016dd270dd94fac1d7632"};
         consensus.defaultAssumeValid = uint256{"0000000000000065c6c38258e201971a3fdfcc2ceee0dd6e85a6c022d45dee34"}; // 4550000
+#endif
 
+#ifdef ENABLE_POCX
+        consensus.nMinimumChainWork = uint256{};  // Zero for new chain
+        consensus.defaultAssumeValid = uint256{}; // No assumed valid blocks
+#else
+        consensus.nMinimumChainWork = uint256{"0000000000000000000000000000000000000000000016dd270dd94fac1d7632"};
+        consensus.defaultAssumeValid = uint256{"0000000000000065c6c38258e201971a3fdfcc2ceee0dd6e85a6c022d45dee34"}; // 4550000
+#endif
+#ifdef ENABLE_POCX
+        // PoCX testnet magic bytes (random, separate from Bitcoin)
+        pchMessageStart[0] = 0x6d;
+        pchMessageStart[1] = 0xf2;
+        pchMessageStart[2] = 0x48;
+        pchMessageStart[3] = 0xb3;
+        nDefaultPort = 18888;
+#else
         pchMessageStart[0] = 0x0b;
         pchMessageStart[1] = 0x11;
         pchMessageStart[2] = 0x09;
         pchMessageStart[3] = 0x07;
         nDefaultPort = 18333;
+#endif
+#ifdef ENABLE_POCX
+        nPruneAfterHeight = 500000;
+        m_assumed_blockchain_size = 0;
+        m_assumed_chain_state_size = 0;
+#else
         nPruneAfterHeight = 1000;
         m_assumed_blockchain_size = 240;
         m_assumed_chain_state_size = 19;
 
+#endif
+#ifdef ENABLE_POCX
+        // PoCX testnet genesis: November 11, 2025 11:11:11 UTC
+        uint64_t genesis_base_target = pocx::consensus::CalculateGenesisBaseTarget(consensus.nPowTargetSpacing);
+        PoCXProof genesis_proof; // Empty proof for genesis (no predecessor to validate against)
+        genesis_proof.SetNull();
+        const char* testnet_message = "Plotatis, ergo sum.";
+        genesis = CreateGenesisBlock(testnet_message, 1762859471, genesis_proof, genesis_base_target, 1, 10 * COIN);
+#else
+        // Bitcoin testnet genesis
         genesis = CreateGenesisBlock(1296688602, 414098458, 0x1d00ffff, 1, 50 * COIN);
+#endif
         consensus.hashGenesisBlock = genesis.GetHash();
+#ifdef ENABLE_POCX
+        // PoCX testnet genesis block hash (November 11, 2025 11:11:11 UTC - "Plotatis, ergo sum.")
+        assert(consensus.hashGenesisBlock == uint256{"181c51a172fe20c203e463f6f203b7d9be388fa0f1282e507192f94d24a57e81"});
+        assert(genesis.hashMerkleRoot == uint256{"5dfbcef5e03e332ea7bfb4f797b915289dbe527f4e88263e29dbca67b945203d"});
+#else
         assert(consensus.hashGenesisBlock == uint256{"000000000933ea01ad0ee984209779baaec3ced90fa3f408719526f8d77f4943"});
         assert(genesis.hashMerkleRoot == uint256{"4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b"});
+#endif
 
         vFixedSeeds.clear();
         vSeeds.clear();
+#ifndef ENABLE_POCX
         // nodes with support for servicebits filtering should be at the top
         vSeeds.emplace_back("testnet-seed.bitcoin.jonasschnelli.ch.");
         vSeeds.emplace_back("seed.tbtc.petertodd.net.");
@@ -264,19 +449,45 @@ public:
         vSeeds.emplace_back("testnet-seed.bluematt.me."); // Just a static list of stable node(s), only supports x9
         vSeeds.emplace_back("seed.testnet.achownodes.xyz."); // Ava Chow, only supports x1, x5, x9, x49, x809, x849, xd, x400, x404, x408, x448, xc08, xc48, x40c
 
+#endif
+        // PoCX: No DNS seeds for single wallet testing
+
+#ifdef ENABLE_POCX
+        // PoCX testnet address prefixes (distinct from Bitcoin)
+        base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1,127); // 0x7F
+        base58Prefixes[SCRIPT_ADDRESS] = std::vector<unsigned char>(1,132); // 0x84 (127+5)
+#else
         base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1,111);
         base58Prefixes[SCRIPT_ADDRESS] = std::vector<unsigned char>(1,196);
+#endif
+
         base58Prefixes[SECRET_KEY] =     std::vector<unsigned char>(1,239);
         base58Prefixes[EXT_PUBLIC_KEY] = {0x04, 0x35, 0x87, 0xCF};
         base58Prefixes[EXT_SECRET_KEY] = {0x04, 0x35, 0x83, 0x94};
 
+#ifdef ENABLE_POCX
+        bech32_hrp = "tpocx";
+        // PoCX: No fixed seeds for single wallet testing
+        vFixedSeeds.clear();
+#else
         bech32_hrp = "tb";
-
         vFixedSeeds = std::vector<uint8_t>(std::begin(chainparams_seed_test), std::end(chainparams_seed_test));
+#endif
 
         fDefaultConsistencyChecks = false;
         m_is_mockable_chain = false;
 
+#ifdef ENABLE_POCX
+        m_assumeutxo_data = {
+            {}
+        };
+
+        chainTxData = ChainTxData{
+            0,
+            0,
+            0
+        };
+#else
         m_assumeutxo_data = {
             {
                 .height = 2'500'000,
@@ -292,9 +503,11 @@ public:
             .tx_count = 508468699,
             .dTxRate  = 7.172978845985714,
         };
+#endif
     }
 };
 
+#ifndef ENABLE_POCX
 /**
  * Testnet (v4): public test network which is reset from time to time.
  */
@@ -395,6 +608,7 @@ public:
         };
     }
 };
+#endif // !ENABLE_POCX
 
 /**
  * Signet: test network with an additional consensus parameter (see BIP325).
@@ -444,7 +658,11 @@ public:
         m_chain_type = ChainType::SIGNET;
         consensus.signet_blocks = true;
         consensus.signet_challenge.assign(bin.begin(), bin.end());
+#ifdef ENABLE_POCX
+        consensus.nSubsidyHalvingInterval = 1050000;
+#else        
         consensus.nSubsidyHalvingInterval = 210000;
+#endif
         consensus.BIP34Height = 1;
         consensus.BIP34Hash = uint256{};
         consensus.BIP65Height = 1;
@@ -452,7 +670,12 @@ public:
         consensus.CSVHeight = 1;
         consensus.SegwitHeight = 1;
         consensus.nPowTargetTimespan = 14 * 24 * 60 * 60; // two weeks
+#ifdef ENABLE_POCX
+        consensus.nPowTargetSpacing = 120; // 2 minutes for PoCX
+        consensus.nPoCXRollingWindowSize = 24; // 24-block rolling window for difficulty adjustment
+#else
         consensus.nPowTargetSpacing = 10 * 60;
+#endif
         consensus.fPowAllowMinDifficultyBlocks = false;
         consensus.enforce_BIP94 = false;
         consensus.fPowNoRetargeting = false;
@@ -482,10 +705,25 @@ public:
         nDefaultPort = 38333;
         nPruneAfterHeight = 1000;
 
+#ifdef ENABLE_POCX
+        // PoCX signet genesis: Use existing CalculateGenesisBaseTarget with correct formula (2^42 / block_time)
+        uint64_t genesis_base_target = pocx::consensus::CalculateGenesisBaseTarget(consensus.nPowTargetSpacing);
+        PoCXProof genesis_proof; // Empty proof for genesis (no predecessor to validate against)
+        genesis_proof.SetNull();
+        const char* signet_message = "The Times 03/Jan/2009 Chancellor on brink of second bailout for banks";
+        genesis = CreateGenesisBlock(signet_message, 1598918400, genesis_proof, genesis_base_target, 1, 10 * COIN);
+#else
         genesis = CreateGenesisBlock(1598918400, 52613770, 0x1e0377ae, 1, 50 * COIN);
+#endif
         consensus.hashGenesisBlock = genesis.GetHash();
+#ifdef ENABLE_POCX
+        // PoCX signet genesis block hash (with empty signature fields + quality/compression)
+        assert(consensus.hashGenesisBlock == uint256{"879af7781ec732bef50d912796cc7f0bd44232d4e0d17a4271b96a557f2c7359"});
+        assert(genesis.hashMerkleRoot == uint256{"d54af763395fcb4b825b0f2b1e8ddc901acf6350277318306487fec22d5de70b"});
+#else
         assert(consensus.hashGenesisBlock == uint256{"00000008819873e925422c1ff0f99f7cc9bbb232af63a077a480a3633bee1ef6"});
         assert(genesis.hashMerkleRoot == uint256{"4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b"});
+#endif
 
         m_assumeutxo_data = {
             {
@@ -502,7 +740,11 @@ public:
         base58Prefixes[EXT_PUBLIC_KEY] = {0x04, 0x35, 0x87, 0xCF};
         base58Prefixes[EXT_SECRET_KEY] = {0x04, 0x35, 0x83, 0x94};
 
+#ifdef ENABLE_POCX
+        bech32_hrp = "tpocx";
+#else
         bech32_hrp = "tb";
+#endif
 
         fDefaultConsistencyChecks = false;
         m_is_mockable_chain = false;
@@ -521,7 +763,7 @@ public:
         m_chain_type = ChainType::REGTEST;
         consensus.signet_blocks = false;
         consensus.signet_challenge.clear();
-        consensus.nSubsidyHalvingInterval = 150;
+        consensus.nSubsidyHalvingInterval = 500;
         consensus.BIP34Height = 1; // Always active unless overridden
         consensus.BIP34Hash = uint256();
         consensus.BIP65Height = 1;  // Always active unless overridden
@@ -531,7 +773,15 @@ public:
         consensus.MinBIP9WarningHeight = 0;
         consensus.powLimit = uint256{"7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"};
         consensus.nPowTargetTimespan = 24 * 60 * 60; // one day
+#ifdef ENABLE_POCX
+        consensus.nPowTargetSpacing = 1; // 1 second for RegTest (instant mining with small plots)
+        consensus.nPoCXRollingWindowSize = 24; // 24-block rolling window for difficulty adjustment
+        consensus.nForgingAssignmentDelay = 4;   // 4 blocks (~4 seconds) before assignment becomes active
+        consensus.nForgingRevocationDelay = 8;   // 8 blocks (~8 seconds) before revocation becomes active
+        consensus.fPoCXLowCapacityCalibration = true;
+#else
         consensus.nPowTargetSpacing = 10 * 60;
+#endif
         consensus.fPowAllowMinDifficultyBlocks = true;
         consensus.enforce_BIP94 = opts.enforce_bip94;
         consensus.fPowNoRetargeting = true;
@@ -588,10 +838,23 @@ public:
             consensus.vDeployments[deployment_pos].min_activation_height = version_bits_params.min_activation_height;
         }
 
+#ifdef ENABLE_POCX
+        uint64_t genesis_base_target = pocx::consensus::CalculateGenesisBaseTarget(consensus.nPowTargetSpacing, true);
+        PoCXProof genesis_proof; // Empty proof for genesis (no predecessor to validate against)
+        genesis_proof.SetNull();
+        const char* regtest_message = "The Times 03/Jan/2009 Chancellor on brink of second bailout for banks";
+        genesis = CreateGenesisBlock(regtest_message, 1296688602, genesis_proof, genesis_base_target, 1, 10 * COIN);
+#else
         genesis = CreateGenesisBlock(1296688602, 2, 0x207fffff, 1, 50 * COIN);
+#endif
         consensus.hashGenesisBlock = genesis.GetHash();
+#ifdef ENABLE_POCX
+        assert(consensus.hashGenesisBlock == uint256{"c67c27870117080a961530416a25c1ba7da1cd593f7f2101c261222a74d5a51e"});
+        assert(genesis.hashMerkleRoot == uint256{"d54af763395fcb4b825b0f2b1e8ddc901acf6350277318306487fec22d5de70b"});
+#else
         assert(consensus.hashGenesisBlock == uint256{"0f9188f13cb7b2c71f2a335e3a4fc328bf5beb436012afca590b1a11466e2206"});
         assert(genesis.hashMerkleRoot == uint256{"4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b"});
+#endif
 
         vFixedSeeds.clear(); //!< Regtest mode doesn't have any fixed seeds.
         vSeeds.clear();
@@ -635,7 +898,11 @@ public:
         base58Prefixes[EXT_PUBLIC_KEY] = {0x04, 0x35, 0x87, 0xCF};
         base58Prefixes[EXT_SECRET_KEY] = {0x04, 0x35, 0x83, 0x94};
 
+#ifdef ENABLE_POCX
+        bech32_hrp = "rpocx";
+#else
         bech32_hrp = "bcrt";
+#endif
     }
 };
 
@@ -661,7 +928,12 @@ std::unique_ptr<const CChainParams> CChainParams::TestNet()
 
 std::unique_ptr<const CChainParams> CChainParams::TestNet4()
 {
+#ifdef ENABLE_POCX
+    // TestNet4 not supported for PoCX - use TestNet3 instead
+    return std::make_unique<const CTestNetParams>();;
+#else
     return std::make_unique<const CTestNet4Params>();
+#endif
 }
 
 std::vector<int> CChainParams::GetAvailableSnapshotHeights() const
@@ -679,7 +951,9 @@ std::optional<ChainType> GetNetworkForMagic(const MessageStartChars& message)
 {
     const auto mainnet_msg = CChainParams::Main()->MessageStart();
     const auto testnet_msg = CChainParams::TestNet()->MessageStart();
+#ifndef ENABLE_POCX
     const auto testnet4_msg = CChainParams::TestNet4()->MessageStart();
+#endif
     const auto regtest_msg = CChainParams::RegTest({})->MessageStart();
     const auto signet_msg = CChainParams::SigNet({})->MessageStart();
 
@@ -687,8 +961,10 @@ std::optional<ChainType> GetNetworkForMagic(const MessageStartChars& message)
         return ChainType::MAIN;
     } else if (std::ranges::equal(message, testnet_msg)) {
         return ChainType::TESTNET;
+#ifndef ENABLE_POCX
     } else if (std::ranges::equal(message, testnet4_msg)) {
         return ChainType::TESTNET4;
+#endif
     } else if (std::ranges::equal(message, regtest_msg)) {
         return ChainType::REGTEST;
     } else if (std::ranges::equal(message, signet_msg)) {

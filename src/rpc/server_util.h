@@ -42,7 +42,9 @@ PeerManager& EnsurePeerman(const node::NodeContext& node);
 AddrMan& EnsureAddrman(const node::NodeContext& node);
 AddrMan& EnsureAnyAddrman(const std::any& context);
 
+#ifndef ENABLE_POCX
 /** Return an empty block index on top of the tip, with height, time and nBits set */
 void NextEmptyBlockIndex(CBlockIndex& tip, const Consensus::Params& consensusParams, CBlockIndex& next_index);
+#endif
 
 #endif // BITCOIN_RPC_SERVER_UTIL_H

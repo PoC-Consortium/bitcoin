@@ -70,6 +70,10 @@ public:
         SendToOther,
         RecvWithAddress,
         RecvFromOther,
+#ifdef ENABLE_POCX
+        PoCXAssignment,
+        PoCXRevocation,
+#endif
     };
 
     /** Number of confirmation recommended for accepting a transaction */

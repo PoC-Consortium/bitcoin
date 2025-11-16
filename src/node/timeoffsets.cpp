@@ -52,6 +52,12 @@ bool TimeOffsets::WarnIfOutOfSync() const
         return false;
     }
 
+#ifdef ENABLE_POCX
+    bilingual_str msg{strprintf(_(
+        "Your computer's date and time appear to be more than %d seconds out of sync with the network, "
+        "this may lead to PoCX consensus failure. Please check your system clock."
+    ), Ticks<std::chrono::seconds>(WARN_THRESHOLD))};
+#else
     bilingual_str msg{strprintf(_(
         "Your computer's date and time appear to be more than %d minutes out of sync with the network, "
         "this may lead to consensus failure. After you've confirmed your computer's clock, this message "
@@ -60,6 +66,7 @@ bool TimeOffsets::WarnIfOutOfSync() const
         "take some time. You can inspect the `timeoffset` field of the `getpeerinfo` and `getnetworkinfo` "
         "RPC methods to get more info."
     ), Ticks<std::chrono::minutes>(WARN_THRESHOLD))};
+#endif
     LogWarning("%s\n", msg.original);
     m_warnings.Set(node::Warning::CLOCK_OUT_OF_SYNC, msg);
     return true;

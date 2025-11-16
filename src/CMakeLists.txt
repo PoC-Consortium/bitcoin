@@ -61,6 +61,14 @@ endif()
 add_library(bitcoin_consensus STATIC EXCLUDE_FROM_ALL
   arith_uint256.cpp
   consensus/merkle.cpp
+  $<$<BOOL:${ENABLE_POCX}>:pocx/consensus/signature.cpp>
+  $<$<BOOL:${ENABLE_POCX}>:pocx/algorithms/time_bending.cpp>
+  $<$<BOOL:${ENABLE_POCX}>:pocx/consensus/proof.cpp>
+  $<$<BOOL:${ENABLE_POCX}>:pocx/consensus/params.cpp>
+  $<$<BOOL:${ENABLE_POCX}>:pocx/algorithms/plot_generation.cpp>
+  $<$<BOOL:${ENABLE_POCX}>:pocx/algorithms/quality.cpp>
+  $<$<BOOL:${ENABLE_POCX}>:pocx/algorithms/encoding.cpp>
+  $<$<BOOL:${ENABLE_POCX}>:pocx/assignments/assignment_state.cpp>
   consensus/tx_check.cpp
   hash.cpp
   primitives/block.cpp
@@ -123,7 +131,8 @@ add_library(bitcoin_common STATIC EXCLUDE_FROM_ALL
   outputtype.cpp
   policy/feerate.cpp
   policy/policy.cpp
-  pow.cpp
+  $<$<NOT:$<BOOL:${ENABLE_POCX}>>:pow.cpp>
+  $<$<BOOL:${ENABLE_POCX}>:pocx/assignments/opcodes.cpp>
   protocol.cpp
   psbt.cpp
   rpc/rawtransaction_util.cpp
@@ -137,6 +146,7 @@ add_library(bitcoin_common STATIC EXCLUDE_FROM_ALL
   script/signingprovider.cpp
   script/solver.cpp
 )
+
 target_link_libraries(bitcoin_common
   PRIVATE
     core_interface
@@ -252,6 +262,8 @@ add_library(bitcoin_node STATIC EXCLUDE_FROM_ALL
   rpc/mining.cpp
   rpc/net.cpp
   rpc/node.cpp
+  $<$<BOOL:${ENABLE_POCX}>:pocx/rpc/mining.cpp>
+  $<$<BOOL:${ENABLE_POCX}>:pocx/rpc/assignments.cpp>
   rpc/output_script.cpp
   rpc/rawtransaction.cpp
   rpc/server.cpp
@@ -270,6 +282,10 @@ add_library(bitcoin_node STATIC EXCLUDE_FROM_ALL
   versionbits.cpp
   $<$<TARGET_EXISTS:bitcoin_wallet>:wallet/init.cpp>
   $<$<NOT:$<TARGET_EXISTS:bitcoin_wallet>>:dummywallet.cpp>
+  $<$<BOOL:${ENABLE_POCX}>:pocx/consensus/difficulty.cpp>
+  $<$<BOOL:${ENABLE_POCX}>:pocx/mining/scheduler.cpp>
+  $<$<BOOL:${ENABLE_POCX}>:pocx/mining/submission.cpp>
+  $<$<BOOL:${ENABLE_POCX}>:pocx/mining/block_builder.cpp>
 )
 target_link_libraries(bitcoin_node
   PRIVATE
