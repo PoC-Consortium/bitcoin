@@ -384,7 +384,11 @@ public:
 /** Functions for validating blocks and updating the block tree */
 
 /** Context-independent validity checks */
+#ifdef ENABLE_POCX
+bool CheckBlock(const CBlock& block, BlockValidationState& state, const Consensus::Params& consensusParams, bool fCheckPOW = true, bool fCheckMerkleRoot = true, bool skip_pocx_proof = false);
+#else
 bool CheckBlock(const CBlock& block, BlockValidationState& state, const Consensus::Params& consensusParams, bool fCheckPOW = true, bool fCheckMerkleRoot = true);
+#endif
 
 /**
  * Verify a block, including transactions.

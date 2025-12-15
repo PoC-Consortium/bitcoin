@@ -2550,7 +2550,12 @@ bool Chainstate::ConnectBlock(const CBlock& block, BlockValidationState& state, 
     // is enforced in ContextualCheckBlockHeader(); we wouldn't want to
     // re-enforce that rule here (at least until we make it impossible for
     // the clock to go backward).
+#ifdef ENABLE_POCX
+    // PoCX: Skip proof validation - header was already validated via AcceptBlockHeader
+    if (!CheckBlock(block, state, params.GetConsensus(), !fJustCheck, !fJustCheck, /*skip_pocx_proof=*/true)) {
+#else
     if (!CheckBlock(block, state, params.GetConsensus(), !fJustCheck, !fJustCheck)) {
+#endif
         if (state.GetResult() == BlockValidationResult::BLOCK_MUTATED) {
             // We don't write down blocks to disk if they may have been
             // corrupted, so this should be impossible unless we're having hardware
@@ -4243,7 +4248,7 @@ static bool CheckBlockHeader(const CBlockHeader& block, BlockValidationState& st
             // Step 3 & 4: Perform full PoC validation (expensive)
             // Skip if already batch-validated during header sync
             if (skip_pocx_proof) {
-                LogDebug(BCLog::VALIDATION, "CheckBlockHeader: skipping PoCX proof validation for height=%d (batch-validated)\n", block.nHeight);
+                LogDebug(BCLog::VALIDATION, "CheckBlockHeader: skipping PoCX proof validation for height=%d\n", block.nHeight);
             } else {
                 auto result = pocx::consensus::ValidateProofOfCapacity(
                     block.generationSignature,
@@ -4355,7 +4360,11 @@ static bool CheckWitnessMalleation(const CBlock& block, bool expect_witness_comm
     return true;
 }
 
+#ifdef ENABLE_POCX
+bool CheckBlock(const CBlock& block, BlockValidationState& state, const Consensus::Params& consensusParams, bool fCheckPOW, bool fCheckMerkleRoot, bool skip_pocx_proof)
+#else
 bool CheckBlock(const CBlock& block, BlockValidationState& state, const Consensus::Params& consensusParams, bool fCheckPOW, bool fCheckMerkleRoot)
+#endif
 {
     // These are checks that are independent of context.
 
@@ -4364,7 +4373,11 @@ bool CheckBlock(const CBlock& block, BlockValidationState& state, const Consensu
 
     // Check that the header is valid (particularly PoW).  This is mostly
     // redundant with the call in AcceptBlockHeader.
+#ifdef ENABLE_POCX
+    if (!CheckBlockHeader(block, state, consensusParams, fCheckPOW, skip_pocx_proof))
+#else
     if (!CheckBlockHeader(block, state, consensusParams, fCheckPOW))
+#endif
         return false;
 
     // Signet only: check block solution
@@ -4969,8 +4982,14 @@ bool ChainstateManager::AcceptBlock(const std::shared_ptr<const CBlock>& pblock,
 
     const CChainParams& params{GetParams()};
 
+#ifdef ENABLE_POCX
+    // PoCX: Skip proof validation - header was already validated via AcceptBlockHeader above
+    if (!CheckBlock(block, state, params.GetConsensus(), /*fCheckPOW=*/true, /*fCheckMerkleRoot=*/true, /*skip_pocx_proof=*/true) ||
+        !ContextualCheckBlock(block, state, *this, pindex->pprev)) {
+#else
     if (!CheckBlock(block, state, params.GetConsensus()) ||
         !ContextualCheckBlock(block, state, *this, pindex->pprev)) {
+#endif
         if (Assume(state.IsInvalid())) {
             ActiveChainstate().InvalidBlockFound(pindex, state);
         }
@@ -5035,7 +5054,13 @@ bool ChainstateManager::ProcessNewBlock(const std::shared_ptr<const CBlock>& blo
         // malleability that cause CheckBlock() to fail; see e.g. CVE-2012-2459 and
         // https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2019-February/016697.html.  Because CheckBlock() is
         // not very expensive, the anti-DoS benefits of caching failure (of a definitely-invalid block) are not substantial.
+#ifdef ENABLE_POCX
+        // PoCX: Skip proof validation if header is already in block index (validated during header sync)
+        bool skip_pocx = m_blockman.m_block_index.count(block->GetHash()) > 0;
+        bool ret = CheckBlock(*block, state, GetConsensus(), /*fCheckPOW=*/true, /*fCheckMerkleRoot=*/true, skip_pocx);
+#else
         bool ret = CheckBlock(*block, state, GetConsensus());
+#endif
         if (ret) {
             // Store to disk
             ret = AcceptBlock(block, state, &pindex, force_processing, nullptr, new_block, min_pow_checked);
