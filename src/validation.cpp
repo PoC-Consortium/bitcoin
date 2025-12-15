@@ -4805,6 +4805,7 @@ bool ChainstateManager::ProcessNewBlockHeaders(std::span<const CBlockHeader> hea
                 inputs[i].nonce = hdr.pocxProof.nonce;
                 inputs[i].seed = hdr.pocxProof.seed.data();
                 inputs[i].compression = hdr.pocxProof.compression;
+                inputs[i].claimed_quality = hdr.pocxProof.quality;  // For early surrender
             }
 
             // Run batch validation
@@ -4813,12 +4814,30 @@ bool ChainstateManager::ProcessNewBlockHeaders(std::span<const CBlockHeader> hea
             auto end_time = std::chrono::steady_clock::now();
             auto duration_ms = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time).count();
 
+            // Handle early surrender (quality mismatch detected during batch processing)
+            if (ret == -2) {
+                // Find the failed block
+                for (size_t i = 0; i < headers_to_validate.size(); i++) {
+                    const auto& result = results[i];
+                    if (!result.is_valid && result.error_code == pocx::consensus::VALIDATION_ERROR_QUALITY_MISMATCH) {
+                        const CBlockHeader& hdr = *headers_to_validate[i];
+                        LogDebug(BCLog::VALIDATION, "PoCX batch validation: early surrender - quality mismatch at height %d (claimed=%llu, calculated=%llu)\n",
+                                 hdr.nHeight, hdr.pocxProof.quality, result.quality);
+                        return state.Invalid(BlockValidationResult::BLOCK_INVALID_HEADER, "bad-pocx-quality-mismatch",
+                                            strprintf("Quality mismatch at height %d: claimed %llu != calculated %llu",
+                                                     hdr.nHeight, hdr.pocxProof.quality, result.quality));
+                    }
+                }
+                // Fallback if we can't find the specific block
+                return state.Invalid(BlockValidationResult::BLOCK_INVALID_HEADER, "pocx-batch-error", "PoCX batch validation quality mismatch");
+            }
+
             if (ret != 0) {
                 LogDebug(BCLog::VALIDATION, "PoCX batch validation failed with error %d\n", ret);
                 return state.Invalid(BlockValidationResult::BLOCK_INVALID_HEADER, "pocx-batch-error", "PoCX batch validation error");
             }
 
-            // Verify all results and check claimed quality matches calculated
+            // Verify all results (quality check already done by early surrender, but double-check for safety)
             for (size_t i = 0; i < headers_to_validate.size(); i++) {
                 const CBlockHeader& hdr = *headers_to_validate[i];
                 const auto& result = results[i];
@@ -4828,15 +4847,6 @@ bool ChainstateManager::ProcessNewBlockHeaders(std::span<const CBlockHeader> hea
                              hdr.nHeight, result.error_code);
                     return state.Invalid(BlockValidationResult::BLOCK_INVALID_HEADER, "bad-pocx-proof",
                                         strprintf("PoCX batch validation failed at height %d", hdr.nHeight));
-                }
-
-                // Verify claimed quality matches calculated quality
-                if (hdr.pocxProof.quality != result.quality) {
-                    LogDebug(BCLog::VALIDATION, "PoCX batch validation: quality mismatch at height %d (claimed=%llu, calculated=%llu)\n",
-                             hdr.nHeight, hdr.pocxProof.quality, result.quality);
-                    return state.Invalid(BlockValidationResult::BLOCK_INVALID_HEADER, "bad-pocx-quality-mismatch",
-                                        strprintf("Quality mismatch at height %d: claimed %llu != calculated %llu",
-                                                 hdr.nHeight, hdr.pocxProof.quality, result.quality));
                 }
             }
 

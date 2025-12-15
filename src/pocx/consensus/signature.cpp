@@ -118,16 +118,12 @@ uint256 PoCXBlockSignatureHash(const uint256& block_hash) {
 }
 
 bool VerifyPoCXBlockCompactSignature(const CBlock& block) {
-    // Consolidated validation: all signature checks in one place
-    LogPrintf("PoCX: [VALIDATION] Starting basic signature validation\n");
-
     // Validate public key format
     CPubKey stored_pubkey(block.vchPubKey.begin(), block.vchPubKey.end());
     if (!stored_pubkey.IsFullyValid()) {
-        LogPrintf("PoCX: [VALIDATION] Invalid pubkey\n");
+        LogPrintf("PoCX: Signature validation FAILED - invalid pubkey\n");
         return false;
     }
-    LogPrintf("PoCX: [VALIDATION] Stored pubkey: %s\n", HexStr(block.vchPubKey).c_str());
 
     // Get the raw block hash first
     uint256 raw_block_hash = block.GetHash();
@@ -135,35 +131,31 @@ bool VerifyPoCXBlockCompactSignature(const CBlock& block) {
     uint256 hash_to_verify = PoCXBlockSignatureHash(raw_block_hash);
 
     // Recover public key from compact signature
-    // Convert std::array to std::vector for RecoverCompact
     std::vector<unsigned char> sig_vec(block.vchSignature.begin(), block.vchSignature.end());
     CPubKey recovered_pubkey;
     if (!recovered_pubkey.RecoverCompact(hash_to_verify, sig_vec)) {
-        LogPrintf("PoCX: [VALIDATION] Failed to recover pubkey from signature\n");
-        LogPrintf("PoCX: [VALIDATION] Hash to verify: %s\n", hash_to_verify.ToString().c_str());
-        LogPrintf("PoCX: [VALIDATION] Signature: %s\n", HexStr(block.vchSignature).c_str());
+        LogPrintf("PoCX: Signature validation FAILED - cannot recover pubkey from signature\n");
+        LogPrintf("PoCX:   Hash: %s\n", hash_to_verify.ToString().c_str());
+        LogPrintf("PoCX:   Signature: %s\n", HexStr(block.vchSignature).c_str());
         return false;
     }
-    LogPrintf("PoCX: [VALIDATION] Recovered pubkey: %s\n", HexStr(recovered_pubkey).c_str());
 
     // Verify the recovered public key matches what's stored in the block
     if (!std::equal(recovered_pubkey.begin(), recovered_pubkey.end(), block.vchPubKey.begin())) {
-        LogPrintf("PoCX: [VALIDATION] Recovered pubkey does not match stored pubkey\n");
-        LogPrintf("PoCX: [VALIDATION] Recovered: %s\n", HexStr(recovered_pubkey).c_str());
-        LogPrintf("PoCX: [VALIDATION] Stored:    %s\n", HexStr(block.vchPubKey).c_str());
+        LogPrintf("PoCX: Signature validation FAILED - pubkey mismatch\n");
+        LogPrintf("PoCX:   Recovered: %s\n", HexStr(recovered_pubkey).c_str());
+        LogPrintf("PoCX:   Stored:    %s\n", HexStr(block.vchPubKey).c_str());
         return false;
     }
 
-    LogPrintf("PoCX: [VALIDATION] Basic signature validation PASSED\n");
+    LogDebug(BCLog::POCX, "Signature valid for block %s\n", raw_block_hash.ToString().c_str());
     return true;
 }
 
 bool VerifyPoCXBlockCompactSignature(const CBlock& block, const CCoinsViewCache& view, int nHeight) {
-    LogPrintf("PoCX: [VALIDATION-EXT] Starting extended validation with assignment support at height %d\n", nHeight);
-
     // First do all the basic signature validation
     if (!VerifyPoCXBlockCompactSignature(block)) {
-        LogPrintf("PoCX: [VALIDATION-EXT] Basic signature validation failed\n");
+        LogPrintf("PoCX: Extended validation FAILED - basic signature validation failed at height %d\n", nHeight);
         return false;
     }
 
@@ -171,30 +163,20 @@ bool VerifyPoCXBlockCompactSignature(const CBlock& block, const CCoinsViewCache&
     CPubKey stored_pubkey(block.vchPubKey);
     std::array<uint8_t, 20> pubkey_account = ExtractAccountIDFromPubKey(stored_pubkey);
 
-    LogPrintf("PoCX: [VALIDATION-EXT] Plot address from proof: %s\n", HexStr(block.pocxProof.account_id).c_str());
-    LogPrintf("PoCX: [VALIDATION-EXT] Pubkey from block: %s\n", HexStr(block.vchPubKey).c_str());
-    LogPrintf("PoCX: [VALIDATION-EXT] Account ID extracted from pubkey: %s\n", HexStr(pubkey_account).c_str());
-
     // Get the effective signer for the plot address at this height
-    LogPrintf("PoCX: [VALIDATION-EXT] Getting effective signer for plot %s at height %d\n",
-             HexStr(block.pocxProof.account_id).c_str(), nHeight);
     std::array<uint8_t, 20> effective_signer = pocx::assignments::GetEffectiveSigner(block.pocxProof.account_id, nHeight, view);
-    LogPrintf("PoCX: [VALIDATION-EXT] Effective signer returned: %s\n", HexStr(effective_signer).c_str());
 
     // The pubkey account must match the effective signer
-    bool accounts_match = AccountIDsMatch(pubkey_account, effective_signer);
-    LogPrintf("PoCX: [VALIDATION-EXT] Comparing accounts - match: %s\n", accounts_match ? "YES" : "NO");
-
-    if (!accounts_match) {
-        LogPrintf("PoCX: [VALIDATION-EXT] FAILED - Account mismatch!\n");
-        LogPrintf("PoCX: [VALIDATION-EXT]   Plot address:     %s\n", HexStr(block.pocxProof.account_id).c_str());
-        LogPrintf("PoCX: [VALIDATION-EXT]   Pubkey account:   %s\n", HexStr(pubkey_account).c_str());
-        LogPrintf("PoCX: [VALIDATION-EXT]   Effective signer: %s\n", HexStr(effective_signer).c_str());
+    if (!AccountIDsMatch(pubkey_account, effective_signer)) {
+        LogPrintf("PoCX: Extended validation FAILED - account mismatch at height %d\n", nHeight);
+        LogPrintf("PoCX:   Plot address:     %s\n", HexStr(block.pocxProof.account_id).c_str());
+        LogPrintf("PoCX:   Pubkey account:   %s\n", HexStr(pubkey_account).c_str());
+        LogPrintf("PoCX:   Effective signer: %s\n", HexStr(effective_signer).c_str());
         return false;
     }
 
-    LogPrintf("PoCX: [VALIDATION-EXT] SUCCESS - All checks passed\n");
-    LogPrintf("PoCX: [VALIDATION-EXT]   Plot: %s, Signer: %s, Effective: %s\n",
+    LogDebug(BCLog::POCX, "Extended validation passed at height %d - plot=%s, signer=%s, effective=%s\n",
+             nHeight,
              HexStr(block.pocxProof.account_id).c_str(),
              HexStr(pubkey_account).c_str(),
              HexStr(effective_signer).c_str());

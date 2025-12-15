@@ -296,6 +296,22 @@ BOOST_AUTO_TEST_CASE(batch_validation_single_block)
         seed[i] = static_cast<uint8_t>(std::strtoul(hex_byte, nullptr, 16));
     }
 
+    // First get the actual quality using single block validation
+    ValidationResult single_result;
+    bool success = pocx_validate_block(
+        gen_sig_hex,
+        1000000,  // base_target
+        account_id,
+        100,      // height
+        1337,     // nonce
+        seed,
+        1,        // compression
+        &single_result
+    );
+    BOOST_REQUIRE(success);
+    BOOST_REQUIRE(single_result.is_valid);
+
+    // Now test batch validation with the correct claimed_quality
     BlockValidationInput input;
     input.generation_sig = gen_sig;
     input.base_target = 1000000;
@@ -304,6 +320,7 @@ BOOST_AUTO_TEST_CASE(batch_validation_single_block)
     input.nonce = 1337;
     input.seed = seed;
     input.compression = 1; // Minimum compression
+    input.claimed_quality = single_result.quality; // Use actual quality for early surrender check
 
     ValidationResult result;
     int ret = pocx_validate_blocks(&input, 1, &result);
@@ -311,7 +328,7 @@ BOOST_AUTO_TEST_CASE(batch_validation_single_block)
     BOOST_CHECK_EQUAL(ret, 0);
     BOOST_CHECK(result.is_valid);
     BOOST_CHECK_EQUAL(result.error_code, VALIDATION_SUCCESS);
-    BOOST_CHECK(result.quality > 0);
+    BOOST_CHECK_EQUAL(result.quality, single_result.quality);
 }
 
 BOOST_AUTO_TEST_CASE(batch_validation_matches_single)
@@ -359,6 +376,7 @@ BOOST_AUTO_TEST_CASE(batch_validation_matches_single)
     input.nonce = 1337;
     input.seed = seed;
     input.compression = 1;
+    input.claimed_quality = single_result.quality; // Use actual quality for early surrender check
 
     ValidationResult batch_result;
     int ret = pocx_validate_blocks(&input, 1, &batch_result);
@@ -377,6 +395,7 @@ BOOST_AUTO_TEST_CASE(batch_validation_multiple_blocks)
     uint8_t gen_sigs[4][32];
     uint8_t account_ids[4][20];
     uint8_t seeds[4][32];
+    char gen_sig_hex[4][65];
 
     std::mt19937 rng(42);
 
@@ -388,8 +407,30 @@ BOOST_AUTO_TEST_CASE(batch_validation_multiple_blocks)
         for (int j = 0; j < 20; j++) {
             account_ids[i][j] = static_cast<uint8_t>(rng() & 0xFF);
         }
+        // Create hex string for single validation
+        for (int j = 0; j < 32; j++) {
+            snprintf(&gen_sig_hex[i][j * 2], 3, "%02x", gen_sigs[i][j]);
+        }
+        gen_sig_hex[i][64] = '\0';
     }
 
+    // First get qualities via single validation
+    ValidationResult single_results[4];
+    for (int i = 0; i < 4; i++) {
+        bool success = pocx_validate_block(
+            gen_sig_hex[i],
+            1000000 + i * 1000,
+            account_ids[i],
+            100 + i,
+            1337 + i * 100,
+            seeds[i],
+            1,
+            &single_results[i]
+        );
+        BOOST_REQUIRE_MESSAGE(success, "Single validation failed for block " << i);
+    }
+
+    // Now test batch validation with correct claimed_quality
     BlockValidationInput inputs[4];
     for (int i = 0; i < 4; i++) {
         inputs[i].generation_sig = gen_sigs[i];
@@ -399,6 +440,7 @@ BOOST_AUTO_TEST_CASE(batch_validation_multiple_blocks)
         inputs[i].nonce = 1337 + i * 100;
         inputs[i].seed = seeds[i];
         inputs[i].compression = 1;
+        inputs[i].claimed_quality = single_results[i].quality;
     }
 
     ValidationResult results[4];
@@ -407,7 +449,7 @@ BOOST_AUTO_TEST_CASE(batch_validation_multiple_blocks)
     BOOST_CHECK_EQUAL(ret, 0);
     for (int i = 0; i < 4; i++) {
         BOOST_CHECK_MESSAGE(results[i].is_valid, "Block " << i << " validation failed");
-        BOOST_CHECK_MESSAGE(results[i].quality > 0, "Block " << i << " has zero quality");
+        BOOST_CHECK_EQUAL(results[i].quality, single_results[i].quality);
     }
 }
 
@@ -418,6 +460,7 @@ BOOST_AUTO_TEST_CASE(batch_validation_mixed_compression)
     uint8_t gen_sig[32];
     uint8_t account_id[20];
     uint8_t seed[32];
+    char gen_sig_hex[65];
 
     std::mt19937 rng(99);
     for (int j = 0; j < 32; j++) {
@@ -426,6 +469,27 @@ BOOST_AUTO_TEST_CASE(batch_validation_mixed_compression)
     }
     for (int j = 0; j < 20; j++) {
         account_id[j] = static_cast<uint8_t>(rng() & 0xFF);
+    }
+    // Create hex string for single validation
+    for (int j = 0; j < 32; j++) {
+        snprintf(&gen_sig_hex[j * 2], 3, "%02x", gen_sig[j]);
+    }
+    gen_sig_hex[64] = '\0';
+
+    // First get qualities via single validation for each compression level
+    ValidationResult single_results[3];
+    for (int i = 0; i < 3; i++) {
+        bool success = pocx_validate_block(
+            gen_sig_hex,
+            1000000,
+            account_id,
+            100,
+            0,
+            seed,
+            i + 1, // compression 1, 2, 3
+            &single_results[i]
+        );
+        BOOST_REQUIRE_MESSAGE(success, "Single validation failed for compression " << (i + 1));
     }
 
     // Create blocks with different compression levels
@@ -438,6 +502,7 @@ BOOST_AUTO_TEST_CASE(batch_validation_mixed_compression)
         inputs[i].nonce = 0; // Use nonce 0 for simplicity
         inputs[i].seed = seed;
         inputs[i].compression = i + 1; // 1, 2, 3
+        inputs[i].claimed_quality = single_results[i].quality;
     }
 
     ValidationResult results[3];
@@ -446,7 +511,8 @@ BOOST_AUTO_TEST_CASE(batch_validation_mixed_compression)
     BOOST_CHECK_EQUAL(ret, 0);
     for (int i = 0; i < 3; i++) {
         BOOST_CHECK_MESSAGE(results[i].is_valid,
-            "Block with compression " << i << " validation failed");
+            "Block with compression " << (i + 1) << " validation failed");
+        BOOST_CHECK_EQUAL(results[i].quality, single_results[i].quality);
     }
 
     // Different compression levels should produce different qualities
@@ -502,6 +568,7 @@ BOOST_AUTO_TEST_CASE(batch_validation_8_blocks_vs_single)
         inputs[i].seed = seeds[i];
         // Mix compression levels: 1, 2, 3, 4 (2 to 16 work units per block)
         inputs[i].compression = (i % 4) + 1;
+        // claimed_quality will be set after single validation
     }
 
     // First: validate each block individually using pocx_validate_block
@@ -519,6 +586,8 @@ BOOST_AUTO_TEST_CASE(batch_validation_8_blocks_vs_single)
         );
         BOOST_REQUIRE_MESSAGE(success, "Single validation failed for block " << i);
         BOOST_REQUIRE_MESSAGE(single_results[i].is_valid, "Single result invalid for block " << i);
+        // Set claimed_quality from single validation result
+        inputs[i].claimed_quality = single_results[i].quality;
     }
 
     // Second: validate all blocks using batch validation (triggers AVX2 with 8 blocks)
@@ -583,6 +652,7 @@ BOOST_AUTO_TEST_CASE(batch_validation_16_blocks_high_compression)
         inputs[i].nonce = rng() % 50000;
         inputs[i].seed = seeds[i];
         inputs[i].compression = 3; // 8 work units each
+        // claimed_quality will be set after single validation
     }
 
     // Single validation
@@ -599,6 +669,8 @@ BOOST_AUTO_TEST_CASE(batch_validation_16_blocks_high_compression)
             &single_results[i]
         );
         BOOST_REQUIRE_MESSAGE(success, "Single validation failed for block " << i);
+        // Set claimed_quality from single validation result
+        inputs[i].claimed_quality = single_results[i].quality;
     }
 
     // Batch validation
@@ -684,25 +756,34 @@ BOOST_AUTO_TEST_CASE(batch_validation_uint256_byte_order)
     input_correct.nonce = nonce;
     input_correct.seed = seed;
     input_correct.compression = compression;
+    input_correct.claimed_quality = ref_result.quality; // Use reference quality
 
     ValidationResult batch_result_correct;
     int ret = pocx_validate_blocks(&input_correct, 1, &batch_result_correct);
     BOOST_REQUIRE_EQUAL(ret, 0);
     BOOST_REQUIRE(batch_result_correct.is_valid);
 
-    // Method 3: Use batch validation with RAW bytes (incorrect way - would fail before fix)
-    BlockValidationInput input_wrong;
-    input_wrong.generation_sig = gen_sig_uint256.data(); // Raw bytes, not reversed!
-    input_wrong.base_target = base_target;
-    input_wrong.account_id = account_id;
-    input_wrong.height = height;
-    input_wrong.nonce = nonce;
-    input_wrong.seed = seed;
-    input_wrong.compression = compression;
+    // Method 3: Use batch validation with RAW bytes (incorrect way - produces different quality)
+    // First get the quality for raw bytes (will be different from ref_result.quality)
+    BlockValidationInput input_wrong_probe;
+    input_wrong_probe.generation_sig = gen_sig_uint256.data(); // Raw bytes, not reversed!
+    input_wrong_probe.base_target = base_target;
+    input_wrong_probe.account_id = account_id;
+    input_wrong_probe.height = height;
+    input_wrong_probe.nonce = nonce;
+    input_wrong_probe.seed = seed;
+    input_wrong_probe.compression = compression;
+    input_wrong_probe.claimed_quality = ref_result.quality; // This will cause early surrender since quality won't match
 
-    ValidationResult batch_result_wrong;
-    ret = pocx_validate_blocks(&input_wrong, 1, &batch_result_wrong);
-    BOOST_REQUIRE_EQUAL(ret, 0);
+    ValidationResult batch_result_wrong_probe;
+    ret = pocx_validate_blocks(&input_wrong_probe, 1, &batch_result_wrong_probe);
+    // Should fail with early surrender because raw bytes produce different quality
+    BOOST_CHECK_EQUAL(ret, -2); // Early surrender error code
+
+    // Also test with correct quality for raw bytes to verify it works
+    // (need to get the quality first without early surrender check - but we can't skip)
+    // Instead, verify via the failed probe that the quality in result is filled
+    uint64_t wrong_quality = batch_result_wrong_probe.quality;
 
     // Verify: correct method matches reference, wrong method doesn't
     BOOST_CHECK_MESSAGE(batch_result_correct.quality == ref_result.quality,
@@ -710,15 +791,15 @@ BOOST_AUTO_TEST_CASE(batch_validation_uint256_byte_order)
         << "batch=" << batch_result_correct.quality
         << " ref=" << ref_result.quality);
 
-    BOOST_CHECK_MESSAGE(batch_result_wrong.quality != ref_result.quality,
+    BOOST_CHECK_MESSAGE(wrong_quality != ref_result.quality,
         "Batch with raw bytes should NOT match reference (proves byte order matters): "
-        << "batch_wrong=" << batch_result_wrong.quality
+        << "batch_wrong=" << wrong_quality
         << " ref=" << ref_result.quality);
 
     BOOST_TEST_MESSAGE("uint256 byte order test passed:");
     BOOST_TEST_MESSAGE("  Reference quality: " << ref_result.quality);
     BOOST_TEST_MESSAGE("  Batch (reversed):  " << batch_result_correct.quality << " - MATCH");
-    BOOST_TEST_MESSAGE("  Batch (raw):       " << batch_result_wrong.quality << " - MISMATCH (expected)");
+    BOOST_TEST_MESSAGE("  Batch (raw):       " << wrong_quality << " - MISMATCH (expected)");
 }
 
 BOOST_AUTO_TEST_SUITE_END()

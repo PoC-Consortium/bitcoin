@@ -20,6 +20,7 @@
 #include <atomic>
 #include <mutex>
 #include <functional>
+#include <set>
 
 namespace pocx {
 namespace consensus {
@@ -49,11 +50,18 @@ struct BlockAccumulator {
     std::atomic<size_t> nonces_received{0};  // Count of nonces processed (atomic for thread safety)
     size_t nonces_expected;           // Total nonces needed
     const BlockValidationInput* input;
+    uint64_t claimed_quality;         // Claimed quality for early surrender check
     std::mutex xor_mutex;             // Protects xor_result during parallel accumulation
 
-    BlockAccumulator() : nonces_expected(0), input(nullptr) {
+    BlockAccumulator() : nonces_expected(0), input(nullptr), claimed_quality(0) {
         std::memset(xor_result, 0, SCOOP_SIZE);
     }
+};
+
+// Early surrender state - shared across threads
+struct EarlySurrenderState {
+    std::atomic<bool> triggered{false};
+    std::atomic<size_t> failed_block_index{0};
 };
 
 // Forward declarations
@@ -99,16 +107,65 @@ static int generate_nonce_scoop(
     return 0;
 }
 
+// Check if a block just completed and validate its quality (early surrender check)
+// Returns true if block completed and quality MATCHES (or was skipped), false if mismatch
+static bool check_block_completion(
+    size_t block_index,
+    std::vector<BlockAccumulator>& accumulators,
+    ValidationResult* results,
+    EarlySurrenderState& surrender_state
+) {
+    BlockAccumulator& acc = accumulators[block_index];
+
+    // Check if this block just completed
+    size_t received = acc.nonces_received.load(std::memory_order_acquire);
+    if (received != acc.nonces_expected) {
+        return true;  // Not complete yet, continue processing
+    }
+
+    // Block is complete - calculate quality
+    uint64_t quality = crypto::Shabal256Lite(acc.xor_result, acc.input->generation_sig);
+
+    // Store result
+    ValidationResult& result = results[block_index];
+    result.quality = quality;
+    result.is_valid = true;
+    result.error_code = VALIDATION_SUCCESS;
+
+    if (acc.input->base_target > 0) {
+        result.deadline = quality / acc.input->base_target;
+    } else {
+        result.deadline = std::numeric_limits<uint64_t>::max();
+    }
+
+    // Early surrender check: verify calculated quality matches claimed quality
+    if (quality != acc.claimed_quality) {
+        // Quality mismatch - trigger early surrender
+        surrender_state.failed_block_index.store(block_index, std::memory_order_relaxed);
+        surrender_state.triggered.store(true, std::memory_order_release);
+        return false;
+    }
+
+    return true;
+}
+
 // Process a single work unit (scalar)
-static void process_single_work_unit(
+// Returns true to continue, false if early surrender triggered
+static bool process_single_work_unit(
     NonceWorkUnit& wu,
     std::vector<BlockAccumulator>& accumulators,
-    ValidationResult* results
+    ValidationResult* results,
+    EarlySurrenderState& surrender_state
 ) {
+    // Check early surrender before doing work
+    if (surrender_state.triggered.load(std::memory_order_acquire)) {
+        return false;
+    }
+
     if (generate_nonce_scoop(wu.account_id, wu.seed, wu.base_nonce, wu.scoop, wu.scoop_data) != 0) {
         results[wu.block_index].is_valid = false;
         results[wu.block_index].error_code = VALIDATION_ERROR_QUALITY_CALCULATION;
-        return;
+        return true;  // Error but not surrender
     }
 
     BlockAccumulator& acc = accumulators[wu.block_index];
@@ -118,17 +175,27 @@ static void process_single_work_unit(
             acc.xor_result[k] ^= wu.scoop_data[k];
         }
     }
-    acc.nonces_received.fetch_add(1, std::memory_order_relaxed);
+    acc.nonces_received.fetch_add(1, std::memory_order_release);
+
+    // Check if this block just completed
+    return check_block_completion(wu.block_index, accumulators, results, surrender_state);
 }
 
 #ifdef ENABLE_AVX2
 // Process 8 work units in parallel using AVX2
-static void process_8_work_units_avx2(
+// Returns true to continue, false if early surrender triggered
+static bool process_8_work_units_avx2(
     std::vector<NonceWorkUnit>& work_units,
     std::vector<BlockAccumulator>& accumulators,
     ValidationResult* results,
-    size_t batch_start
+    size_t batch_start,
+    EarlySurrenderState& surrender_state
 ) {
+    // Check early surrender before doing work
+    if (surrender_state.triggered.load(std::memory_order_acquire)) {
+        return false;
+    }
+
     // Allocate 8 nonce buffers
     uint8_t* nonce_buffers[8];
     for (int i = 0; i < 8; i++) {
@@ -139,9 +206,11 @@ static void process_8_work_units_avx2(
                 std::free(nonce_buffers[j]);
             }
             for (int j = 0; j < 8; j++) {
-                process_single_work_unit(work_units[batch_start + j], accumulators, results);
+                if (!process_single_work_unit(work_units[batch_start + j], accumulators, results, surrender_state)) {
+                    return false;
+                }
             }
-            return;
+            return true;
         }
     }
 
@@ -166,12 +235,17 @@ static void process_8_work_units_avx2(
             std::free(nonce_buffers[i]);
         }
         for (int i = 0; i < 8; i++) {
-            process_single_work_unit(work_units[batch_start + i], accumulators, results);
+            if (!process_single_work_unit(work_units[batch_start + i], accumulators, results, surrender_state)) {
+                return false;
+            }
         }
-        return;
+        return true;
     }
 
     // Extract scoops and accumulate
+    // Track which blocks we updated so we can check completion
+    std::set<size_t> updated_blocks;
+
     for (int i = 0; i < 8; i++) {
         NonceWorkUnit& wu = work_units[batch_start + i];
         const size_t scoop_start = static_cast<size_t>(wu.scoop) * SCOOP_SIZE;
@@ -184,10 +258,20 @@ static void process_8_work_units_avx2(
                 acc.xor_result[k] ^= wu.scoop_data[k];
             }
         }
-        acc.nonces_received.fetch_add(1, std::memory_order_relaxed);
+        acc.nonces_received.fetch_add(1, std::memory_order_release);
+        updated_blocks.insert(wu.block_index);
 
         std::free(nonce_buffers[i]);
     }
+
+    // Check completion for all blocks we updated
+    for (size_t block_idx : updated_blocks) {
+        if (!check_block_completion(block_idx, accumulators, results, surrender_state)) {
+            return false;
+        }
+    }
+
+    return true;
 }
 #endif
 
@@ -198,7 +282,8 @@ static void process_work_range(
     ValidationResult* results,
     size_t start_idx,
     size_t end_idx,
-    [[maybe_unused]] bool use_avx2
+    [[maybe_unused]] bool use_avx2,
+    EarlySurrenderState& surrender_state
 ) {
     size_t i = start_idx;
 
@@ -206,7 +291,9 @@ static void process_work_range(
     // Process in batches of 8 using AVX2 when available
     if (use_avx2 && crypto::HaveAVX2()) {
         while (i + 8 <= end_idx) {
-            process_8_work_units_avx2(work_units, accumulators, results, i);
+            if (!process_8_work_units_avx2(work_units, accumulators, results, i, surrender_state)) {
+                return;  // Early surrender triggered
+            }
             i += 8;
         }
     }
@@ -214,7 +301,9 @@ static void process_work_range(
 
     // Process remaining work units with scalar
     while (i < end_idx) {
-        process_single_work_unit(work_units[i], accumulators, results);
+        if (!process_single_work_unit(work_units[i], accumulators, results, surrender_state)) {
+            return;  // Early surrender triggered
+        }
         i++;
     }
 }
@@ -271,12 +360,15 @@ static int pocx_validate_blocks_scalar(
         }
     }
 
-    // Step 3: Initialize accumulators
+    // Step 3: Initialize accumulators and early surrender state
     std::vector<BlockAccumulator> accumulators(count);
     for (size_t i = 0; i < count; i++) {
         accumulators[i].nonces_expected = block_work_counts[i];
         accumulators[i].input = &inputs[i];
+        accumulators[i].claimed_quality = inputs[i].claimed_quality;
     }
+
+    EarlySurrenderState surrender_state;
 
     // Step 4: Process work units in parallel (scalar - no AVX2 nonce generation)
     // Reserve 1 thread for system responsiveness (networking, RPC, etc.)
@@ -292,7 +384,7 @@ static int pocx_validate_blocks_scalar(
     if (num_threads <= 1 || total_work < MIN_WORK_PER_THREAD * 2) {
         // Single-threaded: process all work units sequentially
         g_last_thread_count.store(1, std::memory_order_relaxed);
-        process_work_range(work_units, accumulators, results, 0, total_work, use_avx2_scalar);
+        process_work_range(work_units, accumulators, results, 0, total_work, use_avx2_scalar, surrender_state);
     } else {
         // Multi-threaded: split work across threads
         std::vector<std::thread> threads;
@@ -312,7 +404,8 @@ static int pocx_validate_blocks_scalar(
                 results,
                 start_idx,
                 end_idx,
-                use_avx2_scalar);
+                use_avx2_scalar,
+                std::ref(surrender_state));
 
             start_idx = end_idx;
         }
@@ -323,37 +416,32 @@ static int pocx_validate_blocks_scalar(
         }
     }
 
-    // Step 5: Finalize - calculate quality for each block
+    // Step 5: Check for early surrender
+    if (surrender_state.triggered.load(std::memory_order_acquire)) {
+        // Mark the failed block's result
+        size_t failed_idx = surrender_state.failed_block_index.load(std::memory_order_relaxed);
+        results[failed_idx].is_valid = false;
+        results[failed_idx].error_code = VALIDATION_ERROR_QUALITY_MISMATCH;
+        return -2;  // Early surrender error code
+    }
+
+    // Step 6: Finalize - verify all blocks completed (results already set by check_block_completion)
     for (size_t i = 0; i < count; i++) {
         ValidationResult& result = results[i];
         BlockAccumulator& acc = accumulators[i];
 
-        // Initialize result
-        result.is_valid = false;
-        result.error_code = -1;
-        result.quality = 0;
-        result.deadline = std::numeric_limits<uint64_t>::max();
-
-        if (acc.nonces_received.load(std::memory_order_relaxed) != acc.nonces_expected) {
-            result.error_code = VALIDATION_ERROR_QUALITY_CALCULATION;
+        // Skip if already processed by check_block_completion
+        if (result.is_valid && result.error_code == VALIDATION_SUCCESS) {
             continue;
         }
 
-        // Calculate quality using Shabal256Lite
-        uint64_t quality = crypto::Shabal256Lite(acc.xor_result, acc.input->generation_sig);
-
-        // Calculate deadline
-        uint64_t deadline;
-        if (acc.input->base_target > 0) {
-            deadline = quality / acc.input->base_target;
-        } else {
-            deadline = std::numeric_limits<uint64_t>::max();
+        // Check for incomplete processing
+        if (acc.nonces_received.load(std::memory_order_relaxed) != acc.nonces_expected) {
+            result.is_valid = false;
+            result.error_code = VALIDATION_ERROR_QUALITY_CALCULATION;
+            result.quality = 0;
+            result.deadline = std::numeric_limits<uint64_t>::max();
         }
-
-        result.is_valid = true;
-        result.error_code = VALIDATION_SUCCESS;
-        result.quality = quality;
-        result.deadline = deadline;
     }
 
     return 0;
@@ -413,12 +501,15 @@ static int pocx_validate_blocks_avx2_impl(
         }
     }
 
-    // Step 3: Initialize accumulators
+    // Step 3: Initialize accumulators and early surrender state
     std::vector<BlockAccumulator> accumulators(count);
     for (size_t i = 0; i < count; i++) {
         accumulators[i].nonces_expected = block_work_counts[i];
         accumulators[i].input = &inputs[i];
+        accumulators[i].claimed_quality = inputs[i].claimed_quality;
     }
+
+    EarlySurrenderState surrender_state;
 
     // Step 4: Process work units in parallel with AVX2 nonce generation
     // Determine number of threads based on work and available hardware
@@ -435,7 +526,7 @@ static int pocx_validate_blocks_avx2_impl(
     if (num_threads <= 1 || total_work < MIN_WORK_PER_THREAD * 2) {
         // Single-threaded: process all work units sequentially
         g_last_thread_count.store(1, std::memory_order_relaxed);
-        process_work_range(work_units, accumulators, results, 0, total_work, use_avx2_impl);
+        process_work_range(work_units, accumulators, results, 0, total_work, use_avx2_impl, surrender_state);
     } else {
         // Multi-threaded: split work across threads
         std::vector<std::thread> threads;
@@ -455,7 +546,8 @@ static int pocx_validate_blocks_avx2_impl(
                 results,
                 start_idx,
                 end_idx,
-                use_avx2_impl);
+                use_avx2_impl,
+                std::ref(surrender_state));
 
             start_idx = end_idx;
         }
@@ -466,37 +558,32 @@ static int pocx_validate_blocks_avx2_impl(
         }
     }
 
-    // Step 5: Finalize - calculate quality for each block
+    // Step 5: Check for early surrender
+    if (surrender_state.triggered.load(std::memory_order_acquire)) {
+        // Mark the failed block's result
+        size_t failed_idx = surrender_state.failed_block_index.load(std::memory_order_relaxed);
+        results[failed_idx].is_valid = false;
+        results[failed_idx].error_code = VALIDATION_ERROR_QUALITY_MISMATCH;
+        return -2;  // Early surrender error code
+    }
+
+    // Step 6: Finalize - verify all blocks completed (results already set by check_block_completion)
     for (size_t i = 0; i < count; i++) {
         ValidationResult& result = results[i];
         BlockAccumulator& acc = accumulators[i];
 
-        // Initialize result
-        result.is_valid = false;
-        result.error_code = -1;
-        result.quality = 0;
-        result.deadline = std::numeric_limits<uint64_t>::max();
-
-        if (acc.nonces_received.load(std::memory_order_relaxed) != acc.nonces_expected) {
-            result.error_code = VALIDATION_ERROR_QUALITY_CALCULATION;
+        // Skip if already processed by check_block_completion
+        if (result.is_valid && result.error_code == VALIDATION_SUCCESS) {
             continue;
         }
 
-        // Calculate quality using Shabal256Lite (scalar, runs once per block)
-        uint64_t quality = crypto::Shabal256Lite(acc.xor_result, acc.input->generation_sig);
-
-        // Calculate deadline
-        uint64_t deadline;
-        if (acc.input->base_target > 0) {
-            deadline = quality / acc.input->base_target;
-        } else {
-            deadline = std::numeric_limits<uint64_t>::max();
+        // Check for incomplete processing
+        if (acc.nonces_received.load(std::memory_order_relaxed) != acc.nonces_expected) {
+            result.is_valid = false;
+            result.error_code = VALIDATION_ERROR_QUALITY_CALCULATION;
+            result.quality = 0;
+            result.deadline = std::numeric_limits<uint64_t>::max();
         }
-
-        result.is_valid = true;
-        result.error_code = VALIDATION_SUCCESS;
-        result.quality = quality;
-        result.deadline = deadline;
     }
 
     return 0;

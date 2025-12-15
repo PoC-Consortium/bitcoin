@@ -24,6 +24,7 @@ struct BlockValidationInput {
     uint64_t nonce;                 // Submitted nonce
     const uint8_t* seed;            // 32 bytes - plot seed
     uint32_t compression;           // Compression level (1-6)
+    uint64_t claimed_quality;       // Claimed quality for early surrender check
 };
 
 /**
