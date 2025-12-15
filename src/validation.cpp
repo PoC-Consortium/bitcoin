@@ -20,6 +20,7 @@
 #ifdef ENABLE_POCX
 #include <pocx/consensus/signature.h>
 #include <pocx/consensus/proof.h>
+#include <pocx/consensus/batch_validation.h>
 #include <pocx/assignments/assignment_state.h>
 #include <pocx/consensus/params.h>
 #include <pocx/consensus/difficulty.h>
@@ -4205,7 +4206,7 @@ void ChainstateManager::ReceivedBlockTransactions(const CBlock& block, CBlockInd
     }
 }
 
-static bool CheckBlockHeader(const CBlockHeader& block, BlockValidationState& state, const Consensus::Params& consensusParams, bool fCheckPOW = true)
+static bool CheckBlockHeader(const CBlockHeader& block, BlockValidationState& state, const Consensus::Params& consensusParams, bool fCheckPOW = true, [[maybe_unused]] bool skip_pocx_proof = false)
 {
 #ifndef ENABLE_POCX
     // Check proof of work matches claimed amount
@@ -4220,7 +4221,7 @@ static bool CheckBlockHeader(const CBlockHeader& block, BlockValidationState& st
                 return state.Invalid(BlockValidationResult::BLOCK_INVALID_HEADER, "bad-pocx-sig",
                                     "PoCX block signature validation failed");
             }
-        
+
 
             // Step 2: Validate compression is within valid range
             auto compression_bounds = pocx::consensus::GetPoCXCompressionBounds(
@@ -4239,27 +4240,32 @@ static bool CheckBlockHeader(const CBlockHeader& block, BlockValidationState& st
                                             min_compression, max_compression));
             }
 
-            // Step 3: Perform full PoC validation (expensive - only when fCheckPOW is true)
-            auto result = pocx::consensus::ValidateProofOfCapacity(
-                block.generationSignature,
-                block.pocxProof,
-                block.nBaseTarget,
-                block.nHeight,
-                block.pocxProof.compression,
-                consensusParams.nPowTargetSpacing
-            );
+            // Step 3 & 4: Perform full PoC validation (expensive)
+            // Skip if already batch-validated during header sync
+            if (skip_pocx_proof) {
+                LogDebug(BCLog::VALIDATION, "CheckBlockHeader: skipping PoCX proof validation for height=%d (batch-validated)\n", block.nHeight);
+            } else {
+                auto result = pocx::consensus::ValidateProofOfCapacity(
+                    block.generationSignature,
+                    block.pocxProof,
+                    block.nBaseTarget,
+                    block.nHeight,
+                    block.pocxProof.compression,
+                    consensusParams.nPowTargetSpacing
+                );
 
-            if (!result.is_valid) {
-                return state.Invalid(BlockValidationResult::BLOCK_INVALID_HEADER,
-                                    "bad-pocx-proof", "PoCX proof validation failed");
-            }
+                if (!result.is_valid) {
+                    return state.Invalid(BlockValidationResult::BLOCK_INVALID_HEADER,
+                                        "bad-pocx-proof", "PoCX proof validation failed");
+                }
 
-            // Step 4: Validate claimed quality matches calculated quality
-            if (block.pocxProof.quality != result.quality) {
-                return state.Invalid(BlockValidationResult::BLOCK_INVALID_HEADER,
-                                    "bad-pocx-quality-mismatch",
-                                    strprintf("Claimed quality %llu does not match calculated quality %llu",
-                                             block.pocxProof.quality, result.quality));
+                // Step 4: Validate claimed quality matches calculated quality
+                if (block.pocxProof.quality != result.quality) {
+                    return state.Invalid(BlockValidationResult::BLOCK_INVALID_HEADER,
+                                        "bad-pocx-quality-mismatch",
+                                        strprintf("Claimed quality %llu does not match calculated quality %llu",
+                                                 block.pocxProof.quality, result.quality));
+                }
             }
         }
     }
@@ -4701,7 +4707,7 @@ static bool ContextualCheckBlock(const CBlock& block, BlockValidationState& stat
     return true;
 }
 
-bool ChainstateManager::AcceptBlockHeader(const CBlockHeader& block, BlockValidationState& state, CBlockIndex** ppindex, bool min_pow_checked)
+bool ChainstateManager::AcceptBlockHeader(const CBlockHeader& block, BlockValidationState& state, CBlockIndex** ppindex, bool min_pow_checked, bool skip_pocx_proof)
 {
     AssertLockHeld(cs_main);
 
@@ -4721,7 +4727,7 @@ bool ChainstateManager::AcceptBlockHeader(const CBlockHeader& block, BlockValida
             return true;
         }
 
-        if (!CheckBlockHeader(block, state, GetConsensus())) {
+        if (!CheckBlockHeader(block, state, GetConsensus(), /*fCheckPOW=*/true, skip_pocx_proof)) {
             LogDebug(BCLog::VALIDATION, "%s: Consensus::CheckBlockHeader: %s, %s\n", __func__, hash.ToString(), state.ToString());
             return false;
         }
@@ -4759,11 +4765,100 @@ bool ChainstateManager::AcceptBlockHeader(const CBlockHeader& block, BlockValida
 bool ChainstateManager::ProcessNewBlockHeaders(std::span<const CBlockHeader> headers, bool min_pow_checked, BlockValidationState& state, const CBlockIndex** ppindex)
 {
     AssertLockNotHeld(cs_main);
+
+#ifdef ENABLE_POCX
+    // Batch validate PoCX proofs for all headers upfront
+    // This uses multi-threading and SIMD for significant speedup during sync
+    bool skip_pocx_proof = false;
+    if (!headers.empty() && headers.size() >= 2) {
+        // Filter to only non-genesis headers that need validation
+        std::vector<const CBlockHeader*> headers_to_validate;
+        for (const auto& header : headers) {
+            if (header.nHeight > 0) {
+                headers_to_validate.push_back(&header);
+            }
+        }
+
+        if (!headers_to_validate.empty()) {
+            // Prepare batch validation inputs
+            std::vector<pocx::consensus::BlockValidationInput> inputs(headers_to_validate.size());
+            std::vector<pocx::consensus::ValidationResult> results(headers_to_validate.size());
+
+            // Storage for reversed generation signatures
+            // uint256::ToString() returns reversed bytes, which is what ValidateProofOfCapacity uses
+            // But batch validation uses raw bytes, so we need to reverse them to match
+            std::vector<std::array<uint8_t, 32>> gen_sigs_reversed(headers_to_validate.size());
+
+            for (size_t i = 0; i < headers_to_validate.size(); i++) {
+                const CBlockHeader& hdr = *headers_to_validate[i];
+
+                // Reverse generation signature bytes to match ValidateProofOfCapacity behavior
+                // (uint256::ToString() reverses bytes, then DecodeGenerationSignature parses them)
+                for (size_t j = 0; j < 32; j++) {
+                    gen_sigs_reversed[i][j] = hdr.generationSignature.data()[31 - j];
+                }
+
+                inputs[i].generation_sig = gen_sigs_reversed[i].data();
+                inputs[i].base_target = hdr.nBaseTarget;
+                inputs[i].account_id = hdr.pocxProof.account_id.data();
+                inputs[i].height = hdr.nHeight;
+                inputs[i].nonce = hdr.pocxProof.nonce;
+                inputs[i].seed = hdr.pocxProof.seed.data();
+                inputs[i].compression = hdr.pocxProof.compression;
+            }
+
+            // Run batch validation
+            auto start_time = std::chrono::steady_clock::now();
+            int ret = pocx::consensus::pocx_validate_blocks(inputs.data(), inputs.size(), results.data());
+            auto end_time = std::chrono::steady_clock::now();
+            auto duration_ms = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time).count();
+
+            if (ret != 0) {
+                LogDebug(BCLog::VALIDATION, "PoCX batch validation failed with error %d\n", ret);
+                return state.Invalid(BlockValidationResult::BLOCK_INVALID_HEADER, "pocx-batch-error", "PoCX batch validation error");
+            }
+
+            // Verify all results and check claimed quality matches calculated
+            for (size_t i = 0; i < headers_to_validate.size(); i++) {
+                const CBlockHeader& hdr = *headers_to_validate[i];
+                const auto& result = results[i];
+
+                if (!result.is_valid) {
+                    LogDebug(BCLog::VALIDATION, "PoCX batch validation: header at height %d failed validation (error=%d)\n",
+                             hdr.nHeight, result.error_code);
+                    return state.Invalid(BlockValidationResult::BLOCK_INVALID_HEADER, "bad-pocx-proof",
+                                        strprintf("PoCX batch validation failed at height %d", hdr.nHeight));
+                }
+
+                // Verify claimed quality matches calculated quality
+                if (hdr.pocxProof.quality != result.quality) {
+                    LogDebug(BCLog::VALIDATION, "PoCX batch validation: quality mismatch at height %d (claimed=%llu, calculated=%llu)\n",
+                             hdr.nHeight, hdr.pocxProof.quality, result.quality);
+                    return state.Invalid(BlockValidationResult::BLOCK_INVALID_HEADER, "bad-pocx-quality-mismatch",
+                                        strprintf("Quality mismatch at height %d: claimed %llu != calculated %llu",
+                                                 hdr.nHeight, hdr.pocxProof.quality, result.quality));
+                }
+            }
+
+            LogDebug(BCLog::VALIDATION, "PoCX batch validation: validated %zu headers in %lld ms using %s (%zu threads)\n",
+                     headers_to_validate.size(), duration_ms,
+                     pocx::consensus::pocx_batch_implementation_name(),
+                     pocx::consensus::pocx_batch_thread_count());
+
+            skip_pocx_proof = true;
+        }
+    }
+#endif
+
     {
         LOCK(cs_main);
         for (const CBlockHeader& header : headers) {
             CBlockIndex *pindex = nullptr; // Use a temp pindex instead of ppindex to avoid a const_cast
+#ifdef ENABLE_POCX
+            bool accepted{AcceptBlockHeader(header, state, &pindex, min_pow_checked, skip_pocx_proof)};
+#else
             bool accepted{AcceptBlockHeader(header, state, &pindex, min_pow_checked)};
+#endif
             CheckBlockIndex();
 
             if (!accepted) {

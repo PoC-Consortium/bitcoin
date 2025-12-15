@@ -27,6 +27,15 @@ if(ENABLE_POCX)
     ../pocx/crypto/shabal256.cpp
     ../pocx/crypto/shabal256_lite.cpp
   )
+  # Add PoCX AVX2 sources if available
+  if(HAVE_AVX2)
+    target_sources(bitcoin_crypto PRIVATE
+      ../pocx/crypto/shabal256_avx2.cpp
+    )
+    set_property(SOURCE ../pocx/crypto/shabal256_avx2.cpp PROPERTY
+      COMPILE_OPTIONS ${AVX2_CXXFLAGS}
+    )
+  endif()
 endif()
 
 target_link_libraries(bitcoin_crypto

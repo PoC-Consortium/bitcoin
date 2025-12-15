@@ -5,6 +5,9 @@
 #include <pocx/algorithms/plot_generation.h>
 #include <pocx/algorithms/encoding.h>
 #include <pocx/crypto/shabal256.h>
+#ifdef ENABLE_AVX2
+#include <pocx/crypto/shabal256_avx2.h>
+#endif
 
 #include <cstring>
 #include <cstdlib>
@@ -157,6 +160,177 @@ int GenerateNonces(
     std::free(final_buffer);
     return 0;
 }
+
+#ifdef ENABLE_AVX2
+
+int GenerateNonces8_avx2(
+    uint8_t* buffers[8],
+    const uint8_t* account_ids[8],
+    const uint8_t* seeds[8],
+    const uint64_t nonces[8]
+) {
+    // Validate inputs
+    for (int lane = 0; lane < 8; lane++) {
+        if (!buffers[lane] || !account_ids[lane] || !seeds[lane]) {
+            return -1;
+        }
+    }
+
+    // Prepare per-lane data
+    uint32_t payload_bytes[8][5];
+    uint32_t seed_u32[8][8];
+    uint32_t nonce_u32[8][2];
+
+    for (int lane = 0; lane < 8; lane++) {
+        BytesToU32LE(account_ids[lane], 20, payload_bytes[lane]);
+        BytesToU32LE(seeds[lane], 32, seed_u32[lane]);
+        U64ToU32BE(nonces[lane], nonce_u32[lane]);
+    }
+
+    // Prepare termination blocks for each lane
+    uint32_t t1[8][MESSAGE_SIZE];
+    uint32_t t2[8][MESSAGE_SIZE];
+    uint32_t pt2[8][MESSAGE_SIZE];
+    uint32_t t3[8][MESSAGE_SIZE];
+
+    for (int lane = 0; lane < 8; lane++) {
+        std::memset(t1[lane], 0, sizeof(t1[lane]));
+        std::memset(t2[lane], 0, sizeof(t2[lane]));
+        std::memset(pt2[lane], 0, sizeof(pt2[lane]));
+        std::memset(t3[lane], 0, sizeof(t3[lane]));
+
+        std::memcpy(t1[lane], seed_u32[lane], 8 * sizeof(uint32_t));
+        std::memcpy(t1[lane] + 8, payload_bytes[lane], 5 * sizeof(uint32_t));
+        t1[lane][13] = nonce_u32[lane][1];
+        t1[lane][14] = nonce_u32[lane][0];
+        t1[lane][15] = 0x80;
+
+        std::memcpy(t2[lane], payload_bytes[lane], 5 * sizeof(uint32_t));
+        t2[lane][5] = nonce_u32[lane][1];
+        t2[lane][6] = nonce_u32[lane][0];
+        t2[lane][7] = 0x80;
+
+        std::memcpy(pt2[lane] + 8, seed_u32[lane], 8 * sizeof(uint32_t));
+
+        t3[lane][0] = 0x80;
+    }
+
+    // Allocate buffers for 8-way parallel processing
+    uint8_t hash[8][HASH_SIZE];
+    uint8_t final_hash[8][HASH_SIZE];
+
+    // Set up pointer arrays for AVX2 calls
+    const uint8_t* data_ptrs[8];
+    const uint32_t* pre_term_ptrs[8];
+    const uint32_t* term_ptrs[8];
+    uint8_t* output_ptrs[8];
+
+    // First hash: no data, just t1 termination
+    for (int lane = 0; lane < 8; lane++) {
+        data_ptrs[lane] = nullptr;
+        pre_term_ptrs[lane] = nullptr;
+        term_ptrs[lane] = t1[lane];
+        output_ptrs[lane] = hash[lane];
+    }
+    crypto::Shabal256_avx2(data_ptrs, 0, pre_term_ptrs, term_ptrs, output_ptrs);
+
+    // Store first hash and prepare pt2 for each lane
+    for (int lane = 0; lane < 8; lane++) {
+        std::memcpy(buffers[lane] + NONCE_SIZE - HASH_SIZE, hash[lane], HASH_SIZE);
+        const uint32_t* hash_u32 = reinterpret_cast<const uint32_t*>(hash[lane]);
+        std::memcpy(pt2[lane], hash_u32, 8 * sizeof(uint32_t));
+    }
+
+    // Main loop: generate hashes from NONCE_SIZE-HASH_SIZE down to NONCE_SIZE-HASH_CAP+HASH_SIZE
+    for (int i = NONCE_SIZE - HASH_SIZE; i >= static_cast<int>(NONCE_SIZE - HASH_CAP + HASH_SIZE); i -= HASH_SIZE) {
+        size_t data_start = static_cast<size_t>(i);
+        size_t data_len = NONCE_SIZE - data_start;
+
+        if (i % 64 == 0) {
+            // Use t1 termination, no pre-term
+            for (int lane = 0; lane < 8; lane++) {
+                data_ptrs[lane] = buffers[lane] + data_start;
+                pre_term_ptrs[lane] = nullptr;
+                term_ptrs[lane] = t1[lane];
+                output_ptrs[lane] = hash[lane];
+            }
+        } else {
+            // Use t2 termination with pt2 pre-term
+            for (int lane = 0; lane < 8; lane++) {
+                data_ptrs[lane] = buffers[lane] + data_start;
+                pre_term_ptrs[lane] = pt2[lane];
+                term_ptrs[lane] = t2[lane];
+                output_ptrs[lane] = hash[lane];
+            }
+        }
+
+        crypto::Shabal256_avx2(data_ptrs, data_len, pre_term_ptrs, term_ptrs, output_ptrs);
+
+        for (int lane = 0; lane < 8; lane++) {
+            std::memcpy(buffers[lane] + i - HASH_SIZE, hash[lane], HASH_SIZE);
+        }
+    }
+
+    // Second loop: from NONCE_SIZE-HASH_CAP down to HASH_SIZE
+    for (int i = NONCE_SIZE - HASH_CAP; i >= static_cast<int>(HASH_SIZE); i -= HASH_SIZE) {
+        size_t data_start = static_cast<size_t>(i);
+
+        for (int lane = 0; lane < 8; lane++) {
+            data_ptrs[lane] = buffers[lane] + data_start;
+            pre_term_ptrs[lane] = nullptr;
+            term_ptrs[lane] = t3[lane];
+            output_ptrs[lane] = hash[lane];
+        }
+
+        crypto::Shabal256_avx2(data_ptrs, HASH_CAP, pre_term_ptrs, term_ptrs, output_ptrs);
+
+        for (int lane = 0; lane < 8; lane++) {
+            std::memcpy(buffers[lane] + i - HASH_SIZE, hash[lane], HASH_SIZE);
+        }
+    }
+
+    // Final hash: hash entire nonce buffer
+    for (int lane = 0; lane < 8; lane++) {
+        data_ptrs[lane] = buffers[lane];
+        pre_term_ptrs[lane] = nullptr;
+        term_ptrs[lane] = t1[lane];
+        output_ptrs[lane] = final_hash[lane];
+    }
+    crypto::Shabal256_avx2(data_ptrs, NONCE_SIZE, pre_term_ptrs, term_ptrs, output_ptrs);
+
+    // XOR final hash across entire buffer
+    for (int lane = 0; lane < 8; lane++) {
+        for (size_t i = 0; i < NONCE_SIZE; i++) {
+            buffers[lane][i] ^= final_hash[lane][i % HASH_SIZE];
+        }
+    }
+
+    // Shuffle each nonce to match plot file layout (same as GenerateNonces)
+    // This rearranges scoops so that scoop N is at offset N * SCOOP_SIZE
+    auto temp_buffer = static_cast<uint8_t*>(std::malloc(NONCE_SIZE));
+    if (!temp_buffer) {
+        return -2;
+    }
+
+    for (int lane = 0; lane < 8; lane++) {
+        // Copy raw nonce to temp
+        std::memcpy(temp_buffer, buffers[lane], NONCE_SIZE);
+
+        // Apply shuffle: scatter from temp to buffer
+        // For single nonce: target_nonce_count=1, target_offset=0, vector_size=1
+        if (unpack_shuffle_scatter(temp_buffer, NONCE_SIZE,
+                                   buffers[lane], NONCE_SIZE,
+                                   0, 1) != 0) {
+            std::free(temp_buffer);
+            return -3;
+        }
+    }
+
+    std::free(temp_buffer);
+    return 0;
+}
+
+#endif // ENABLE_AVX2
 
 } // namespace algorithms
 } // namespace pocx

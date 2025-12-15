@@ -65,6 +65,7 @@ add_library(bitcoin_consensus STATIC EXCLUDE_FROM_ALL
   $<$<BOOL:${ENABLE_POCX}>:pocx/algorithms/time_bending.cpp>
   $<$<BOOL:${ENABLE_POCX}>:pocx/consensus/proof.cpp>
   $<$<BOOL:${ENABLE_POCX}>:pocx/consensus/params.cpp>
+  $<$<BOOL:${ENABLE_POCX}>:pocx/consensus/batch_validation.cpp>
   $<$<BOOL:${ENABLE_POCX}>:pocx/algorithms/plot_generation.cpp>
   $<$<BOOL:${ENABLE_POCX}>:pocx/algorithms/quality.cpp>
   $<$<BOOL:${ENABLE_POCX}>:pocx/algorithms/encoding.cpp>
@@ -85,6 +86,16 @@ target_link_libraries(bitcoin_consensus
     bitcoin_crypto
     secp256k1
 )
+# Enable AVX2 for PoCX batch validation if available
+if(ENABLE_POCX AND HAVE_AVX2)
+  target_compile_definitions(bitcoin_consensus PRIVATE ENABLE_AVX2)
+  set_property(SOURCE pocx/consensus/batch_validation.cpp PROPERTY
+    COMPILE_OPTIONS ${AVX2_CXXFLAGS}
+  )
+  set_property(SOURCE pocx/algorithms/plot_generation.cpp PROPERTY
+    COMPILE_OPTIONS ${AVX2_CXXFLAGS}
+  )
+endif()
 
 if(WITH_ZMQ)
   add_subdirectory(zmq)

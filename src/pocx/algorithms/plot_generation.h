@@ -29,6 +29,27 @@ int GenerateNonces(
     uint64_t num_nonces
 );
 
+#ifdef ENABLE_AVX2
+/**
+ * Generate 8 nonces in parallel using AVX2.
+ *
+ * This function generates 8 independent nonces simultaneously using SIMD.
+ * Each nonce can have a different account_id, seed, and nonce value.
+ *
+ * @param buffers       Array of 8 output buffers (each NONCE_SIZE bytes)
+ * @param account_ids   Array of 8 account ID pointers (each 20 bytes)
+ * @param seeds         Array of 8 seed pointers (each 32 bytes)
+ * @param nonces        Array of 8 nonce values
+ * @return 0 on success, negative on error
+ */
+int GenerateNonces8_avx2(
+    uint8_t* buffers[8],
+    const uint8_t* account_ids[8],
+    const uint8_t* seeds[8],
+    const uint64_t nonces[8]
+);
+#endif
+
 } // namespace algorithms
 } // namespace pocx
 

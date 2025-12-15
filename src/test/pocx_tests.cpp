@@ -21,7 +21,12 @@ using namespace pocx::crypto;
 using namespace pocx::consensus;
 using namespace pocx::algorithms;
 
-BOOST_FIXTURE_TEST_SUITE(pocx_tests, BasicTestingSetup)
+// PoCX requires regtest for testing (mainnet is disabled)
+struct PoCXTestingSetup : BasicTestingSetup {
+    PoCXTestingSetup() : BasicTestingSetup{ChainType::REGTEST, {.extra_args = {"-regtest"}}} {}
+};
+
+BOOST_FIXTURE_TEST_SUITE(pocx_tests, PoCXTestingSetup)
 
 BOOST_AUTO_TEST_CASE(shabal256_testvectors)
 {

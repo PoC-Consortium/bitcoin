@@ -72,6 +72,7 @@ add_executable(test_bitcoin
   peerman_tests.cpp
   pmt_tests.cpp
   $<$<BOOL:${ENABLE_POCX}>:pocx_tests.cpp>
+  $<$<BOOL:${ENABLE_POCX}>:pocx_avx2_tests.cpp>
   policy_fee_tests.cpp
   policyestimator_tests.cpp
   pool_tests.cpp
@@ -161,6 +162,11 @@ target_link_libraries(test_bitcoin
   Boost::headers
   libevent::extra
 )
+
+# Enable AVX2 tests when AVX2 is available
+if(HAVE_AVX2)
+  target_compile_definitions(test_bitcoin PRIVATE ENABLE_AVX2)
+endif()
 
 if(ENABLE_WALLET)
   add_subdirectory(${PROJECT_SOURCE_DIR}/src/wallet/test wallet)
