@@ -96,6 +96,10 @@ if(ENABLE_POCX AND HAVE_AVX2)
     COMPILE_OPTIONS ${AVX2_CXXFLAGS}
   )
 endif()
+# Enable SSE2 for PoCX batch validation (baseline for x86-64)
+if(ENABLE_POCX AND CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|AMD64|i[3-6]86")
+  target_compile_definitions(bitcoin_consensus PRIVATE ENABLE_SSE2)
+endif()
 
 if(WITH_ZMQ)
   add_subdirectory(zmq)

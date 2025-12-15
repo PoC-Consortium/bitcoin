@@ -72,7 +72,7 @@ add_executable(test_bitcoin
   peerman_tests.cpp
   pmt_tests.cpp
   $<$<BOOL:${ENABLE_POCX}>:pocx_tests.cpp>
-  $<$<BOOL:${ENABLE_POCX}>:pocx_avx2_tests.cpp>
+  $<$<BOOL:${ENABLE_POCX}>:pocx_simd_tests.cpp>
   policy_fee_tests.cpp
   policyestimator_tests.cpp
   pool_tests.cpp
@@ -166,6 +166,11 @@ target_link_libraries(test_bitcoin
 # Enable AVX2 tests when AVX2 is available
 if(HAVE_AVX2)
   target_compile_definitions(test_bitcoin PRIVATE ENABLE_AVX2)
+endif()
+
+# Enable SSE2 tests (SSE2 is baseline for x86-64)
+if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|AMD64|i[3-6]86")
+  target_compile_definitions(test_bitcoin PRIVATE ENABLE_SSE2)
 endif()
 
 if(ENABLE_WALLET)

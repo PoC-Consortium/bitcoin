@@ -50,6 +50,27 @@ int GenerateNonces8_avx2(
 );
 #endif
 
+#ifdef ENABLE_SSE2
+/**
+ * Generate 4 nonces in parallel using SSE2.
+ *
+ * This function generates 4 independent nonces simultaneously using SIMD.
+ * Each nonce can have a different account_id, seed, and nonce value.
+ *
+ * @param buffers       Array of 4 output buffers (each NONCE_SIZE bytes)
+ * @param account_ids   Array of 4 account ID pointers (each 20 bytes)
+ * @param seeds         Array of 4 seed pointers (each 32 bytes)
+ * @param nonces        Array of 4 nonce values
+ * @return 0 on success, negative on error
+ */
+int GenerateNonces4_sse2(
+    uint8_t* buffers[4],
+    const uint8_t* account_ids[4],
+    const uint8_t* seeds[4],
+    const uint64_t nonces[4]
+);
+#endif
+
 } // namespace algorithms
 } // namespace pocx
 

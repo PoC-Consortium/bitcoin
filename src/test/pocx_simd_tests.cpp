@@ -4,6 +4,7 @@
 
 #include <pocx/crypto/shabal256.h>
 #include <pocx/crypto/shabal256_avx2.h>
+#include <pocx/crypto/shabal256_sse2.h>
 #include <pocx/consensus/batch_validation.h>
 #include <pocx/consensus/proof.h>
 #include <pocx/consensus/signature.h>
@@ -28,7 +29,7 @@ struct PoCXTestingSetup : BasicTestingSetup {
     PoCXTestingSetup() : BasicTestingSetup{ChainType::REGTEST, {.extra_args = {"-regtest"}}} {}
 };
 
-BOOST_FIXTURE_TEST_SUITE(pocx_avx2_tests, PoCXTestingSetup)
+BOOST_FIXTURE_TEST_SUITE(pocx_simd_tests, PoCXTestingSetup)
 
 BOOST_AUTO_TEST_CASE(avx2_detection)
 {
@@ -801,5 +802,249 @@ BOOST_AUTO_TEST_CASE(batch_validation_uint256_byte_order)
     BOOST_TEST_MESSAGE("  Batch (reversed):  " << batch_result_correct.quality << " - MATCH");
     BOOST_TEST_MESSAGE("  Batch (raw):       " << wrong_quality << " - MISMATCH (expected)");
 }
+
+// ============================================================================
+// SSE2 Tests
+// ============================================================================
+
+BOOST_AUTO_TEST_CASE(sse2_detection)
+{
+    // Just test that detection works without crashing
+    bool have_sse2 = HaveSSE2();
+    BOOST_TEST_MESSAGE("SSE2 available: " << (have_sse2 ? "yes" : "no"));
+}
+
+#ifdef ENABLE_SSE2
+
+BOOST_AUTO_TEST_CASE(generate_nonces_sse2_matches_scalar)
+{
+    // Critical test: Compare GenerateNonces4_sse2 output with GenerateNonces output byte-by-byte
+    // This ensures the SSE2 nonce generation produces identical nonces to scalar
+
+    if (!HaveSSE2()) {
+        BOOST_TEST_MESSAGE("Skipping SSE2 test - SSE2 not available");
+        return;
+    }
+
+    // Test with 4 different account/seed/nonce combinations
+    uint8_t account_ids[4][20];
+    uint8_t seeds[4][32];
+    uint64_t nonces[4];
+
+    std::mt19937 rng(0x55E2FACE);
+
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 20; j++) {
+            account_ids[i][j] = static_cast<uint8_t>(rng() & 0xFF);
+        }
+        for (int j = 0; j < 32; j++) {
+            seeds[i][j] = static_cast<uint8_t>(rng() & 0xFF);
+        }
+        nonces[i] = rng() % 100000;
+    }
+
+    // Generate nonces with scalar GenerateNonces
+    uint8_t scalar_buffers[4][pocx::algorithms::NONCE_SIZE];
+    for (int i = 0; i < 4; i++) {
+        int ret = pocx::algorithms::GenerateNonces(
+            scalar_buffers[i], pocx::algorithms::NONCE_SIZE, 0,
+            account_ids[i], seeds[i], nonces[i], 1
+        );
+        BOOST_REQUIRE_EQUAL(ret, 0);
+    }
+
+    // Generate nonces with SSE2
+    uint8_t sse2_buffers[4][pocx::algorithms::NONCE_SIZE];
+    uint8_t* buffer_ptrs[4];
+    const uint8_t* account_ptrs[4];
+    const uint8_t* seed_ptrs[4];
+
+    for (int i = 0; i < 4; i++) {
+        buffer_ptrs[i] = sse2_buffers[i];
+        account_ptrs[i] = account_ids[i];
+        seed_ptrs[i] = seeds[i];
+    }
+
+    int ret = pocx::algorithms::GenerateNonces4_sse2(buffer_ptrs, account_ptrs, seed_ptrs, nonces);
+    BOOST_REQUIRE_EQUAL(ret, 0);
+
+    // Compare byte-by-byte
+    int mismatches = 0;
+    for (int i = 0; i < 4; i++) {
+        if (std::memcmp(scalar_buffers[i], sse2_buffers[i], pocx::algorithms::NONCE_SIZE) != 0) {
+            mismatches++;
+            // Find first mismatch
+            for (size_t j = 0; j < pocx::algorithms::NONCE_SIZE; j++) {
+                if (scalar_buffers[i][j] != sse2_buffers[i][j]) {
+                    BOOST_ERROR("Nonce " << i << " mismatch at byte " << j
+                        << ": scalar=0x" << std::hex << (int)scalar_buffers[i][j]
+                        << " sse2=0x" << (int)sse2_buffers[i][j] << std::dec);
+                    break;
+                }
+            }
+        }
+    }
+    BOOST_CHECK_EQUAL(mismatches, 0);
+    BOOST_TEST_MESSAGE("GenerateNonces4_sse2 matches scalar GenerateNonces for all 4 nonces");
+}
+
+BOOST_AUTO_TEST_CASE(shabal256_sse2_matches_scalar)
+{
+    // Skip if SSE2 not available
+    if (!HaveSSE2()) {
+        BOOST_TEST_MESSAGE("Skipping SSE2 test - SSE2 not available");
+        return;
+    }
+
+    // Create 4 different test inputs
+    uint8_t data[4][64];
+    uint32_t term[4][16];
+    uint8_t output_scalar[4][32];
+    uint8_t output_sse2[4][32];
+
+    std::mt19937 rng(54321); // Fixed seed for reproducibility
+
+    for (int i = 0; i < 4; i++) {
+        // Fill with pseudo-random data
+        for (int j = 0; j < 64; j++) {
+            data[i][j] = static_cast<uint8_t>(rng() & 0xFF);
+        }
+        // Create termination block
+        std::memset(term[i], 0, sizeof(term[i]));
+        term[i][0] = 0x80;
+
+        // Scalar computation
+        Shabal256(data[i], 64, nullptr, term[i], output_scalar[i]);
+    }
+
+    // SSE2 computation
+    const uint8_t* data_ptrs[4];
+    const uint32_t* term_ptrs[4];
+    uint8_t* output_ptrs[4];
+
+    for (int i = 0; i < 4; i++) {
+        data_ptrs[i] = data[i];
+        term_ptrs[i] = term[i];
+        output_ptrs[i] = output_sse2[i];
+    }
+
+    const uint32_t* pre_term_ptrs[4] = {nullptr, nullptr, nullptr, nullptr};
+
+    Shabal256_sse2(data_ptrs, 64, pre_term_ptrs, term_ptrs, output_ptrs);
+
+    // Compare results
+    for (int i = 0; i < 4; i++) {
+        BOOST_CHECK_MESSAGE(
+            std::memcmp(output_scalar[i], output_sse2[i], 32) == 0,
+            "SSE2 output mismatch at lane " << i
+        );
+    }
+}
+
+BOOST_AUTO_TEST_CASE(shabal256_sse2_with_preterm)
+{
+    // Skip if SSE2 not available
+    if (!HaveSSE2()) {
+        BOOST_TEST_MESSAGE("Skipping SSE2 test - SSE2 not available");
+        return;
+    }
+
+    // Test with pre-termination blocks (like in nonce generation)
+    uint8_t data[4][64];
+    uint32_t pre_term[4][16];
+    uint32_t term[4][16];
+    uint8_t output_scalar[4][32];
+    uint8_t output_sse2[4][32];
+
+    std::mt19937 rng(98765);
+
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 64; j++) {
+            data[i][j] = static_cast<uint8_t>(rng() & 0xFF);
+        }
+        for (int j = 0; j < 16; j++) {
+            pre_term[i][j] = rng();
+            term[i][j] = rng();
+        }
+        term[i][0] |= 0x80; // Ensure padding bit
+
+        // Scalar computation with pre_term
+        Shabal256(data[i], 64, pre_term[i], term[i], output_scalar[i]);
+    }
+
+    // SSE2 computation
+    const uint8_t* data_ptrs[4];
+    const uint32_t* pre_term_ptrs[4];
+    const uint32_t* term_ptrs[4];
+    uint8_t* output_ptrs[4];
+
+    for (int i = 0; i < 4; i++) {
+        data_ptrs[i] = data[i];
+        pre_term_ptrs[i] = pre_term[i];
+        term_ptrs[i] = term[i];
+        output_ptrs[i] = output_sse2[i];
+    }
+
+    Shabal256_sse2(data_ptrs, 64, pre_term_ptrs, term_ptrs, output_ptrs);
+
+    // Compare results
+    for (int i = 0; i < 4; i++) {
+        BOOST_CHECK_MESSAGE(
+            std::memcmp(output_scalar[i], output_sse2[i], 32) == 0,
+            "SSE2 output with pre_term mismatch at lane " << i
+        );
+    }
+}
+
+BOOST_AUTO_TEST_CASE(shabal256_sse2_known_vectors)
+{
+    // Skip if SSE2 not available
+    if (!HaveSSE2()) {
+        BOOST_TEST_MESSAGE("Skipping SSE2 test - SSE2 not available");
+        return;
+    }
+
+    // Use same test vector as scalar test
+    static const uint8_t EXPECTED[32] = {
+        0xDA, 0x8F, 0x08, 0xC0, 0x2A, 0x67, 0xBA, 0x9A,
+        0x56, 0xBD, 0xD0, 0x79, 0x8E, 0x48, 0xAE, 0x07,
+        0x14, 0x21, 0x5E, 0x09, 0x3B, 0x5B, 0x85, 0x06,
+        0x49, 0xA3, 0x77, 0x18, 0x99, 0x3F, 0x54, 0xA2
+    };
+
+    // Same input 4 times
+    uint8_t data[4][64];
+    uint32_t term[4][16];
+    uint8_t output[4][32];
+
+    for (int i = 0; i < 4; i++) {
+        std::memset(data[i], 0, 64);
+        std::memset(term[i], 0, sizeof(term[i]));
+        term[i][0] = 0x80;
+    }
+
+    const uint8_t* data_ptrs[4];
+    const uint32_t* term_ptrs[4];
+    uint8_t* output_ptrs[4];
+    const uint32_t* pre_term_ptrs[4] = {nullptr, nullptr, nullptr, nullptr};
+
+    for (int i = 0; i < 4; i++) {
+        data_ptrs[i] = data[i];
+        term_ptrs[i] = term[i];
+        output_ptrs[i] = output[i];
+    }
+
+    Shabal256_sse2(data_ptrs, 64, pre_term_ptrs, term_ptrs, output_ptrs);
+
+    // All lanes should produce the same known result
+    for (int i = 0; i < 4; i++) {
+        BOOST_CHECK_MESSAGE(
+            std::memcmp(output[i], EXPECTED, 32) == 0,
+            "SSE2 known vector mismatch at lane " << i
+        );
+    }
+}
+
+#endif // ENABLE_SSE2
 
 BOOST_AUTO_TEST_SUITE_END()

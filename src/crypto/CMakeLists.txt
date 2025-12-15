@@ -36,6 +36,13 @@ if(ENABLE_POCX)
       COMPILE_OPTIONS ${AVX2_CXXFLAGS}
     )
   endif()
+  # Add PoCX SSE2 sources (SSE2 is baseline for x86-64, no special flags needed)
+  if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|AMD64|i[3-6]86")
+    target_sources(bitcoin_crypto PRIVATE
+      ../pocx/crypto/shabal256_sse2.cpp
+    )
+    target_compile_definitions(bitcoin_crypto PRIVATE ENABLE_SSE2)
+  endif()
 endif()
 
 target_link_libraries(bitcoin_crypto
