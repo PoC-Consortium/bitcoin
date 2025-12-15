@@ -138,7 +138,11 @@ bool Intro::showIfNeeded(bool& did_show_intro, int64_t& prune_MiB)
         /* Use selectParams here to guarantee Params() can be used by node interface */
         try {
             SelectParams(gArgs.GetChainType());
-        } catch (const std::exception&) {
+        } catch (const std::exception& e) {
+#ifdef ENABLE_POCX
+            // #POCXTODO: Remove this before mainnet launch!
+            QMessageBox::critical(nullptr, CLIENT_NAME, QString::fromStdString(e.what()));
+#endif
             return false;
         }
 

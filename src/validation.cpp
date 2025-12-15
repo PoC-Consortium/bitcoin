@@ -6098,6 +6098,13 @@ double ChainstateManager::GuessVerificationProgress(const CBlockIndex* pindex) c
         return 0.0;
     }
 
+#ifdef ENABLE_POCX
+    // Fallback to height-based progress when ChainTxData not configured
+    if (data.tx_count == 0 && data.dTxRate == 0 && m_best_header) {
+        return std::min<double>(static_cast<double>(pindex->nHeight) / m_best_header->nHeight, 1.0);
+    }
+#endif
+
     if (pindex->m_chain_tx_count == 0) {
         LogDebug(BCLog::VALIDATION, "Block %d has unset m_chain_tx_count. Unable to estimate verification progress.\n", pindex->nHeight);
         return 0.0;
