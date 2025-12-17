@@ -186,3 +186,27 @@ void Shabal256(const uint8_t* data, size_t len, const uint32_t* pre_term, const 
 
 } // namespace crypto
 } // namespace pocx
+
+// Provide fallback implementations of HaveAVX2() and HaveSSE2() for non-x86 architectures.
+// On x86, these are defined in shabal256_avx2.cpp and shabal256_sse2.cpp respectively.
+// On ARM and other architectures, those files are not compiled, so we need stubs here.
+#if !defined(__x86_64__) && !defined(__amd64__) && !defined(__i386__) && !defined(_M_X64) && !defined(_M_IX86)
+
+#include <pocx/crypto/shabal256_avx2.h>
+#include <pocx/crypto/shabal256_sse2.h>
+
+namespace pocx {
+namespace crypto {
+
+bool HaveAVX2() {
+    return false;
+}
+
+bool HaveSSE2() {
+    return false;
+}
+
+} // namespace crypto
+} // namespace pocx
+
+#endif // Non-x86 architectures
