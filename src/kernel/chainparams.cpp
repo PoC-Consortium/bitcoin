@@ -27,6 +27,7 @@
 #include <type_traits>
 #ifdef ENABLE_POCX
 #include <pocx/consensus/params.h>
+#include <pocx/pocx_seeds.h>
 #endif
 
 using namespace util::hex_literals;
@@ -441,16 +442,19 @@ public:
 
         vFixedSeeds.clear();
         vSeeds.clear();
-#ifndef ENABLE_POCX
+#ifdef ENABLE_POCX
+        // PoCX testnet DNS seeds
+        for (const auto& seed : pocx_testnet_dns_seeds) {
+            vSeeds.emplace_back(seed);
+        }
+#else
         // nodes with support for servicebits filtering should be at the top
         vSeeds.emplace_back("testnet-seed.bitcoin.jonasschnelli.ch.");
         vSeeds.emplace_back("seed.tbtc.petertodd.net.");
         vSeeds.emplace_back("seed.testnet.bitcoin.sprovoost.nl.");
         vSeeds.emplace_back("testnet-seed.bluematt.me."); // Just a static list of stable node(s), only supports x9
         vSeeds.emplace_back("seed.testnet.achownodes.xyz."); // Ava Chow, only supports x1, x5, x9, x49, x809, x849, xd, x400, x404, x408, x448, xc08, xc48, x40c
-
 #endif
-        // PoCX: No DNS seeds for single wallet testing
 
 #ifdef ENABLE_POCX
         // PoCX testnet address prefixes (distinct from Bitcoin)
@@ -467,8 +471,8 @@ public:
 
 #ifdef ENABLE_POCX
         bech32_hrp = "tpocx";
-        // PoCX: No fixed seeds for single wallet testing
-        vFixedSeeds.clear();
+        // PoCX testnet fixed seeds
+        vFixedSeeds = std::vector<uint8_t>(std::begin(pocx_seed_testnet), std::end(pocx_seed_testnet));
 #else
         bech32_hrp = "tb";
         vFixedSeeds = std::vector<uint8_t>(std::begin(chainparams_seed_test), std::end(chainparams_seed_test));
