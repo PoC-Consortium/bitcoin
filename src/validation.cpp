@@ -26,6 +26,7 @@
 #include <pocx/consensus/difficulty.h>
 #include <pocx/assignments/opcodes.h>
 #include <pocx/algorithms/time_bending.h>
+#include <pocx/mining/scheduler.h>
 #endif
 #include <cuckoocache.h>
 #include <flatfile.h>
@@ -4596,7 +4597,21 @@ static bool ContextualCheckBlockHeader(const CBlockHeader& block, BlockValidatio
                                 strprintf("poc_time %llu exceeds elapsed time %u since previous block",
                                          poc_time, elapsed_time));
         }
-    }    
+
+        // Defensive forging check - after PoC validation and time constraints passed
+        // If we have a better solution, signal forge and reject this block
+        // Skip for quality=0 (templates) - we can never beat quality 0, and it avoids log noise
+        if (block.pocxProof.quality > 0) {
+            if (auto* scheduler = pocx::mining::GetPoCXScheduler()) {
+                if (scheduler->TryDefensiveForge(block.hashPrevBlock, block.pocxProof.quality)) {
+                    return state.Invalid(BlockValidationResult::BLOCK_INVALID_HEADER,
+                                        "pocx-defensive-forge",
+                                        strprintf("Rejecting block with quality %llu - forging better solution",
+                                                 block.pocxProof.quality));
+                }
+            }
+        }
+    }
 #else
     if (block.nBits != GetNextWorkRequired(pindexPrev, &block, consensusParams))
         return state.Invalid(BlockValidationResult::BLOCK_INVALID_HEADER, "bad-diffbits", "incorrect proof of work");

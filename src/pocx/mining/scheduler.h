@@ -55,7 +55,7 @@ private:
     std::mutex m_queue_mutex;
     std::condition_variable m_queue_cv;
 
-    // Current forging state (accessed only by worker thread - no mutex needed)
+    // Current forging state - protected by m_forging_mutex for cross-thread access
     std::unique_ptr<ForgingState> m_current_forging;
 
     // Single persistent worker thread
@@ -65,14 +65,15 @@ private:
     interfaces::Mining* m_mining;
     PoCXBlockBuilder m_block_builder;
 
+    // Defensive forging - mutex protects m_current_forging for cross-thread access
+    mutable std::mutex m_forging_mutex;
+    std::atomic<bool> m_defensive_forge_requested{false};
+
     void WorkerThreadFunc();
     void ProcessSubmission(const NonceSubmission& submission);
     void WaitForDeadlineOrNewSubmission();
-    bool ForgeBlock();
+    bool ForgeBlock(bool defensive = false);
     bool SubmitForgedBlock(const CBlock& block);
-
-    // Defensive forging
-    void CheckDefensiveForging(const node::NodeContext& node_context, const CBlockIndex& new_tip);
 
 public:
     explicit PoCXScheduler(interfaces::Mining& mining);
@@ -88,7 +89,26 @@ public:
                      const uint256& generation_signature);
 
     void Shutdown();
+
+    /**
+     * Attempt defensive forge if we have a better solution.
+     * Called by validation when a competing block arrives.
+     * Thread-safe, non-blocking - signals worker thread to forge.
+     *
+     * @param tip_hash The tip both blocks are building on
+     * @param incoming_quality The competing block's quality
+     * @return true if we have better quality and will forge (caller should reject incoming block)
+     *         false if no defense needed (caller should accept incoming block)
+     */
+    bool TryDefensiveForge(const uint256& tip_hash, uint64_t incoming_quality);
 };
+
+/**
+ * Get the global PoCX scheduler instance.
+ * Returns nullptr if scheduler not initialized (mining not started).
+ * Thread-safe.
+ */
+PoCXScheduler* GetPoCXScheduler();
 
 } // namespace mining
 } // namespace pocx
