@@ -126,10 +126,13 @@ void CBlockIndex::BuildSkip()
 arith_uint256 GetBlockProof(const CBlockIndex& block)
 {
 #ifdef ENABLE_POCX
-    // work = (2^64 / base_target)
+    // work = (2^64 / nNextBaseTarget)
     const arith_uint256 TWO64 = arith_uint256(1) << 64;
-    arith_uint256 work = TWO64 / arith_uint256(block.nBaseTarget);
-    return work;
+    if (block.nNextBaseTarget > 0) {
+        return TWO64 / arith_uint256(block.nNextBaseTarget);
+    }
+    // Fallback for temp objects (headerssync)
+    return TWO64 / arith_uint256(block.nBaseTarget);
 #else
     arith_uint256 bnTarget;
     bool fNegative;

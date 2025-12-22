@@ -4565,7 +4565,7 @@ static bool ContextualCheckBlockHeader(const CBlockHeader& block, BlockValidatio
     }
 
     // Step 3: Validate base target matches expected difficulty
-    uint64_t expected_base_target = pocx::consensus::GetNextBaseTarget(pindexPrev, consensusParams);
+    uint64_t expected_base_target = pindexPrev->nNextBaseTarget;
 
     if (block.nBaseTarget != expected_base_target) {
         LogPrintf("PoCX: Base target mismatch - block has %llu, expected %llu\n",

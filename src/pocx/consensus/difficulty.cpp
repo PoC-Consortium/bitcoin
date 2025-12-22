@@ -4,6 +4,7 @@
 
 #include <pocx/consensus/difficulty.h>
 #include <pocx/consensus/params.h>
+#include <pocx/algorithms/time_bending.h>
 #include <chain.h>
 #include <hash.h>
 #include <span.h>
@@ -33,12 +34,40 @@ uint64_t GetNextBaseTarget(const CBlockIndex* pindexLast, const Consensus::Param
 
     // Use GetAncestor for O(1) lookup like Bitcoin
     const int lookback = std::min(params.nPoCXRollingWindowSize, pindexLast->nHeight);
-    const CBlockIndex* pindexFirst = pindexLast->GetAncestor(pindexLast->nHeight - lookback + 1);
+    const CBlockIndex* pindexFirst = pindexLast->GetAncestor(pindexLast->nHeight - lookback);
     assert(pindexFirst);
 
-    // Calculate actual timespan for the window
-    int64_t actual_timespan = pindexLast->GetBlockTime() - pindexFirst->GetBlockTime();
+    // Wall-clock timespan (O(1) lookup)
+    int64_t total_wait = pindexLast->GetBlockTime() - pindexFirst->GetBlockTime();
     int64_t target_timespan = static_cast<int64_t>(lookback) * params.nPowTargetSpacing;
+
+    // Sum components over window for hybrid formula
+    uint64_t total_bended = 0;
+    uint64_t total_quality_adj = 0;
+
+    // Calculate weighted running average like Burstcoin
+    // Recent blocks have more weight: newest gets ~24x, oldest gets ~1x
+    const CBlockIndex* walker = pindexLast;
+    uint64_t avg_base_target = walker->nBaseTarget;
+
+    for (int i = 0; i < lookback; i++) {
+        total_bended += pocx::algorithms::CalculateTimeBendedDeadline(
+            walker->pocxProof.quality, walker->nBaseTarget, params.nPowTargetSpacing);
+        total_quality_adj += walker->pocxProof.quality / walker->nBaseTarget;
+
+        // Update weighted average for all blocks after the first
+        if (i > 0) {
+            // Weighted running average: avg = (avg * (i+1) + new_value) / (i+2)
+            // Use 128-bit intermediate to prevent overflow
+            avg_base_target = static_cast<uint64_t>(
+                (static_cast<__uint128_t>(avg_base_target) * (i + 1) + walker->nBaseTarget) / (i + 2));
+        }
+
+        walker = walker->pprev;
+    }
+
+    // Hybrid formula: wall_clock - Σ(bended) + Σ(quality_adj)
+    int64_t actual_timespan = total_wait - static_cast<int64_t>(total_bended) + static_cast<int64_t>(total_quality_adj);
 
     // Apply time variance limits (factor 2)
     int64_t min_timespan = target_timespan / 2;
@@ -51,15 +80,6 @@ uint64_t GetNextBaseTarget(const CBlockIndex* pindexLast, const Consensus::Param
     if (actual_timespan > target_timespan * 2) {
         actual_timespan = target_timespan * 2;
     }
-
-    // Calculate average base target over the window
-    uint64_t total_base_target = 0;
-    const CBlockIndex* walker = pindexLast;
-    for (int i = 0; i < lookback && walker; i++) {
-        total_base_target += walker->nBaseTarget;
-        walker = walker->pprev;
-    }
-    uint64_t avg_base_target = total_base_target / lookback;
 
     // Calculate base target adjustment using average
     uint64_t new_base_target = avg_base_target * actual_timespan / target_timespan;
@@ -118,7 +138,7 @@ NewBlockContext GetNewBlockContext(const ChainstateManager& chainman) {
     return NewBlockContext{
         .height = tip->nHeight + 1,
         .generation_signature = GetNextGenerationSignature(tip),
-        .base_target = GetNextBaseTarget(tip, chainman.GetParams().GetConsensus()),
+        .base_target = tip->nNextBaseTarget,
         .block_hash = tip->GetBlockHash()
     };
 }

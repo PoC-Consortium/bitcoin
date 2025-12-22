@@ -194,6 +194,7 @@ public:
 #ifdef ENABLE_POCX
     uint256 generationSignature{};
     uint64_t nBaseTarget{0};
+    uint64_t nNextBaseTarget{0};  // Effective base target from hybrid formula (for work calculation)
     PoCXProof pocxProof{};
     
     // Block signature fields
@@ -435,6 +436,7 @@ public:
         // nHeight is already serialized above at line 414
         READWRITE(obj.generationSignature);
         READWRITE(obj.nBaseTarget);
+        READWRITE(obj.nNextBaseTarget);
         READWRITE(obj.pocxProof);
         READWRITE(obj.vchPubKey);
         READWRITE(obj.vchSignature);

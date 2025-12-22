@@ -184,7 +184,7 @@ std::unique_ptr<CBlockTemplate> BlockAssembler::CreateNewBlock()
 #ifdef ENABLE_POCX
     pblock->nHeight = nHeight;
     pblock->generationSignature = pocx::consensus::GetNextGenerationSignature(pindexPrev);
-    pblock->nBaseTarget = pocx::consensus::GetNextBaseTarget(pindexPrev, chainparams.GetConsensus());
+    pblock->nBaseTarget = pindexPrev->nNextBaseTarget;
     pblock->pocxProof.SetNull();
     pblock->vchPubKey.fill(0);
     pblock->vchSignature.fill(0);

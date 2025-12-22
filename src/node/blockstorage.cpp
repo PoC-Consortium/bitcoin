@@ -38,6 +38,10 @@
 #include <util/translation.h>
 #include <validation.h>
 
+#ifdef ENABLE_POCX
+#include <pocx/consensus/difficulty.h>
+#endif
+
 #include <cstddef>
 #include <map>
 #include <optional>
@@ -132,6 +136,7 @@ bool BlockTreeDB::LoadBlockIndexGuts(const Consensus::Params& consensusParams, s
 #ifdef ENABLE_POCX
                 pindexNew->generationSignature = diskindex.generationSignature;
                 pindexNew->nBaseTarget    = diskindex.nBaseTarget;
+                pindexNew->nNextBaseTarget = diskindex.nNextBaseTarget;
                 pindexNew->pocxProof      = diskindex.pocxProof;
                 pindexNew->vchPubKey      = diskindex.vchPubKey;
                 pindexNew->vchSignature   = diskindex.vchSignature;
@@ -236,7 +241,11 @@ CBlockIndex* BlockManager::AddToBlockIndex(const CBlockHeader& block, CBlockInde
         pindexNew->nHeight = pindexNew->pprev->nHeight + 1;
         pindexNew->BuildSkip();
     }
-    pindexNew->nTimeMax = (pindexNew->pprev ? std::max(pindexNew->pprev->nTimeMax, pindexNew->nTime) : pindexNew->nTime);    
+#ifdef ENABLE_POCX
+    // Calculate nNextBaseTarget before GetBlockProof (uses hybrid formula for work calculation)
+    pindexNew->nNextBaseTarget = pocx::consensus::GetNextBaseTarget(pindexNew, GetConsensus());
+#endif
+    pindexNew->nTimeMax = (pindexNew->pprev ? std::max(pindexNew->pprev->nTimeMax, pindexNew->nTime) : pindexNew->nTime);
     pindexNew->nChainWork = (pindexNew->pprev ? pindexNew->pprev->nChainWork : 0) + GetBlockProof(*pindexNew);
     pindexNew->RaiseValidity(BLOCK_VALID_TREE);
     if (best_header == nullptr || best_header->nChainWork < pindexNew->nChainWork) {
