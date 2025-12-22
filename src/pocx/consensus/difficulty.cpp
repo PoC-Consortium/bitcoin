@@ -5,6 +5,7 @@
 #include <pocx/consensus/difficulty.h>
 #include <pocx/consensus/params.h>
 #include <pocx/algorithms/time_bending.h>
+#include <arith_uint256.h>
 #include <chain.h>
 #include <hash.h>
 #include <span.h>
@@ -58,9 +59,12 @@ uint64_t GetNextBaseTarget(const CBlockIndex* pindexLast, const Consensus::Param
         // Update weighted average for all blocks after the first
         if (i > 0) {
             // Weighted running average: avg = (avg * (i+1) + new_value) / (i+2)
-            // Use 128-bit intermediate to prevent overflow
-            avg_base_target = static_cast<uint64_t>(
-                (static_cast<__uint128_t>(avg_base_target) * (i + 1) + walker->nBaseTarget) / (i + 2));
+            // Use arith_uint256 for portable overflow-safe arithmetic (works on 32-bit ARM)
+            arith_uint256 wide_avg(avg_base_target);
+            wide_avg *= (i + 1);
+            wide_avg += walker->nBaseTarget;
+            wide_avg /= (i + 2);
+            avg_base_target = wide_avg.GetLow64();
         }
 
         walker = walker->pprev;
