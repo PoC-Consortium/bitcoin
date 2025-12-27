@@ -4598,13 +4598,15 @@ static bool ContextualCheckBlockHeader(const CBlockHeader& block, BlockValidatio
                                          poc_time, elapsed_time));
         }
 
-        // Defensive forging check - after PoC validation and time constraints passed
-        // If we have a better solution, signal forge and reject this block
-        // Skip for quality=0 (templates) - we can never beat quality 0, and it avoids log noise
+        // Defensive forging check - if we have a better solution, signal rush-forge
+        // and reject the incoming block to prevent race conditions.
+        // Use BLOCK_TIME_FUTURE to reject without punishing the peer - the block is valid,
+        // we just don't want it because we're forging a better one.
+        // Skip for quality=0 (templates) - we can never beat quality 0
         if (block.pocxProof.quality > 0) {
             if (auto* scheduler = pocx::mining::GetPoCXScheduler()) {
                 if (scheduler->TryDefensiveForge(block.hashPrevBlock, block.pocxProof.quality)) {
-                    return state.Invalid(BlockValidationResult::BLOCK_INVALID_HEADER,
+                    return state.Invalid(BlockValidationResult::BLOCK_TIME_FUTURE,
                                         "pocx-defensive-forge",
                                         strprintf("Rejecting block with quality %llu - forging better solution",
                                                  block.pocxProof.quality));
