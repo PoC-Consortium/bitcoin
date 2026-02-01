@@ -279,8 +279,6 @@ void BitcoinGUI::createActions()
     forgingAssignmentAction->setStatusTip(tr("Manage forging rights assignments for your plots"));
     forgingAssignmentAction->setToolTip(forgingAssignmentAction->statusTip());
     forgingAssignmentAction->setCheckable(true);
-    // Only show forging assignment tab when running as mining server
-    forgingAssignmentAction->setVisible(gArgs.GetBoolArg("-miningserver", false));
     tabGroup->addAction(forgingAssignmentAction);
 #endif
 
