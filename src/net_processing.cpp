@@ -2481,11 +2481,13 @@ void PeerManagerImpl::SendBlockTransactions(CNode& pfrom, Peer& peer, const CBlo
 
 bool PeerManagerImpl::CheckHeadersPoW(const std::vector<CBlockHeader>& headers, const Consensus::Params& consensusParams, Peer& peer)
 {
+#ifndef ENABLE_POCX
     // Do these headers have proof-of-work matching what's claimed?
     if (!HasValidProofOfWork(headers, consensusParams)) {
         Misbehaving(peer, "header with invalid proof of work");
         return false;
     }
+#endif
 
     // Are these headers connected to each other?
     if (!CheckHeadersAreContinuous(headers)) {

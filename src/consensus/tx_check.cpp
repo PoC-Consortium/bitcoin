@@ -8,6 +8,10 @@
 #include <primitives/transaction.h>
 #include <consensus/validation.h>
 
+#ifdef ENABLE_POCX
+#include <pocx/assignments/opcodes.h>
+#endif
+
 bool CheckTransaction(const CTransaction& tx, TxValidationState& state)
 {
     // Basic checks that don't depend on any context
@@ -55,6 +59,22 @@ bool CheckTransaction(const CTransaction& tx, TxValidationState& state)
             if (txin.prevout.IsNull())
                 return state.Invalid(TxValidationResult::TX_CONSENSUS, "bad-txns-prevout-null");
     }
+
+#ifdef ENABLE_POCX
+    // Check: Maximum one POCX OP_RETURN per transaction
+    int pocx_opreturn_count = 0;
+    for (const auto& output : tx.vout) {
+        if (pocx::assignments::IsAssignmentOpReturn(output) ||
+            pocx::assignments::IsRevocationOpReturn(output)) {
+            pocx_opreturn_count++;
+            if (pocx_opreturn_count > 1) {
+                return state.Invalid(TxValidationResult::TX_CONSENSUS,
+                                   "multiple-pocx-opreturns",
+                                   "Transaction contains multiple PoCX OP_RETURNs");
+            }
+        }
+    }
+#endif
 
     return true;
 }
