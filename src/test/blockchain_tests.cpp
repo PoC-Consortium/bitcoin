@@ -15,6 +15,7 @@
 
 using util::ToString;
 
+#ifndef ENABLE_POCX
 /* Equality between doubles is imprecise. Comparison should be done
  * with a small threshold of tolerance, rather than exact equality.
  */
@@ -50,9 +51,11 @@ static void TestDifficulty(uint32_t nbits, double expected_difficulty)
 
     RejectDifficultyMismatch(difficulty, expected_difficulty);
 }
+#endif
 
 BOOST_FIXTURE_TEST_SUITE(blockchain_tests, BasicTestingSetup)
 
+#ifndef ENABLE_POCX
 BOOST_AUTO_TEST_CASE(get_difficulty_for_very_low_target)
 {
     TestDifficulty(0x1f111111, 0.000001);
@@ -77,6 +80,7 @@ BOOST_AUTO_TEST_CASE(get_difficulty_for_very_high_target)
 {
     TestDifficulty(0x12345678, 5913134931067755359633408.0);
 }
+#endif
 
 //! Prune chain from height down to genesis block and check that
 //! GetPruneHeight returns the correct value

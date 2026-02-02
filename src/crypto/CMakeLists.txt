@@ -21,6 +21,32 @@ add_library(bitcoin_crypto STATIC EXCLUDE_FROM_ALL
   siphash.cpp
   ../support/cleanse.cpp
 )
+# Add PoCX crypto sources when enabled
+if(ENABLE_POCX)
+  target_sources(bitcoin_crypto PRIVATE
+    ../pocx/crypto/shabal256.cpp
+    ../pocx/crypto/shabal256_lite.cpp
+  )
+  # Add PoCX AVX2 sources if available
+  if(HAVE_AVX2)
+    target_sources(bitcoin_crypto PRIVATE
+      ../pocx/crypto/shabal256_avx2.cpp
+    )
+    set_property(SOURCE ../pocx/crypto/shabal256_avx2.cpp PROPERTY
+      COMPILE_OPTIONS ${AVX2_CXXFLAGS}
+    )
+  endif()
+  # Add PoCX SSE2 sources if SSE4.1 available (implies SSE2 support)
+  if(HAVE_SSE41)
+    target_sources(bitcoin_crypto PRIVATE
+      ../pocx/crypto/shabal256_sse2.cpp
+    )
+    set_property(SOURCE ../pocx/crypto/shabal256_sse2.cpp PROPERTY
+      COMPILE_OPTIONS ${SSE41_CXXFLAGS}
+    )
+    target_compile_definitions(bitcoin_crypto PRIVATE ENABLE_SSE2)
+  endif()
+endif()
 
 target_link_libraries(bitcoin_crypto
   PRIVATE

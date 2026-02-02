@@ -23,6 +23,10 @@
 
 #include <QLatin1String>
 
+#ifdef ENABLE_POCX
+#include <pocx/assignments/opcodes.h>
+#endif
+
 QString TransactionDesc::FormatTxStatus(const interfaces::WalletTxStatus& status, bool inMempool)
 {
     int depth = status.depth_in_main_chain;
@@ -277,6 +281,61 @@ QString TransactionDesc::toHTML(interfaces::Node& node, interfaces::Wallet& wall
         strHTML += "<br><b>" + tr("Message") + ":</b><br>" + GUIUtil::HtmlEscape(wtx.value_map["message"], true) + "<br>";
     if (wtx.value_map.count("comment") && !wtx.value_map["comment"].empty())
         strHTML += "<br><b>" + tr("Comment") + ":</b><br>" + GUIUtil::HtmlEscape(wtx.value_map["comment"], true) + "<br>";
+
+#ifdef ENABLE_POCX
+    // Check if this is a PoCX assignment or revocation transaction
+    for (const CTxOut& txout : wtx.tx->vout) {
+        if (pocx::assignments::IsAssignmentOpReturn(txout)) {
+            auto parsed = pocx::assignments::ParseAssignmentOpReturn(txout);
+            if (parsed.has_value()) {
+                const auto& [plot_addr_bytes, forge_addr_bytes] = parsed.value();
+
+                // Convert plot address
+                uint160 plot_hash;
+                std::copy(plot_addr_bytes.begin(), plot_addr_bytes.end(), plot_hash.begin());
+                std::string plot_address = EncodeDestination(WitnessV0KeyHash(plot_hash));
+
+                // Convert forging address
+                uint160 forge_hash;
+                std::copy(forge_addr_bytes.begin(), forge_addr_bytes.end(), forge_hash.begin());
+                std::string forge_address = EncodeDestination(WitnessV0KeyHash(forge_hash));
+
+                strHTML += "<b>" + tr("Assignment plot address") + ":</b> " + GUIUtil::HtmlEscape(plot_address) + "<br>";
+                strHTML += "<b>" + tr("Assignment forging address") + ":</b> " + GUIUtil::HtmlEscape(forge_address) + "<br>";
+
+                // Calculate activation height (assignment delay is 4 blocks)
+                if (status.is_in_main_chain && status.block_height > 0) {
+                    int activation_height = status.block_height + 4;
+                    strHTML += "<b>" + tr("Assignment activation height") + ":</b> " + QString::number(activation_height) + "<br>";
+                } else {
+                    strHTML += "<b>" + tr("Assignment activation height") + ":</b> " + tr("Pending confirmation") + "<br>";
+                }
+            }
+            break;
+        } else if (pocx::assignments::IsRevocationOpReturn(txout)) {
+            auto parsed = pocx::assignments::ParseRevocationOpReturn(txout);
+            if (parsed.has_value()) {
+                const auto& plot_addr_bytes = parsed.value();
+
+                // Convert plot address
+                uint160 plot_hash;
+                std::copy(plot_addr_bytes.begin(), plot_addr_bytes.end(), plot_hash.begin());
+                std::string plot_address = EncodeDestination(WitnessV0KeyHash(plot_hash));
+
+                strHTML += "<b>" + tr("Revocation plot address") + ":</b> " + GUIUtil::HtmlEscape(plot_address) + "<br>";
+
+                // Calculate revocation height (revocation delay is 4 blocks)
+                if (status.is_in_main_chain && status.block_height > 0) {
+                    int revocation_height = status.block_height + 4;
+                    strHTML += "<b>" + tr("Revocation effective height") + ":</b> " + QString::number(revocation_height) + "<br>";
+                } else {
+                    strHTML += "<b>" + tr("Revocation effective height") + ":</b> " + tr("Pending confirmation") + "<br>";
+                }
+            }
+            break;
+        }
+    }
+#endif
 
     strHTML += "<b>" + tr("Transaction ID") + ":</b> " + rec->getTxHash() + "<br>";
     strHTML += "<b>" + tr("Transaction total size") + ":</b> " + QString::number(wtx.tx->GetTotalSize()) + " bytes<br>";
