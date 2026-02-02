@@ -18,7 +18,11 @@
 #include <vector>
 
 // A compressed CBlockHeader, which leaves out the prevhash
+#ifdef ENABLE_POCX
+struct alignas(8) CompressedHeader {
+#else
 struct CompressedHeader {
+#endif
     // header
     int32_t nVersion{0};
     uint256 hashMerkleRoot;
@@ -246,7 +250,9 @@ private:
     const NodeId m_id;
 
     /** We use the consensus params in our anti-DoS calculations */
+#ifndef ENABLE_POCX
     const Consensus::Params& m_consensus_params;
+#endif
 
     /** Store the last block in our block index that the peer's chain builds from */
     const CBlockIndex* m_chain_start{nullptr};

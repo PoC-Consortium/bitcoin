@@ -2,8 +2,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef BITCOIN_POCX_SEEDS_H
-#define BITCOIN_POCX_SEEDS_H
+#ifndef BITCOIN_POCX_POCX_SEEDS_H
+#define BITCOIN_POCX_POCX_SEEDS_H
 
 #include <cstdint>
 #include <string>
@@ -28,9 +28,7 @@ inline const std::vector<std::string> pocx_mainnet_dns_seeds = {
     // TODO: Add mainnet DNS seeds before launch
 };
 
-// PoCX Mainnet Fixed Seeds (to be configured before mainnet launch)
-inline const uint8_t pocx_seed_main[] = {
-    // TODO: Add mainnet fixed seeds before launch
-};
+// #POCXTODO PoCX Mainnet Fixed Seeds (to be configured before mainnet launch)
+inline const uint8_t pocx_seed_main[] = {0x00};
 
-#endif // BITCOIN_POCX_SEEDS_H
+#endif // BITCOIN_POCX_POCX_SEEDS_H

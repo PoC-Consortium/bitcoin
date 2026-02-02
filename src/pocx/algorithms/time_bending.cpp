@@ -74,9 +74,9 @@ uint64_t CalculateTimeBendedDeadline(uint64_t quality, uint64_t base_target, uin
 
     arith_uint256 r = int_cuberoot_u256(V);
 
-    arith_uint256 numer = SCALE_Q * r;
-    arith_uint256 denom = arith_uint256(1) << (P + Q);
-    arith_uint256 rounded = (numer + (denom >> 1)) / denom;
+    arith_uint256 numerator = SCALE_Q * r;
+    arith_uint256 denominator = arith_uint256(1) << (P + Q);
+    arith_uint256 rounded = (numerator + (denominator >> 1)) / denominator;
 
     return rounded.GetLow64();
 }

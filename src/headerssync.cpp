@@ -31,7 +31,11 @@ static_assert(sizeof(CompressedHeader) == 48);
 HeadersSyncState::HeadersSyncState(NodeId id, const Consensus::Params& consensus_params,
         const CBlockIndex* chain_start, const arith_uint256& minimum_required_work) :
     m_commit_offset(FastRandomContext().randrange<unsigned>(HEADER_COMMITMENT_PERIOD)),
+#ifdef ENABLE_POCX
+    m_id(id),
+#else
     m_id(id), m_consensus_params(consensus_params),
+#endif
     m_chain_start(chain_start),
     m_minimum_required_work(minimum_required_work),
     m_current_chain_work(chain_start->nChainWork),
