@@ -8,7 +8,7 @@
 #include <span.h>
 
 class CRPCTable;
-struct CRPCCommand;
+class CRPCCommand;
 
 namespace pocx {
 namespace rpc {

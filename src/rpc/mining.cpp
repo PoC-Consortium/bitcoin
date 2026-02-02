@@ -176,22 +176,29 @@ static bool GenerateBlock(ChainstateManager& chainman, CBlock&& block, uint64_t&
         uint8_t account_id[20];
         std::copy(witness_program.begin(), witness_program.end(), account_id);
 
-        // Get previous block index
-        const CBlockIndex* pindexPrev = chainman.m_blockman.LookupBlockIndex(block.hashPrevBlock);
-        if (!pindexPrev) {
-            throw JSONRPCError(RPC_INTERNAL_ERROR, "Previous block not found");
-        }
-
         // Check forging assignment: reject if this address has assigned forging rights to someone else
         std::array<uint8_t, 20> account_array;
         std::copy(std::begin(account_id), std::end(account_id), account_array.begin());
 
-        const CCoinsViewCache& view = chainman.ActiveChainstate().CoinsTip();
-        std::array<uint8_t, 20> effective_signer = pocx::assignments::GetEffectiveSigner(
-            account_array,
-            block.nHeight,
-            view
-        );
+        std::array<uint8_t, 20> effective_signer;
+        int64_t prev_block_time;
+        {
+            LOCK(cs_main);
+
+            // Get previous block index
+            const CBlockIndex* pindexPrev = chainman.m_blockman.LookupBlockIndex(block.hashPrevBlock);
+            if (!pindexPrev) {
+                throw JSONRPCError(RPC_INTERNAL_ERROR, "Previous block not found");
+            }
+            prev_block_time = pindexPrev->GetBlockTime();
+
+            const CCoinsViewCache& view = chainman.ActiveChainstate().CoinsTip();
+            effective_signer = pocx::assignments::GetEffectiveSigner(
+                account_array,
+                block.nHeight,
+                view
+            );
+        }
 
         // If account has assigned forging to someone else, reject early with clear error
         if (effective_signer != account_array) {
@@ -215,8 +222,7 @@ static bool GenerateBlock(ChainstateManager& chainman, CBlock&& block, uint64_t&
             gen_sig_reversed[i] = block.generationSignature.data()[31 - i];
         }
 
-        // Get absolute times for forge time calculation (avoids signed/unsigned comparison)
-        int64_t prev_block_time = pindexPrev->GetBlockTime();
+        // Get current time for forge time calculation
         int64_t current_time = GetTime();
 
         // Try to find a nonce that can forge immediately
