@@ -10,6 +10,7 @@
 #include <pocx/consensus/proof.h>
 #include <test/util/setup_common.h>
 #include <crypto/sha256.h>
+#include <util/strencodings.h>
 
 
 #include <boost/test/unit_test.hpp>
@@ -66,7 +67,7 @@ BOOST_AUTO_TEST_CASE(shabal256_testvectors)
 
     uint8_t hash_b[32];
     const uint8_t* test_data_b = reinterpret_cast<const uint8_t*>(TEST_B_M1);
-    
+
     Shabal256(test_data_b, 64, nullptr, TEST_B_M2, hash_b);
     BOOST_CHECK(std::memcmp(hash_b, TEST_B_RESULT, 32) == 0);
 }
@@ -98,11 +99,11 @@ BOOST_AUTO_TEST_CASE(calculate_scoop_basic)
     const uint64_t block_height = 0;
     const char* gen_sig_hex = "9821beb3b34d9a3b30127c05f8d1e9006f8a02f565a3572145134bbe34d37a76";
     uint8_t generation_signature[32];
-    
+
     // Convert hex string to bytes
     int decode_result = DecodeGenerationSignature(gen_sig_hex, generation_signature);
     BOOST_CHECK_EQUAL(decode_result, 0); // Success
-    
+
     // Test CalculateScoop function
     int scoop = CalculateScoop(block_height, generation_signature);
     BOOST_CHECK_EQUAL(scoop, 667); // Expected result from Rust test
@@ -113,26 +114,22 @@ BOOST_AUTO_TEST_CASE(generate_nonces_basic)
     // Test parameters matching Rust test_nonce_generation_scalar
     uint8_t seed[32];
     const char* seed_hex = "AFFEAFFEAFFEAFFEAFFEAFFEAFFEAFFEAFFEAFFEAFFEAFFEAFFEAFFEAFFEAFFE";
-    
+
     // Convert hex seed to bytes
-    for (int i = 0; i < 32; i++) {
-        char hex_byte[3] = {seed_hex[i * 2], seed_hex[i * 2 + 1], 0};
-        seed[i] = static_cast<uint8_t>(std::strtoul(hex_byte, nullptr, 16));
-    }
+    auto seed_vec = ParseHex(seed_hex);
+    std::copy(seed_vec.begin(), seed_vec.end(), seed);
 
     uint8_t address_payload[20];
     const char* addr_hex = "99BC78BA577A95A11F1A344D4D2AE55F2F857B98";
-    
+
     // Convert hex address to bytes
-    for (int i = 0; i < 20; i++) {
-        char hex_byte[3] = {addr_hex[i * 2], addr_hex[i * 2 + 1], 0};
-        address_payload[i] = static_cast<uint8_t>(std::strtoul(hex_byte, nullptr, 16));
-    }
+    auto addr_vec = ParseHex(addr_hex);
+    std::copy(addr_vec.begin(), addr_vec.end(), address_payload);
 
     const uint64_t start_nonce = 1337;
     const uint64_t nonce_count = 32;
     const size_t buf_size = nonce_count * NONCE_SIZE;
-    
+
     std::vector<uint8_t> buf(buf_size, 0);
 
     // Test the function
@@ -145,17 +142,17 @@ BOOST_AUTO_TEST_CASE(generate_nonces_basic)
     hasher.Write(buf.data(), buf_size);
     uint8_t hash_result[32];
     hasher.Finalize(hash_result);
-    
+
     // Convert hash to hex string
     std::stringstream ss;
     for (int i = 0; i < 32; i++) {
         ss << std::hex << std::setw(2) << std::setfill('0') << static_cast<unsigned>(hash_result[i]);
     }
     std::string actual_hash = ss.str();
-    
+
     // Expected hash from Rust test
     const std::string expected_hash = "acc0b40a22cf8ce8aabe361bd4b67bdb61b7367755ae9cb9963a68acaa6d322c";
-    
+
     // Verify exact match with Rust implementation
     BOOST_CHECK_EQUAL(actual_hash, expected_hash);
 }

@@ -29,7 +29,6 @@
 #include <node/context.h>
 #include <node/transaction.h>
 #include <rpc/server_util.h>
-#include <policy/policy.h>
 #include <chainparams.h>
 #include <addresstype.h>
 

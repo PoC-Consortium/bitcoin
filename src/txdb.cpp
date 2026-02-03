@@ -353,9 +353,12 @@ void CCoinsViewDB::WriteAssignmentsToBatch(
     // We need height for the new key - reconstruct from assignment data
     for (const auto& [plot_addr, txid] : deletedAssignments) {
         // Find the assignment in the map to get its height
+        // Note: Copy to local refs to avoid C++17 structured binding capture limitation
+        const auto& pa = plot_addr;
+        const auto& tx = txid;
         auto it = std::find_if(assignments.begin(), assignments.end(),
-            [&](const auto& entry) {
-                return entry.first.first == plot_addr && entry.first.second == txid;
+            [&pa, &tx](const auto& entry) {
+                return entry.first.first == pa && entry.first.second == tx;
             });
 
         if (it != assignments.end()) {

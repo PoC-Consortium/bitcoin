@@ -2,8 +2,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef BITCOIN_POCX_CONSENSUS_POCX_H
-#define BITCOIN_POCX_CONSENSUS_POCX_H
+#ifndef BITCOIN_POCX_CONSENSUS_SIGNATURE_H
+#define BITCOIN_POCX_CONSENSUS_SIGNATURE_H
 
 #include <primitives/block.h>
 #include <uint256.h>
@@ -60,5 +60,5 @@ bool VerifyPoCXBlockCompactSignature(const CBlock& block, const CCoinsViewCache&
 } // namespace consensus
 } // namespace pocx
 
-#endif // BITCOIN_POCX_CONSENSUS_POCX_H
+#endif // BITCOIN_POCX_CONSENSUS_SIGNATURE_H
 

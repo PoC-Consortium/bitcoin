@@ -36,8 +36,13 @@ private:
         block.hashPrevBlock.SetNull();
         block.hashMerkleRoot.SetNull();
         block.nTime = 1231006505;
+#ifdef ENABLE_POCX
+        block.nBaseTarget = 1000000;
+        block.nHeight = 0;
+#else
         block.nBits = 0x1d00ffff;
         block.nNonce = 2083236893;
+#endif
         block.fChecked = false;
         CMutableTransaction tx;
         tx.vin.resize(1);

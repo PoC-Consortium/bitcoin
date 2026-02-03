@@ -10,7 +10,7 @@
 #include <hash.h>
 #include <span.h>
 #include <sync.h>
-#include <node/chainstate.h>
+#include <validation.h>
 #include <stdexcept>
 
 namespace pocx {
