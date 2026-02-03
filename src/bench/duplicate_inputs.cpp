@@ -8,7 +8,9 @@
 #include <consensus/consensus.h>
 #include <consensus/merkle.h>
 #include <consensus/validation.h>
+#ifndef ENABLE_POCX
 #include <pow.h>
+#endif
 #include <primitives/block.h>
 #include <primitives/transaction.h>
 #include <random.h>
@@ -41,8 +43,13 @@ static void DuplicateInputs(benchmark::Bench& bench)
     LOCK(cs_main);
     CBlockIndex* pindexPrev = testing_setup->m_node.chainman->ActiveChain().Tip();
     assert(pindexPrev != nullptr);
+#ifdef ENABLE_POCX
+    block.nBaseTarget = 1000000;
+    block.nHeight = pindexPrev->nHeight + 1;
+#else
     block.nBits = GetNextWorkRequired(pindexPrev, &block, chainparams.GetConsensus());
     block.nNonce = 0;
+#endif
     auto nHeight = pindexPrev->nHeight + 1;
 
     // Make a coinbase TX

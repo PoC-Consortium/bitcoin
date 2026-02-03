@@ -2,6 +2,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
+#ifndef ENABLE_POCX  // PoW fuzz tests not applicable to PoCX consensus
+
 #include <chain.h>
 #include <chainparams.h>
 #include <pow.h>
@@ -122,3 +124,5 @@ FUZZ_TARGET(pow_transition, .init = initialize_pow)
     unsigned int new_nbits{GetNextWorkRequired(last_block, nullptr, consensus_params)};
     Assert(PermittedDifficultyTransition(consensus_params, last_block->nHeight + 1, last_block->nBits, new_nbits));
 }
+
+#endif // ENABLE_POCX

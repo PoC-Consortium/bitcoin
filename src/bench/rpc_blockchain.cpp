@@ -39,7 +39,11 @@ struct TestBlockAndIndex {
 
         blockHash = block.GetHash();
         blockindex.phashBlock = &blockHash;
+#ifdef ENABLE_POCX
+        blockindex.nBaseTarget = 1000000;
+#else
         blockindex.nBits = 403014710;
+#endif
     }
 };
 

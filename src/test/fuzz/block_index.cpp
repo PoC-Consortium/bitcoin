@@ -37,8 +37,13 @@ CBlockHeader ConsumeBlockHeader(FuzzedDataProvider& provider)
     header.hashPrevBlock = g_block_hash;
     header.hashMerkleRoot = g_block_hash;
     header.nTime = provider.ConsumeIntegral<decltype(header.nTime)>();
+#ifdef ENABLE_POCX
+    header.nBaseTarget = Params().GenesisBlock().nBaseTarget;
+    header.nHeight = provider.ConsumeIntegral<decltype(header.nHeight)>();
+#else
     header.nBits = Params().GenesisBlock().nBits;
     header.nNonce = provider.ConsumeIntegral<decltype(header.nNonce)>();
+#endif
     return header;
 }
 
