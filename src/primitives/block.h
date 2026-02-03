@@ -87,14 +87,14 @@ public:
     uint256 hashPrevBlock;
     uint256 hashMerkleRoot;
     uint32_t nTime;
-    
+
 #ifdef ENABLE_POCX
     // PoCX consensus fields (replace PoW fields)
     int nHeight;                             // Block height for context-free validation
     uint256 generationSignature;            // PoCX: Generation signature for context-free validation
     uint64_t nBaseTarget;                    // PoCX difficulty target (like nBits)
     PoCXProof pocxProof;                     // Plot-specific mining data
-    
+
     // Block signature fields (prove plot ownership)
     std::array<uint8_t, 33> vchPubKey;      // Public key of block generator (33 bytes compressed)
     std::array<uint8_t, 65> vchSignature;   // Compact signature (65 bytes)
@@ -108,7 +108,7 @@ public:
     {
         SetNull();
     }
-    
+
 #ifdef ENABLE_POCX
     SERIALIZE_METHODS(CBlockHeader, obj) {
         READWRITE(obj.nVersion, obj.hashPrevBlock, obj.hashMerkleRoot, obj.nTime,

@@ -263,7 +263,7 @@ public:
 
 #ifdef ENABLE_POCX
         bech32_hrp = "pocx";
-        // #POCXTODO : No fixed seeds for single wallet testing     
+        // #POCXTODO : No fixed seeds for single wallet testing
         vFixedSeeds.clear();
 #else
         bech32_hrp = "bc";
@@ -663,7 +663,7 @@ public:
         consensus.signet_challenge.assign(bin.begin(), bin.end());
 #ifdef ENABLE_POCX
         consensus.nSubsidyHalvingInterval = 1050000;
-#else        
+#else
         consensus.nSubsidyHalvingInterval = 210000;
 #endif
         consensus.BIP34Height = 1;

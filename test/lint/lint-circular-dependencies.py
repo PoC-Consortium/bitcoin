@@ -25,6 +25,10 @@ EXPECTED_CIRCULAR_DEPENDENCIES = (
 
     # Temporary, removed in followup https://github.com/bitcoin/bitcoin/pull/24230
     "index/base -> node/context -> net_processing -> index/blockfilterindex -> index/base",
+
+    # PoCX: consensus and mining modules require validation context
+    "pocx/consensus/difficulty -> validation -> pocx/consensus/difficulty",
+    "pocx/mining/scheduler -> validation -> pocx/mining/scheduler",
 )
 
 CODE_DIR = "src"

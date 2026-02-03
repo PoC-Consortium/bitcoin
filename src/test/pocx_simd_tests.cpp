@@ -15,6 +15,8 @@
 #include <test/util/setup_common.h>
 
 #include <boost/test/unit_test.hpp>
+#include <crypto/hex_base.h>
+#include <util/strencodings.h>
 #include <cstring>
 #include <vector>
 #include <random>
@@ -285,17 +287,13 @@ BOOST_AUTO_TEST_CASE(batch_validation_single_block)
 
     uint8_t account_id[20];
     const char* account_hex = "99BC78BA577A95A11F1A344D4D2AE55F2F857B98";
-    for (int i = 0; i < 20; i++) {
-        char hex_byte[3] = {account_hex[i * 2], account_hex[i * 2 + 1], 0};
-        account_id[i] = static_cast<uint8_t>(std::strtoul(hex_byte, nullptr, 16));
-    }
+    auto account_vec = ParseHex<uint8_t>(account_hex);
+    std::copy(account_vec.begin(), account_vec.end(), account_id);
 
     uint8_t seed[32];
     const char* seed_hex = "AFFEAFFEAFFEAFFEAFFEAFFEAFFEAFFEAFFEAFFEAFFEAFFEAFFEAFFEAFFEAFFE";
-    for (int i = 0; i < 32; i++) {
-        char hex_byte[3] = {seed_hex[i * 2], seed_hex[i * 2 + 1], 0};
-        seed[i] = static_cast<uint8_t>(std::strtoul(hex_byte, nullptr, 16));
-    }
+    auto seed_vec = ParseHex<uint8_t>(seed_hex);
+    std::copy(seed_vec.begin(), seed_vec.end(), seed);
 
     // First get the actual quality using single block validation
     ValidationResult single_result;
@@ -342,17 +340,13 @@ BOOST_AUTO_TEST_CASE(batch_validation_matches_single)
 
     uint8_t account_id[20];
     const char* account_hex = "99BC78BA577A95A11F1A344D4D2AE55F2F857B98";
-    for (int i = 0; i < 20; i++) {
-        char hex_byte[3] = {account_hex[i * 2], account_hex[i * 2 + 1], 0};
-        account_id[i] = static_cast<uint8_t>(std::strtoul(hex_byte, nullptr, 16));
-    }
+    auto account_vec = ParseHex<uint8_t>(account_hex);
+    std::copy(account_vec.begin(), account_vec.end(), account_id);
 
     uint8_t seed[32];
     const char* seed_hex = "AFFEAFFEAFFEAFFEAFFEAFFEAFFEAFFEAFFEAFFEAFFEAFFEAFFEAFFEAFFEAFFE";
-    for (int i = 0; i < 32; i++) {
-        char hex_byte[3] = {seed_hex[i * 2], seed_hex[i * 2 + 1], 0};
-        seed[i] = static_cast<uint8_t>(std::strtoul(hex_byte, nullptr, 16));
-    }
+    auto seed_vec = ParseHex<uint8_t>(seed_hex);
+    std::copy(seed_vec.begin(), seed_vec.end(), seed);
 
     // Validate single block using existing function
     ValidationResult single_result;
@@ -409,9 +403,8 @@ BOOST_AUTO_TEST_CASE(batch_validation_multiple_blocks)
             account_ids[i][j] = static_cast<uint8_t>(rng() & 0xFF);
         }
         // Create hex string for single validation
-        for (int j = 0; j < 32; j++) {
-            snprintf(&gen_sig_hex[i][j * 2], 3, "%02x", gen_sigs[i][j]);
-        }
+        std::string hex_str = HexStr(std::span<const uint8_t>(gen_sigs[i], 32));
+        std::copy(hex_str.begin(), hex_str.end(), gen_sig_hex[i]);
         gen_sig_hex[i][64] = '\0';
     }
 
@@ -472,9 +465,8 @@ BOOST_AUTO_TEST_CASE(batch_validation_mixed_compression)
         account_id[j] = static_cast<uint8_t>(rng() & 0xFF);
     }
     // Create hex string for single validation
-    for (int j = 0; j < 32; j++) {
-        snprintf(&gen_sig_hex[j * 2], 3, "%02x", gen_sig[j]);
-    }
+    std::string hex_str = HexStr(std::span<const uint8_t>(gen_sig, 32));
+    std::copy(hex_str.begin(), hex_str.end(), gen_sig_hex);
     gen_sig_hex[64] = '\0';
 
     // First get qualities via single validation for each compression level
@@ -546,9 +538,8 @@ BOOST_AUTO_TEST_CASE(batch_validation_8_blocks_vs_single)
             gen_sigs[i][j] = static_cast<uint8_t>(rng() & 0xFF);
         }
         // Convert to hex for single validation
-        for (int j = 0; j < 32; j++) {
-            snprintf(gen_sig_hex[i] + j * 2, 3, "%02x", gen_sigs[i][j]);
-        }
+        std::string hex_str = HexStr(std::span<const uint8_t>(gen_sigs[i], 32));
+        std::copy(hex_str.begin(), hex_str.end(), gen_sig_hex[i]);
         gen_sig_hex[i][64] = '\0';
 
         // Generate random account_id
@@ -634,9 +625,8 @@ BOOST_AUTO_TEST_CASE(batch_validation_16_blocks_high_compression)
         for (int j = 0; j < 32; j++) {
             gen_sigs[i][j] = static_cast<uint8_t>(rng() & 0xFF);
         }
-        for (int j = 0; j < 32; j++) {
-            snprintf(gen_sig_hex[i] + j * 2, 3, "%02x", gen_sigs[i][j]);
-        }
+        std::string hex_str = HexStr(std::span<const uint8_t>(gen_sigs[i], 32));
+        std::copy(hex_str.begin(), hex_str.end(), gen_sig_hex[i]);
         gen_sig_hex[i][64] = '\0';
 
         for (int j = 0; j < 20; j++) {

@@ -2,8 +2,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef BITCOIN_POCX_CONSENSUS_VALIDATION_H
-#define BITCOIN_POCX_CONSENSUS_VALIDATION_H
+#ifndef BITCOIN_POCX_CONSENSUS_PROOF_H
+#define BITCOIN_POCX_CONSENSUS_PROOF_H
 
 #include <array>
 #include <cstdint>
@@ -59,4 +59,4 @@ bool pocx_validate_block(
 } // namespace consensus
 } // namespace pocx
 
-#endif // BITCOIN_POCX_CONSENSUS_VALIDATION_H
+#endif // BITCOIN_POCX_CONSENSUS_PROOF_H

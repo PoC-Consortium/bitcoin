@@ -15,6 +15,7 @@
 #include <consensus/params.h>
 #include <consensus/validation.h>
 #include <core_io.h>
+#include <crypto/hex_base.h>
 #include <deploymentinfo.h>
 #include <deploymentstatus.h>
 #include <interfaces/mining.h>
@@ -301,13 +302,7 @@ static bool GenerateBlock(ChainstateManager& chainman, CBlock&& block, uint64_t&
 
         // Sign the block using wallet
         if (node_context) {
-            std::string account_hex;
-            account_hex.reserve(40);
-            for (int i = 0; i < 20; i++) {
-                char buf[3];
-                snprintf(buf, sizeof(buf), "%02x", account_id[i]);
-                account_hex += buf;
-            }
+            std::string account_hex = HexStr(std::span<const uint8_t>(account_id, 20));
 
             block.hashMerkleRoot = BlockMerkleRoot(block);
             if (!pocx::mining::SignPoCXBlockWithAvailableWallet(node_context, block, account_hex)) {

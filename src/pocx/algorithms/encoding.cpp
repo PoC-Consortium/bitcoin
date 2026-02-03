@@ -4,8 +4,8 @@
 
 #include <pocx/algorithms/encoding.h>
 
+#include <util/strencodings.h>
 #include <cstring>
-#include <cstdlib>
 #include <optional>
 #include <array>
 
@@ -22,18 +22,12 @@ int DecodeGenerationSignature(const char* hex_string, uint8_t generation_signatu
         return -1;
     }
 
-    for (size_t i = 0; i < 32; i++) {
-        char hex_byte[3] = {hex_string[i * 2], hex_string[i * 2 + 1], '\0'};
-        char* endptr;
-        unsigned long val = std::strtoul(hex_byte, &endptr, 16);
-
-        if (*endptr != '\0' || val > 255) {
-            return -2;
-        }
-
-        generation_signature[i] = static_cast<uint8_t>(val);
+    auto parsed = TryParseHex<uint8_t>(hex_string);
+    if (!parsed || parsed->size() != 32) {
+        return -2;
     }
 
+    std::copy(parsed->begin(), parsed->end(), generation_signature);
     return 0;
 }
 
@@ -71,19 +65,13 @@ std::optional<std::array<uint8_t, 20>> ParseAccountID(const char* hex_string) {
         return std::nullopt;
     }
 
-    std::array<uint8_t, 20> result;
-    for (size_t i = 0; i < 20; i++) {
-        char hex_byte[3] = {hex_string[i * 2], hex_string[i * 2 + 1], '\0'};
-        char* endptr;
-        unsigned long val = std::strtoul(hex_byte, &endptr, 16);
-
-        if (*endptr != '\0' || val > 255) {
-            return std::nullopt;
-        }
-
-        result[i] = static_cast<uint8_t>(val);
+    auto parsed = TryParseHex<uint8_t>(hex_string);
+    if (!parsed || parsed->size() != 20) {
+        return std::nullopt;
     }
 
+    std::array<uint8_t, 20> result;
+    std::copy(parsed->begin(), parsed->end(), result.begin());
     return result;
 }
 

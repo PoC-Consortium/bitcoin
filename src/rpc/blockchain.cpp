@@ -212,7 +212,7 @@ UniValue blockheaderToJSON(const CBlockIndex& tip, const CBlockIndex& blockindex
     // PoCX consensus fields
     result.pushKV("base_target", blockindex.nBaseTarget);
     result.pushKV("generation_signature", blockindex.generationSignature.GetHex());
-    
+
     // PoCX proof fields
     UniValue pocx_proof(UniValue::VOBJ);
 

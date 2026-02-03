@@ -129,7 +129,7 @@ static RPCHelpMan submit_nonce()
         {
             NodeContext& node = EnsureAnyNodeContext(request.context);
             ChainstateManager& chainman = EnsureChainman(node);
-            
+
             // Parse PoCX protocol parameters
             int height = request.params[0].getInt<int>();
             std::string generation_signature = request.params[1].get_str();
@@ -142,21 +142,21 @@ static RPCHelpMan submit_nonce()
             uint64_t quality = (request.params.size() > 6 && !request.params[6].isNull()) ?
                                request.params[6].getInt<uint64_t>() : 0;
             (void)quality; // Suppress unused parameter warning
-            
+
             UniValue result(UniValue::VOBJ);
-            
+
             try {
                 // 1. Fast format validation (fail early)
                 // Account ID format validation
                 if (account_id.length() != 40 || !IsHex(account_id)) {
                     throw JSONRPCError(RPC_INVALID_PARAMETER, "Invalid account_id format - must be 40 hex characters");
                 }
-                
+
                 // Seed format validation
                 if (seed.length() != 64 || !IsHex(seed)) {
                     throw JSONRPCError(RPC_INVALID_PARAMETER, "Invalid seed format - must be 64 hex characters");
                 }
-                
+
                 // Parse account ID
                 auto account_id_parsed = pocx::algorithms::ParseAccountID(account_id.c_str());
                 if (!account_id_parsed) {
@@ -242,19 +242,19 @@ static RPCHelpMan submit_nonce()
                     compression,
                     &validation_result
                 );
-                               
+
                 if (!validation_success || !validation_result.is_valid) {
-                    throw JSONRPCError(RPC_VERIFY_REJECTED, strprintf("PoCX validation failed: success=%s, is_valid=%s, error_code=%d", 
+                    throw JSONRPCError(RPC_VERIFY_REJECTED, strprintf("PoCX validation failed: success=%s, is_valid=%s, error_code=%d",
                                                     validation_success ? "true" : "false",
                                                     validation_result.is_valid ? "true" : "false",
                                                     validation_result.error_code));
                 }
-                
+
                 // Calculate deadlines
                 uint64_t raw_quality = validation_result.quality;           // Raw quality from disk
                 uint64_t deadline_seconds = raw_quality / context.base_target;  // Difficulty-adjusted deadline (seconds)
                 uint64_t forge_time = pocx::algorithms::CalculateTimeBendedDeadline(raw_quality, context.base_target, consensusParams.nPowTargetSpacing);  // Time Bended forge time
-                
+
                 // Concise success logging with result
                 LogPrintLevel(BCLog::POCX, BCLog::Level::Info,
                              "nonce=%llu height=%d gensig=...%s account=...%s seed=...%s raw_quality=%llu deadline=%lus forge_time=%lus -> ACK\n",
@@ -263,7 +263,7 @@ static RPCHelpMan submit_nonce()
                              account_id.substr(std::max(0, (int)account_id.length()-8)),
                              seed.substr(std::max(0, (int)seed.length()-8)),
                              raw_quality, deadline_seconds, forge_time);
-                
+
                 // Initialize scheduler and submit for timed forging
                 Mining& miner = EnsureMining(node);
                 EnsurePoCXScheduler(miner);
@@ -282,14 +282,14 @@ static RPCHelpMan submit_nonce()
                 result.pushKV("accepted", true);
                 result.pushKV("quality", deadline_seconds);  // Difficulty-adjusted deadline (seconds)
                 result.pushKV("poc_time", forge_time);  // Time Bended forge time (seconds)
-                
+
                 return result;
-                
+
             } catch (const std::exception& e) {
                 result.pushKV("accepted", false);
                 result.pushKV("error", e.what());
             }
-            
+
             return result;
         },
     };

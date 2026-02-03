@@ -72,34 +72,34 @@ ValidationResult ValidateProofOfCapacity(const uint256& generationSignature,
 std::array<uint8_t, 20> ExtractAccountIDFromPubKey(const CPubKey& pubkey) {
     std::array<uint8_t, 20> account_id;
     account_id.fill(0);
-    
+
     if (!pubkey.IsValid() || !pubkey.IsCompressed()) {
         return account_id;
     }
-    
+
     // For PoCX, account ID is the HASH160 of the compressed public key
     // This matches the P2PKH/P2WPKH address format
     CKeyID keyid = pubkey.GetID();
     static_assert(sizeof(keyid) == 20, "CKeyID must be 20 bytes");
     std::copy(keyid.begin(), keyid.end(), account_id.begin());
-    
+
     return account_id;
 }
 
 std::array<uint8_t, 20> ExtractAccountIDFromScript(const CScript& script) {
     std::array<uint8_t, 20> account_id;
     account_id.fill(0);
-    
+
     // PoCX mining only supports P2WPKH (witness v0 keyhash)
     // Format: OP_0 <20 bytes>
-    if (script.size() == 22 && 
+    if (script.size() == 22 &&
         script[0] == 0x00 && // OP_0 (witness version 0)
         script[1] == 0x14) { // Push 20 bytes
-        
+
         // Extract the 20-byte keyhash
         std::copy(script.begin() + 2, script.begin() + 22, account_id.begin());
     }
-    
+
     return account_id;
 }
 

@@ -196,7 +196,7 @@ public:
     uint64_t nBaseTarget{0};
     uint64_t nNextBaseTarget{0};  // Effective base target from hybrid formula (for work calculation)
     PoCXProof pocxProof{};
-    
+
     // Block signature fields
     std::array<uint8_t, 33> vchPubKey;
     std::array<uint8_t, 65> vchSignature;
@@ -212,7 +212,7 @@ public:
     unsigned int nTimeMax{0};
 
     explicit CBlockIndex(const CBlockHeader& block)
-        : 
+        :
 #ifdef ENABLE_POCX
           nHeight{block.nHeight},
 #endif
@@ -221,7 +221,7 @@ public:
           nTime{block.nTime},
 #ifdef ENABLE_POCX
           generationSignature{block.generationSignature},
-          nBaseTarget{block.nBaseTarget}, 
+          nBaseTarget{block.nBaseTarget},
           pocxProof{block.pocxProof},
           vchPubKey{block.vchPubKey},
           vchSignature{block.vchSignature}
@@ -315,7 +315,7 @@ public:
     {
 #ifdef ENABLE_POCX
         return 0; // disabled
-#else        
+#else
         int64_t pmedian[nMedianTimeSpan];
         int64_t* pbegin = &pmedian[nMedianTimeSpan];
         int64_t* pend = &pmedian[nMedianTimeSpan];

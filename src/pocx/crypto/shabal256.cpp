@@ -9,19 +9,19 @@ namespace pocx {
 namespace crypto {
 
 const uint32_t A_INIT[12] = {
-    0x52F84552, 0xE54B7999, 0x2D8EE3EC, 0xB9645191, 0xE0078B86, 0xBB7C44C9, 
+    0x52F84552, 0xE54B7999, 0x2D8EE3EC, 0xB9645191, 0xE0078B86, 0xBB7C44C9,
     0xD2B5C1CA, 0xB0D2EB8C, 0x14CE5A45, 0x22AF50DC, 0xEFFDBC6B, 0xEB21B74A,
 };
 
 const uint32_t B_INIT[16] = {
-    0xB555C6EE, 0x3E710596, 0xA72A652F, 0x9301515F, 0xDA28C1FA, 0x696FD868, 
-    0x9CB6BF72, 0x0AFE4002, 0xA6E03615, 0x5138C1D4, 0xBE216306, 0xB38B8890, 
+    0xB555C6EE, 0x3E710596, 0xA72A652F, 0x9301515F, 0xDA28C1FA, 0x696FD868,
+    0x9CB6BF72, 0x0AFE4002, 0xA6E03615, 0x5138C1D4, 0xBE216306, 0xB38B8890,
     0x3EA8B96B, 0x3299ACE4, 0x30924DD4, 0x55CB34A5,
 };
 
 const uint32_t C_INIT[16] = {
-    0xB405F031, 0xC4233EBA, 0xB3733979, 0xC0DD9D55, 0xC51C28AE, 0xA327B8E1, 
-    0x56C56167, 0xED614433, 0x88B59D60, 0x60E2CEBA, 0x758B4B8B, 0x83E82A7F, 
+    0xB405F031, 0xC4233EBA, 0xB3733979, 0xC0DD9D55, 0xC51C28AE, 0xA327B8E1,
+    0x56C56167, 0xED614433, 0x88B59D60, 0x60E2CEBA, 0x758B4B8B, 0x83E82A7F,
     0xBC968828, 0xE6E00BF7, 0xBA839E55, 0x9B491C60,
 };
 
@@ -44,9 +44,9 @@ inline void xor_w(uint32_t* a, uint32_t w_low, uint32_t w_high) {
     a[1] ^= w_high;
 }
 
-inline void perm_elt(uint32_t* a, uint32_t* b, int xa0, int xa1, int xb0, int xb1, 
+inline void perm_elt(uint32_t* a, uint32_t* b, int xa0, int xa1, int xb0, int xb1,
                      int xb2, int xb3, uint32_t xc, uint32_t xm) {
-    a[xa0] = (a[xa0] ^ (((a[xa1] << 15) | (a[xa1] >> 17)) * 5) ^ xc) * 3 
+    a[xa0] = (a[xa0] ^ (((a[xa1] << 15) | (a[xa1] >> 17)) * 5) ^ xc) * 3
              ^ b[xb1] ^ (b[xb2] & ~b[xb3]) ^ xm;
     b[xb0] = ~(((b[xb0] << 1) | (b[xb0] >> 31)) ^ a[xa0]);
 }
@@ -141,12 +141,12 @@ void Shabal256(const uint8_t* data, size_t len, const uint32_t* pre_term, const 
     memcpy(a, A_INIT, sizeof(a));
     memcpy(b, B_INIT, sizeof(b));
     memcpy(c, C_INIT, sizeof(c));
-    
+
     uint32_t w_high = 0;
     uint32_t w_low = 1;
     size_t num = len >> 6;
     size_t ptr = 0;
-    
+
     uint32_t* data_aligned = nullptr;
     if (len > 0) {
         data_aligned = reinterpret_cast<uint32_t*>(const_cast<uint8_t*>(data));
@@ -161,7 +161,7 @@ void Shabal256(const uint8_t* data, size_t len, const uint32_t* pre_term, const 
         ptr += 16;
         --num;
     }
-    
+
     if (pre_term) {
         input_block_add(b, pre_term);
         xor_w(a, w_low, w_high);
@@ -170,17 +170,17 @@ void Shabal256(const uint8_t* data, size_t len, const uint32_t* pre_term, const 
         swap_bc(b, c);
         incr_w(&w_low, &w_high);
     }
-    
+
     input_block_add(b, term);
     xor_w(a, w_low, w_high);
     apply_p(a, b, c, term);
-    
+
     for (int i = 0; i < 3; ++i) {
         swap_bc(b, c);
         xor_w(a, w_low, w_high);
         apply_p(a, b, c, term);
     }
-    
+
     memcpy(output, &b[8], 32);
 }
 
