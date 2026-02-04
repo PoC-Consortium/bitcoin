@@ -20,6 +20,9 @@
 
 using node::BlockAssembler;
 
+#ifndef ENABLE_POCX
+// PoCX: Fuzz tests use MineBlock which creates mock PoCX proofs that fail consensus validation
+
 FUZZ_TARGET(utxo_total_supply)
 {
     SeedRandomStateForTest(SeedRand::ZEROS);
@@ -175,3 +178,5 @@ FUZZ_TARGET(utxo_total_supply)
             });
     }
 }
+
+#endif // !ENABLE_POCX

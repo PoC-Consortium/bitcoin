@@ -25,6 +25,9 @@ using node::BlockAssembler;
 using node::NodeContext;
 using util::ToString;
 
+#ifndef ENABLE_POCX
+// PoCX: Fuzz tests use MineBlock which creates mock PoCX proofs that fail consensus validation
+
 namespace {
 
 const TestingSetup* g_setup;
@@ -430,3 +433,5 @@ FUZZ_TARGET(tx_pool, .init = initialize_tx_pool)
     Finish(fuzzed_data_provider, tx_pool, chainstate);
 }
 } // namespace
+
+#endif // !ENABLE_POCX

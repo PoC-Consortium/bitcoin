@@ -50,6 +50,8 @@ BOOST_AUTO_TEST_CASE(timeoffsets)
     BOOST_CHECK(offsets.Median() == 15s);
 }
 
+#ifndef ENABLE_POCX
+// PoCX: Test uses time offset warning thresholds that differ for PoCX
 static bool IsWarningRaised(const std::vector<std::chrono::seconds>& check_offsets)
 {
     node::Warnings warnings{};
@@ -58,8 +60,6 @@ static bool IsWarningRaised(const std::vector<std::chrono::seconds>& check_offse
     return offsets.WarnIfOutOfSync();
 }
 
-#ifndef ENABLE_POCX
-// PoCX: Test uses time offset warning thresholds that differ for PoCX
 BOOST_AUTO_TEST_CASE(timeoffsets_warning)
 {
     BOOST_CHECK(IsWarningRaised({{-60min, -40min, -30min, 0min, 10min}}));

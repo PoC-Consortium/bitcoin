@@ -20,6 +20,9 @@
 using namespace util::hex_literals;
 using util::Split;
 
+#ifndef ENABLE_POCX
+// PoCX: Tests use Bitcoin mainnet address prefixes that differ from PoCX prefixes
+
 namespace {
 
 void CheckUnparsable(const std::string& prv, const std::string& pub, const std::string& expected_error)
@@ -569,8 +572,6 @@ void CheckInferDescriptor(const std::string& script_hex, const std::string& expe
 
 }
 
-#ifndef ENABLE_POCX
-// PoCX: Tests use Bitcoin mainnet address prefixes that differ from PoCX prefixes
 BOOST_FIXTURE_TEST_SUITE(descriptor_tests, BasicTestingSetup)
 
 BOOST_AUTO_TEST_CASE(descriptor_test)

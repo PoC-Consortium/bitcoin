@@ -19,6 +19,9 @@
 
 using util::SplitString;
 
+#ifndef ENABLE_POCX
+// PoCX: Tests use Bitcoin mainnet addresses that differ from PoCX prefixes
+
 static UniValue JSON(std::string_view json)
 {
     UniValue value;
@@ -81,8 +84,6 @@ UniValue RPCTestingSetup::CallRPC(std::string args)
     }
 }
 
-#ifndef ENABLE_POCX
-// PoCX: Tests use Bitcoin mainnet addresses that differ from PoCX prefixes
 BOOST_FIXTURE_TEST_SUITE(rpc_tests, RPCTestingSetup)
 
 BOOST_AUTO_TEST_CASE(rpc_namedparams)

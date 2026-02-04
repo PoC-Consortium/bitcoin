@@ -29,6 +29,9 @@
 #include <string_view>
 #include <vector>
 
+#ifndef ENABLE_POCX
+// PoCX: Fuzz tests use MineBlock which creates mock PoCX proofs that fail consensus validation
+
 namespace {
 TestingSetup* g_setup;
 std::string_view LIMIT_TO_MESSAGE_TYPE{};
@@ -125,3 +128,5 @@ FUZZ_TARGET(process_message, .init = initialize_process_message)
         ResetChainman(*g_setup);
     }
 }
+
+#endif // !ENABLE_POCX

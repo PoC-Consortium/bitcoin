@@ -19,6 +19,11 @@
 
 #include <boost/test/unit_test.hpp>
 
+#ifndef ENABLE_POCX
+// PoCX: BIP324 key derivation uses network magic in the HKDF process. PoCX has different
+// network magic bytes, so Bitcoin mainnet test vectors won't match. The BIP324 implementation
+// itself is correct - it just produces different HKDF outputs with different network magic.
+
 namespace {
 
 struct BIP324Test : BasicTestingSetup {
@@ -163,10 +168,6 @@ void TestBIP324PacketVector(
 
 BOOST_FIXTURE_TEST_SUITE(bip324_tests, BIP324Test)
 
-#ifndef ENABLE_POCX
-// PoCX: BIP324 key derivation uses network magic in the HKDF process. PoCX has different
-// network magic bytes, so Bitcoin mainnet test vectors won't match. The BIP324 implementation
-// itself is correct - it just produces different HKDF outputs with different network magic.
 BOOST_AUTO_TEST_CASE(packet_test_vectors) {
     // BIP324 key derivation uses network magic in the HKDF process. We use mainnet params here
     // as that is what the test vectors are written for.
@@ -303,6 +304,7 @@ BOOST_AUTO_TEST_CASE(packet_test_vectors) {
         "",
         "7c4b9e1e6c1ce69da7b01513cdc4588fd93b04dafefaf87f31561763d906c672bac3dfceb751ebd126728ac017d4d580e931b8e5c7d5dfe0123be4dc9b2d2238b655c8a7fadaf8082c31e310909b5b731efc12f0a56e849eae6bfeedcc86dd27ef9b91d159256aa8e8d2b71a311f73350863d70f18d0d7302cf551e4303c7733");
 }
-#endif // !ENABLE_POCX
 
 BOOST_AUTO_TEST_SUITE_END()
+
+#endif // !ENABLE_POCX

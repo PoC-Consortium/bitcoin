@@ -22,6 +22,9 @@
 
 using namespace util::hex_literals;
 
+#ifndef ENABLE_POCX
+// PoCX: Uses TestChain100Setup which creates mock PoCX blocks
+
 // A fee amount that is above 1sat/vB but below 5sat/vB for most transactions created within these
 // unit tests.
 static const CAmount low_fee_amt{200};
@@ -47,8 +50,6 @@ inline CTransactionRef create_placeholder_tx(size_t num_inputs, size_t num_outpu
 }
 }; // struct TxPackageTest
 
-#ifndef ENABLE_POCX
-// PoCX: Uses TestChain100Setup which creates mock PoCX blocks
 BOOST_FIXTURE_TEST_SUITE(txpackage_tests, TxPackageTest)
 
 BOOST_AUTO_TEST_CASE(package_hash_tests)
