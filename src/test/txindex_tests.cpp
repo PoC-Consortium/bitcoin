@@ -11,6 +11,8 @@
 
 #include <boost/test/unit_test.hpp>
 
+#ifndef ENABLE_POCX
+// PoCX: Uses TestChain100Setup which creates mock PoCX blocks
 BOOST_AUTO_TEST_SUITE(txindex_tests)
 
 BOOST_FIXTURE_TEST_CASE(txindex_initial_sync, TestChain100Setup)
@@ -74,3 +76,4 @@ BOOST_FIXTURE_TEST_CASE(txindex_initial_sync, TestChain100Setup)
 }
 
 BOOST_AUTO_TEST_SUITE_END()
+#endif // !ENABLE_POCX

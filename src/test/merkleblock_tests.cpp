@@ -11,6 +11,8 @@
 #include <set>
 #include <vector>
 
+#ifndef ENABLE_POCX
+// PoCX: Tests use hardcoded PoW blocks that can't be deserialized
 BOOST_AUTO_TEST_SUITE(merkleblock_tests)
 
 /**
@@ -78,3 +80,4 @@ BOOST_AUTO_TEST_CASE(merkleblock_construct_from_txids_not_found)
 }
 
 BOOST_AUTO_TEST_SUITE_END()
+#endif // !ENABLE_POCX

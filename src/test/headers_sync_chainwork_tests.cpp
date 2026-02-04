@@ -59,6 +59,9 @@ void HeadersGeneratorSetup::GenerateHeaders(std::vector<CBlockHeader>& headers,
     return;
 }
 
+#ifndef ENABLE_POCX
+// PoCX: Chainwork calculations used in header sync tests cause division by zero
+// because PoCX doesn't use PoW-based chainwork.
 BOOST_FIXTURE_TEST_SUITE(headers_sync_chainwork_tests, HeadersGeneratorSetup)
 
 // In this test, we construct two sets of headers from genesis, one with
@@ -156,3 +159,4 @@ BOOST_AUTO_TEST_CASE(headers_sync_state)
 }
 
 BOOST_AUTO_TEST_SUITE_END()
+#endif // !ENABLE_POCX

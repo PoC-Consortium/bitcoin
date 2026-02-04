@@ -658,10 +658,19 @@ BOOST_AUTO_TEST_CASE(util_GetChainTypeString)
     std::string error;
 
     BOOST_CHECK(test_args.ParseParameters(0, argv_testnet4, error));
+#ifdef ENABLE_POCX
+    // PoCX defaults to testnet until mainnet is ready
+    BOOST_CHECK_EQUAL(test_args.GetChainTypeString(), "test");
+#else
     BOOST_CHECK_EQUAL(test_args.GetChainTypeString(), "main");
+#endif
 
     BOOST_CHECK(test_args.ParseParameters(0, argv_testnet4, error));
+#ifdef ENABLE_POCX
+    BOOST_CHECK_EQUAL(test_args.GetChainTypeString(), "test");
+#else
     BOOST_CHECK_EQUAL(test_args.GetChainTypeString(), "main");
+#endif
 
     BOOST_CHECK(test_args.ParseParameters(2, argv_testnet4, error));
     BOOST_CHECK_EQUAL(test_args.GetChainTypeString(), "testnet4");
@@ -1019,7 +1028,12 @@ BOOST_FIXTURE_TEST_CASE(util_ChainMerge, ChainMergeTestingSetup)
     // Results file is formatted like:
     //
     //   <input> || <output>
+#ifdef ENABLE_POCX
+    // PoCX defaults to testnet, producing different output combinations
+    BOOST_CHECK_EQUAL(out_sha_hex, "40b69cd49b21d56a9fe7920f0bc279c7d6c5da897facfc35b8b786c033305718");
+#else
     BOOST_CHECK_EQUAL(out_sha_hex, "c0e33aab0c74e040ddcee9edad59e8148d8e1cacb3cccd9ea1a1f485cb6bad21");
+#endif
 }
 
 BOOST_AUTO_TEST_CASE(util_ReadWriteSettings)

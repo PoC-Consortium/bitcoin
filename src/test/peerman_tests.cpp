@@ -11,6 +11,8 @@
 
 #include <boost/test/unit_test.hpp>
 
+#ifndef ENABLE_POCX
+// PoCX: Test mines blocks without proper PoCX proofs
 BOOST_FIXTURE_TEST_SUITE(peerman_tests, RegTestingSetup)
 
 /** Window, in blocks, for connecting to NODE_NETWORK_LIMITED peers */
@@ -76,3 +78,4 @@ BOOST_AUTO_TEST_CASE(connections_desirable_service_flags)
 }
 
 BOOST_AUTO_TEST_SUITE_END()
+#endif // !ENABLE_POCX

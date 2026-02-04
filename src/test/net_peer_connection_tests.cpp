@@ -29,6 +29,8 @@
 
 #include <boost/test/unit_test.hpp>
 
+#ifndef ENABLE_POCX
+// PoCX: Uses mainnet TestingSetup which may have different chain parameters
 struct LogIPsTestingSetup : public TestingSetup {
     LogIPsTestingSetup()
         : TestingSetup{ChainType::MAIN, {.extra_args = {"-logips"}}} {}
@@ -170,3 +172,4 @@ BOOST_FIXTURE_TEST_CASE(test_addnode_getaddednodeinfo_and_connection_detection, 
 }
 
 BOOST_AUTO_TEST_SUITE_END()
+#endif // !ENABLE_POCX

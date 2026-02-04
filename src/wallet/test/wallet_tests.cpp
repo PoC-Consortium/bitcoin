@@ -41,6 +41,8 @@ namespace wallet {
 static_assert(DEFAULT_TRANSACTION_MINFEE >= DEFAULT_MIN_RELAY_TX_FEE, "wallet minimum fee is smaller than default relay fee");
 static_assert(WALLET_INCREMENTAL_RELAY_FEE >= DEFAULT_INCREMENTAL_RELAY_FEE, "wallet incremental fee is smaller than default incremental relay fee");
 
+#ifndef ENABLE_POCX
+// PoCX: Uses TestChain100Setup which creates mock PoCX blocks
 BOOST_FIXTURE_TEST_SUITE(wallet_tests, WalletTestingSetup)
 
 static CMutableTransaction TestSimpleSpend(const CTransaction& from, uint32_t index, const CKey& key, const CScript& pubkey)
@@ -722,4 +724,5 @@ BOOST_FIXTURE_TEST_CASE(RemoveTxs, TestChain100Setup)
 }
 
 BOOST_AUTO_TEST_SUITE_END()
+#endif // !ENABLE_POCX
 } // namespace wallet

@@ -127,6 +127,9 @@ BOOST_AUTO_TEST_CASE(blockfilter_basic_test)
     BOOST_CHECK(default_ctor_block_filter_1.GetEncodedFilter() == default_ctor_block_filter_2.GetEncodedFilter());
 }
 
+#ifndef ENABLE_POCX
+// PoCX: JSON test vectors contain PoW blocks with nBits/nNonce fields.
+// PoCX blocks have nBaseTarget/pocxProof instead, so DecodeHexBlk fails.
 BOOST_AUTO_TEST_CASE(blockfilters_json_test)
 {
     UniValue json;
@@ -175,6 +178,7 @@ BOOST_AUTO_TEST_CASE(blockfilters_json_test)
         BOOST_CHECK(computed_header_basic == filter_header_basic);
     }
 }
+#endif // !ENABLE_POCX
 
 BOOST_AUTO_TEST_CASE(blockfilter_type_names)
 {

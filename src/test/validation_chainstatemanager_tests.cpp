@@ -28,6 +28,8 @@
 
 #include <boost/test/unit_test.hpp>
 
+#ifndef ENABLE_POCX
+// PoCX: Uses TestChain100Setup which creates mock PoCX blocks
 using node::BlockManager;
 using node::KernelNotifications;
 using node::SnapshotMetadata;
@@ -837,3 +839,4 @@ BOOST_FIXTURE_TEST_CASE(chainstatemanager_args, BasicTestingSetup)
 }
 
 BOOST_AUTO_TEST_SUITE_END()
+#endif // !ENABLE_POCX

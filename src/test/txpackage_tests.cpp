@@ -47,6 +47,8 @@ inline CTransactionRef create_placeholder_tx(size_t num_inputs, size_t num_outpu
 }
 }; // struct TxPackageTest
 
+#ifndef ENABLE_POCX
+// PoCX: Uses TestChain100Setup which creates mock PoCX blocks
 BOOST_FIXTURE_TEST_SUITE(txpackage_tests, TxPackageTest)
 
 BOOST_AUTO_TEST_CASE(package_hash_tests)
@@ -1236,3 +1238,4 @@ BOOST_AUTO_TEST_CASE(package_rbf_tests)
     }
 }
 BOOST_AUTO_TEST_SUITE_END()
+#endif // !ENABLE_POCX

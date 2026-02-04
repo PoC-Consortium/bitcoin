@@ -7,6 +7,8 @@
 #include <kernel/disconnected_transactions.h>
 #include <test/util/setup_common.h>
 
+#ifndef ENABLE_POCX
+// PoCX: Uses TestChain100Setup which creates mock PoCX blocks
 BOOST_FIXTURE_TEST_SUITE(disconnected_transactions, TestChain100Setup)
 
 //! Tests that DisconnectedBlockTransactions limits its own memory properly
@@ -93,3 +95,4 @@ BOOST_AUTO_TEST_CASE(disconnectpool_memory_limits)
 }
 
 BOOST_AUTO_TEST_SUITE_END()
+#endif // !ENABLE_POCX

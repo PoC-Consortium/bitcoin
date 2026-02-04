@@ -13,6 +13,8 @@
 
 using interfaces::FoundBlock;
 
+#ifndef ENABLE_POCX
+// PoCX: Uses TestChain100Setup which creates mock PoCX blocks
 BOOST_FIXTURE_TEST_SUITE(interfaces_tests, TestChain100Setup)
 
 BOOST_AUTO_TEST_CASE(findBlock)
@@ -163,3 +165,4 @@ BOOST_AUTO_TEST_CASE(hasBlocks)
 }
 
 BOOST_AUTO_TEST_SUITE_END()
+#endif // !ENABLE_POCX

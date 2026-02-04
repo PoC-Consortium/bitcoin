@@ -18,6 +18,8 @@
 
 #include <algorithm>
 
+#ifndef ENABLE_POCX
+// PoCX: Tests use Bitcoin mainnet address prefixes that differ from PoCX prefixes
 BOOST_FIXTURE_TEST_SUITE(key_io_tests, BasicTestingSetup)
 
 // Goal: check that parsed keys match test payload
@@ -148,3 +150,4 @@ BOOST_AUTO_TEST_CASE(key_io_invalid)
 }
 
 BOOST_AUTO_TEST_SUITE_END()
+#endif // !ENABLE_POCX

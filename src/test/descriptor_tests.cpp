@@ -569,6 +569,8 @@ void CheckInferDescriptor(const std::string& script_hex, const std::string& expe
 
 }
 
+#ifndef ENABLE_POCX
+// PoCX: Tests use Bitcoin mainnet address prefixes that differ from PoCX prefixes
 BOOST_FIXTURE_TEST_SUITE(descriptor_tests, BasicTestingSetup)
 
 BOOST_AUTO_TEST_CASE(descriptor_test)
@@ -1259,3 +1261,4 @@ BOOST_AUTO_TEST_CASE(descriptor_test)
 }
 
 BOOST_AUTO_TEST_SUITE_END()
+#endif // !ENABLE_POCX

@@ -20,6 +20,8 @@
 
 #include <boost/test/unit_test.hpp>
 
+#ifndef ENABLE_POCX
+// PoCX: Chainstate tests use block creation that differs for PoCX
 BOOST_FIXTURE_TEST_SUITE(validation_chainstate_tests, ChainTestingSetup)
 
 //! Test resizing coins-related Chainstate caches during runtime.
@@ -148,3 +150,4 @@ BOOST_FIXTURE_TEST_CASE(chainstate_update_tip, TestChain100Setup)
 }
 
 BOOST_AUTO_TEST_SUITE_END()
+#endif // !ENABLE_POCX

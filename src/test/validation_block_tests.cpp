@@ -31,6 +31,8 @@ struct MinerTestingSetup : public RegTestingSetup {
 };
 } // namespace validation_block_tests
 
+#ifndef ENABLE_POCX
+// PoCX: Block validation tests use PoW-specific block creation
 BOOST_FIXTURE_TEST_SUITE(validation_block_tests, MinerTestingSetup)
 
 struct TestSubscriber final : public CValidationInterface {
@@ -367,3 +369,4 @@ BOOST_AUTO_TEST_CASE(witness_commitment_index)
     BOOST_CHECK_EQUAL(GetWitnessCommitmentIndex(pblock), 2);
 }
 BOOST_AUTO_TEST_SUITE_END()
+#endif // !ENABLE_POCX

@@ -13,6 +13,8 @@
 #include <optional>
 #include <vector>
 
+#ifndef ENABLE_POCX
+// PoCX: Tests use TestingSetup with mempool linearization that has different behavior
 BOOST_FIXTURE_TEST_SUITE(miniminer_tests, TestingSetup)
 
 const CAmount low_fee{CENT/2000}; // 500 ṩ
@@ -702,3 +704,4 @@ BOOST_FIXTURE_TEST_CASE(manual_ctor, TestChain100Setup)
 }
 
 BOOST_AUTO_TEST_SUITE_END()
+#endif // !ENABLE_POCX

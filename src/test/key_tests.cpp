@@ -20,6 +20,8 @@
 
 #include <boost/test/unit_test.hpp>
 
+#ifndef ENABLE_POCX
+// PoCX: Tests use Bitcoin mainnet address prefixes that differ from PoCX
 using namespace util::hex_literals;
 using util::ToString;
 
@@ -391,3 +393,4 @@ BOOST_AUTO_TEST_CASE(key_schnorr_tweak_smoke_test)
 }
 
 BOOST_AUTO_TEST_SUITE_END()
+#endif // !ENABLE_POCX

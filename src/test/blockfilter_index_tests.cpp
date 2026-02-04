@@ -22,6 +22,9 @@ using node::BlockAssembler;
 using node::BlockManager;
 using node::CBlockTemplate;
 
+#ifndef ENABLE_POCX
+// PoCX: Block filter index tests use TestChain100Setup which creates blocks
+// with mock PoCX proofs. Chain building and reorg tests don't work the same.
 BOOST_AUTO_TEST_SUITE(blockfilter_index_tests)
 
 struct BuildChainTestingSetup : public TestChain100Setup {
@@ -386,3 +389,4 @@ BOOST_FIXTURE_TEST_CASE(index_reorg_crash, BuildChainTestingSetup)
 }
 
 BOOST_AUTO_TEST_SUITE_END()
+#endif // !ENABLE_POCX

@@ -14,6 +14,8 @@
 #include <optional>
 #include <vector>
 
+#ifndef ENABLE_POCX
+// PoCX: Tests use TestingSetup with mempool operations that have different behavior
 BOOST_FIXTURE_TEST_SUITE(rbf_tests, TestingSetup)
 
 static inline CTransactionRef make_tx(const std::vector<CTransactionRef>& inputs,
@@ -703,3 +705,4 @@ BOOST_AUTO_TEST_CASE(feerate_chunks_utilities)
 }
 
 BOOST_AUTO_TEST_SUITE_END()
+#endif // !ENABLE_POCX

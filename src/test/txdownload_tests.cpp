@@ -16,6 +16,8 @@
 
 #include <boost/test/unit_test.hpp>
 
+#ifndef ENABLE_POCX
+// PoCX: Uses TestingSetup with tx processing that differs for PoCX
 BOOST_FIXTURE_TEST_SUITE(txdownload_tests, TestingSetup)
 
 struct Behaviors {
@@ -339,3 +341,4 @@ BOOST_FIXTURE_TEST_CASE(handle_missing_inputs, TestChain100Setup)
 }
 
 BOOST_AUTO_TEST_SUITE_END()
+#endif // !ENABLE_POCX

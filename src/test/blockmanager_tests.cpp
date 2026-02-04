@@ -57,6 +57,8 @@ BOOST_AUTO_TEST_CASE(blockmanager_find_block_pos)
     BOOST_CHECK_EQUAL(actual.nPos, STORAGE_HEADER_BYTES + ::GetSerializeSize(TX_WITH_WITNESS(params->GenesisBlock())) + STORAGE_HEADER_BYTES);
 }
 
+#ifndef ENABLE_POCX
+// PoCX: Tests using TestChain100Setup depend on PoW chain behavior
 BOOST_FIXTURE_TEST_CASE(blockmanager_scan_unlink_already_pruned_files, TestChain100Setup)
 {
     // Cap last block file size, and mine new block in a new block file.
@@ -136,6 +138,7 @@ BOOST_FIXTURE_TEST_CASE(blockmanager_block_data_availability, TestChain100Setup)
     BOOST_CHECK(blockman.CheckBlockDataAvailability(tip, *first_available_block));
     BOOST_CHECK(!blockman.CheckBlockDataAvailability(tip, *last_pruned_block));
 }
+#endif // !ENABLE_POCX
 
 BOOST_FIXTURE_TEST_CASE(blockmanager_readblock_hash_mismatch, TestingSetup)
 {
@@ -153,6 +156,8 @@ BOOST_FIXTURE_TEST_CASE(blockmanager_readblock_hash_mismatch, TestingSetup)
     BOOST_CHECK(!m_node.chainman->m_blockman.ReadBlock(block, index));
 }
 
+#ifndef ENABLE_POCX
+// PoCX: Block size calculation uses 80-byte PoW headers; PoCX headers are larger
 BOOST_AUTO_TEST_CASE(blockmanager_flush_block_file)
 {
     KernelNotifications notifications{Assert(m_node.shutdown_request), m_node.exit_status, *Assert(m_node.warnings)};
@@ -221,5 +226,6 @@ BOOST_AUTO_TEST_CASE(blockmanager_flush_block_file)
     BOOST_CHECK(!blockman.ReadBlock(read_block, pos2, {}));
     BOOST_CHECK_EQUAL(read_block.nVersion, 2);
 }
+#endif // !ENABLE_POCX
 
 BOOST_AUTO_TEST_SUITE_END()

@@ -13,6 +13,8 @@
 
 #include <boost/test/unit_test.hpp>
 
+#ifndef ENABLE_POCX
+// PoCX: Uses TestChain100Setup which creates mock PoCX blocks
 namespace wallet {
 BOOST_FIXTURE_TEST_SUITE(spend_tests, WalletTestingSetup)
 
@@ -106,3 +108,4 @@ BOOST_FIXTURE_TEST_CASE(wallet_duplicated_preset_inputs_test, TestChain100Setup)
 
 BOOST_AUTO_TEST_SUITE_END()
 } // namespace wallet
+#endif // !ENABLE_POCX

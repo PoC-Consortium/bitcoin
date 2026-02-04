@@ -17,6 +17,8 @@
 
 #include <univalue.h>
 
+#ifndef ENABLE_POCX
+// PoCX: Tests use Bitcoin mainnet address prefixes
 using namespace util::hex_literals;
 
 BOOST_FIXTURE_TEST_SUITE(script_standard_tests, BasicTestingSetup)
@@ -492,3 +494,4 @@ BOOST_AUTO_TEST_CASE(bip341_spk_test_vectors)
 }
 
 BOOST_AUTO_TEST_SUITE_END()
+#endif // !ENABLE_POCX

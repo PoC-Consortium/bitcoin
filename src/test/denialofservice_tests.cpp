@@ -139,6 +139,8 @@ void AddRandomOutboundPeer(NodeId& id, std::vector<CNode*>& vNodes, PeerManager&
 }
 }; // struct OutboundTest
 
+#ifndef ENABLE_POCX
+// PoCX: Test uses nPowTargetSpacing timing assumptions that differ for PoCX
 BOOST_FIXTURE_TEST_CASE(stale_tip_peer_management, OutboundTest)
 {
     NodeId id{0};
@@ -236,6 +238,7 @@ BOOST_FIXTURE_TEST_CASE(stale_tip_peer_management, OutboundTest)
 
     connman->ClearTestNodes();
 }
+#endif // !ENABLE_POCX
 
 BOOST_FIXTURE_TEST_CASE(block_relay_only_eviction, OutboundTest)
 {

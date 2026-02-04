@@ -1480,6 +1480,8 @@ BOOST_AUTO_TEST_CASE(message_sign)
     BOOST_CHECK_EQUAL(expected_signature, generated_signature);
 }
 
+#ifndef ENABLE_POCX
+// PoCX: Test uses Bitcoin mainnet addresses that differ from PoCX prefixes
 BOOST_AUTO_TEST_CASE(message_verify)
 {
     BOOST_CHECK_EQUAL(
@@ -1531,6 +1533,7 @@ BOOST_AUTO_TEST_CASE(message_verify)
             "Trust me"),
         MessageVerificationResult::OK);
 }
+#endif // !ENABLE_POCX
 
 BOOST_AUTO_TEST_CASE(message_hash)
 {

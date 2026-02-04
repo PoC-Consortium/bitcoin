@@ -170,6 +170,9 @@ BOOST_AUTO_TEST_CASE(bloom_match)
     BOOST_CHECK_MESSAGE(!filter.IsRelevantAndUpdate(tx), "Simple Bloom filter matched COutPoint for an output we didn't care about");
 }
 
+#ifndef ENABLE_POCX
+// PoCX: Merkle block tests use hardcoded PoW blocks that can't be deserialized
+// with PoCX block header format (nBaseTarget/pocxProof vs nBits/nNonce).
 BOOST_AUTO_TEST_CASE(merkle_block_1)
 {
     CBlock block = getBlock13b8a();
@@ -454,6 +457,7 @@ BOOST_AUTO_TEST_CASE(merkle_block_4_test_update_none)
     BOOST_CHECK(!filter.contains(COutPoint(Txid::FromHex("147caa76786596590baa4e98f5d9f48b86c7765e489f7a6ff3360fe5c674360b").value(), 0)));
     BOOST_CHECK(!filter.contains(COutPoint(Txid::FromHex("02981fa052f0481dbc5868f4fc2166035a10f27a03cfd2de67326471df5bc041").value(), 0)));
 }
+#endif // !ENABLE_POCX
 
 std::vector<unsigned char> BloomTest::RandomData()
 {

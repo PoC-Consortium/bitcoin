@@ -32,6 +32,8 @@
 
 #include <boost/test/unit_test.hpp>
 
+#ifndef ENABLE_POCX
+// PoCX: Mining tests use PoW-specific block creation and validation
 using namespace util::hex_literals;
 using interfaces::BlockTemplate;
 using interfaces::Mining;
@@ -723,13 +725,13 @@ BOOST_AUTO_TEST_CASE(CreateNewBlock_validity)
             while (CheckProofOfWork(block.GetHash(), block.nBits, Assert(m_node.chainman)->GetParams().GetConsensus())) {
                 block.nNonce++;
             }
-#endif
 
             std::string reason;
             std::string debug;
             BOOST_REQUIRE(!mining->checkBlock(block, {.check_pow = true}, reason, debug));
             BOOST_REQUIRE_EQUAL(reason, "high-hash");
             BOOST_REQUIRE_EQUAL(debug, "proof of work failed");
+#endif
         }
     }
 
@@ -817,3 +819,4 @@ BOOST_AUTO_TEST_CASE(CreateNewBlock_validity)
 }
 
 BOOST_AUTO_TEST_SUITE_END()
+#endif // !ENABLE_POCX
