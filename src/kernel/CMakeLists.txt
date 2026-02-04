@@ -43,6 +43,17 @@ add_library(bitcoinkernel
   ../policy/settings.cpp
   ../policy/truc_policy.cpp
   $<$<NOT:$<BOOL:${ENABLE_POCX}>>:../pow.cpp>
+  $<$<BOOL:${ENABLE_POCX}>:../pocx/consensus/params.cpp>
+  $<$<BOOL:${ENABLE_POCX}>:../pocx/consensus/batch_validation.cpp>
+  $<$<BOOL:${ENABLE_POCX}>:../pocx/consensus/signature.cpp>
+  $<$<BOOL:${ENABLE_POCX}>:../pocx/consensus/proof.cpp>
+  $<$<BOOL:${ENABLE_POCX}>:../pocx/consensus/difficulty.cpp>
+  $<$<BOOL:${ENABLE_POCX}>:../pocx/algorithms/time_bending.cpp>
+  $<$<BOOL:${ENABLE_POCX}>:../pocx/algorithms/quality.cpp>
+  $<$<BOOL:${ENABLE_POCX}>:../pocx/algorithms/encoding.cpp>
+  $<$<BOOL:${ENABLE_POCX}>:../pocx/algorithms/plot_generation.cpp>
+  $<$<BOOL:${ENABLE_POCX}>:../pocx/assignments/assignment_state.cpp>
+  $<$<BOOL:${ENABLE_POCX}>:../pocx/assignments/opcodes.cpp>
   ../primitives/block.cpp
   ../primitives/transaction.cpp
   ../pubkey.cpp

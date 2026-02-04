@@ -855,7 +855,8 @@ std::variant<ChainType, std::string> ArgsManager::GetChainArg() const
     if (fTestNet4) return ChainType::TESTNET4;
 #ifdef ENABLE_POCX
     // #POCXTODO: Remove this before mainnet launch!
-    throw std::runtime_error("PoCX mainnet is not available yet. Use -testnet or -regtest for testing.");
+    // Default to testnet for PoCX builds until mainnet is ready
+    return ChainType::TESTNET;
 #else
     return ChainType::MAIN;
 #endif

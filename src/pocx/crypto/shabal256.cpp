@@ -189,9 +189,19 @@ void Shabal256(const uint8_t* data, size_t len, const uint32_t* pre_term, const 
 
 // Runtime SIMD detection functions - always compiled here.
 // The actual SIMD implementations are in shabal256_avx2.cpp and shabal256_sse2.cpp.
-#include <compat/cpuid.h>
 #include <pocx/crypto/shabal256_avx2.h>
 #include <pocx/crypto/shabal256_sse2.h>
+
+// Platform-specific includes for CPUID
+#if defined(_M_X64) || defined(_M_IX86)
+// MSVC on x86/x64
+#include <intrin.h>
+#define POCX_HAVE_CPUID
+#elif defined(__x86_64__) || defined(__amd64__) || defined(__i386__)
+// GCC/Clang on x86/x64
+#include <cpuid.h>
+#define POCX_HAVE_CPUID
+#endif
 
 namespace pocx {
 namespace crypto {
@@ -199,23 +209,39 @@ namespace crypto {
 static int g_have_avx2 = -1; // -1 = not checked, 0 = no, 1 = yes
 static int g_have_sse2 = -1;
 
+#ifdef POCX_HAVE_CPUID
+static inline void pocx_cpuid(uint32_t leaf, uint32_t subleaf, uint32_t& eax, uint32_t& ebx, uint32_t& ecx, uint32_t& edx)
+{
+#if defined(_MSC_VER)
+    int regs[4];
+    __cpuidex(regs, leaf, subleaf);
+    eax = regs[0];
+    ebx = regs[1];
+    ecx = regs[2];
+    edx = regs[3];
+#else
+    __cpuid_count(leaf, subleaf, eax, ebx, ecx, edx);
+#endif
+}
+#endif
+
 bool HaveAVX2() {
     if (g_have_avx2 >= 0) {
         return g_have_avx2 == 1;
     }
 
-#ifdef HAVE_GETCPUID
+#ifdef POCX_HAVE_CPUID
     uint32_t eax, ebx, ecx, edx;
 
     // Check for CPUID support and get max function
-    GetCPUID(0, 0, eax, ebx, ecx, edx);
+    pocx_cpuid(0, 0, eax, ebx, ecx, edx);
     if (eax < 7) {
         g_have_avx2 = 0;
         return false;
     }
 
     // Check for AVX support (CPUID.1:ECX.AVX[bit 28])
-    GetCPUID(1, 0, eax, ebx, ecx, edx);
+    pocx_cpuid(1, 0, eax, ebx, ecx, edx);
     bool have_avx = (ecx >> 28) & 1;
     bool have_xsave = (ecx >> 27) & 1;
 
@@ -241,7 +267,7 @@ bool HaveAVX2() {
 #endif
 
     // Check for AVX2 support (CPUID.7:EBX.AVX2[bit 5])
-    GetCPUID(7, 0, eax, ebx, ecx, edx);
+    pocx_cpuid(7, 0, eax, ebx, ecx, edx);
     bool have_avx2 = (ebx >> 5) & 1;
 
     g_have_avx2 = have_avx2 ? 1 : 0;
@@ -257,18 +283,18 @@ bool HaveSSE2() {
         return g_have_sse2 == 1;
     }
 
-#ifdef HAVE_GETCPUID
+#ifdef POCX_HAVE_CPUID
     uint32_t eax, ebx, ecx, edx;
 
     // Check for CPUID support and get max function
-    GetCPUID(0, 0, eax, ebx, ecx, edx);
+    pocx_cpuid(0, 0, eax, ebx, ecx, edx);
     if (eax < 1) {
         g_have_sse2 = 0;
         return false;
     }
 
     // Check for SSE2 support (CPUID.1:EDX.SSE2[bit 26])
-    GetCPUID(1, 0, eax, ebx, ecx, edx);
+    pocx_cpuid(1, 0, eax, ebx, ecx, edx);
     bool have_sse2 = (edx >> 26) & 1;
 
     g_have_sse2 = have_sse2 ? 1 : 0;

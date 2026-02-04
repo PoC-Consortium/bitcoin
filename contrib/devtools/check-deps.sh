@@ -48,6 +48,26 @@ declare -A SUPPRESS
 SUPPRESS["common.cpp.o interface_ui.cpp.o _Z11InitWarningRK13bilingual_str"]=1
 SUPPRESS["common.cpp.o interface_ui.cpp.o _Z9InitErrorRK13bilingual_str"]=1
 
+# PoCX: mining/wallet signing creates node->wallet dependency for block signing
+SUPPRESS["mining.cpp.o wallet_signing.cpp.o _ZN4pocx6mining14HaveAccountKey"]=1
+SUPPRESS["mining.cpp.o wallet_signing.cpp.o _ZN4pocx6mining32SignPoCXBlockWithAvailableWallet"]=1
+SUPPRESS["scheduler.cpp.o wallet_signing.cpp.o _ZN4pocx6mining32SignPoCXBlockWithAvailableWallet"]=1
+# PoCX: tx_check uses assignment opcodes for OP_RETURN validation
+SUPPRESS["tx_check.cpp.o opcodes.cpp.o _ZN4pocx11assignments20IsAssignmentOpReturn"]=1
+SUPPRESS["tx_check.cpp.o opcodes.cpp.o _ZN4pocx11assignments20IsRevocationOpReturn"]=1
+# PoCX: consensus code uses logging
+SUPPRESS["assignment_state.cpp.o logging.cpp.o _Z11LogInstance"]=1
+SUPPRESS["signature.cpp.o logging.cpp.o _Z11LogInstance"]=1
+SUPPRESS["assignment_state.cpp.o logging.cpp.o _ZN5BCLog6Logger11LogPrintStr"]=1
+SUPPRESS["signature.cpp.o logging.cpp.o _ZN5BCLog6Logger11LogPrintStr"]=1
+SUPPRESS["assignment_state.cpp.o logging.cpp.o _ZNK5BCLog6Logger20WillLogCategoryLevel"]=1
+SUPPRESS["signature.cpp.o logging.cpp.o _ZNK5BCLog6Logger20WillLogCategoryLevel"]=1
+# PoCX: primitives use strencodings
+SUPPRESS["block.cpp.o strencodings.cpp.o _Z11TryParseHex"]=1
+SUPPRESS["encoding.cpp.o strencodings.cpp.o _Z11TryParseHex"]=1
+# PoCX: wallet signing uses validation
+SUPPRESS["wallet_signing.cpp.o validation.cpp.o _ZNK17ChainstateManager16ActiveChainstate"]=1
+
 usage() {
    echo "Usage: $(basename "${BASH_SOURCE[0]}") [BUILD_DIR]"
 }
