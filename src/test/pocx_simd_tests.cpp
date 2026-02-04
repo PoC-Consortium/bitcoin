@@ -39,6 +39,8 @@ BOOST_AUTO_TEST_CASE(avx2_detection)
     bool have_avx2 = HaveAVX2();
     BOOST_TEST_MESSAGE("AVX2 available: " << (have_avx2 ? "yes" : "no"));
     BOOST_TEST_MESSAGE("Batch implementation: " << pocx_batch_implementation_name());
+    // Assertion to satisfy Boost.Test requirement
+    BOOST_CHECK(true);
 }
 
 #ifdef ENABLE_AVX2
@@ -802,6 +804,8 @@ BOOST_AUTO_TEST_CASE(sse2_detection)
     // Just test that detection works without crashing
     bool have_sse2 = HaveSSE2();
     BOOST_TEST_MESSAGE("SSE2 available: " << (have_sse2 ? "yes" : "no"));
+    // Assertion to satisfy Boost.Test requirement
+    BOOST_CHECK(true);
 }
 
 #ifdef ENABLE_SSE2

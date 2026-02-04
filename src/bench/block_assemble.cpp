@@ -22,6 +22,9 @@
 
 using node::BlockAssembler;
 
+#ifndef ENABLE_POCX
+// PoCX: Benchmarks use MineBlock which creates mock PoCX proofs that fail consensus validation
+
 static void AssembleBlock(benchmark::Bench& bench)
 {
     const auto test_setup = MakeNoLogFileContext<const TestingSetup>();
@@ -71,3 +74,5 @@ static void BlockAssemblerAddPackageTxns(benchmark::Bench& bench)
 
 BENCHMARK(AssembleBlock, benchmark::PriorityLevel::HIGH);
 BENCHMARK(BlockAssemblerAddPackageTxns, benchmark::PriorityLevel::LOW);
+
+#endif // !ENABLE_POCX

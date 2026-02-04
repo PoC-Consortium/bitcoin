@@ -14,11 +14,12 @@
 
 #include <boost/test/unit_test.hpp>
 
-const std::vector<std::pair<Wtxid, CTransactionRef>> empty_extra_txn;
-
 #ifndef ENABLE_POCX
 // PoCX: Compact block encoding tests depend on PoW block structure.
 // PoCX blocks have different header fields (nBaseTarget, pocxProof instead of nBits, nNonce).
+
+const std::vector<std::pair<Wtxid, CTransactionRef>> empty_extra_txn;
+
 BOOST_FIXTURE_TEST_SUITE(blockencodings_tests, RegTestingSetup)
 
 static CMutableTransaction BuildTransactionTestCase() {
