@@ -10,10 +10,6 @@
 #include <cstdint>
 #include <cstring>
 
-#if defined(__x86_64__) || defined(__amd64__) || defined(__i386__)
-#include <cpuid.h>
-#endif
-
 #ifdef ENABLE_AVX2
 #include <immintrin.h>
 #endif
@@ -21,53 +17,7 @@
 namespace pocx {
 namespace crypto {
 
-// Runtime AVX2 detection with caching
-static int g_have_avx2 = -1; // -1 = not checked, 0 = no, 1 = yes
-
-bool HaveAVX2() {
-    if (g_have_avx2 >= 0) {
-        return g_have_avx2 == 1;
-    }
-
-#if defined(__x86_64__) || defined(__amd64__) || defined(__i386__)
-    uint32_t eax, ebx, ecx, edx;
-
-    // Check for CPUID support and get max function
-    __cpuid_count(0, 0, eax, ebx, ecx, edx);
-    if (eax < 7) {
-        g_have_avx2 = 0;
-        return false;
-    }
-
-    // Check for AVX support (CPUID.1:ECX.AVX[bit 28])
-    __cpuid_count(1, 0, eax, ebx, ecx, edx);
-    bool have_avx = (ecx >> 28) & 1;
-    bool have_xsave = (ecx >> 27) & 1;
-
-    if (!have_avx || !have_xsave) {
-        g_have_avx2 = 0;
-        return false;
-    }
-
-    // Check if OS has enabled AVX registers (xgetbv)
-    uint32_t xcr0_lo, xcr0_hi;
-    __asm__("xgetbv" : "=a"(xcr0_lo), "=d"(xcr0_hi) : "c"(0));
-    if ((xcr0_lo & 6) != 6) {
-        g_have_avx2 = 0;
-        return false;
-    }
-
-    // Check for AVX2 support (CPUID.7:EBX.AVX2[bit 5])
-    __cpuid_count(7, 0, eax, ebx, ecx, edx);
-    bool have_avx2 = (ebx >> 5) & 1;
-
-    g_have_avx2 = have_avx2 ? 1 : 0;
-    return g_have_avx2 == 1;
-#else
-    g_have_avx2 = 0;
-    return false;
-#endif
-}
+// HaveAVX2() is defined in shabal256.cpp to ensure it's always available
 
 #ifdef ENABLE_AVX2
 

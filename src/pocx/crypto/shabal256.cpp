@@ -187,26 +187,97 @@ void Shabal256(const uint8_t* data, size_t len, const uint32_t* pre_term, const 
 } // namespace crypto
 } // namespace pocx
 
-// Provide fallback implementations of HaveAVX2() and HaveSSE2() for non-x86 architectures.
-// On x86, these are defined in shabal256_avx2.cpp and shabal256_sse2.cpp respectively.
-// On ARM and other architectures, those files are not compiled, so we need stubs here.
-#if !defined(__x86_64__) && !defined(__amd64__) && !defined(__i386__) && !defined(_M_X64) && !defined(_M_IX86)
-
+// Runtime SIMD detection functions - always compiled here.
+// The actual SIMD implementations are in shabal256_avx2.cpp and shabal256_sse2.cpp.
+#include <compat/cpuid.h>
 #include <pocx/crypto/shabal256_avx2.h>
 #include <pocx/crypto/shabal256_sse2.h>
 
 namespace pocx {
 namespace crypto {
 
+static int g_have_avx2 = -1; // -1 = not checked, 0 = no, 1 = yes
+static int g_have_sse2 = -1;
+
 bool HaveAVX2() {
+    if (g_have_avx2 >= 0) {
+        return g_have_avx2 == 1;
+    }
+
+#ifdef HAVE_GETCPUID
+    uint32_t eax, ebx, ecx, edx;
+
+    // Check for CPUID support and get max function
+    GetCPUID(0, 0, eax, ebx, ecx, edx);
+    if (eax < 7) {
+        g_have_avx2 = 0;
+        return false;
+    }
+
+    // Check for AVX support (CPUID.1:ECX.AVX[bit 28])
+    GetCPUID(1, 0, eax, ebx, ecx, edx);
+    bool have_avx = (ecx >> 28) & 1;
+    bool have_xsave = (ecx >> 27) & 1;
+
+    if (!have_avx || !have_xsave) {
+        g_have_avx2 = 0;
+        return false;
+    }
+
+    // Check if OS has enabled AVX registers (xgetbv)
+#if defined(_MSC_VER)
+    unsigned long long xcr0 = _xgetbv(0);
+    if ((xcr0 & 6) != 6) {
+        g_have_avx2 = 0;
+        return false;
+    }
+#else
+    uint32_t xcr0_lo, xcr0_hi;
+    __asm__("xgetbv" : "=a"(xcr0_lo), "=d"(xcr0_hi) : "c"(0));
+    if ((xcr0_lo & 6) != 6) {
+        g_have_avx2 = 0;
+        return false;
+    }
+#endif
+
+    // Check for AVX2 support (CPUID.7:EBX.AVX2[bit 5])
+    GetCPUID(7, 0, eax, ebx, ecx, edx);
+    bool have_avx2 = (ebx >> 5) & 1;
+
+    g_have_avx2 = have_avx2 ? 1 : 0;
+    return g_have_avx2 == 1;
+#else
+    g_have_avx2 = 0;
     return false;
+#endif
 }
 
 bool HaveSSE2() {
+    if (g_have_sse2 >= 0) {
+        return g_have_sse2 == 1;
+    }
+
+#ifdef HAVE_GETCPUID
+    uint32_t eax, ebx, ecx, edx;
+
+    // Check for CPUID support and get max function
+    GetCPUID(0, 0, eax, ebx, ecx, edx);
+    if (eax < 1) {
+        g_have_sse2 = 0;
+        return false;
+    }
+
+    // Check for SSE2 support (CPUID.1:EDX.SSE2[bit 26])
+    GetCPUID(1, 0, eax, ebx, ecx, edx);
+    bool have_sse2 = (edx >> 26) & 1;
+
+    g_have_sse2 = have_sse2 ? 1 : 0;
+    return g_have_sse2 == 1;
+#else
+    g_have_sse2 = 0;
     return false;
+#endif
 }
 
 } // namespace crypto
 } // namespace pocx
-
-#endif // Non-x86 architectures

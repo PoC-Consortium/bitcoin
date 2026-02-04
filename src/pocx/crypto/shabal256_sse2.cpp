@@ -10,10 +10,6 @@
 #include <cstdint>
 #include <cstring>
 
-#if defined(__x86_64__) || defined(__amd64__) || defined(__i386__)
-#include <cpuid.h>
-#endif
-
 #ifdef ENABLE_SSE2
 #include <emmintrin.h>
 #endif
@@ -21,35 +17,7 @@
 namespace pocx {
 namespace crypto {
 
-// Runtime SSE2 detection with caching
-static int g_have_sse2 = -1; // -1 = not checked, 0 = no, 1 = yes
-
-bool HaveSSE2() {
-    if (g_have_sse2 >= 0) {
-        return g_have_sse2 == 1;
-    }
-
-#if defined(__x86_64__) || defined(__amd64__) || defined(__i386__)
-    uint32_t eax, ebx, ecx, edx;
-
-    // Check for CPUID support and get max function
-    __cpuid_count(0, 0, eax, ebx, ecx, edx);
-    if (eax < 1) {
-        g_have_sse2 = 0;
-        return false;
-    }
-
-    // Check for SSE2 support (CPUID.1:EDX.SSE2[bit 26])
-    __cpuid_count(1, 0, eax, ebx, ecx, edx);
-    bool have_sse2 = (edx >> 26) & 1;
-
-    g_have_sse2 = have_sse2 ? 1 : 0;
-    return g_have_sse2 == 1;
-#else
-    g_have_sse2 = 0;
-    return false;
-#endif
-}
+// HaveSSE2() is defined in shabal256.cpp to ensure it's always available
 
 #ifdef ENABLE_SSE2
 

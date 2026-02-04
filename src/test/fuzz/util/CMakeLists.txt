@@ -19,11 +19,17 @@ target_link_libraries(test_fuzz
 )
 
 # PoCX: bitcoin_node depends on bitcoin_wallet for block signing functions.
-# Use LINK_GROUP:RESCAN to handle the circular dependency between these
-# static libraries. This is the proper CMake 3.24+ solution - it tells the
-# linker to rescan the group for unresolved symbols.
+# This creates a circular dependency that requires special linker handling.
 if(ENABLE_WALLET AND ENABLE_POCX)
-  target_link_libraries(test_fuzz PRIVATE "$<LINK_GROUP:RESCAN,bitcoin_node,bitcoin_wallet>")
+  if(MSVC)
+    # MSVC doesn't support LINK_GROUP:RESCAN. List libraries multiple times
+    # to resolve circular dependencies (MSVC linker handles this).
+    target_link_libraries(test_fuzz PRIVATE bitcoin_node bitcoin_wallet bitcoin_node)
+  else()
+    # Use LINK_GROUP:RESCAN on GNU/Clang (CMake 3.24+) - tells linker to
+    # rescan the group for unresolved symbols.
+    target_link_libraries(test_fuzz PRIVATE "$<LINK_GROUP:RESCAN,bitcoin_node,bitcoin_wallet>")
+  endif()
 else()
   target_link_libraries(test_fuzz PRIVATE bitcoin_node)
 endif()
