@@ -82,6 +82,10 @@ BOOST_AUTO_TEST_CASE(get_difficulty_for_very_high_target)
 }
 #endif
 
+#ifndef ENABLE_POCX
+// PoCX: TestChain100Setup creates blocks with mock PoCX proofs that don't have
+// the same block status behavior as PoW blocks. Skip chain-dependent tests.
+
 //! Prune chain from height down to genesis block and check that
 //! GetPruneHeight returns the correct value
 static void CheckGetPruneHeight(node::BlockManager& blockman, CChain& chain, int height) EXCLUSIVE_LOCKS_REQUIRED(::cs_main)
@@ -99,9 +103,6 @@ static void CheckGetPruneHeight(node::BlockManager& blockman, CChain& chain, int
     BOOST_CHECK_EQUAL(*prune_height, height);
 }
 
-#ifndef ENABLE_POCX
-// PoCX: TestChain100Setup creates blocks with mock PoCX proofs that don't have
-// the same block status behavior as PoW blocks. Skip chain-dependent tests.
 BOOST_FIXTURE_TEST_CASE(get_prune_height, TestChain100Setup)
 {
     LOCK(::cs_main);
