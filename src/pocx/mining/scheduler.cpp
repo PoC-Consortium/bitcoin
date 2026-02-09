@@ -4,7 +4,9 @@
 
 #include <pocx/mining/scheduler.h>
 #include <pocx/mining/submission.h>
+#ifdef ENABLE_WALLET
 #include <pocx/mining/wallet_signing.h>
+#endif
 #include <pocx/consensus/difficulty.h>
 #include <pocx/consensus/signature.h>
 #include <pocx/consensus/params.h>
@@ -455,6 +457,7 @@ bool PoCXScheduler::ForgeBlock(bool defensive) {
     }
 
     // Sign block using wallet
+#ifdef ENABLE_WALLET
     bool signed_successfully = pocx::mining::SignPoCXBlockWithAvailableWallet(
         context,
         *block,
@@ -465,6 +468,10 @@ bool PoCXScheduler::ForgeBlock(bool defensive) {
         LogPrintf("PoCX: [Scheduler] Block signing failed\n");
         return false;
     }
+#else
+    LogPrintf("PoCX: [Scheduler] Cannot forge block - wallet support not compiled\n");
+    return false;
+#endif
 
     LogPrintf("PoCX: [Scheduler] Block forged with nonce: %llu, quality: %llu, compression: %u\n",
              block->pocxProof.nonce, block->pocxProof.quality, block->pocxProof.compression);

@@ -52,7 +52,9 @@
 #include <pocx/consensus/params.h>
 #include <pocx/algorithms/quality.h>
 #include <pocx/algorithms/time_bending.h>
+#ifdef ENABLE_WALLET
 #include <pocx/mining/wallet_signing.h>
+#endif
 #include <pocx/assignments/assignment_state.h>
 #include <key.h>
 #include <pubkey.h>
@@ -301,6 +303,7 @@ static bool GenerateBlock(ChainstateManager& chainman, CBlock&& block, uint64_t&
         block.pocxProof.compression = compression;
 
         // Sign the block using wallet
+#ifdef ENABLE_WALLET
         if (node_context) {
             std::string account_hex = HexStr(std::span<const uint8_t>(account_id, 20));
 
@@ -309,6 +312,10 @@ static bool GenerateBlock(ChainstateManager& chainman, CBlock&& block, uint64_t&
                 throw JSONRPCError(RPC_WALLET_ERROR, "Failed to sign PoCX block - wallet may not have the key");
             }
         }
+#else
+        (void)node_context;
+        throw JSONRPCError(RPC_WALLET_ERROR, "PoCX block signing requires wallet support - rebuild with ENABLE_WALLET");
+#endif
 
         if (chainman.m_interrupt) {
             return false;

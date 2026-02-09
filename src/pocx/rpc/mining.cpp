@@ -4,7 +4,9 @@
 
 #include <consensus/params.h>
 #include <interfaces/mining.h>
+#ifdef ENABLE_WALLET
 #include <interfaces/wallet.h>
+#endif
 #include <logging.h>
 #include <node/context.h>
 #include <rpc/server.h>
@@ -19,10 +21,12 @@
 #include <pocx/consensus/proof.h>
 #include <pocx/assignments/assignment_state.h>
 #include <pocx/mining/scheduler.h>
+#ifdef ENABLE_WALLET
 #include <pocx/mining/wallet_signing.h>
+#include <wallet/wallet.h>
+#endif
 #include <pocx/consensus/difficulty.h>
 #include <pocx/rpc/assignments.h>
-#include <wallet/wallet.h>
 
 #include <limits>
 #include <mutex>
@@ -182,6 +186,7 @@ static RPCHelpMan submit_nonce()
                 }
 
                 // 4. Wallet verification (before expensive proof work)
+#ifdef ENABLE_WALLET
                 if (node.wallet_loader) {
                     auto wallets = node.wallet_loader->getWallets();
                     bool has_key = false;
@@ -216,6 +221,11 @@ static RPCHelpMan submit_nonce()
                                      effective_signer_account, account_id));
                     }
                 }
+#else
+                // Wallet support disabled - skip key verification
+                // Note: Block signing will fail later in scheduler if no wallet
+                LogPrintf("PoCX: Wallet support disabled - skipping key verification for %s\n", account_id.c_str());
+#endif
 
                 // 5. Validate compression against bounds (before expensive proof validation)
                 const Consensus::Params& consensusParams = chainman.GetParams().GetConsensus();
