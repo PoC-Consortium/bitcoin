@@ -9,20 +9,12 @@ namespace mining {
 
 bool SubmissionValidator::ValidateContext(
     const NonceSubmission& submission,
-    int current_height,
-    const uint256& current_gen_sig
+    const uint256& current_block_hash
 ) {
-    // Check if submission is stale (height mismatch)
-    if (submission.expected_height != current_height) {
-        return false;
-    }
-
-    // Check if generation signature matches (context validation)
-    if (submission.generation_signature != current_gen_sig) {
-        return false;
-    }
-
-    return true;
+    // Block hash uniquely identifies the chain tip — single comparison
+    // replaces the old height + generation_signature double-check and
+    // also catches same-height reorgs.
+    return submission.block_hash == current_block_hash;
 }
 
 bool SubmissionValidator::IsBetterThanCurrent(

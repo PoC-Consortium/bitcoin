@@ -21,26 +21,23 @@ struct NonceSubmission {
     uint64_t nonce;
     uint64_t quality;
     uint32_t compression;
-    int expected_height;
-    uint256 generation_signature;
+    uint256 block_hash;             // Tip block hash (sole staleness indicator)
     std::chrono::steady_clock::time_point submit_time;
 
     NonceSubmission() = default;
     NonceSubmission(const std::string& acc_id, const std::string& s, uint64_t n,
-                   uint64_t q, uint32_t c, int h, const uint256& gs)
+                   uint64_t q, uint32_t c, const uint256& bh)
         : account_id(acc_id), seed(s), nonce(n), quality(q), compression(c),
-          expected_height(h), generation_signature(gs),
-          submit_time(std::chrono::steady_clock::now()) {}
+          block_hash(bh), submit_time(std::chrono::steady_clock::now()) {}
 };
 
 /** Submission validation helpers */
 class SubmissionValidator {
 public:
-    /** Validate submission matches current chain context */
+    /** Validate submission matches current chain context (block_hash is the sole staleness indicator) */
     static bool ValidateContext(
         const NonceSubmission& submission,
-        int current_height,
-        const uint256& current_gen_sig
+        const uint256& current_block_hash
     );
 
     /** Check if submission is better than current best (lower quality wins) */

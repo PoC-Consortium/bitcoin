@@ -106,24 +106,26 @@ static RPCHelpMan submit_nonce()
     return RPCHelpMan{"submit_nonce",
         "Submit a PoCX nonce solution.\n",
         {
+            {"block_hash", RPCArg::Type::STR_HEX, RPCArg::Optional::NO, "Previous block hash"},
             {"height", RPCArg::Type::NUM, RPCArg::Optional::NO, "Block height for this submission"},
             {"generation_signature", RPCArg::Type::STR_HEX, RPCArg::Optional::NO, "Generation signature"},
+            {"base_target", RPCArg::Type::NUM, RPCArg::Optional::NO, "Base target for this block"},
             {"account_id", RPCArg::Type::STR, RPCArg::Optional::NO, "Account ID (20-byte hex or address)"},
             {"seed", RPCArg::Type::STR, RPCArg::Optional::NO, "Plot seed"},
             {"nonce", RPCArg::Type::NUM, RPCArg::Optional::NO, "Mining nonce"},
             {"compression", RPCArg::Type::NUM, RPCArg::Optional::NO, "Compression level used (1-6)"},
-            {"quality", RPCArg::Type::NUM, RPCArg::Optional::OMITTED, "Quality value (optional, not used by server)"},
+            {"raw_quality", RPCArg::Type::NUM, RPCArg::Optional::NO, "Raw quality from proof validation"},
         },
         RPCResult{
             RPCResult::Type::OBJ, "", "",
             {
-                {RPCResult::Type::NUM, "quality", "Adjusted quality (raw_quality / base_target)"},
+                {RPCResult::Type::NUM, "raw_quality", "Raw quality from proof validation"},
                 {RPCResult::Type::NUM, "poc_time", "Time to find nonce (milliseconds)"},
             }
         },
         RPCExamples{
-            HelpExampleCli("submit_nonce", "12345 \"abcdef123456...\" \"1234567890abcdef1234567890abcdef12345678\" \"plot_seed\" 999888777 1 null")
-            + HelpExampleRpc("submit_nonce", "12345, \"abcdef123456...\", \"1234567890abcdef1234567890abcdef12345678\", \"plot_seed\", 999888777, 1, null")
+            HelpExampleCli("submit_nonce", "\"blockhash...\" 12345 \"gensig...\" 18325193796 \"1234567890abcdef1234567890abcdef12345678\" \"seed...\" 999888777 1 123456789")
+            + HelpExampleRpc("submit_nonce", "\"blockhash...\", 12345, \"gensig...\", 18325193796, \"1234567890abcdef1234567890abcdef12345678\", \"seed...\", 999888777, 1, 123456789")
         },
         [&](const RPCHelpMan& self, const JSONRPCRequest& request) -> UniValue
         {
@@ -131,17 +133,15 @@ static RPCHelpMan submit_nonce()
             ChainstateManager& chainman = EnsureChainman(node);
             
             // Parse PoCX protocol parameters
-            int height = request.params[0].getInt<int>();
-            std::string generation_signature = request.params[1].get_str();
-            std::string account_id = request.params[2].get_str();
-            std::string seed = request.params[3].get_str();
-            uint64_t nonce = request.params[4].getInt<uint64_t>();
-            uint32_t compression = static_cast<uint32_t>(request.params[5].getInt<int>());
-
-            // Optional parameters
-            uint64_t quality = (request.params.size() > 6 && !request.params[6].isNull()) ?
-                               request.params[6].getInt<uint64_t>() : 0;
-            (void)quality; // Suppress unused parameter warning
+            std::string block_hash = request.params[0].get_str();
+            int height = request.params[1].getInt<int>();
+            std::string generation_signature = request.params[2].get_str();
+            uint64_t base_target = request.params[3].getInt<uint64_t>();
+            std::string account_id = request.params[4].get_str();
+            std::string seed = request.params[5].get_str();
+            uint64_t nonce = request.params[6].getInt<uint64_t>();
+            uint32_t compression = static_cast<uint32_t>(request.params[7].getInt<int>());
+            uint64_t submitted_raw_quality = request.params[8].getInt<uint64_t>();
             
             UniValue result(UniValue::VOBJ);
             
@@ -175,10 +175,21 @@ static RPCHelpMan submit_nonce()
                     throw JSONRPCError(RPC_INVALID_PARAMETER, strprintf("Invalid height: expected %d, got %d", context.height, height));
                 }
 
+                // Block hash validation
+                auto submitted_block_hash = uint256::FromHex(block_hash);
+                if (!submitted_block_hash || *submitted_block_hash != context.block_hash) {
+                    throw JSONRPCError(RPC_VERIFY_REJECTED, "Block hash mismatch");
+                }
+
                 // Generation signature validation
                 auto submitted_gen_sig = uint256::FromHex(generation_signature);
                 if (!submitted_gen_sig || *submitted_gen_sig != context.generation_signature) {
                     throw JSONRPCError(RPC_VERIFY_REJECTED, "Generation signature mismatch");
+                }
+
+                // Base target validation
+                if (base_target != context.base_target) {
+                    throw JSONRPCError(RPC_VERIFY_REJECTED, strprintf("Base target mismatch: expected %llu, got %llu", context.base_target, base_target));
                 }
 
                 // 4. Wallet verification (before expensive proof work)
@@ -251,18 +262,18 @@ static RPCHelpMan submit_nonce()
                 }
                 
                 // Calculate deadlines
-                uint64_t raw_quality = validation_result.quality;           // Raw quality from disk
-                uint64_t deadline_seconds = raw_quality / context.base_target;  // Difficulty-adjusted deadline (seconds)
+                uint64_t raw_quality = validation_result.quality;           // Raw quality from proof validation
+                (void)submitted_raw_quality;  // Server validates independently; miner-submitted value not used
                 uint64_t forge_time = pocx::algorithms::CalculateTimeBendedDeadline(raw_quality, context.base_target, consensusParams.nPowTargetSpacing);  // Time Bended forge time
                 
                 // Concise success logging with result
                 LogPrintLevel(BCLog::POCX, BCLog::Level::Info,
-                             "nonce=%llu height=%d gensig=...%s account=...%s seed=...%s raw_quality=%llu deadline=%lus forge_time=%lus -> ACK\n",
+                             "nonce=%llu height=%d gensig=...%s account=...%s seed=...%s raw_quality=%llu forge_time=%lus -> ACK\n",
                              nonce, height,
                              generation_signature.substr(std::max(0, (int)generation_signature.length()-8)),
                              account_id.substr(std::max(0, (int)account_id.length()-8)),
                              seed.substr(std::max(0, (int)seed.length()-8)),
-                             raw_quality, deadline_seconds, forge_time);
+                             raw_quality, forge_time);
                 
                 // Initialize scheduler and submit for timed forging
                 Mining& miner = EnsureMining(node);
@@ -272,7 +283,7 @@ static RPCHelpMan submit_nonce()
                 }
 
                 bool queued = g_pocx_scheduler->SubmitNonce(
-                    account_id, seed, nonce, raw_quality, compression, height, *submitted_gen_sig
+                    account_id, seed, nonce, raw_quality, compression, *submitted_block_hash
                 );
 
                 if (!queued) {
@@ -280,7 +291,7 @@ static RPCHelpMan submit_nonce()
                 }
 
                 result.pushKV("accepted", true);
-                result.pushKV("quality", deadline_seconds);  // Difficulty-adjusted deadline (seconds)
+                result.pushKV("raw_quality", raw_quality);  // Raw quality from proof validation
                 result.pushKV("poc_time", forge_time);  // Time Bended forge time (seconds)
                 
                 return result;

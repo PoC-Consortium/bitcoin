@@ -46,8 +46,7 @@ bool PoCXScheduler::SubmitNonce(const std::string& account_id,
                                 uint64_t nonce,
                                 uint64_t quality,
                                 uint32_t compression,
-                                int height,
-                                const uint256& generation_signature) {
+                                const uint256& block_hash) {
 
     // Create submission for queue (validation already done in RPC)
     NonceSubmission submission(
@@ -56,8 +55,7 @@ bool PoCXScheduler::SubmitNonce(const std::string& account_id,
         nonce,
         quality,
         compression,
-        height,
-        generation_signature
+        block_hash
     );
 
     // Add to queue with DoS protection
@@ -225,24 +223,21 @@ void PoCXScheduler::ProcessSubmission(const NonceSubmission& submission) {
         return; // No context available - discard silently
     }
 
-    // Get current tip block hash and time
-    uint256 current_tip_hash;
+    auto current_context = pocx::consensus::GetNewBlockContext(*node_context->chainman);
+
+    // Validate submission staleness (single block_hash comparison)
+    if (!SubmissionValidator::ValidateContext(submission, current_context.block_hash)) {
+        return; // Stale submission - discard silently
+    }
+
+    // Get block time for forge scheduling (context.block_hash already confirmed tip match)
     int64_t block_time = 0;
     {
         LOCK(cs_main);
         auto* tip = node_context->chainman->ActiveChain().Tip();
-        if (!tip) {
-            return; // No tip available
+        if (tip) {
+            block_time = tip->nTime;
         }
-        current_tip_hash = tip->GetBlockHash();
-        block_time = tip->nTime;
-    }
-
-    auto current_context = pocx::consensus::GetNewBlockContext(*node_context->chainman);
-
-    // Validate submission context (height and generation signature)
-    if (!SubmissionValidator::ValidateContext(submission, current_context.height, current_context.generation_signature)) {
-        return; // Stale submission - discard silently
     }
 
     // Calculate deadline using Time Bending
@@ -257,7 +252,7 @@ void PoCXScheduler::ProcessSubmission(const NonceSubmission& submission) {
         // Check if better than current best FOR SAME TIP
         // If tip changed, this is a new competition - accept any valid submission
         std::optional<uint64_t> current_quality;
-        if (m_current_forging && m_current_forging->tip_block_hash == current_tip_hash) {
+        if (m_current_forging && m_current_forging->tip_block_hash == current_context.block_hash) {
             current_quality = m_current_forging->quality;
         }
         if (!SubmissionValidator::IsBetterThanCurrent(submission.quality, current_quality)) {
@@ -278,9 +273,7 @@ void PoCXScheduler::ProcessSubmission(const NonceSubmission& submission) {
         m_current_forging->compression = submission.compression;
         m_current_forging->deadline_seconds = deadline_seconds;
         m_current_forging->base_target = current_context.base_target;
-        m_current_forging->height = current_context.height;
-        m_current_forging->generation_sig = current_context.generation_signature;
-        m_current_forging->tip_block_hash = current_tip_hash;
+        m_current_forging->tip_block_hash = current_context.block_hash;
         m_current_forging->cancelled = false;
 
         // Store block time and calculate forge time
@@ -289,7 +282,7 @@ void PoCXScheduler::ProcessSubmission(const NonceSubmission& submission) {
                                        std::chrono::seconds(deadline_seconds);
 
         LogPrintf("PoCX: [Scheduler] New best solution - tip: %s, quality: %llu, deadline: %llu sec\n",
-                 current_tip_hash.ToString().substr(0, 16).c_str(),
+                 current_context.block_hash.ToString().substr(0, 16).c_str(),
                  submission.quality, deadline_seconds);
     }
 
@@ -361,16 +354,10 @@ void PoCXScheduler::WaitForDeadlineOrNewSubmission() {
                 return;
             }
 
-            // Check if height still matches
-            if (m_current_forging->height != current_context.height) {
+            // Single block_hash comparison detects all staleness (new block, reorg, etc.)
+            if (m_current_forging->tip_block_hash != current_context.block_hash) {
                 m_current_forging.reset();
-                return; // Stale height
-            }
-
-            // Check if generation signature still matches
-            if (m_current_forging->generation_sig != current_context.generation_signature) {
-                m_current_forging.reset();
-                return; // Stale generation signature
+                return; // Stale - chain tip changed
             }
 
             // Edge case: base target changed
