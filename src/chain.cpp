@@ -125,6 +125,16 @@ void CBlockIndex::BuildSkip()
 
 arith_uint256 GetBlockProof(const CBlockIndex& block)
 {
+#ifdef ENABLE_POCX
+    // nBaseTarget = minimum required work, nNextBaseTarget = actual work including quality
+    // work = (2^64 / nNextBaseTarget)
+    const arith_uint256 TWO64 = arith_uint256(1) << 64;
+    if (block.nNextBaseTarget > 0) {
+        return TWO64 / arith_uint256(block.nNextBaseTarget);
+    }
+    // Headerssync fallback; one-block offset, negligible for chain comparison
+    return TWO64 / arith_uint256(block.nBaseTarget);
+#else
     arith_uint256 bnTarget;
     bool fNegative;
     bool fOverflow;
@@ -136,6 +146,7 @@ arith_uint256 GetBlockProof(const CBlockIndex& block)
     // as bnTarget+1, it is equal to ((2**256 - bnTarget - 1) / (bnTarget+1)) + 1,
     // or ~bnTarget / (bnTarget+1) + 1.
     return (~bnTarget / (bnTarget + 1)) + 1;
+#endif
 }
 
 int64_t GetBlockProofEquivalentTime(const CBlockIndex& to, const CBlockIndex& from, const CBlockIndex& tip, const Consensus::Params& params)

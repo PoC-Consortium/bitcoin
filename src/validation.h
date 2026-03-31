@@ -384,7 +384,11 @@ public:
 /** Functions for validating blocks and updating the block tree */
 
 /** Context-independent validity checks */
+#ifdef ENABLE_POCX
+bool CheckBlock(const CBlock& block, BlockValidationState& state, const Consensus::Params& consensusParams, bool fCheckPOW = true, bool fCheckMerkleRoot = true, bool skip_pocx_proof = false);
+#else
 bool CheckBlock(const CBlock& block, BlockValidationState& state, const Consensus::Params& consensusParams, bool fCheckPOW = true, bool fCheckMerkleRoot = true);
+#endif
 
 /**
  * Verify a block, including transactions.
@@ -409,8 +413,10 @@ BlockValidationState TestBlockValidity(
     bool check_pow,
     bool check_merkle_root) EXCLUSIVE_LOCKS_REQUIRED(cs_main);
 
+#ifndef ENABLE_POCX
 /** Check with the proof of work on each blockheader matches the value in nBits */
 bool HasValidProofOfWork(const std::vector<CBlockHeader>& headers, const Consensus::Params& consensusParams);
+#endif
 
 /** Check if a block has been mutated (with respect to its merkle root and witness commitments). */
 bool IsBlockMutated(const CBlock& block, bool check_witness_root);
@@ -957,11 +963,20 @@ private:
      * block index (permanent memory storage), indicating that the header is
      * known to be part of a sufficiently high-work chain (anti-dos check).
      */
+#ifdef ENABLE_POCX
+    bool AcceptBlockHeader(
+        const CBlockHeader& block,
+        BlockValidationState& state,
+        CBlockIndex** ppindex,
+        bool min_pow_checked,
+        bool skip_pocx_proof = false) EXCLUSIVE_LOCKS_REQUIRED(cs_main);
+#else
     bool AcceptBlockHeader(
         const CBlockHeader& block,
         BlockValidationState& state,
         CBlockIndex** ppindex,
         bool min_pow_checked) EXCLUSIVE_LOCKS_REQUIRED(cs_main);
+#endif
     friend Chainstate;
 
     /** Most recent headers presync progress update, for rate-limiting. */

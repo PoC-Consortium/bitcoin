@@ -11,6 +11,7 @@
 #include <uint256.h>
 #include <util/check.h>
 
+#ifndef ENABLE_POCX
 unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHeader *pblock, const Consensus::Params& params)
 {
     assert(pindexLast != nullptr);
@@ -83,6 +84,7 @@ unsigned int CalculateNextWorkRequired(const CBlockIndex* pindexLast, int64_t nF
 
     return bnNew.GetCompact();
 }
+#endif // !ENABLE_POCX
 
 // Check that on difficulty adjustments, the new difficulty does not increase
 // or decrease beyond the permitted limits.

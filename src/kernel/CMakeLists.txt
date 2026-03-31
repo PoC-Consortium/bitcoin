@@ -79,6 +79,18 @@ add_library(bitcoinkernel
   ../validation.cpp
   ../validationinterface.cpp
   ../versionbits.cpp
+  $<$<BOOL:${ENABLE_POCX}>:../pocx/consensus/signature.cpp>
+  $<$<BOOL:${ENABLE_POCX}>:../pocx/consensus/proof.cpp>
+  $<$<BOOL:${ENABLE_POCX}>:../pocx/consensus/params.cpp>
+  $<$<BOOL:${ENABLE_POCX}>:../pocx/consensus/batch_validation.cpp>
+  $<$<BOOL:${ENABLE_POCX}>:../pocx/consensus/difficulty.cpp>
+  $<$<BOOL:${ENABLE_POCX}>:../pocx/algorithms/time_bending.cpp>
+  $<$<BOOL:${ENABLE_POCX}>:../pocx/algorithms/plot_generation.cpp>
+  $<$<BOOL:${ENABLE_POCX}>:../pocx/algorithms/quality.cpp>
+  $<$<BOOL:${ENABLE_POCX}>:../pocx/algorithms/encoding.cpp>
+  $<$<BOOL:${ENABLE_POCX}>:../pocx/assignments/assignment_state.cpp>
+  $<$<BOOL:${ENABLE_POCX}>:../pocx/assignments/opcodes.cpp>
+  $<$<BOOL:${ENABLE_POCX}>:../pocx/mining/defensive_forge.cpp>
   $<TARGET_OBJECTS:bitcoin_clientversion>
   $<TARGET_OBJECTS:bitcoin_crypto>
   $<TARGET_OBJECTS:leveldb>
@@ -93,6 +105,21 @@ target_link_libraries(bitcoinkernel
   PUBLIC
     Boost::headers
 )
+
+# Enable AVX2 for PoCX batch validation if available
+if(ENABLE_POCX AND HAVE_AVX2)
+  target_compile_definitions(bitcoinkernel PRIVATE ENABLE_AVX2)
+  set_property(SOURCE ../pocx/consensus/batch_validation.cpp PROPERTY
+    COMPILE_OPTIONS ${AVX2_CXXFLAGS}
+  )
+  set_property(SOURCE ../pocx/algorithms/plot_generation.cpp PROPERTY
+    COMPILE_OPTIONS ${AVX2_CXXFLAGS}
+  )
+endif()
+# SSE2 is baseline on x86-64, no special compiler flags needed
+if(ENABLE_POCX AND CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|amd64")
+  target_compile_definitions(bitcoinkernel PRIVATE ENABLE_SSE2)
+endif()
 
 target_include_directories(bitcoinkernel PRIVATE $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src/leveldb/include>)
 

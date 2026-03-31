@@ -118,6 +118,13 @@ struct Params {
     bool fPowNoRetargeting;
     int64_t nPowTargetSpacing;
     int64_t nPowTargetTimespan;
+#ifdef ENABLE_POCX
+    /** PoCX parameters */
+    int nPoCXRollingWindowSize; // Number of blocks for difficulty adjustment rolling window
+    int nForgingAssignmentDelay; // Blocks to wait before assignment becomes active (default: 30)
+    int nForgingRevocationDelay; // Blocks to wait before revocation becomes active (default: 720)
+    bool fPoCXLowCapacityCalibration; // Use 16-nonce calibration (2^60) instead of 1TiB (2^42)
+#endif
     std::chrono::seconds PowTargetSpacing() const
     {
         return std::chrono::seconds{nPowTargetSpacing};
