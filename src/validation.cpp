@@ -4690,25 +4690,6 @@ static bool ContextualCheckBlock(const CBlock& block, BlockValidationState& stat
         }
     }
 
-#ifdef ENABLE_POCX
-    // PoCX: Verify that the coinbase output goes to the account that signed the block
-    // Skip templates (fCheckPOW=false) and genesis block (height 0)
-    // Templates are unsigned and validated separately after signing
-    if (fCheckPOW && nHeight > 0 && block.vtx.size() > 0 && block.vtx[0]->vout.size() > 0) {
-        // Extract account ID from the signature's public key
-        std::array<uint8_t, 20> signer_account = pocx::consensus::ExtractAccountIDFromPubKey(CPubKey(block.vchPubKey.begin(), block.vchPubKey.end()));
-
-        // Extract account ID from the coinbase output
-        std::array<uint8_t, 20> coinbase_account = pocx::consensus::ExtractAccountIDFromScript(block.vtx[0]->vout[0].scriptPubKey);
-
-        // Verify coinbase goes to the signer (only contextual check needed here)
-        if (!pocx::consensus::AccountIDsMatch(signer_account, coinbase_account)) {
-            return state.Invalid(BlockValidationResult::BLOCK_CONSENSUS, "bad-pocx-coinbase",
-                                "PoCX block coinbase must go to the account that signed the block");
-        }
-    }
-#endif
-
     // Validation for witness commitments.
     // * We compute the witness hash (which is the hash including witnesses) of all the block's transactions, except the
     //   coinbase (where 0x0000....0000 is used instead).
