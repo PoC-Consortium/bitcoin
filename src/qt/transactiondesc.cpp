@@ -10,6 +10,7 @@
 #include <qt/transactionrecord.h>
 
 #include <common/system.h>
+#include <chainparams.h>
 #include <consensus/consensus.h>
 #include <interfaces/node.h>
 #include <interfaces/wallet.h>
@@ -303,9 +304,8 @@ QString TransactionDesc::toHTML(interfaces::Node& node, interfaces::Wallet& wall
                 strHTML += "<b>" + tr("Assignment plot address") + ":</b> " + GUIUtil::HtmlEscape(plot_address) + "<br>";
                 strHTML += "<b>" + tr("Assignment forging address") + ":</b> " + GUIUtil::HtmlEscape(forge_address) + "<br>";
 
-                // Calculate activation height (assignment delay is 4 blocks)
                 if (status.is_in_main_chain && status.block_height > 0) {
-                    int activation_height = status.block_height + 4;
+                    int activation_height = status.block_height + Params().GetConsensus().nForgingAssignmentDelay;
                     strHTML += "<b>" + tr("Assignment activation height") + ":</b> " + QString::number(activation_height) + "<br>";
                 } else {
                     strHTML += "<b>" + tr("Assignment activation height") + ":</b> " + tr("Pending confirmation") + "<br>";
@@ -324,9 +324,8 @@ QString TransactionDesc::toHTML(interfaces::Node& node, interfaces::Wallet& wall
 
                 strHTML += "<b>" + tr("Revocation plot address") + ":</b> " + GUIUtil::HtmlEscape(plot_address) + "<br>";
 
-                // Calculate revocation height (revocation delay is 4 blocks)
                 if (status.is_in_main_chain && status.block_height > 0) {
-                    int revocation_height = status.block_height + 4;
+                    int revocation_height = status.block_height + Params().GetConsensus().nForgingRevocationDelay;
                     strHTML += "<b>" + tr("Revocation effective height") + ":</b> " + QString::number(revocation_height) + "<br>";
                 } else {
                     strHTML += "<b>" + tr("Revocation effective height") + ":</b> " + tr("Pending confirmation") + "<br>";
