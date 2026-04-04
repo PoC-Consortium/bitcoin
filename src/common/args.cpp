@@ -838,12 +838,6 @@ std::variant<ChainType, std::string> ArgsManager::GetChainArg() const
     }
     if (chain_arg) {
         if (auto parsed = ChainTypeFromString(*chain_arg)) {
-#ifdef ENABLE_POCX
-            // #POCXTODO: Remove this before mainnet launch!
-            if (*parsed == ChainType::MAIN) {
-                throw std::runtime_error("PoCX mainnet is not available yet. Use -testnet or -regtest for testing.");
-            }
-#endif
             return *parsed;
         }
         // Not a known string, so return original string
@@ -853,12 +847,7 @@ std::variant<ChainType, std::string> ArgsManager::GetChainArg() const
     if (fSigNet) return ChainType::SIGNET;
     if (fTestNet) return ChainType::TESTNET;
     if (fTestNet4) return ChainType::TESTNET4;
-#ifdef ENABLE_POCX
-    // #POCXTODO: Remove this before mainnet launch!
-    throw std::runtime_error("PoCX mainnet is not available yet. Use -testnet or -regtest for testing.");
-#else
     return ChainType::MAIN;
-#endif
 }
 
 bool ArgsManager::UseDefaultSection(const std::string& arg) const
