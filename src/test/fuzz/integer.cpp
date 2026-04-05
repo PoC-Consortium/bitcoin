@@ -68,8 +68,10 @@ FUZZ_TARGET(integer, .init = initialize_integer)
     const char ch = fuzzed_data_provider.ConsumeIntegral<char>();
     const bool b = fuzzed_data_provider.ConsumeBool();
 
+#ifndef ENABLE_POCX
     const Consensus::Params& consensus_params = Params().GetConsensus();
     (void)CheckProofOfWorkImpl(u256, u32, consensus_params);
+#endif
     if (u64 <= MAX_MONEY) {
         const uint64_t compressed_money_amount = CompressAmount(u64);
         assert(u64 == DecompressAmount(compressed_money_amount));
