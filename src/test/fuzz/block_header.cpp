@@ -26,11 +26,7 @@ FUZZ_TARGET(block_header)
         constexpr uint256 u256_max{"ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"};
         assert(hash != u256_max);
         assert(block_header->GetBlockTime() == block_header->nTime);
-#ifdef ENABLE_POCX
-        assert(block_header->IsNull() == (block_header->nBaseTarget == 0));
-#else
         assert(block_header->IsNull() == (block_header->nBits == 0));
-#endif
     }
     {
         CBlockHeader mut_block_header = *block_header;

@@ -2,8 +2,6 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef ENABLE_POCX // PoW-specific fuzz test, not applicable to PoCX
-
 #include <arith_uint256.h>
 #include <blockencodings.h>
 #include <net.h>
@@ -250,5 +248,3 @@ FUZZ_TARGET(p2p_headers_presync, .init = initialize)
     // in the headers pre-sync logic.
     assert(WITH_LOCK(cs_main, return chainman.m_blockman.m_block_index.size()) == original_index_size);
 }
-
-#endif // !ENABLE_POCX
