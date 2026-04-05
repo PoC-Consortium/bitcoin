@@ -6128,7 +6128,7 @@ double ChainstateManager::GuessVerificationProgress(const CBlockIndex* pindex) c
 
 #ifdef ENABLE_POCX
     // Fallback to height-based progress when ChainTxData not configured
-    if (data.tx_count == 0 && data.dTxRate == 0 && m_best_header) {
+    if (data.tx_count == 0 && data.dTxRate == 0 && m_best_header && m_best_header->nHeight > 0) {
         return std::min<double>(static_cast<double>(pindex->nHeight) / m_best_header->nHeight, 1.0);
     }
 #endif
