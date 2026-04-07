@@ -188,6 +188,7 @@ UniValue blockheaderToJSON(const CBlockIndex& tip, const CBlockIndex& blockindex
     result.pushKV("versionHex", strprintf("%08x", blockindex.nVersion));
     result.pushKV("merkleroot", blockindex.hashMerkleRoot.GetHex());
     result.pushKV("time", blockindex.nTime);
+    result.pushKV("mediantime", blockindex.GetMedianTimePast());
 #ifdef ENABLE_POCX
     // Time since last block (more relevant than mediantime for PoCX)
     if (blockindex.pprev) {
@@ -205,10 +206,7 @@ UniValue blockheaderToJSON(const CBlockIndex& tip, const CBlockIndex& blockindex
         consensusParams.nPowTargetSpacing
     );
     result.pushKV("poc_time", poc_time);
-#else
-    result.pushKV("mediantime", blockindex.GetMedianTimePast());
-#endif
-#ifdef ENABLE_POCX
+
     // PoCX consensus fields
     result.pushKV("base_target", blockindex.nBaseTarget);
     result.pushKV("generation_signature", blockindex.generationSignature.GetHex());
@@ -677,13 +675,10 @@ static RPCHelpMan getblockheader()
                             {RPCResult::Type::STR_HEX, "versionHex", "The block version formatted in hexadecimal"},
                             {RPCResult::Type::STR_HEX, "merkleroot", "The merkle root"},
                             {RPCResult::Type::NUM_TIME, "time", "The block time expressed in " + UNIX_EPOCH_TIME},
+                            {RPCResult::Type::NUM_TIME, "mediantime", "The median block time expressed in " + UNIX_EPOCH_TIME},
 #ifdef ENABLE_POCX
                             {RPCResult::Type::NUM, "time_since_last_block", "Time in seconds since the previous block"},
                             {RPCResult::Type::NUM, "poc_time", "PoCX solution time in seconds"},
-#else
-                            {RPCResult::Type::NUM_TIME, "mediantime", "The median block time expressed in " + UNIX_EPOCH_TIME},
-#endif
-#ifdef ENABLE_POCX
                             {RPCResult::Type::NUM, "base_target", "The PoCX difficulty base target"},
                             {RPCResult::Type::STR_HEX, "generation_signature", "The PoCX generation signature"},
                             {RPCResult::Type::OBJ, "pocx_proof", "The PoCX proof information",
@@ -872,13 +867,10 @@ static RPCHelpMan getblock()
                     {RPCResult::Type::ARR, "tx", "The transaction ids",
                         {{RPCResult::Type::STR_HEX, "", "The transaction id"}}},
                     {RPCResult::Type::NUM_TIME, "time",       "The block time expressed in " + UNIX_EPOCH_TIME},
+                    {RPCResult::Type::NUM_TIME, "mediantime", "The median block time expressed in " + UNIX_EPOCH_TIME},
 #ifdef ENABLE_POCX
                     {RPCResult::Type::NUM, "time_since_last_block", "Time in seconds since the previous block"},
                     {RPCResult::Type::NUM, "poc_time", "PoCX solution time in seconds"},
-#else
-                    {RPCResult::Type::NUM_TIME, "mediantime", "The median block time expressed in " + UNIX_EPOCH_TIME},
-#endif
-#ifdef ENABLE_POCX
                     {RPCResult::Type::NUM, "base_target", "The PoCX difficulty base target"},
                     {RPCResult::Type::STR_HEX, "generation_signature", "The PoCX generation signature"},
                     {RPCResult::Type::OBJ, "pocx_proof", "The PoCX proof information",
@@ -1477,9 +1469,7 @@ RPCHelpMan getblockchaininfo()
 #endif
                 {RPCResult::Type::NUM, "difficulty", "the current difficulty"},
                 {RPCResult::Type::NUM_TIME, "time", "The block time expressed in " + UNIX_EPOCH_TIME},
-#ifndef ENABLE_POCX
                 {RPCResult::Type::NUM_TIME, "mediantime", "The median block time expressed in " + UNIX_EPOCH_TIME},
-#endif
                 {RPCResult::Type::NUM, "verificationprogress", "estimate of verification progress [0..1]"},
                 {RPCResult::Type::BOOL, "initialblockdownload", "(debug information) estimate of whether this node is in Initial Block Download mode"},
                 {RPCResult::Type::STR_HEX, "chainwork", "total amount of work in active chain, in hexadecimal"},
@@ -1524,9 +1514,7 @@ RPCHelpMan getblockchaininfo()
 #endif
     obj.pushKV("difficulty", GetDifficulty(tip));
     obj.pushKV("time", tip.GetBlockTime());
-#ifndef ENABLE_POCX
     obj.pushKV("mediantime", tip.GetMedianTimePast());
-#endif
     obj.pushKV("verificationprogress", chainman.GuessVerificationProgress(&tip));
     obj.pushKV("initialblockdownload", chainman.IsInitialBlockDownload());
     obj.pushKV("chainwork", tip.nChainWork.GetHex());
@@ -1949,11 +1937,7 @@ static RPCHelpMan getchaintxstats()
     }
 
     const CBlockIndex& past_block{*CHECK_NONFATAL(pindex->GetAncestor(pindex->nHeight - blockcount))};
-#ifdef ENABLE_POCX
-    const int64_t nTimeDiff{pindex->GetBlockTime() - past_block.GetBlockTime()};
-#else
     const int64_t nTimeDiff{pindex->GetMedianTimePast() - past_block.GetMedianTimePast()};
-#endif
 
     UniValue ret(UniValue::VOBJ);
     ret.pushKV("time", (int64_t)pindex->nTime);

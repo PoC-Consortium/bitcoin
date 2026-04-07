@@ -313,9 +313,6 @@ public:
 
     int64_t GetMedianTimePast() const
     {
-#ifdef ENABLE_POCX
-        return 0; // disabled
-#else
         int64_t pmedian[nMedianTimeSpan];
         int64_t* pbegin = &pmedian[nMedianTimeSpan];
         int64_t* pend = &pmedian[nMedianTimeSpan];
@@ -326,7 +323,6 @@ public:
 
         std::sort(pbegin, pend);
         return pbegin[(pend - pbegin) / 2];
-#endif
     }
 
     std::string ToString() const;
