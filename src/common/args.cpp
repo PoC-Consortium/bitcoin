@@ -837,9 +837,7 @@ std::variant<ChainType, std::string> ArgsManager::GetChainArg() const
         throw std::runtime_error("Invalid combination of -regtest, -signet, -testnet, -testnet4 and -chain. Can use at most one.");
     }
     if (chain_arg) {
-        if (auto parsed = ChainTypeFromString(*chain_arg)) {
-            return *parsed;
-        }
+        if (auto parsed = ChainTypeFromString(*chain_arg)) return *parsed;
         // Not a known string, so return original string
         return *chain_arg;
     }

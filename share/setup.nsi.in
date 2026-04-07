@@ -169,8 +169,8 @@ Section -un.post UNSEC0001
     Delete /REBOOTOK "$SMPROGRAMS\$StartMenuGroup\$(^Name).lnk"
     Delete /REBOOTOK "$SMPROGRAMS\$StartMenuGroup\@CLIENT_NAME@ (testnet).lnk"
 !if "@POCX_BUILD@" == "0"
-    Delete /REBOOTOK "$SMPROGRAMS\$StartMenuGroup\@CLIENT_NAME@ (test signet).lnk"
     Delete /REBOOTOK "$SMPROGRAMS\$StartMenuGroup\@CLIENT_NAME@ (testnet4).lnk"
+    Delete /REBOOTOK "$SMPROGRAMS\$StartMenuGroup\@CLIENT_NAME@ (test signet).lnk"
 !endif
     Delete /REBOOTOK "$SMSTARTUP\Bitcoin.lnk"
     Delete /REBOOTOK $INSTDIR\uninstall.exe

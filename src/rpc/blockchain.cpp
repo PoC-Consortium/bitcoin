@@ -542,7 +542,8 @@ static RPCHelpMan syncwithvalidationinterfacequeue()
 
 static RPCHelpMan getdifficulty()
 {
-    return RPCHelpMan{"getdifficulty",
+    return RPCHelpMan{
+        "getdifficulty",
 #ifdef ENABLE_POCX
                 "Returns the mining difficulty as estimated network capacity in terabytes (TiB).\n"
                 "Examples: 1.0 = ~1 TiB network capacity, 1024.0 = ~1 PiB network capacity.\n",
