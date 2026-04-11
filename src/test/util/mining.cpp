@@ -17,6 +17,13 @@
 #include <validationinterface.h>
 #include <versionbits.h>
 
+#ifdef ENABLE_POCX
+#include <hash.h>
+#include <pocx/consensus/params.h>
+#include <pocx/regtest/forging.h>
+#include <util/time.h>
+#endif
+
 #include <algorithm>
 #include <memory>
 
@@ -37,6 +44,14 @@ std::vector<std::shared_ptr<CBlock>> CreateBlockChain(size_t total_height, const
 {
     std::vector<std::shared_ptr<CBlock>> ret{total_height};
     auto time{params.GenesisBlock().nTime};
+#ifdef ENABLE_POCX
+    // ForgeRegtestBlock's mocktime-aware branch needs a non-zero mocktime to
+    // roll forward across the loop; anchor it at genesis time before we start.
+    SetMockTime(std::chrono::seconds{params.GenesisBlock().nTime});
+    const uint64_t genesis_base_target = pocx::consensus::CalculateGenesisBaseTarget(
+        params.GetConsensus().nPowTargetSpacing,
+        params.GetConsensus().fPoCXLowCapacityCalibration);
+#endif
     // NOTE: here `height` does not correspond to the block height but the block height - 1.
     for (size_t height{0}; height < total_height; ++height) {
         CBlock& block{*(ret.at(height) = std::make_shared<CBlock>())};
@@ -53,17 +68,25 @@ std::vector<std::shared_ptr<CBlock>> CreateBlockChain(size_t total_height, const
         block.vtx = {MakeTransactionRef(std::move(coinbase_tx))};
 
         block.nVersion = VERSIONBITS_LAST_OLD_BLOCK_VERSION;
-        block.hashPrevBlock = (height >= 1 ? *ret.at(height - 1) : params.GenesisBlock()).GetHash();
+        const CBlock& prev_block = (height >= 1 ? *ret.at(height - 1) : params.GenesisBlock());
+        block.hashPrevBlock = prev_block.GetHash();
         block.hashMerkleRoot = BlockMerkleRoot(block);
         block.nTime = ++time;
 #ifdef ENABLE_POCX
-        // PoCX mode: Create a minimal valid block without PoW mining
-        std::string error;
-        block.pocxProof.SetAccountId("1234567890abcdef1234567890abcdef12345678", error);
-        block.pocxProof.nonce = height + 1; // Use height as simple nonce
-        block.pocxProof.quality = 4398046511104ULL; // Quality for ~240s poc_time with default base target
-        block.pocxProof.compression = 1; // Minimum compression for tests
-        block.nBaseTarget = 18325193796; // Default base target
+        // Populate the header fields BlockAssembler would normally fill in,
+        // then route through the same hot-path forger as GenerateBlock.
+        block.nHeight = static_cast<int>(height + 1);
+        block.nBaseTarget = genesis_base_target;
+        HashWriter gensig_hasher{};
+        gensig_hasher << prev_block.generationSignature;
+        gensig_hasher << std::span<const uint8_t>(prev_block.pocxProof.account_id);
+        block.generationSignature = gensig_hasher.GetHash();
+
+        std::string err;
+        if (!pocx::regtest::ForgeRegtestBlock(block, params.GetConsensus(), prev_block.nTime, err)) {
+            assert(false && "CreateBlockChain: ForgeRegtestBlock failed");
+        }
+        time = block.nTime; // keep `time` in sync with the forger's nTime
 #else
         block.nBits = params.GenesisBlock().nBits;
         block.nNonce = 0;
@@ -109,13 +132,19 @@ COutPoint MineBlock(const NodeContext& node, std::shared_ptr<CBlock>& block)
         assert(block->nNonce);
     }
 #else
-    // PoCX mode: Block is already "mined" (no PoW required)
-    if (block->pocxProof.IsNull()) {
-        std::string error;
-        block->pocxProof.SetAccountId("1234567890abcdef1234567890abcdef12345678", error);
-        block->pocxProof.nonce = 123456789;
-        block->pocxProof.quality = 4398046511104ULL; // Quality for ~240s poc_time with default base target
-        block->pocxProof.compression = 1; // Minimum compression for tests
+    {
+        auto& chainman = *Assert(node.chainman);
+        int64_t prev_time{0};
+        {
+            LOCK(::cs_main);
+            const CBlockIndex* pindexPrev = chainman.m_blockman.LookupBlockIndex(block->hashPrevBlock);
+            assert(pindexPrev);
+            prev_time = pindexPrev->GetBlockTime();
+        }
+        std::string err;
+        if (!pocx::regtest::ForgeRegtestBlock(*block, chainman.GetConsensus(), prev_time, err)) {
+            assert(false && "MineBlock: ForgeRegtestBlock failed");
+        }
     }
 #endif
 

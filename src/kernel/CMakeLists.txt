@@ -106,6 +106,13 @@ target_link_libraries(bitcoinkernel
     Boost::headers
 )
 
+# Mark this TU as kernel-library build so validation.cpp can skip code
+# paths that depend on symbols only present in bitcoin_node/bitcoin_common
+# (e.g. Params(), regtest hot-path forger).
+if(ENABLE_POCX)
+  target_compile_definitions(bitcoinkernel PRIVATE BUILD_BITCOIN_KERNEL)
+endif()
+
 # Enable AVX2 for PoCX batch validation if available
 if(ENABLE_POCX AND HAVE_AVX2)
   target_compile_definitions(bitcoinkernel PRIVATE ENABLE_AVX2)

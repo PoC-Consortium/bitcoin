@@ -27,6 +27,9 @@
 #include <pocx/assignments/opcodes.h>
 #include <pocx/algorithms/time_bending.h>
 #include <pocx/mining/defensive_forge.h>
+#ifndef BUILD_BITCOIN_KERNEL
+#include <pocx/regtest/forging.h>
+#endif
 #endif
 #include <cuckoocache.h>
 #include <flatfile.h>
@@ -4249,6 +4252,23 @@ static bool CheckBlockHeader(const CBlockHeader& block, BlockValidationState& st
             // Skip if already batch-validated during header sync
             if (skip_pocx_proof) {
                 LogDebug(BCLog::VALIDATION, "CheckBlockHeader: skipping PoCX proof validation for height=%d\n", block.nHeight);
+#ifndef BUILD_BITCOIN_KERNEL
+            } else if (Params().GetChainType() == ChainType::REGTEST &&
+                       pocx::regtest::IsRegtestHotPathProof(block.pocxProof)) {
+                // Regtest hot path: recompute synthetic quality and verify.
+                uint64_t computed_quality = 0;
+                if (!pocx::regtest::ComputeRegtestHotPathQuality(block, &computed_quality)) {
+                    return state.Invalid(BlockValidationResult::BLOCK_INVALID_HEADER,
+                                         "bad-pocx-proof",
+                                         "regtest hot-path proof malformed (nonce out of range)");
+                }
+                if (block.pocxProof.quality != computed_quality) {
+                    return state.Invalid(BlockValidationResult::BLOCK_INVALID_HEADER,
+                                         "bad-pocx-quality-mismatch",
+                                         strprintf("Claimed quality %llu does not match synthetic quality %llu",
+                                                   block.pocxProof.quality, computed_quality));
+                }
+#endif
             } else {
                 auto result = pocx::consensus::ValidateProofOfCapacity(
                     block.generationSignature,
@@ -4783,10 +4803,18 @@ bool ChainstateManager::ProcessNewBlockHeaders(std::span<const CBlockHeader> hea
     AssertLockNotHeld(cs_main);
 
 #ifdef ENABLE_POCX
-    // Batch validate PoCX proofs for all headers upfront
-    // This uses multi-threading and SIMD for significant speedup during sync
+    // Batch-validate PoCX proofs upfront (SIMD path). Skipped on regtest
+    // (when reachable): the synthetic-plot hot path is incompatible with
+    // the real PoC2 batch validator, and per-header regtest validation is
+    // already microseconds. The kernel-library build can't see Params()
+    // and never processes regtest anyway, so just run the batch there.
     bool skip_pocx_proof = false;
+#ifdef BUILD_BITCOIN_KERNEL
     if (!headers.empty() && headers.size() >= 2) {
+#else
+    if (Params().GetChainType() != ChainType::REGTEST &&
+        !headers.empty() && headers.size() >= 2) {
+#endif
         // Filter to only non-genesis headers that need validation
         std::vector<const CBlockHeader*> headers_to_validate;
         for (const auto& header : headers) {

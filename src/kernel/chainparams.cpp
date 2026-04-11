@@ -776,10 +776,10 @@ public:
         consensus.powLimit = uint256{"7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"};
         consensus.nPowTargetTimespan = 24 * 60 * 60; // one day
 #ifdef ENABLE_POCX
-        consensus.nPowTargetSpacing = 1; // 1 second for RegTest (instant mining with small plots)
-        consensus.nPoCXRollingWindowSize = 24; // 24-block rolling window for difficulty adjustment
-        consensus.nForgingAssignmentDelay = 4;   // 4 blocks (~4 seconds) before assignment becomes active
-        consensus.nForgingRevocationDelay = 8;   // 8 blocks (~8 seconds) before revocation becomes active
+        consensus.nPowTargetSpacing = 120;
+        consensus.nPoCXRollingWindowSize = 24;
+        consensus.nForgingAssignmentDelay = 4;
+        consensus.nForgingRevocationDelay = 8;
         consensus.fPoCXLowCapacityCalibration = true;
 #else
         consensus.nPowTargetSpacing = 10 * 60;
@@ -851,7 +851,7 @@ public:
 #endif
         consensus.hashGenesisBlock = genesis.GetHash();
 #ifdef ENABLE_POCX
-        assert(consensus.hashGenesisBlock == uint256{"c67c27870117080a961530416a25c1ba7da1cd593f7f2101c261222a74d5a51e"});
+        assert(consensus.hashGenesisBlock == uint256{"2a98a52253aeff06093948b00568d380b7634621bc606403127973c9acbbfde0"});
         assert(genesis.hashMerkleRoot == uint256{"d54af763395fcb4b825b0f2b1e8ddc901acf6350277318306487fec22d5de70b"});
 #else
         assert(consensus.hashGenesisBlock == uint256{"0f9188f13cb7b2c71f2a335e3a4fc328bf5beb436012afca590b1a11466e2206"});
@@ -868,10 +868,19 @@ public:
         m_assumeutxo_data = {
             {   // For use by unit tests
                 .height = 110,
+#ifdef ENABLE_POCX
+                .hash_serialized = AssumeutxoHash{uint256{"c83019854ce2c7f30e8fd3a6e542a109e53229c410b0b8ade7d122c7a4e71a2f"}},
+#else
                 .hash_serialized = AssumeutxoHash{uint256{"b952555c8ab81fec46f3d4253b7af256d766ceb39fb7752b9d18cdf4a0141327"}},
+#endif
                 .m_chain_tx_count = 111,
+#ifdef ENABLE_POCX
+                .blockhash = consteval_ctor(uint256{"a8ff6154642f6a8abede59c67dfaaeffc0ae753e34827df51a0eed1697c27771"}),
+#else
                 .blockhash = consteval_ctor(uint256{"6affe030b7965ab538f820a56ef56c8149b7dc1d1c144af57113be080db7c397"}),
+#endif
             },
+            // POCXTODO(regtest-redesign): regenerate the two entries below under PoCX.
             {
                 // For use by fuzz target src/test/fuzz/utxo_snapshot.cpp
                 .height = 200,

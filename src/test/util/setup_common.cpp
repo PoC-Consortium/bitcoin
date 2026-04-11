@@ -60,6 +60,10 @@
 #include <validationinterface.h>
 #include <walletinitinterface.h>
 
+#ifdef ENABLE_POCX
+#include <pocx/regtest/forging.h>
+#endif
+
 #include <algorithm>
 #include <future>
 #include <functional>
@@ -383,7 +387,7 @@ TestChain100Setup::TestChain100Setup(
 #ifdef ENABLE_POCX
         assert(
             m_node.chainman->ActiveChain().Tip()->GetBlockHash().ToString() ==
-            "a1842065309ae7f8156d9d0e7808e56e2cfa09a8be439736106e5e9700c97d5b");
+            "6359451e004b0678ef72bd130977618923fff55ae29ce0a1198297908e27ad51");
 #else
         assert(
             m_node.chainman->ActiveChain().Tip()->GetBlockHash().ToString() ==
@@ -398,7 +402,10 @@ void TestChain100Setup::mineBlocks(int num_blocks)
     for (int i = 0; i < num_blocks; i++) {
         std::vector<CMutableTransaction> noTxns;
         CBlock b = CreateAndProcessBlock(noTxns, scriptPubKey);
+#ifndef ENABLE_POCX
+        // PoCX advances mocktime inside ForgeRegtestBlock; only nudge in non-PoCX builds.
         SetMockTime(GetTime() + 1);
+#endif
         m_coinbase_txns.push_back(b.vtx[0]);
     }
 }
@@ -419,7 +426,20 @@ CBlock TestChain100Setup::CreateBlock(
     RegenerateCommitments(block, *Assert(m_node.chainman));
 
 #ifdef ENABLE_POCX
-    // PoCX: Skip PoW mining in tests, blocks are validated differently
+    {
+        ChainstateManager& chainman = *Assert(m_node.chainman);
+        int64_t prev_time{0};
+        {
+            LOCK(::cs_main);
+            const CBlockIndex* pindexPrev = chainman.m_blockman.LookupBlockIndex(block.hashPrevBlock);
+            Assert(pindexPrev);
+            prev_time = pindexPrev->GetBlockTime();
+        }
+        std::string err;
+        if (!pocx::regtest::ForgeRegtestBlock(block, chainman.GetConsensus(), prev_time, err)) {
+            throw std::runtime_error("TestChain100Setup::CreateBlock: ForgeRegtestBlock failed: " + err);
+        }
+    }
 #else
     while (!CheckProofOfWork(block.GetHash(), block.nBits, m_node.chainman->GetConsensus())) ++block.nNonce;
 #endif

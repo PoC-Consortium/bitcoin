@@ -21,12 +21,20 @@ uint64_t CalculateGenesisBaseTarget(int64_t target_spacing_seconds, bool low_cap
     // - For target block time: base_target = E(quality) / block_time
     // - Therefore: base_target = 2^42 / block_time
     //
-    // Regtest uses 2^60 for low capacity mode (16 nonces = 4 MiB) to enable development mining without plotted storage.
+    // Regtest uses 2^58 for low capacity mode (64 nonces = 16 MiB) to enable development mining without plotted storage.
+    // POWER_58 is the largest safe value that keeps the difficulty-adjustment multiplication in uint64.
 
-    const uint64_t POWER_42 = 4398046511104ULL;        // 2^42 for 1 TiB (mainnet)
-    const uint64_t POWER_60 = 1152921504606846976ULL;  // 2^60 for 16 nonces (regtest)
+    const uint64_t POWER_42 = 4398046511104ULL;        // 2^42 for 1 TiB (mainnet/testnet)
+    const uint64_t POWER_58 = 288230376151711744ULL;   // 2^58 for 64 nonces (regtest)
 
-    uint64_t base_power = low_capacity_calibration ? POWER_60 : POWER_42;
+    // Difficulty adjustment computes avg_base_target * actual_timespan / target_timespan
+    // where avg_base_target <= POWER_58/spacing and actual_timespan <= 2*window*spacing,
+    // so the product is bounded by POWER_58 * 2 * window (spacing cancels).
+    // Regtest uses window=24 -> POWER_58 * 48 < 2^64.
+    static_assert(POWER_58 <= (UINT64_MAX / (2 * 24)),
+                  "POWER_58 * 2 * rolling_window overflows uint64 in difficulty math");
+
+    uint64_t base_power = low_capacity_calibration ? POWER_58 : POWER_42;
     uint64_t genesis_base_target = base_power / target_spacing_seconds;
 
     // Ensure we don't go to zero
