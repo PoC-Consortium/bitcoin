@@ -70,6 +70,7 @@ add_library(bitcoin_consensus STATIC EXCLUDE_FROM_ALL
   $<$<BOOL:${ENABLE_POCX}>:pocx/algorithms/quality.cpp>
   $<$<BOOL:${ENABLE_POCX}>:pocx/algorithms/encoding.cpp>
   $<$<BOOL:${ENABLE_POCX}>:pocx/assignments/assignment_state.cpp>
+  $<$<BOOL:${ENABLE_POCX}>:pocx/assignments/opcodes.cpp>
   consensus/tx_check.cpp
   hash.cpp
   primitives/block.cpp
@@ -147,7 +148,6 @@ add_library(bitcoin_common STATIC EXCLUDE_FROM_ALL
   policy/feerate.cpp
   policy/policy.cpp
   $<$<NOT:$<BOOL:${ENABLE_POCX}>>:pow.cpp>
-  $<$<BOOL:${ENABLE_POCX}>:pocx/assignments/opcodes.cpp>
   protocol.cpp
   psbt.cpp
   rpc/rawtransaction_util.cpp

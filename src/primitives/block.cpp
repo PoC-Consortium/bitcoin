@@ -8,7 +8,28 @@
 #include <hash.h>
 #include <tinyformat.h>
 #ifdef ENABLE_POCX
-#include <util/strencodings.h>
+#include <crypto/hex_base.h>
+
+namespace {
+// Local fixed-length hex decoder (consensus lib cannot depend on util/strencodings).
+bool DecodeFixedHex(std::string_view hex, std::span<uint8_t> out)
+{
+    if (hex.size() != out.size() * 2) return false;
+    auto nibble = [](char c) -> int {
+        if (c >= '0' && c <= '9') return c - '0';
+        if (c >= 'a' && c <= 'f') return c - 'a' + 10;
+        if (c >= 'A' && c <= 'F') return c - 'A' + 10;
+        return -1;
+    };
+    for (size_t i = 0; i < out.size(); ++i) {
+        int hi = nibble(hex[i * 2]);
+        int lo = nibble(hex[i * 2 + 1]);
+        if (hi < 0 || lo < 0) return false;
+        out[i] = static_cast<uint8_t>((hi << 4) | lo);
+    }
+    return true;
+}
+} // namespace
 #endif
 
 uint256 CBlockHeader::GetHash() const
@@ -61,12 +82,10 @@ std::string CBlock::ToString() const
 #ifdef ENABLE_POCX
 // PoCXProof utility function implementations
 bool PoCXProof::SetAccountId(const std::string& hex_str, std::string& error) {
-    auto bytes = ParseHex(hex_str);
-    if (bytes.size() != 20) {
+    if (!DecodeFixedHex(hex_str, account_id)) {
         error = "Account ID must be exactly 20 bytes (40 hex characters)";
         return false;
     }
-    std::copy(bytes.begin(), bytes.end(), account_id.begin());
     return true;
 }
 
@@ -75,12 +94,10 @@ std::string PoCXProof::GetAccountIdHex() const {
 }
 
 bool PoCXProof::SetSeed(const std::string& hex_str, std::string& error) {
-    auto bytes = ParseHex(hex_str);
-    if (bytes.size() != 32) {
+    if (!DecodeFixedHex(hex_str, seed)) {
         error = "Seed must be exactly 32 bytes (64 hex characters)";
         return false;
     }
-    std::copy(bytes.begin(), bytes.end(), seed.begin());
     return true;
 }
 

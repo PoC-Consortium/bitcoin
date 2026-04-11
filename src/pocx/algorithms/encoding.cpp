@@ -4,29 +4,49 @@
 
 #include <pocx/algorithms/encoding.h>
 
-#include <util/strencodings.h>
 #include <cstring>
 #include <optional>
 #include <array>
+#include <span>
+#include <string_view>
 
 namespace pocx {
 namespace algorithms {
+
+namespace {
+// Local fixed-length hex decoder (consensus lib cannot depend on util/strencodings).
+bool DecodeFixedHex(std::string_view hex, std::span<uint8_t> out)
+{
+    if (hex.size() != out.size() * 2) return false;
+    auto nibble = [](char c) -> int {
+        if (c >= '0' && c <= '9') return c - '0';
+        if (c >= 'a' && c <= 'f') return c - 'a' + 10;
+        if (c >= 'A' && c <= 'F') return c - 'A' + 10;
+        return -1;
+    };
+    for (size_t i = 0; i < out.size(); ++i) {
+        int hi = nibble(hex[i * 2]);
+        int lo = nibble(hex[i * 2 + 1]);
+        if (hi < 0 || lo < 0) return false;
+        out[i] = static_cast<uint8_t>((hi << 4) | lo);
+    }
+    return true;
+}
+} // namespace
 
 int DecodeGenerationSignature(const char* hex_string, uint8_t generation_signature[32]) {
     if (!hex_string || !generation_signature) {
         return -1;
     }
 
-    size_t hex_len = std::strlen(hex_string);
-    if (hex_len != 64) {
+    if (std::strlen(hex_string) != 64) {
         return -1;
     }
 
-    auto bytes = ParseHex(std::string_view(hex_string, 64));
-    if (bytes.size() != 32) {
+    if (!DecodeFixedHex(std::string_view(hex_string, 64),
+                        std::span<uint8_t>(generation_signature, 32))) {
         return -2;
     }
-    std::memcpy(generation_signature, bytes.data(), 32);
 
     return 0;
 }
@@ -56,22 +76,14 @@ void U64ToU32BE(uint64_t value, uint32_t output[2]) {
 }
 
 std::optional<std::array<uint8_t, 20>> ParseAccountID(const char* hex_string) {
-    if (!hex_string) {
-        return std::nullopt;
-    }
-
-    size_t hex_len = std::strlen(hex_string);
-    if (hex_len != 40) {
-        return std::nullopt;
-    }
-
-    auto bytes = ParseHex(std::string_view(hex_string, 40));
-    if (bytes.size() != 20) {
+    if (!hex_string || std::strlen(hex_string) != 40) {
         return std::nullopt;
     }
 
     std::array<uint8_t, 20> result;
-    std::copy(bytes.begin(), bytes.end(), result.begin());
+    if (!DecodeFixedHex(std::string_view(hex_string, 40), result)) {
+        return std::nullopt;
+    }
     return result;
 }
 
