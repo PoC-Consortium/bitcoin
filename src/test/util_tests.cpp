@@ -1489,6 +1489,26 @@ BOOST_AUTO_TEST_CASE(message_verify)
             "message too"),
         MessageVerificationResult::ERR_INVALID_ADDRESS);
 
+#ifdef ENABLE_POCX
+    BOOST_CHECK_EQUAL(
+        MessageVerify("dNow76a1auscRwKQjPrhMBiC23f9rGqMmD", "signature should be irrelevant", "message too"),
+        MessageVerificationResult::ERR_ADDRESS_NO_KEY);
+    BOOST_CHECK_EQUAL(
+        MessageVerify("bXZrt3gTRaYuHJEa99ssRsxREdP7DwMLb9", "invalid signature, not in base64 encoding", "message should be irrelevant"),
+        MessageVerificationResult::ERR_MALFORMED_SIGNATURE);
+    BOOST_CHECK_EQUAL(
+        MessageVerify("bXZrt3gTRaYuHJEa99ssRsxREdP7DwMLb9", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=", "message should be irrelevant"),
+        MessageVerificationResult::ERR_PUBKEY_NOT_RECOVERED);
+    BOOST_CHECK_EQUAL(
+        MessageVerify("bGvheUyTn9f2rM1JCx6P99mnDsXWU31uDS", "IPojfrX2dfPnH26UegfbGQQLrdK844DlHq5157/P6h57WyuS/Qsl+h/WSVGDF4MUi4rWSswW38oimDYfNNUBUOk=", "I never signed this"),
+        MessageVerificationResult::ERR_NOT_SIGNED);
+    BOOST_CHECK_EQUAL(
+        MessageVerify("bGvheUyTn9f2rM1JCx6P99mnDsXWU31uDS", "IPojfrX2dfPnH26UegfbGQQLrdK844DlHq5157/P6h57WyuS/Qsl+h/WSVGDF4MUi4rWSswW38oimDYfNNUBUOk=", "Trust no one"),
+        MessageVerificationResult::OK);
+    BOOST_CHECK_EQUAL(
+        MessageVerify("bCjtH2FCAUuVteUJHVS3bWYQxeNrzZ9oLL", "IIcaIENoYW5jZWxsb3Igb24gYnJpbmsgb2Ygc2Vjb25kIGJhaWxvdXQgZm9yIGJhbmtzIAaHRtbCeDZINyavx14=", "Trust me"),
+        MessageVerificationResult::OK);
+#else
     BOOST_CHECK_EQUAL(
         MessageVerify(
             "3B5fQsEXEaV8v6U3ejYc8XaKXAkyQj2MjV",
@@ -1530,6 +1550,7 @@ BOOST_AUTO_TEST_CASE(message_verify)
             "IIcaIENoYW5jZWxsb3Igb24gYnJpbmsgb2Ygc2Vjb25kIGJhaWxvdXQgZm9yIGJhbmtzIAaHRtbCeDZINyavx14=",
             "Trust me"),
         MessageVerificationResult::OK);
+#endif
 }
 
 BOOST_AUTO_TEST_CASE(message_hash)

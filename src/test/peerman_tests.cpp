@@ -5,6 +5,9 @@
 #include <chainparams.h>
 #include <node/miner.h>
 #include <net_processing.h>
+#ifdef ENABLE_POCX
+#include <pocx/regtest/forging.h>
+#endif
 #include <pow.h>
 #include <test/util/setup_common.h>
 #include <validation.h>
@@ -21,7 +24,15 @@ static void mineBlock(const node::NodeContext& node, std::chrono::seconds block_
     auto curr_time = GetTime<std::chrono::seconds>();
     SetMockTime(block_time); // update time so the block is created with it
     CBlock block = node::BlockAssembler{node.chainman->ActiveChainstate(), nullptr, {}}.CreateNewBlock()->block;
-#ifndef ENABLE_POCX
+#ifdef ENABLE_POCX
+    {
+        int64_t prev_time = WITH_LOCK(::cs_main, return node.chainman->ActiveChain().Tip()->GetBlockTime());
+        std::string err;
+        if (!pocx::regtest::ForgeRegtestBlock(block, node.chainman->GetConsensus(), prev_time, err)) {
+            throw std::runtime_error("peerman_tests mineBlock: ForgeRegtestBlock failed: " + err);
+        }
+    }
+#else
     while (!CheckProofOfWork(block.GetHash(), block.nBits, node.chainman->GetConsensus())) ++block.nNonce;
 #endif
     block.fChecked = true; // little speedup
@@ -61,10 +72,17 @@ BOOST_AUTO_TEST_CASE(connections_desirable_service_flags)
     // Now, perform the same tests for when the node receives a block.
     m_node.validation_signals->RegisterValidationInterface(peerman.get());
 
+#ifndef ENABLE_POCX
     // First, verify a block in the past doesn't enable limited peers connections
     // At this point, our time is (NODE_NETWORK_LIMITED_ALLOW_CONN_BLOCKS + 1) * 10 minutes ahead the tip's time.
     mineBlock(m_node, /*block_time=*/std::chrono::seconds{tip_block_time + 1});
     BOOST_CHECK(peerman->GetDesirableServiceFlags(peer_flags) == ServiceFlags(NODE_NETWORK | NODE_WITNESS));
+#else
+    // POCXTODO: PoCX min spacing (120s) prevents forging a block with timestamp
+    // tip+1, and the PoCX regtest safety window (144 * 120s = 17280s) is shorter
+    // than this test's mocktime offset, so a forged past-block lands inside the
+    // window and the flag doesn't flip. Needs a PoCX-aware variant.
+#endif
 
     // Verify a block close to the tip enables limited peers connections
     mineBlock(m_node, /*block_time=*/GetTime<std::chrono::seconds>());

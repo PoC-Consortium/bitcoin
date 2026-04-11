@@ -35,7 +35,9 @@ static CBlock BuildBlockTestCase(FastRandomContext& ctx) {
     block.vtx[0] = MakeTransactionRef(tx);
     block.nVersion = 42;
     block.hashPrevBlock = ctx.rand256();
-#ifndef ENABLE_POCX
+#ifdef ENABLE_POCX
+    block.nBaseTarget = 1; // non-zero so CBlockHeader::IsNull() returns false
+#else
     block.nBits = 0x207fffff;
 #endif
 
@@ -281,7 +283,9 @@ BOOST_AUTO_TEST_CASE(EmptyBlockRoundTripTest)
     block.vtx[0] = MakeTransactionRef(std::move(coinbase));
     block.nVersion = 42;
     block.hashPrevBlock = rand_ctx.rand256();
-#ifndef ENABLE_POCX
+#ifdef ENABLE_POCX
+    block.nBaseTarget = 1; // non-zero so CBlockHeader::IsNull() returns false
+#else
     block.nBits = 0x207fffff;
 #endif
 

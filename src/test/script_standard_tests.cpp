@@ -2,7 +2,11 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
+#ifdef ENABLE_POCX
+#include <test/data/bip341_wallet_vectors_pocx.json.h>
+#else
 #include <test/data/bip341_wallet_vectors.json.h>
+#endif
 
 #include <addresstype.h>
 #include <key.h>
@@ -447,7 +451,11 @@ BOOST_AUTO_TEST_CASE(script_standard_taproot_builder)
     BOOST_CHECK(builder.IsValid() && builder.IsComplete());
     builder.Finalize(key_inner);
     BOOST_CHECK(builder.IsValid() && builder.IsComplete());
+#ifdef ENABLE_POCX
+    BOOST_CHECK_EQUAL(EncodeDestination(builder.GetOutput()), "pocx1pj6gaw944fy0xpmzzu45ugqde4rz7mqj5kj0tg8kmr5f0pjq8vnaq3qydm5");
+#else
     BOOST_CHECK_EQUAL(EncodeDestination(builder.GetOutput()), "bc1pj6gaw944fy0xpmzzu45ugqde4rz7mqj5kj0tg8kmr5f0pjq8vnaqgynnge");
+#endif
 }
 
 BOOST_AUTO_TEST_CASE(bip341_spk_test_vectors)
@@ -455,7 +463,11 @@ BOOST_AUTO_TEST_CASE(bip341_spk_test_vectors)
     using control_set = decltype(TaprootSpendData::scripts)::mapped_type;
 
     UniValue tests;
+#ifdef ENABLE_POCX
+    tests.read(json_tests::bip341_wallet_vectors_pocx);
+#else
     tests.read(json_tests::bip341_wallet_vectors);
+#endif
 
     const auto& vectors = tests["scriptPubKey"];
 

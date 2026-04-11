@@ -8,6 +8,10 @@
 #include <consensus/merkle.h>
 #include <consensus/validation.h>
 #include <node/miner.h>
+#ifdef ENABLE_POCX
+#include <pocx/consensus/difficulty.h>
+#include <pocx/regtest/forging.h>
+#endif
 #include <pow.h>
 #include <random.h>
 #include <test/util/random.h>
@@ -97,7 +101,26 @@ std::shared_ptr<CBlock> MinerTestingSetup::FinalizeBlock(std::shared_ptr<CBlock>
 
     pblock->hashMerkleRoot = BlockMerkleRoot(*pblock);
 
-#ifndef ENABLE_POCX
+#ifdef ENABLE_POCX
+    {
+        const auto& consensus = Params().GetConsensus();
+        const CBlockIndex* prev_index = WITH_LOCK(::cs_main, return m_node.chainman->m_blockman.LookupBlockIndex(pblock->hashPrevBlock));
+        BOOST_REQUIRE(prev_index != nullptr);
+        pblock->nHeight = prev_index->nHeight + 1;
+        pblock->nBaseTarget = pocx::consensus::GetNextBaseTarget(prev_index, consensus);
+        pblock->generationSignature = pocx::consensus::GetNextGenerationSignature(prev_index);
+        // Pin mocktime so ForgeRegtestBlock emits a block at exactly prev+120s.
+        // max() with the current tip time + 120 keeps BlockAssembler's subsequent
+        // TestBlockValidity happy on the main chain while still allowing sibling
+        // forges off older prevs in the fork tree.
+        const int64_t tip_time = WITH_LOCK(::cs_main, return m_node.chainman->ActiveChain().Tip()->GetBlockTime());
+        SetMockTime(std::max<int64_t>(prev_index->GetBlockTime(), tip_time) + consensus.nPowTargetSpacing);
+        std::string err;
+        if (!pocx::regtest::ForgeRegtestBlock(*pblock, consensus, prev_index->GetBlockTime(), err)) {
+            throw std::runtime_error("validation_block_tests FinalizeBlock: ForgeRegtestBlock failed: " + err);
+        }
+    }
+#else
     while (!CheckProofOfWork(pblock->GetHash(), pblock->nBits, Params().GetConsensus())) {
         ++(pblock->nNonce);
     }

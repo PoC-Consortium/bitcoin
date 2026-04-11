@@ -12,6 +12,12 @@
 #include <test/util/setup_common.h>
 #include <univalue.h>
 #include <util/time.h>
+#ifdef ENABLE_POCX
+#include <addresstype.h>
+#include <key_io.h>
+#include <uint256.h>
+#include <util/strencodings.h>
+#endif
 
 #include <any>
 
@@ -198,8 +204,18 @@ BOOST_AUTO_TEST_CASE(rpc_rawsign)
       "[{\"txid\":\"b4cc287e58f87cdae59417329f710f3ecd75a4ee1d2872b7248f50977c8493f3\","
       "\"vout\":1,\"scriptPubKey\":\"a914b10c9df5f7edf436c697f02f1efdba4cf399615187\","
       "\"redeemScript\":\"512103debedc17b3df2badbcdd86d5feb4562b86fe182e5998abd8bcd4f122c6155b1b21027e940bb73ab8732bfdf7f9216ecefca5b94d6df834e77e108f68e66f126044c052ae\"}]";
+#ifdef ENABLE_POCX
+    // Derive the P2SH output address from the redeemScript hash under PoCX's
+    // P2SH prefix, since the upstream literal below is a mainnet-BTC address.
+    uint160 rs_hash;
+    std::copy_n(ParseHex("b10c9df5f7edf436c697f02f1efdba4cf3996151").begin(), 20, rs_hash.begin());
+    const std::string p2sh_addr = EncodeDestination(ScriptHash(rs_hash));
+    r = CallRPC(std::string("createrawtransaction ")+prevout+" "+
+      "{\""+p2sh_addr+"\":11}");
+#else
     r = CallRPC(std::string("createrawtransaction ")+prevout+" "+
       "{\"3HqAe9LtNBjnsfM4CyYaWTnvCaUYT7v4oZ\":11}");
+#endif
     std::string notsigned = r.get_str();
     std::string privkey1 = "\"KzsXybp9jX64P5ekX1KUxRQ79Jht9uzW7LorgwE65i5rWACL6LQe\"";
     std::string privkey2 = "\"Kyhdf5LuKTRx4ge69ybABsiUAWjVRK4XGxAKk2FQLp2HjGMy87Z4\"";

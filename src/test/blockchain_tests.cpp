@@ -17,6 +17,9 @@
 using util::ToString;
 #endif // ENABLE_POCX
 
+// POCXTODO: the GetDifficulty test cases below are PoW-specific — they pass
+// nBits values and assert the resulting difficulty. Under PoCX, GetDifficulty
+// is computed from nBaseTarget, so these cases are structurally inapplicable.
 #ifndef ENABLE_POCX
 /* Equality between doubles is imprecise. Comparison should be done
  * with a small threshold of tolerance, rather than exact equality.

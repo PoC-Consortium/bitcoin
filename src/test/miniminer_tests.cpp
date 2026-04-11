@@ -569,8 +569,18 @@ BOOST_FIXTURE_TEST_CASE(miniminer_overlap, TestChain100Setup)
     BOOST_CHECK(miniminer_pool.IsReadyToCalculate());
     for (const auto& sequences : {miniminer_manual.Linearize(), miniminer_pool.Linearize()}) {
         // tx2 and tx4 selected first: high feerate with nothing to bump
+#ifdef ENABLE_POCX
+        // Tie-breaking among same-feerate txs is txid-dependent. PoCX coinbase
+        // txids differ from BTC, so tx2/tx4 may land in either position {0, 1}.
+        {
+            const auto pos2{Find(sequences, tx2->GetHash())};
+            const auto pos4{Find(sequences, tx4->GetHash())};
+            BOOST_CHECK((pos2 == 0 && pos4 == 1) || (pos2 == 1 && pos4 == 0));
+        }
+#else
         BOOST_CHECK_EQUAL(Find(sequences, tx4->GetHash()), 0);
         BOOST_CHECK_EQUAL(Find(sequences, tx2->GetHash()), 1);
+#endif
 
         // tx5 + tx7 CPFP
         BOOST_CHECK_EQUAL(Find(sequences, tx5->GetHash()), 2);

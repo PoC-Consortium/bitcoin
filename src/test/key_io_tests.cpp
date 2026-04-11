@@ -3,7 +3,11 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #include <test/data/key_io_invalid.json.h>
+#ifdef ENABLE_POCX
+#include <test/data/key_io_valid_pocx.json.h>
+#else
 #include <test/data/key_io_valid.json.h>
+#endif
 
 #include <key.h>
 #include <key_io.h>
@@ -23,7 +27,11 @@ BOOST_FIXTURE_TEST_SUITE(key_io_tests, BasicTestingSetup)
 // Goal: check that parsed keys match test payload
 BOOST_AUTO_TEST_CASE(key_io_valid_parse)
 {
+#ifdef ENABLE_POCX
+    UniValue tests = read_json(json_tests::key_io_valid_pocx);
+#else
     UniValue tests = read_json(json_tests::key_io_valid);
+#endif
     CKey privkey;
     CTxDestination destination;
     SelectParams(ChainType::MAIN);
@@ -84,7 +92,11 @@ BOOST_AUTO_TEST_CASE(key_io_valid_parse)
 // Goal: check that generated keys match test vectors
 BOOST_AUTO_TEST_CASE(key_io_valid_gen)
 {
+#ifdef ENABLE_POCX
+    UniValue tests = read_json(json_tests::key_io_valid_pocx);
+#else
     UniValue tests = read_json(json_tests::key_io_valid);
+#endif
 
     for (unsigned int idx = 0; idx < tests.size(); idx++) {
         const UniValue& test = tests[idx];

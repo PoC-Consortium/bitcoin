@@ -311,7 +311,21 @@ BOOST_FIXTURE_TEST_CASE(rbf_helper_functions, TestChain100Setup)
     // Tests for CheckConflictTopology
 
     // Tx4 has 23 descendants
+#ifdef ENABLE_POCX
+    // set_34_cpfp contains both tx3 (24 descendants via tx4's chain) and tx4
+    // (23 direct descendants). CheckConflictTopology returns the first
+    // violation it encounters, and the iteration order of setEntries is tx-
+    // hash dependent. Under PoCX coinbase txids differ, so either tx3 or tx4
+    // may be reported first. Accept either form of the expected error.
+    {
+        const auto actual{pool.CheckConflictTopology(set_34_cpfp).value()};
+        const auto expected_tx3{strprintf("%s has 24 descendants, max 1 allowed", entry3_low->GetSharedTx()->GetHash().ToString())};
+        const auto expected_tx4{strprintf("%s has 23 descendants, max 1 allowed", entry4_high->GetSharedTx()->GetHash().ToString())};
+        BOOST_CHECK(actual == expected_tx3 || actual == expected_tx4);
+    }
+#else
     BOOST_CHECK_EQUAL(pool.CheckConflictTopology(set_34_cpfp).value(), strprintf("%s has 24 descendants, max 1 allowed", entry3_low->GetSharedTx()->GetHash().ToString()));
+#endif
 
     // No descendants yet
     BOOST_CHECK(pool.CheckConflictTopology({entry9_unchained}) == std::nullopt);
@@ -536,7 +550,18 @@ BOOST_FIXTURE_TEST_CASE(calc_feerate_diagram_rbf, TestChain100Setup)
         changeset->StageAddition(replacement_tx, high_fee, 0, 1, 0, false, 4, LockPoints());
         const auto replace_too_large{changeset->CalculateChunksForRBF()};
         BOOST_CHECK(!replace_too_large.has_value());
+#ifdef ENABLE_POCX
+        // The cluster {low_tx → high_tx → normal_tx} produces two legitimate
+        // topology violations: low_tx has 2 descendants, or high_tx is both
+        // ancestor and descendant. Which one is reported first depends on
+        // tx-hash iteration order, and PoCX coinbase txids differ from BTC.
+        const auto actual{util::ErrorString(replace_too_large).original};
+        const auto expected_high{strprintf("%s has both ancestor and descendant, exceeding cluster limit of 2", high_tx->GetHash().GetHex())};
+        const auto expected_low{strprintf("%s has 2 descendants, max 1 allowed", low_tx->GetHash().GetHex())};
+        BOOST_CHECK(actual == expected_high || actual == expected_low);
+#else
         BOOST_CHECK_EQUAL(util::ErrorString(replace_too_large).original, strprintf("%s has both ancestor and descendant, exceeding cluster limit of 2", high_tx->GetHash().GetHex()));
+#endif
     }
 
     // Make a size 2 cluster that is itself two chunks; evict both txns

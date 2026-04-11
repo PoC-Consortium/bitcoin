@@ -65,7 +65,13 @@ BOOST_AUTO_TEST_CASE(timeoffsets_warning)
     BOOST_CHECK(IsWarningRaised({5, 11min}));
 
     BOOST_CHECK(!IsWarningRaised({4, 60min}));
+#ifdef ENABLE_POCX
+    // PoCX's tighter 10s warn threshold (120s block target) fires on a 3min
+    // drift. Use sub-threshold offsets to verify the "within tolerance" path.
+    BOOST_CHECK(!IsWarningRaised({100, 5s}));
+#else
     BOOST_CHECK(!IsWarningRaised({100, 3min}));
+#endif
 }
 
 

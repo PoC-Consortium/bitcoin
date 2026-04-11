@@ -143,7 +143,11 @@ BOOST_FIXTURE_TEST_CASE(scan_for_wallet_transactions, TestChain100Setup)
         BOOST_CHECK(result.last_failed_block.IsNull());
         BOOST_CHECK_EQUAL(result.last_scanned_block, newTip->GetBlockHash());
         BOOST_CHECK_EQUAL(*result.last_scanned_height, newTip->nHeight);
+#ifdef ENABLE_POCX
+        BOOST_CHECK_EQUAL(GetBalance(wallet).m_mine_immature, 20 * COIN);
+#else
         BOOST_CHECK_EQUAL(GetBalance(wallet).m_mine_immature, 100 * COIN);
+#endif
 
         {
             CBlockLocator locator;
@@ -179,7 +183,11 @@ BOOST_FIXTURE_TEST_CASE(scan_for_wallet_transactions, TestChain100Setup)
         BOOST_CHECK_EQUAL(result.last_failed_block, oldTip->GetBlockHash());
         BOOST_CHECK_EQUAL(result.last_scanned_block, newTip->GetBlockHash());
         BOOST_CHECK_EQUAL(*result.last_scanned_height, newTip->nHeight);
+#ifdef ENABLE_POCX
+        BOOST_CHECK_EQUAL(GetBalance(wallet).m_mine_immature, 10 * COIN);
+#else
         BOOST_CHECK_EQUAL(GetBalance(wallet).m_mine_immature, 50 * COIN);
+#endif
     }
 
     // Prune the remaining block file.
@@ -406,7 +414,11 @@ BOOST_FIXTURE_TEST_CASE(ListCoinsTest, ListCoinsTestingSetup)
     BOOST_CHECK_EQUAL(list.begin()->second.size(), 1U);
 
     // Check initial balance from one mature coinbase transaction.
+#ifdef ENABLE_POCX
+    BOOST_CHECK_EQUAL(10 * COIN, WITH_LOCK(wallet->cs_wallet, return AvailableCoins(*wallet).GetTotalAmount()));
+#else
     BOOST_CHECK_EQUAL(50 * COIN, WITH_LOCK(wallet->cs_wallet, return AvailableCoins(*wallet).GetTotalAmount()));
+#endif
 
     // Add a transaction creating a change address, and confirm ListCoins still
     // returns the coin associated with the change address underneath the

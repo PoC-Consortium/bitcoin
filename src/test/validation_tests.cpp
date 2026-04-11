@@ -24,7 +24,11 @@ BOOST_FIXTURE_TEST_SUITE(validation_tests, TestingSetup)
 static void TestBlockSubsidyHalvings(const Consensus::Params& consensusParams)
 {
     int maxHalvings = 64;
+#ifdef ENABLE_POCX
+    CAmount nInitialSubsidy = 10 * COIN;
+#else
     CAmount nInitialSubsidy = 50 * COIN;
+#endif
 
     CAmount nPreviousSubsidy = nInitialSubsidy * 2; // for height == 0
     BOOST_CHECK_EQUAL(nPreviousSubsidy, nInitialSubsidy * 2);
@@ -57,13 +61,28 @@ BOOST_AUTO_TEST_CASE(subsidy_limit_test)
 {
     const auto chainParams = CreateChainParams(*m_node.args, ChainType::MAIN);
     CAmount nSum = 0;
-    for (int nHeight = 0; nHeight < 14000000; nHeight += 1000) {
+#ifdef ENABLE_POCX
+    // PoCX: initial subsidy 10 * COIN, halving interval 1,050,000 blocks.
+    // Iterate far enough to cover the full halving schedule.
+    const int64_t kSumUpTo = 70'000'000;
+    const CAmount kInitialSubsidy = 10 * COIN;
+#else
+    const int64_t kSumUpTo = 14'000'000;
+    const CAmount kInitialSubsidy = 50 * COIN;
+#endif
+    for (int nHeight = 0; nHeight < kSumUpTo; nHeight += 1000) {
         CAmount nSubsidy = GetBlockSubsidy(nHeight, chainParams->GetConsensus());
-        BOOST_CHECK(nSubsidy <= 50 * COIN);
+        BOOST_CHECK(nSubsidy <= kInitialSubsidy);
         nSum += nSubsidy * 1000;
         BOOST_CHECK(MoneyRange(nSum));
     }
+#ifdef ENABLE_POCX
+    // Exact cumulative subsidy over the full halving schedule at step 1000.
+    // Pinned to guard against any future change to the subsidy schedule.
+    BOOST_CHECK_EQUAL(nSum, CAmount{2099999986350000});
+#else
     BOOST_CHECK_EQUAL(nSum, CAmount{2099999997690000});
+#endif
 }
 
 BOOST_AUTO_TEST_CASE(signet_parse_tests)
@@ -142,11 +161,20 @@ BOOST_AUTO_TEST_CASE(test_assumeutxo)
     }
 
     const auto out110 = *params->AssumeutxoForHeight(110);
+#ifdef ENABLE_POCX
+    BOOST_CHECK_EQUAL(out110.hash_serialized.ToString(), "c83019854ce2c7f30e8fd3a6e542a109e53229c410b0b8ade7d122c7a4e71a2f");
+#else
     BOOST_CHECK_EQUAL(out110.hash_serialized.ToString(), "b952555c8ab81fec46f3d4253b7af256d766ceb39fb7752b9d18cdf4a0141327");
+#endif
     BOOST_CHECK_EQUAL(out110.m_chain_tx_count, 111U);
 
+#ifdef ENABLE_POCX
+    const auto out110_2 = *params->AssumeutxoForBlockhash(uint256{"a8ff6154642f6a8abede59c67dfaaeffc0ae753e34827df51a0eed1697c27771"});
+    BOOST_CHECK_EQUAL(out110_2.hash_serialized.ToString(), "c83019854ce2c7f30e8fd3a6e542a109e53229c410b0b8ade7d122c7a4e71a2f");
+#else
     const auto out110_2 = *params->AssumeutxoForBlockhash(uint256{"6affe030b7965ab538f820a56ef56c8149b7dc1d1c144af57113be080db7c397"});
     BOOST_CHECK_EQUAL(out110_2.hash_serialized.ToString(), "b952555c8ab81fec46f3d4253b7af256d766ceb39fb7752b9d18cdf4a0141327");
+#endif
     BOOST_CHECK_EQUAL(out110_2.m_chain_tx_count, 111U);
 }
 

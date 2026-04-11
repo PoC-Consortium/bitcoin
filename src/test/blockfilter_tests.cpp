@@ -2,7 +2,11 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
+#ifdef ENABLE_POCX
+#include <test/data/blockfilters_pocx.json.h>
+#else
 #include <test/data/blockfilters.json.h>
+#endif
 #include <test/util/setup_common.h>
 
 #include <blockfilter.h>
@@ -130,7 +134,11 @@ BOOST_AUTO_TEST_CASE(blockfilter_basic_test)
 BOOST_AUTO_TEST_CASE(blockfilters_json_test)
 {
     UniValue json;
+#ifdef ENABLE_POCX
+    if (!json.read(json_tests::blockfilters_pocx) || !json.isArray()) {
+#else
     if (!json.read(json_tests::blockfilters) || !json.isArray()) {
+#endif
         BOOST_ERROR("Parse error.");
         return;
     }
@@ -152,7 +160,15 @@ BOOST_AUTO_TEST_CASE(blockfilters_json_test)
         BOOST_CHECK(uint256::FromHex(test[pos++].get_str()));
 
         CBlock block;
+#ifdef ENABLE_POCX
+        // Fixture hex is BTC-serialized; reconstruct txs into a PoCX CBlock.
+        {
+            DataStream stream{ParseHex<std::byte>(test[pos++].get_str())};
+            ReadBtcBlockIntoPocx(stream, block);
+        }
+#else
         BOOST_REQUIRE(DecodeHexBlk(block, test[pos++].get_str()));
+#endif
 
         CBlockUndo block_undo;
         block_undo.vtxundo.emplace_back();

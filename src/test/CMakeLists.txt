@@ -145,6 +145,16 @@ target_json_data_sources(test_bitcoin
   data/tx_invalid.json
   data/tx_valid.json
 )
+# PoCX regenerates fixtures that bake network prefixes/HRP into hash-derived
+# strings or compute BIP158 filters against block.GetHash(). Keep the upstream
+# files pristine and ship PoCX variants alongside.
+if(ENABLE_POCX)
+  target_json_data_sources(test_bitcoin
+    data/bip341_wallet_vectors_pocx.json
+    data/blockfilters_pocx.json
+    data/key_io_valid_pocx.json
+  )
+endif()
 target_raw_data_sources(test_bitcoin NAMESPACE test::data
   data/asmap.raw
 )

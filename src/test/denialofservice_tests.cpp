@@ -151,7 +151,14 @@ BOOST_FIXTURE_TEST_CASE(stale_tip_peer_management, OutboundTest)
 
     const auto time_init{GetTime<std::chrono::seconds>()};
     SetMockTime(time_init);
+#ifdef ENABLE_POCX
+    // PoCX's 120s spacing makes 3 * spacing = 360s < STALE_CHECK_INTERVAL
+    // (10 min), so the upstream formula below doesn't clear the gating check
+    // in CheckForStaleTipAndEvictPeers. Bump past STALE_CHECK_INTERVAL.
+    const auto time_later{time_init + 10min + 1s};
+#else
     const auto time_later{time_init + 3 * std::chrono::seconds{m_node.chainman->GetConsensus().nPowTargetSpacing} + 1s};
+#endif
     connman->Init(options);
     std::vector<CNode *> vNodes;
 

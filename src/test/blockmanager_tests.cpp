@@ -175,8 +175,15 @@ BOOST_AUTO_TEST_CASE(blockmanager_flush_block_file)
     CBlock block3;
     block3.nVersion = 3;
 
+#ifdef ENABLE_POCX
+    // PoCX's CBlockHeader embeds nBaseTarget/generationSignature/pocxProof
+    // fields plus a block signature, yielding a larger serialized size for
+    // an otherwise-empty block.
+    constexpr int TEST_BLOCK_SIZE{287};
+#else
     // They are 80 bytes header + 1 byte 0x00 for vtx length
     constexpr int TEST_BLOCK_SIZE{81};
+#endif
 
     // Blockstore is empty
     BOOST_CHECK_EQUAL(blockman.CalculateCurrentUsage(), 0);
@@ -194,6 +201,17 @@ BOOST_AUTO_TEST_CASE(blockmanager_flush_block_file)
     // Errors are expected because block data is junk, thrown AFTER successful read
     CBlock read_block;
     BOOST_CHECK_EQUAL(read_block.nVersion, 0);
+#ifdef ENABLE_POCX
+    // PoCX's ReadBlock does not run a PoW-style header check on read (see the
+    // #ifndef ENABLE_POCX guard in blockstorage.cpp). Default-initialized
+    // blocks therefore pass deserialization without the "Errors in block
+    // header" log line. Assert the weaker, still-meaningful invariant: the
+    // deserialized payload round-trips the nVersion we wrote.
+    BOOST_CHECK(blockman.ReadBlock(read_block, pos1, {}));
+    BOOST_CHECK_EQUAL(read_block.nVersion, 1);
+    BOOST_CHECK(blockman.ReadBlock(read_block, pos2, {}));
+    BOOST_CHECK_EQUAL(read_block.nVersion, 2);
+#else
     {
         ASSERT_DEBUG_LOG("Errors in block header");
         BOOST_CHECK(!blockman.ReadBlock(read_block, pos1, {}));
@@ -204,6 +222,7 @@ BOOST_AUTO_TEST_CASE(blockmanager_flush_block_file)
         BOOST_CHECK(!blockman.ReadBlock(read_block, pos2, {}));
         BOOST_CHECK_EQUAL(read_block.nVersion, 2);
     }
+#endif
 
     // During reindex, the flat file block storage will not be written to.
     // UpdateBlockInfo will, however, update the blockfile metadata.
@@ -218,7 +237,11 @@ BOOST_AUTO_TEST_CASE(blockmanager_flush_block_file)
     BOOST_CHECK_EQUAL(blockman.CalculateCurrentUsage(), (TEST_BLOCK_SIZE + STORAGE_HEADER_BYTES) * 2);
 
     // Block 2 was not overwritten:
+#ifdef ENABLE_POCX
+    BOOST_CHECK(blockman.ReadBlock(read_block, pos2, {}));
+#else
     BOOST_CHECK(!blockman.ReadBlock(read_block, pos2, {}));
+#endif
     BOOST_CHECK_EQUAL(read_block.nVersion, 2);
 }
 

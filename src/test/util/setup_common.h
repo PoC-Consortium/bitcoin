@@ -272,6 +272,16 @@ std::unique_ptr<T> MakeNoLogFileContext(const ChainType chain_type = ChainType::
 
 CBlock getBlock13b8a();
 
+#ifdef ENABLE_POCX
+//! Read a BTC-serialized block from `stream` into a PoCX CBlock by skipping
+//! the 80-byte upstream header (layout-incompatible with PoCX's CBlockHeader)
+//! and parsing only the tx section. The block is made internally consistent
+//! by recomputing hashMerkleRoot from the txs. Used in tests that rely on
+//! real-world BTC mainnet block hexes for merkle/bloom/filter assertions.
+class DataStream;
+void ReadBtcBlockIntoPocx(DataStream& stream, CBlock& block);
+#endif
+
 // Make types usable in BOOST_CHECK_* @{
 namespace std {
 template <typename T> requires std::is_enum_v<T>
