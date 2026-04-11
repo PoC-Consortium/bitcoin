@@ -4815,10 +4815,20 @@ bool ChainstateManager::ProcessNewBlockHeaders(std::span<const CBlockHeader> hea
     if (Params().GetChainType() != ChainType::REGTEST &&
         !headers.empty() && headers.size() >= 2) {
 #endif
-        // Filter to only non-genesis headers that need validation
+        // Filter to non-genesis headers that we don't already have in the
+        // block index. Peers re-send batches during catch-up, reconnects and
+        // overlapping tip announcements, and without this check the threaded
+        // batch validator would redo the full 2^compression nonce
+        // regeneration for every known header, every time. Keyed on
+        // GetHash(), which matches m_block_index's own key and handles forks
+        // correctly (different hashes at the same height are distinct
+        // entries).
         std::vector<const CBlockHeader*> headers_to_validate;
-        for (const auto& header : headers) {
-            if (header.nHeight > 0) {
+        {
+            LOCK(::cs_main);
+            for (const auto& header : headers) {
+                if (header.nHeight == 0) continue;
+                if (m_blockman.LookupBlockIndex(header.GetHash()) != nullptr) continue;
                 headers_to_validate.push_back(&header);
             }
         }
