@@ -27,7 +27,9 @@
 #include <wallet/receive.h>
 #include <wallet/rpc/wallet.h>
 #ifdef ENABLE_POCX
+#include <pocx/mining/wallet_signing.h>
 #include <pocx/rpc/assignments_wallet.h>
+#include <primitives/block.h>
 #endif
 #include <wallet/spend.h>
 #include <wallet/wallet.h>
@@ -531,6 +533,17 @@ public:
         return MakeSignalHandler(m_wallet->NotifyCanGetAddressesChanged.connect(fn));
     }
     CWallet* wallet() override { return m_wallet.get(); }
+
+#ifdef ENABLE_POCX
+    bool haveAccountKey(const std::string& account_id) override
+    {
+        return pocx::mining::HaveAccountKey(account_id, this);
+    }
+    bool signPoCXBlock(const std::string& account_id, CBlock& block) override
+    {
+        return pocx::mining::SignPoCXBlock(this, block.GetHash(), account_id, block);
+    }
+#endif
 
     WalletContext& m_context;
     std::shared_ptr<CWallet> m_wallet;

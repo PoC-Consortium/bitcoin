@@ -26,7 +26,6 @@
 #include <pocx/consensus/proof.h>
 #include <pocx/assignments/assignment_state.h>
 #include <pocx/mining/scheduler.h>
-#include <pocx/mining/wallet_signing.h>
 #include <wallet/wallet.h>
 #endif
 
@@ -227,7 +226,7 @@ static RPCHelpMan submit_nonce()
 
                     // Check if we have the key for the effective signer
                     for (auto& wallet : wallets) {
-                        if (pocx::mining::HaveAccountKey(effective_signer_account, wallet.get())) {
+                        if (wallet->haveAccountKey(effective_signer_account)) {
                             has_key = true;
                             break;
                         }

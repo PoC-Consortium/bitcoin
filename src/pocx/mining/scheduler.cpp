@@ -5,7 +5,6 @@
 #include <pocx/mining/scheduler.h>
 #include <pocx/mining/submission.h>
 #include <pocx/mining/defensive_forge.h>
-#include <pocx/mining/wallet_signing.h>
 #include <pocx/mining/block_context.h>
 #include <pocx/consensus/difficulty.h>
 #include <pocx/consensus/signature.h>
@@ -16,6 +15,7 @@
 
 #include <chain.h>
 #include <coins.h>
+#include <interfaces/wallet.h>
 #include <logging.h>
 #include <node/context.h>
 #include <sync.h>
@@ -465,12 +465,23 @@ bool PoCXScheduler::ForgeBlock(bool defensive) {
         }
     }
 
-    // Sign block using wallet
-    bool signed_successfully = pocx::mining::SignPoCXBlockWithAvailableWallet(
-        context,
-        *block,
-        effective_signer
-    );
+    // Sign block: iterate wallets and hand off via interfaces::Wallet so the
+    // node lib never links wallet-side signing symbols directly.
+    bool signed_successfully = false;
+    if (context->wallet_loader) {
+        auto wallets = context->wallet_loader->getWallets();
+        LogPrintf("PoCX: [Scheduler] Trying %zu wallet(s) for effective signer %s\n",
+                  wallets.size(), effective_signer.c_str());
+        for (auto& wallet : wallets) {
+            if (wallet->haveAccountKey(effective_signer) &&
+                wallet->signPoCXBlock(effective_signer, *block)) {
+                signed_successfully = true;
+                break;
+            }
+        }
+    } else {
+        LogPrintf("PoCX: [Scheduler] No wallet loader available for signing\n");
+    }
 
     if (!signed_successfully) {
         LogPrintf("PoCX: [Scheduler] Block signing failed\n");

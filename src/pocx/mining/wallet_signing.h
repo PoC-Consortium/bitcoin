@@ -14,33 +14,23 @@ namespace interfaces {
 class Wallet;
 }
 
-namespace node {
-struct NodeContext;
-}
-
 namespace pocx {
 namespace mining {
 
-/** Check if wallet has the key for a PoCX account */
+/** Check if wallet has the key for a PoCX account.
+ *  Internal helper used by the interfaces::Wallet implementation. */
 bool HaveAccountKey(
     const std::string& account_id,
     interfaces::Wallet* wallet
 );
 
-/** Sign a PoCX block using wallet keys (supports descriptor and legacy wallets) */
+/** Sign a PoCX block using wallet keys (supports descriptor and legacy wallets).
+ *  Internal helper used by the interfaces::Wallet implementation. */
 bool SignPoCXBlock(
     interfaces::Wallet* wallet,
     const uint256& block_hash,
     const std::string& account_id,
     CBlock& block
-);
-
-/** Sign a PoCX block with any available wallet that holds the key for
- *  the given effective signer account (caller must resolve assignments). */
-bool SignPoCXBlockWithAvailableWallet(
-    ::node::NodeContext* context,
-    CBlock& block,
-    const std::string& effective_signer
 );
 
 } // namespace mining

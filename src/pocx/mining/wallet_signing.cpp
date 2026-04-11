@@ -8,7 +8,6 @@
 #include <interfaces/wallet.h>
 #include <key_io.h>
 #include <logging.h>
-#include <node/context.h>
 #include <primitives/block.h>
 #include <util/strencodings.h>
 #include <wallet/scriptpubkeyman.h>
@@ -149,44 +148,6 @@ bool SignPoCXBlock(
     }
 
     LogPrintf("PoCX: No ScriptPubKeyMan found that can sign for account %s\n", account_id.c_str());
-    return false;
-}
-
-bool SignPoCXBlockWithAvailableWallet(
-    ::node::NodeContext* context,
-    CBlock& block,
-    const std::string& effective_signer
-) {
-    if (!context || !context->wallet_loader) {
-        LogPrintf("PoCX: No wallet available for signing block\n");
-        return false;
-    }
-
-    LogPrintf("PoCX: Signing block at height %d for effective signer %s\n",
-              block.nHeight, effective_signer.c_str());
-
-    auto wallets = context->wallet_loader->getWallets();
-    LogPrintf("PoCX: Found %zu wallet(s) available\n", wallets.size());
-
-    for (auto& wallet : wallets) {
-        if (HaveAccountKey(effective_signer, wallet.get())) {
-            LogPrintf("PoCX: Found wallet with key for effective signer %s\n",
-                     effective_signer.c_str());
-
-            if (SignPoCXBlock(wallet.get(), block.GetHash(), effective_signer, block)) {
-                LogPrintf("PoCX: Block signed successfully\n");
-                LogPrintf("PoCX:   Block pubkey: %s\n", HexStr(block.vchPubKey).c_str());
-                LogPrintf("PoCX:   Block signature size: %zu\n", block.vchSignature.size());
-                return true;
-            } else {
-                LogPrintf("PoCX: Signing failed for effective signer %s\n",
-                         effective_signer.c_str());
-            }
-        }
-    }
-
-    LogPrintf("PoCX: No wallet has key for effective signer %s\n",
-              effective_signer.c_str());
     return false;
 }
 
