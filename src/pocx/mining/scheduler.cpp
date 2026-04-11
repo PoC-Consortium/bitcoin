@@ -11,12 +11,16 @@
 #include <pocx/consensus/signature.h>
 #include <pocx/consensus/params.h>
 #include <pocx/algorithms/time_bending.h>
+#include <pocx/algorithms/encoding.h>
+#include <pocx/assignments/assignment_state.h>
 
 #include <chain.h>
+#include <coins.h>
 #include <logging.h>
 #include <node/context.h>
 #include <sync.h>
 #include <util/check.h>
+#include <util/strencodings.h>
 #include <validation.h>
 
 namespace {
@@ -448,11 +452,24 @@ bool PoCXScheduler::ForgeBlock(bool defensive) {
         }
     }
 
+    // Resolve effective signer (respect assignments) before handing off to
+    // the wallet-side signer. Keeps the ChainstateManager access in node lib.
+    std::string effective_signer = account_id;
+    if (context && context->chainman) {
+        auto plot_id = pocx::algorithms::ParseAccountID(account_id.c_str());
+        if (plot_id) {
+            LOCK(cs_main);
+            const CCoinsViewCache& view = context->chainman->ActiveChainstate().CoinsTip();
+            auto signer = pocx::assignments::GetEffectiveSigner(*plot_id, block->nHeight, view);
+            effective_signer = HexStr(signer);
+        }
+    }
+
     // Sign block using wallet
     bool signed_successfully = pocx::mining::SignPoCXBlockWithAvailableWallet(
         context,
         *block,
-        account_id
+        effective_signer
     );
 
     if (!signed_successfully) {

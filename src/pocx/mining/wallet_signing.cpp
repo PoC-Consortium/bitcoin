@@ -4,17 +4,13 @@
 
 #include <pocx/mining/wallet_signing.h>
 
-#include <pocx/assignments/assignment_state.h>
-#include <pocx/algorithms/encoding.h>
 #include <addresstype.h>
 #include <interfaces/wallet.h>
 #include <key_io.h>
 #include <logging.h>
 #include <node/context.h>
 #include <primitives/block.h>
-#include <sync.h>
 #include <util/strencodings.h>
-#include <validation.h>
 #include <wallet/scriptpubkeyman.h>
 #include <wallet/wallet.h>
 
@@ -159,39 +155,16 @@ bool SignPoCXBlock(
 bool SignPoCXBlockWithAvailableWallet(
     ::node::NodeContext* context,
     CBlock& block,
-    const std::string& plot_account_id
+    const std::string& effective_signer
 ) {
     if (!context || !context->wallet_loader) {
         LogPrintf("PoCX: No wallet available for signing block\n");
         return false;
     }
 
-    // Parse plot account ID
-    auto plot_id = pocx::algorithms::ParseAccountID(plot_account_id.c_str());
-    if (!plot_id) {
-        LogPrintf("PoCX: Invalid plot account ID format\n");
-        return false;
-    }
+    LogPrintf("PoCX: Signing block at height %d for effective signer %s\n",
+              block.nHeight, effective_signer.c_str());
 
-    // Get effective signer considering assignments
-    std::string effective_signer = plot_account_id;
-
-    if (context->chainman) {
-        LOCK(cs_main);
-        auto& chainstate = context->chainman->ActiveChainstate();
-        const CCoinsViewCache& view = chainstate.CoinsTip();
-
-        // Get effective signer considering assignments
-        std::array<uint8_t, 20> signer = pocx::assignments::GetEffectiveSigner(*plot_id, block.nHeight, view);
-        effective_signer = HexStr(signer);
-    }
-
-    LogPrintf("PoCX: Plot: %s, Effective signer: %s at height %d\n",
-              plot_account_id.c_str(),
-              effective_signer.c_str(),
-              block.nHeight);
-
-    // Try to sign with any available wallet that has the key
     auto wallets = context->wallet_loader->getWallets();
     LogPrintf("PoCX: Found %zu wallet(s) available\n", wallets.size());
 

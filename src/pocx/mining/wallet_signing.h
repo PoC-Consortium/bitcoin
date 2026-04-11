@@ -35,11 +35,12 @@ bool SignPoCXBlock(
     CBlock& block
 );
 
-/** Sign a PoCX block with available wallet (handles assignment resolution) */
+/** Sign a PoCX block with any available wallet that holds the key for
+ *  the given effective signer account (caller must resolve assignments). */
 bool SignPoCXBlockWithAvailableWallet(
     ::node::NodeContext* context,
     CBlock& block,
-    const std::string& plot_account_id
+    const std::string& effective_signer
 );
 
 } // namespace mining
