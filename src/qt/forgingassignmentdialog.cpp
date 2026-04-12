@@ -49,9 +49,7 @@
 
 ForgingAssignmentDialog::ForgingAssignmentDialog(const PlatformStyle *_platformStyle, QWidget *parent) :
     QWidget(parent),
-    model(nullptr),
-    platformStyle(_platformStyle),
-    currentMode(AssignMode)
+    platformStyle(_platformStyle)
 {
     // Set window properties
     setWindowTitle(tr("Forging Assignment Manager"));
@@ -147,9 +145,7 @@ ForgingAssignmentDialog::ForgingAssignmentDialog(const PlatformStyle *_platformS
     validateInputs();
 }
 
-ForgingAssignmentDialog::~ForgingAssignmentDialog()
-{
-}
+ForgingAssignmentDialog::~ForgingAssignmentDialog() = default;
 
 void ForgingAssignmentDialog::setModel(WalletModel *_model)
 {
@@ -651,7 +647,7 @@ bool ForgingAssignmentDialog::createAssignmentTransaction()
             return false;
         }
 
-        CTransactionRef tx = result.value();
+        const auto& tx = result.value();
 
         // Broadcast the transaction
         std::string err_string;
@@ -768,7 +764,7 @@ bool ForgingAssignmentDialog::createRevocationTransaction()
             return false;
         }
 
-        CTransactionRef tx = result.value();
+        const auto& tx = result.value();
 
         // Broadcast the transaction
         std::string err_string;

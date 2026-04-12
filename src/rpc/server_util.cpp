@@ -20,7 +20,9 @@
 #include <any>
 
 using node::NodeContext;
+#ifndef ENABLE_POCX
 using node::UpdateTime;
+#endif
 
 NodeContext& EnsureAnyNodeContext(const std::any& context)
 {

@@ -13,8 +13,6 @@
 #include <uint256.h>
 #include <node/context.h>
 
-using node::NodeContext;
-
 namespace pocx {
 namespace rpc {
 

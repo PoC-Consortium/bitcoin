@@ -73,7 +73,7 @@ static RPCHelpMan create_assignment()
                 throw JSONRPCError(RPC_WALLET_ERROR, "Failed to create assignment transaction: " + util::ErrorString(tx_result).original);
             }
 
-            CTransactionRef tx = *tx_result;
+            const auto& tx = *tx_result;
 
             pwallet->CommitTransaction(tx, /*mapValue=*/{}, /*orderForm=*/{});
 
@@ -135,7 +135,7 @@ static RPCHelpMan revoke_assignment()
                 throw JSONRPCError(RPC_WALLET_ERROR, "Failed to create revocation transaction: " + util::ErrorString(tx_result).original);
             }
 
-            CTransactionRef tx = *tx_result;
+            const auto& tx = *tx_result;
 
             pwallet->CommitTransaction(tx, /*mapValue=*/{}, /*orderForm=*/{});
 

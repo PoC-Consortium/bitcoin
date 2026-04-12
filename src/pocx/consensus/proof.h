@@ -22,12 +22,10 @@ namespace consensus {
 
 /** Validation result structure for native C++ validation */
 struct ValidationResult {
-    bool is_valid;
-    int32_t error_code;
-    uint64_t quality;
-    uint64_t deadline;
-
-    ValidationResult() : is_valid(false), error_code(-1), quality(0), deadline(std::numeric_limits<uint64_t>::max()) {}
+    bool is_valid{false};
+    int32_t error_code{-1};
+    uint64_t quality{0};
+    uint64_t deadline{std::numeric_limits<uint64_t>::max()};
 };
 
 /** Error codes for validation operations */

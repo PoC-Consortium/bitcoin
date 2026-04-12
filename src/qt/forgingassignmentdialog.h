@@ -72,9 +72,9 @@ private:
     QPushButton *checkButton;
     QPushButton *clearButton;
 
-    WalletModel *model;
+    WalletModel *model{nullptr};
     const PlatformStyle *platformStyle;
-    Mode currentMode;
+    Mode currentMode{AssignMode};
 
     bool validatePlotterId();
     bool validateForgingAddress();

@@ -13,7 +13,9 @@
 
 #include <cstdlib>
 
+#ifndef ENABLE_POCX
 using util::ToString;
+#endif // ENABLE_POCX
 
 #ifndef ENABLE_POCX
 /* Equality between doubles is imprecise. Comparison should be done

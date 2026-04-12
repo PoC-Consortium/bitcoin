@@ -49,12 +49,12 @@ struct NonceWorkUnit {
 struct BlockAccumulator {
     uint8_t xor_result[SCOOP_SIZE];  // Accumulated XOR of all scoops
     std::atomic<size_t> nonces_received{0};  // Count of nonces processed (atomic for thread safety)
-    size_t nonces_expected;           // Total nonces needed
-    const BlockValidationInput* input;
-    uint64_t claimed_quality;         // Claimed quality for early surrender check
+    size_t nonces_expected{0};           // Total nonces needed
+    const BlockValidationInput* input{nullptr};
+    uint64_t claimed_quality{0};         // Claimed quality for early surrender check
     std::mutex xor_mutex;             // Protects xor_result during parallel accumulation
 
-    BlockAccumulator() : nonces_expected(0), input(nullptr), claimed_quality(0) {
+    BlockAccumulator() {
         std::memset(xor_result, 0, SCOOP_SIZE);
     }
 };

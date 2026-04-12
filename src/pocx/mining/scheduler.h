@@ -35,13 +35,13 @@ struct ForgingState {
     uint64_t quality;               // Calculated quality
     uint32_t compression;           // Compression level used
     uint64_t deadline_seconds;      // Deadline in seconds
-    uint64_t base_target;           // Base target used for nonce validation
-    int64_t block_time;             // Time of the previous block
+    uint64_t base_target{0};           // Base target used for nonce validation
+    int64_t block_time{0};             // Time of the previous block
     uint256 tip_block_hash;         // Hash of chain tip (sole staleness indicator)
     std::chrono::system_clock::time_point forge_time;  // When to forge
     std::atomic<bool> cancelled;    // Cancellation flag
 
-    ForgingState() : base_target(0), block_time(0), cancelled(false) {}
+    ForgingState() : cancelled(false) {}
 };
 
 /** Queue-based forging scheduler for PoCX mining */

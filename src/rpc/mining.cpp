@@ -61,7 +61,9 @@
 using interfaces::BlockRef;
 using interfaces::BlockTemplate;
 using interfaces::Mining;
+#ifndef ENABLE_POCX
 using node::BlockAssembler;
+#endif
 using node::GetMinimumTime;
 using node::NodeContext;
 using node::RegenerateCommitments;
