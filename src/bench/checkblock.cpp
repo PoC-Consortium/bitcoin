@@ -25,6 +25,10 @@
 // a block off the wire, but before we can relay the block on to peers using
 // compact block relay.
 
+#ifndef ENABLE_POCX
+// block413567 is a BTC mainnet block whose serialized header layout is
+// incompatible with PoCX's CBlockHeader. Deserialization fails under PoCX.
+
 static void DeserializeBlockTest(benchmark::Bench& bench)
 {
     DataStream stream(benchmark::data::block413567);
@@ -62,3 +66,4 @@ static void DeserializeAndCheckBlockTest(benchmark::Bench& bench)
 
 BENCHMARK(DeserializeBlockTest, benchmark::PriorityLevel::HIGH);
 BENCHMARK(DeserializeAndCheckBlockTest, benchmark::PriorityLevel::HIGH);
+#endif // !ENABLE_POCX

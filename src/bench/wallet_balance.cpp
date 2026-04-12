@@ -26,7 +26,13 @@
 namespace wallet {
 static void WalletBalance(benchmark::Bench& bench, const bool set_dirty, const bool add_mine)
 {
+#ifdef ENABLE_POCX
+    // PoCX block creation (ForgeRegtestBlock / generatetoaddress) only works
+    // on regtest; upstream defaults to MAIN.
+    const auto test_setup = MakeNoLogFileContext<const TestingSetup>(ChainType::REGTEST);
+#else
     const auto test_setup = MakeNoLogFileContext<const TestingSetup>();
+#endif
 
     const auto& ADDRESS_WATCHONLY = ADDRESS_BCRT1_UNSPENDABLE;
 

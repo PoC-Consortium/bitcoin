@@ -33,6 +33,9 @@
  * This benchmark measures the performance of deserializing the block (or just
  * its header, beginning with PR 16981).
  */
+#ifndef ENABLE_POCX
+// block413567 is a BTC mainnet block whose serialized header layout is
+// incompatible with PoCX's CBlockHeader.
 static void LoadExternalBlockFile(benchmark::Bench& bench)
 {
     const auto testing_setup{MakeNoLogFileContext<const TestingSetup>(ChainType::MAIN)};
@@ -72,3 +75,4 @@ static void LoadExternalBlockFile(benchmark::Bench& bench)
 }
 
 BENCHMARK(LoadExternalBlockFile, benchmark::PriorityLevel::HIGH);
+#endif // !ENABLE_POCX

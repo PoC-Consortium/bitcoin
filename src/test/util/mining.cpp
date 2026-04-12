@@ -102,6 +102,11 @@ std::vector<std::shared_ptr<CBlock>> CreateBlockChain(size_t total_height, const
 
 COutPoint MineBlock(const NodeContext& node, const node::BlockAssembler::Options& assembler_options)
 {
+#ifdef ENABLE_POCX
+    // ForgeRegtestBlock requires mocktime on a mockable chain. Bench callers
+    // may not set it, so enable it here if not already active.
+    if (GetMockTime().count() == 0) SetMockTime(GetTime());
+#endif
     auto block = PrepareBlock(node, assembler_options);
     auto valid = MineBlock(node, block);
     assert(!valid.IsNull());

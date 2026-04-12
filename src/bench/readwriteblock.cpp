@@ -19,6 +19,9 @@
 #include <memory>
 #include <vector>
 
+#ifndef ENABLE_POCX
+// block413567 is a BTC mainnet block whose serialized header layout is
+// incompatible with PoCX's CBlockHeader.
 static CBlock CreateTestBlock()
 {
     DataStream stream{benchmark::data::block413567};
@@ -68,3 +71,4 @@ static void ReadRawBlockBench(benchmark::Bench& bench)
 BENCHMARK(WriteBlockBench, benchmark::PriorityLevel::HIGH);
 BENCHMARK(ReadBlockBench, benchmark::PriorityLevel::HIGH);
 BENCHMARK(ReadRawBlockBench, benchmark::PriorityLevel::HIGH);
+#endif // !ENABLE_POCX

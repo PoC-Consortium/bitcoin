@@ -28,7 +28,12 @@ static const DatabaseFormat DATABASE_FORMATS[] = {
        DatabaseFormat::SQLITE,
 };
 
+#ifdef ENABLE_POCX
+// PoCX regtest bech32 HRP is "rpocx" — same zero-hash witness program.
+const std::string ADDRESS_BCRT1_UNSPENDABLE = "rpocx1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqv7kl0z";
+#else
 const std::string ADDRESS_BCRT1_UNSPENDABLE = "bcrt1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq3xueyj";
+#endif
 
 std::unique_ptr<CWallet> CreateSyncedWallet(interfaces::Chain& chain, CChain& cchain, const CKey& key);
 

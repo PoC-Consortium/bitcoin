@@ -24,7 +24,12 @@ using node::BlockAssembler;
 
 static void AssembleBlock(benchmark::Bench& bench)
 {
+#ifdef ENABLE_POCX
+    // PoCX's ForgeRegtestBlock only works on regtest; upstream defaults to MAIN.
+    const auto test_setup = MakeNoLogFileContext<const TestingSetup>(ChainType::REGTEST);
+#else
     const auto test_setup = MakeNoLogFileContext<const TestingSetup>();
+#endif
 
     CScriptWitness witness;
     witness.stack.push_back(WITNESS_STACK_ELEM_OP_TRUE);

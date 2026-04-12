@@ -21,8 +21,10 @@
 #include <memory>
 #include <vector>
 
+#ifndef ENABLE_POCX
+// block413567 is a BTC mainnet block whose serialized header layout is
+// incompatible with PoCX's CBlockHeader.
 namespace {
-
 struct TestBlockAndIndex {
     const std::unique_ptr<const TestingSetup> testing_setup{MakeNoLogFileContext<const TestingSetup>(ChainType::MAIN)};
     CBlock block{};
@@ -90,3 +92,4 @@ static void BlockToJsonVerboseWrite(benchmark::Bench& bench)
 }
 
 BENCHMARK(BlockToJsonVerboseWrite, benchmark::PriorityLevel::HIGH);
+#endif // !ENABLE_POCX
