@@ -71,7 +71,7 @@ static RPCHelpMan get_mining_info()
                 {RPCResult::Type::NUM, "base_target", "Current difficulty base target"},
                 {RPCResult::Type::NUM, "height", "Next block height"},
                 {RPCResult::Type::STR_HEX, "block_hash", "Previous block hash"},
-                {RPCResult::Type::NUM, "target_quality", "Target quality (optional)"},
+                {RPCResult::Type::NUM, "target_quality", "Target quality threshold (uint64 max when unused)"},
                 {RPCResult::Type::NUM, "minimum_compression_level", "Minimum compression level for validation"},
                 {RPCResult::Type::NUM, "target_compression_level", "Target compression level for optimization"},
             }
@@ -120,17 +120,17 @@ static RPCHelpMan submit_nonce()
             {"height", RPCArg::Type::NUM, RPCArg::Optional::NO, "Block height for this submission"},
             {"generation_signature", RPCArg::Type::STR_HEX, RPCArg::Optional::NO, "Generation signature"},
             {"base_target", RPCArg::Type::NUM, RPCArg::Optional::NO, "Base target for this block"},
-            {"account_id", RPCArg::Type::STR, RPCArg::Optional::NO, "Account ID (20-byte hex or address)"},
-            {"seed", RPCArg::Type::STR, RPCArg::Optional::NO, "Plot seed"},
+            {"account_id", RPCArg::Type::STR_HEX, RPCArg::Optional::NO, "Account ID (40 hex characters)"},
+            {"seed", RPCArg::Type::STR_HEX, RPCArg::Optional::NO, "Plot seed (64 hex characters)"},
             {"nonce", RPCArg::Type::NUM, RPCArg::Optional::NO, "Mining nonce"},
             {"compression", RPCArg::Type::NUM, RPCArg::Optional::NO, "Compression level used (1-6)"},
-            {"raw_quality", RPCArg::Type::NUM, RPCArg::Optional::NO, "Raw quality from proof validation"},
+            {"raw_quality", RPCArg::Type::NUM, RPCArg::Optional::NO, "Raw quality from proof validation (advisory; server re-validates)"},
         },
         RPCResult{
             RPCResult::Type::OBJ, "", "",
             {
                 {RPCResult::Type::NUM, "raw_quality", "Raw quality from proof validation"},
-                {RPCResult::Type::NUM, "poc_time", "Time to find nonce (milliseconds)"},
+                {RPCResult::Type::NUM, "poc_time", "Time-bended forge time in seconds"},
             }
         },
         RPCExamples{
@@ -300,18 +300,14 @@ static RPCHelpMan submit_nonce()
                     throw JSONRPCError(RPC_CLIENT_IN_INITIAL_DOWNLOAD, "Submission queue is full, please try again later");
                 }
 
-                result.pushKV("accepted", true);
-                result.pushKV("raw_quality", raw_quality);  // Raw quality from proof validation
-                result.pushKV("poc_time", forge_time);  // Time Bended forge time (seconds)
+                result.pushKV("raw_quality", raw_quality);
+                result.pushKV("poc_time", forge_time);
 
                 return result;
 
             } catch (const std::exception& e) {
-                result.pushKV("accepted", false);
-                result.pushKV("error", e.what());
+                throw JSONRPCError(RPC_INTERNAL_ERROR, e.what());
             }
-
-            return result;
         },
     };
 }

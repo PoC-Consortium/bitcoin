@@ -26,7 +26,7 @@ static RPCHelpMan get_assignment()
         "Get assignment details for a specific plot address\n"
         "Returns the current assignment status and details for a plot address.\n",
         {
-            {"plot_address", RPCArg::Type::STR, RPCArg::Optional::NO, "The plot address to query (bech32)"},
+            {"plot_address", RPCArg::Type::STR, RPCArg::Optional::NO, "The plot address to query (P2WPKH bech32)"},
             {"height", RPCArg::Type::NUM, RPCArg::Optional::OMITTED, "Block height to check (default: current tip)"},
         },
         RPCResult{
@@ -36,11 +36,14 @@ static RPCHelpMan get_assignment()
                 {RPCResult::Type::NUM, "height", "Block height checked"},
                 {RPCResult::Type::BOOL, "has_assignment", "Whether plot has an active assignment"},
                 {RPCResult::Type::STR, "state", "Assignment state (UNASSIGNED/ASSIGNING/ASSIGNED/REVOKING/REVOKED)"},
-                {RPCResult::Type::STR, "forging_address", "Address assigned to forge (if any)"},
-                {RPCResult::Type::STR_HEX, "assignment_txid", "Transaction that created the assignment"},
-                {RPCResult::Type::NUM, "assignment_height", "Block height when assignment was created"},
-                {RPCResult::Type::NUM, "activation_height", "Block height when assignment became active"},
-                {RPCResult::Type::BOOL, "revoked", "Whether the assignment has been revoked"},
+                {RPCResult::Type::STR, "forging_address", "Address assigned to forge (empty string if none)"},
+                {RPCResult::Type::STR_HEX, "assignment_txid", /*optional=*/true, "Transaction that created the assignment (only if has_assignment)"},
+                {RPCResult::Type::NUM, "assignment_height", /*optional=*/true, "Block height when assignment was created (only if has_assignment)"},
+                {RPCResult::Type::NUM, "activation_height", /*optional=*/true, "Block height when assignment became active (only if has_assignment)"},
+                {RPCResult::Type::BOOL, "revoked", /*optional=*/true, "Whether the assignment has been revoked (only if has_assignment)"},
+                {RPCResult::Type::STR_HEX, "revocation_txid", /*optional=*/true, "Transaction that revoked the assignment (only if revoked)"},
+                {RPCResult::Type::NUM, "revocation_height", /*optional=*/true, "Block height when revocation was recorded (only if revoked)"},
+                {RPCResult::Type::NUM, "revocation_effective_height", /*optional=*/true, "Block height when revocation becomes effective (only if revoked)"},
             }
         },
         RPCExamples{

@@ -724,18 +724,27 @@ static RPCHelpMan getblocktemplate()
                 }},
                 {RPCResult::Type::NUM, "coinbasevalue", "maximum allowable input to coinbase transaction, including the generation award and transaction fees (in satoshis)"},
                 {RPCResult::Type::STR, "longpollid", "an id to include with a request to longpoll on an update to this template"},
+#ifdef ENABLE_POCX
+                {RPCResult::Type::STR_HEX, "generation_signature", "The PoCX generation signature for the next block"},
+                {RPCResult::Type::NUM, "base_target", "The PoCX difficulty base target for the next block"},
+#else
                 {RPCResult::Type::STR, "target", "The hash target"},
+#endif
                 {RPCResult::Type::NUM_TIME, "mintime", "The minimum timestamp appropriate for the next block time, expressed in " + UNIX_EPOCH_TIME + ". Adjusted for the proposed BIP94 timewarp rule."},
                 {RPCResult::Type::ARR, "mutable", "list of ways the block template may be changed",
                 {
                     {RPCResult::Type::STR, "value", "A way the block template may be changed, e.g. 'time', 'transactions', 'prevblock'"},
                 }},
+#ifndef ENABLE_POCX
                 {RPCResult::Type::STR_HEX, "noncerange", "A range of valid nonces"},
+#endif
                 {RPCResult::Type::NUM, "sigoplimit", "limit of sigops in blocks"},
                 {RPCResult::Type::NUM, "sizelimit", "limit of block size"},
                 {RPCResult::Type::NUM, "weightlimit", /*optional=*/true, "limit of block weight"},
                 {RPCResult::Type::NUM_TIME, "curtime", "current timestamp in " + UNIX_EPOCH_TIME + ". Adjusted for the proposed BIP94 timewarp rule."},
+#ifndef ENABLE_POCX
                 {RPCResult::Type::STR, "bits", "compressed target of next block"},
+#endif
                 {RPCResult::Type::NUM, "height", "The height of the next block"},
                 {RPCResult::Type::STR_HEX, "signet_challenge", /*optional=*/true, "Only on signet"},
                 {RPCResult::Type::STR_HEX, "default_witness_commitment", /*optional=*/true, "a valid witness commitment for the unmodified block template"},
