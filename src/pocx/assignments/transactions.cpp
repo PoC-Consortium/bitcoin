@@ -3,14 +3,25 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 //
-// WALLET INTEGRATION: COMPLETE
+// Hand-rolled forging transaction builder.
 //
-// This file contains wallet functions for creating forging assignment transactions.
-// Updated for the OP_RETURN-only architecture.
+// Shape:
+//   Assignment: inputs → OP_RETURN (POCX + plot + forge) [+ change]
+//   Revocation: inputs → OP_RETURN (XCOP + plot)         [+ change]
 //
-// OP_RETURN-only transaction format:
-//   Assignment: Input (plot owner) → OP_RETURN (POCX + plot + forge) → Change
-//   Revocation: Input (plot owner) → OP_RETURN (XCOP + plot) → Change
+// At least one input must pay from the plot address (P2WPKH ownership proof).
+// Extra inputs (plot or foreign) are pulled in only when needed to cover fee.
+// A change output is emitted only when the excess above fee exceeds dust;
+// otherwise the tx is built changeless and the sub-dust excess goes to fee
+// (same tradeoff Core applies to normal change).
+//
+// Change, when emitted, goes to a fresh wallet change address reserved via
+// ReserveDestination, matching normal Bitcoin Core wallet behavior.
+//
+// Fee estimation uses CalculateMaximumSignedTxSize, which places max-size
+// dummy witnesses via the wallet's key info and measures actual vsize —
+// any drift vs. the real signed tx is one-sided (over-estimate), so the
+// computed change value is never invalid.
 //
 
 #include <pocx/assignments/transactions.h>
@@ -21,8 +32,11 @@
 #include <wallet/fees.h>
 #include <consensus/amount.h>
 #include <policy/policy.h>
+#include <policy/feerate.h>
+#include <outputtype.h>
 #include <util/strencodings.h>
 #include <util/moneystr.h>
+#include <util/rbf.h>
 #include <key_io.h>
 #include <addresstype.h>
 #include <script/signingprovider.h>
@@ -30,17 +44,22 @@
 #include <coins.h>
 #include <logging.h>
 #include <algorithm>
+#include <vector>
 
 namespace pocx {
 namespace assignments {
 
 using ::wallet::CCoinControl;
-using ::wallet::CRecipient;
-using ::wallet::CWalletTx;
+using ::wallet::ReserveDestination;
+using ::wallet::TxSize;
 
 namespace {
 
 enum class TransactionType { ASSIGNMENT, REVOCATION };
+
+// One P2WPKH output is a fixed 31 vB (8B value + 1B scriptlen + 22B scriptPubKey).
+// Used only to translate between "with change" and "changeless" vsize.
+constexpr int32_t kP2WPKHOutputVsize = 31;
 
 util::Result<CTransactionRef> CreateForgingTransactionImpl(
     ::wallet::CWallet& wallet,
@@ -50,23 +69,15 @@ util::Result<CTransactionRef> CreateForgingTransactionImpl(
     TransactionType type,
     CAmount& fee
 ) {
-    // OP_RETURN-only architecture:
-    // Transaction format:
-    //   Assignment: Input (plot owner) → OP_RETURN (POCX + plot + forge) → Change
-    //   Revocation: Input (plot owner) → OP_RETURN (XCOP + plot) → Change
-
-    // Parse and validate plot address
+    // --- 1. Parse and validate addresses ---
     CTxDestination plotDest = DecodeDestination(plotAddressStr);
     const WitnessV0KeyHash* plotKeyHash = std::get_if<WitnessV0KeyHash>(&plotDest);
     if (!plotKeyHash) {
         return util::Error{_("Plot address must be P2WPKH (bech32)")};
     }
-
-    // Convert plot address to 20-byte array
     std::array<uint8_t, 20> plotAddress;
     std::copy(plotKeyHash->begin(), plotKeyHash->end(), plotAddress.begin());
 
-    // Parse and validate forging address (assignment only)
     std::array<uint8_t, 20> forgingAddress;
     if (type == TransactionType::ASSIGNMENT) {
         if (!forgingAddressStr.has_value()) {
@@ -80,104 +91,134 @@ util::Result<CTransactionRef> CreateForgingTransactionImpl(
         std::copy(forgeKeyHash->begin(), forgeKeyHash->end(), forgingAddress.begin());
     }
 
-    LOCK(wallet.cs_wallet);
-
-    // Configure coin control first - set min_depth to avoid unconfirmed coins
-    CCoinControl plotCoinControl = coin_control;
-    if (!plotCoinControl.m_feerate.has_value()) {
-        plotCoinControl.m_feerate = GetMinimumFeeRate(wallet, plotCoinControl, nullptr);
-    }
-    plotCoinControl.m_min_depth = 1;  // Only use confirmed coins
-    plotCoinControl.m_allow_other_inputs = true;  // Allow other inputs if plot coin insufficient for fees
-
-    // Find largest UTXO from plot address to prove ownership
-    CScript plotScript = GetScriptForDestination(plotDest);
-    auto availableCoins = AvailableCoins(wallet, &plotCoinControl);
-
-    COutPoint largestPlotCoin;
-    CAmount largestAmount = 0;
-    bool hasPlotCoins = false;
-
-    for (const auto& coin : availableCoins.All()) {
-        if (coin.txout.scriptPubKey == plotScript) {
-            if (coin.txout.nValue > largestAmount) {
-                largestPlotCoin = coin.outpoint;
-                largestAmount = coin.txout.nValue;
-                hasPlotCoins = true;
-            }
-        }
-    }
-
-    if (!hasPlotCoins) {
-        return util::Error{_("No coins available at the plot address. Cannot prove ownership.")};
-    }
-
-    // Force selection of largest plot address coin
-    plotCoinControl.Select(largestPlotCoin);
-
-    // Create dummy recipient (we'll replace with OP_RETURN)
-    std::vector<CRecipient> recipients;
-    recipients.push_back({plotDest, 1000, false});  // Temporary output
-
-    // Create transaction - force change to position 1 to ensure output 0 is dummy
-    // Sign it so we can get accurate size including witness data
-    auto res = CreateTransaction(wallet, recipients, /*change_pos=*/1, plotCoinControl, /*sign=*/true);
-    if (!res) {
-        return util::Error{util::ErrorString(res)};
-    }
-
-    // Get size and fee BEFORE modification
-    size_t size_before = GetVirtualTransactionSize(*res->tx);
-    CAmount fee_before = res->fee;  // Actual calculated fee (not including 1000 sat dummy)
-
-    // Replace first output with OP_RETURN
-    CMutableTransaction mtx(*res->tx);
+    // --- 2. Build OP_RETURN script ---
     CScript opReturnScript = (type == TransactionType::ASSIGNMENT)
         ? CreateAssignmentOpReturn(plotAddress, forgingAddress)
         : CreateRevocationOpReturn(plotAddress);
-    mtx.vout[0] = CTxOut(0, opReturnScript);
 
-    // Get size AFTER modification (witness data still intact from signing)
-    size_t size_after = GetVirtualTransactionSize(CTransaction(mtx));
-
-    // Scale fee proportionally using ceiling division to avoid underpayment from rounding
-    CAmount fee_after = (fee_before * size_after + size_before - 1) / size_before;
-
-    // Calculate additional fee needed beyond what CreateTransaction already allocated
-    CAmount additional_fee = fee_after - fee_before;
-
-    // Verify dummy amount is sufficient for fee adjustment
-    if (additional_fee > 1000) {
-        return util::Error{strprintf(
-            _("Transaction size increase requires %d sat additional fee, but only 1000 sat dummy available"),
-            additional_fee
-        )};
+    // --- 3. Resolve feerate ---
+    CCoinControl cc = coin_control;
+    if (!cc.m_feerate.has_value()) {
+        cc.m_feerate = GetMinimumFeeRate(wallet, cc, nullptr);
     }
+    cc.m_min_depth = 1;
+    const CFeeRate feerate = *cc.m_feerate;
 
-    // Return from dummy what doesn't compromise the fee (1000 sat dummy minus additional fee)
-    CAmount safe_to_return = 1000 - additional_fee;
-    if (safe_to_return > 0 && mtx.vout.size() > 1) {
-        mtx.vout[1].nValue += safe_to_return;
+    LOCK(wallet.cs_wallet);
+
+    // --- 4. Reserve a fresh change address (bech32 P2WPKH) ---
+    // Held via ReserveDestination so it's only consumed if we actually emit change.
+    ReserveDestination change_reserve(&wallet, OutputType::BECH32);
+    auto op_change_dest = change_reserve.GetReservedDestination(/*internal=*/true);
+    if (!op_change_dest) {
+        return util::Error{strprintf(_("Failed to reserve change address: %s"),
+                                     util::ErrorString(op_change_dest).original)};
     }
+    const CScript changeScript = GetScriptForDestination(*op_change_dest);
 
-    // Re-sign the transaction
-    std::map<COutPoint, Coin> coins;
-    for (const auto& input : mtx.vin) {
-        const CWalletTx* wtx = wallet.GetWalletTx(input.prevout.hash);
-        if (!wtx) {
-            return util::Error{_("Failed to find input transaction")};
+    // --- 5. Partition available coins into plot vs. other ---
+    CScript plotScript = GetScriptForDestination(plotDest);
+    auto available = AvailableCoins(wallet, &cc);
+
+    struct SelUtxo { COutPoint outpoint; CTxOut txout; };
+    std::vector<SelUtxo> plotUtxos, otherUtxos;
+    for (const auto& c : available.All()) {
+        if (c.txout.scriptPubKey == plotScript) {
+            plotUtxos.push_back({c.outpoint, c.txout});
+        } else {
+            otherUtxos.push_back({c.outpoint, c.txout});
         }
-        coins[input.prevout] = Coin(wtx->tx->vout[input.prevout.n], 1, false);
+    }
+    if (plotUtxos.empty()) {
+        return util::Error{_("No coins available at the plot address. Cannot prove ownership.")};
     }
 
+    auto byValueDesc = [](const SelUtxo& a, const SelUtxo& b) {
+        return a.txout.nValue > b.txout.nValue;
+    };
+    std::sort(plotUtxos.begin(), plotUtxos.end(), byValueDesc);
+    std::sort(otherUtxos.begin(), otherUtxos.end(), byValueDesc);
+
+    // --- 6. Assemble a shape-A candidate (OP_RETURN + change placeholder) ---
+    // We always size as shape A; shape B's vsize is vsize_A minus one P2WPKH output.
+    CMutableTransaction mtx;
+    mtx.version = 2;
+    mtx.nLockTime = 0;
+    mtx.vout.emplace_back(0, opReturnScript);
+    mtx.vout.emplace_back(0, changeScript); // placeholder value, set at finalization
+
+    std::vector<SelUtxo> selected;
+    std::vector<CTxOut> input_txouts;
+    CAmount input_sum = 0;
+    auto addInput = [&](const SelUtxo& u) {
+        CTxIn in(u.outpoint);
+        in.nSequence = MAX_BIP125_RBF_SEQUENCE;
+        mtx.vin.push_back(std::move(in));
+        selected.push_back(u);
+        input_txouts.push_back(u.txout);
+        input_sum += u.txout.nValue;
+    };
+
+    // First input must be from the plot address (ownership proof).
+    addInput(plotUtxos.front());
+    size_t plot_idx = 1, other_idx = 0;
+
+    const CFeeRate dust_relay_fee{DUST_RELAY_TX_FEE};
+    const CAmount dust_change = GetDustThreshold(CTxOut(0, changeScript), dust_relay_fee);
+
+    enum class Shape { NeedMore, WithChange, Changeless };
+    auto classify = [&](Shape& out) -> bool {
+        TxSize sizes = CalculateMaximumSignedTxSize(CTransaction(mtx), &wallet, input_txouts, &cc);
+        if (sizes.vsize < 0) return false;
+        const int32_t vsize_A = sizes.vsize;
+        const int32_t vsize_B = vsize_A - kP2WPKHOutputVsize;
+        const CAmount fee_A = feerate.GetFee(vsize_A);
+        const CAmount fee_B = feerate.GetFee(vsize_B);
+        if (input_sum >= fee_A + dust_change) { out = Shape::WithChange; return true; }
+        if (input_sum >= fee_B && (input_sum - fee_B) < dust_change) { out = Shape::Changeless; return true; }
+        out = Shape::NeedMore;
+        return true;
+    };
+
+    Shape shape;
+    if (!classify(shape)) return util::Error{_("Failed to estimate transaction size")};
+    while (shape == Shape::NeedMore) {
+        if (plot_idx < plotUtxos.size()) {
+            addInput(plotUtxos[plot_idx++]);
+        } else if (other_idx < otherUtxos.size()) {
+            addInput(otherUtxos[other_idx++]);
+        } else {
+            return util::Error{_("Insufficient funds for forging transaction")};
+        }
+        if (!classify(shape)) return util::Error{_("Failed to estimate transaction size")};
+    }
+
+    // --- 7. Finalize vout and fee ---
+    CAmount final_fee;
+    if (shape == Shape::WithChange) {
+        TxSize sizes = CalculateMaximumSignedTxSize(CTransaction(mtx), &wallet, input_txouts, &cc);
+        if (sizes.vsize < 0) return util::Error{_("Failed to estimate transaction size")};
+        final_fee = feerate.GetFee(sizes.vsize);
+        mtx.vout[1].nValue = input_sum - final_fee;
+        change_reserve.KeepDestination();
+    } else { // Changeless: drop the change output.
+        mtx.vout.resize(1); // keep only OP_RETURN
+        final_fee = input_sum; // entire input sum becomes fee
+        // change_reserve destructor returns the unused address to the keypool.
+    }
+
+    // --- 8. Sign ---
+    std::map<COutPoint, Coin> coins;
+    for (const auto& u : selected) {
+        coins[u.outpoint] = Coin(u.txout, /*height=*/1, /*coinbase=*/false);
+    }
     std::map<int, bilingual_str> input_errors;
-    bool complete = wallet.SignTransaction(mtx, coins, SIGHASH_ALL, input_errors);
-    if (!complete) {
+    if (!wallet.SignTransaction(mtx, coins, SIGHASH_ALL, input_errors)) {
         const char* tx_type = (type == TransactionType::ASSIGNMENT) ? "assignment" : "revocation";
         return util::Error{strprintf(_("Failed to sign forging %s transaction"), tx_type)};
     }
 
-    fee = fee_after;
+    fee = final_fee;
     return MakeTransactionRef(std::move(mtx));
 }
 
