@@ -224,14 +224,28 @@ static RPCHelpMan submit_nonce()
                         }
                     }
 
-                    // Check if we have the key for the effective signer
+                    // Check if any unlocked wallet has the key for the effective signer.
+                    // Mirrors scheduler.cpp signing loop: an unlocked wallet anywhere in
+                    // the list is sufficient, but if every match is locked we must reject.
+                    bool found_locked_only = false;
                     for (auto& wallet : wallets) {
                         if (wallet->haveAccountKey(effective_signer_account)) {
+                            if (wallet->isLocked()) {
+                                found_locked_only = true;
+                                continue;
+                            }
                             has_key = true;
+                            found_locked_only = false;
                             break;
                         }
                     }
                     if (!has_key) {
+                        if (found_locked_only) {
+                            throw JSONRPCError(RPC_WALLET_UNLOCK_NEEDED,
+                                strprintf("Wallet holding key for effective signer %s is locked - "
+                                          "unlock with walletpassphrase first",
+                                          effective_signer_account));
+                        }
                         throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY,
                             strprintf("No private key available for effective signer %s (plot: %s)",
                                      effective_signer_account, account_id));
