@@ -23,15 +23,16 @@ inline const uint8_t pocx_seed_testnet[] = {
     0x01,0x04, 0x2e,0xe0,0x52,0x27, 0x47,0xa2,  // 46.224.82.39:18338
 };
 
-// PoCX Mainnet DNS Seeds (to be configured before mainnet launch)
+// PoCX Mainnet DNS Seeds
 inline const std::vector<std::string> pocx_mainnet_dns_seeds = {
-    // TODO: Add mainnet DNS seeds before launch
+    "seeds.bitcoin-pocx.org.",
 };
 
-// PoCX Mainnet Fixed Seeds (to be configured before mainnet launch)
+// PoCX Mainnet Fixed Seeds (BIP155 format)
+// Format: 0x01=IPv4, 0x04=length, 4 IP bytes, 2 port bytes (big endian)
+// Port 8338 = 0x2092
 inline const uint8_t pocx_seed_main[] = {
-    // #POCXTODO: Add mainnet fixed seeds before launch
-    0x01,0x04, 0x00,0x00,0x00,0x00, 0x20,0x92,  // 0.0.0.0:8338 (dummy placeholder)
+    0x01,0x04, 0x5c,0x2b,0x6f,0x6c, 0x20,0x92,  // 92.43.111.108:8338
 };
 
 #endif // BITCOIN_POCX_POCX_SEEDS_H

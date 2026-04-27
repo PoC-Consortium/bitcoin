@@ -236,8 +236,10 @@ public:
         // service bits we want, but we should get them updated to support all service bits wanted by any
         // release ASAP to avoid it where possible.
 #ifdef ENABLE_POCX
-        // #POCXTODO PoCX: No DNS seeds available at launch
-        vSeeds.clear();
+        // PoCX mainnet DNS seeds
+        for (const auto& seed : pocx_mainnet_dns_seeds) {
+            vSeeds.emplace_back(seed);
+        }
 #else
         vSeeds.emplace_back("seed.bitcoin.sipa.be."); // Pieter Wuille, only supports x1, x5, x9, and xd
         vSeeds.emplace_back("dnsseed.bluematt.me."); // Matt Corallo, only supports x9
