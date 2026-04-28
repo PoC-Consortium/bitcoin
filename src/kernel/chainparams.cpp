@@ -190,7 +190,7 @@ public:
          */
 #ifdef ENABLE_POCX
         // PoCX mainnet magic bytes (random, separate from Bitcoin)
-        pchMessageStart[0] = 0xa7;
+        pchMessageStart[0] = 0xa8;
         pchMessageStart[1] = 0x3c;
         pchMessageStart[2] = 0x91;
         pchMessageStart[3] = 0x5e;
@@ -214,8 +214,8 @@ public:
         uint64_t genesis_base_target = pocx::consensus::CalculateGenesisBaseTarget(consensus.nPowTargetSpacing);
         PoCXProof genesis_proof; // Empty proof for genesis (no predecessor to validate against)
         genesis_proof.SetNull();
-        const char* mainnet_message = "The Times 03/Jan/2009 Chancellor on brink of second bailout for banks";
-        genesis = CreateGenesisBlock(mainnet_message, 1231006505, genesis_proof, genesis_base_target, 1, 10 * COIN);
+        const char* mainnet_message = "Dry Run";
+        genesis = CreateGenesisBlock(mainnet_message, 1777572000, genesis_proof, genesis_base_target, 1, 10 * COIN);
 #else
         // Bitcoin genesis: January 3, 2009
         genesis = CreateGenesisBlock(1231006505, 2083236893, 0x1d00ffff, 1, 50 * COIN);
@@ -223,8 +223,8 @@ public:
         consensus.hashGenesisBlock = genesis.GetHash();
 #ifdef ENABLE_POCX
         // PoCX mainnet genesis block hash (with empty signature fields + quality/compression)
-        assert(consensus.hashGenesisBlock == uint256{"23ce719791691b22527f148bc454fdaf77228168d7757891ada83c893dd3259a"});
-        assert(genesis.hashMerkleRoot == uint256{"d54af763395fcb4b825b0f2b1e8ddc901acf6350277318306487fec22d5de70b"});
+        assert(consensus.hashGenesisBlock == uint256{"7c0ae9a04587ef4c9308ba2cc72ecdb9cebc52928b71bc1865f7dbf2cd9020f5"});
+        assert(genesis.hashMerkleRoot == uint256{"e0c749391a3570dd55b2afae939ce7f23395e8b120428ba2b3a5f120fbd64c14"});
 #else
         assert(consensus.hashGenesisBlock == uint256{"000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f"});
         assert(genesis.hashMerkleRoot == uint256{"4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b"});
