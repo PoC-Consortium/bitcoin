@@ -31,6 +31,7 @@
 #include <validation.h>
 
 #include <algorithm>
+#include <fstream>
 #include <utility>
 #include <numeric>
 
@@ -173,7 +174,20 @@ std::unique_ptr<CBlockTemplate> BlockAssembler::CreateNewBlock()
     coinbaseTx.vout.resize(1);
     coinbaseTx.vout[0].scriptPubKey = m_options.coinbase_output_script;
     coinbaseTx.vout[0].nValue = nFees + GetBlockSubsidy(nHeight, chainparams.GetConsensus());
-    coinbaseTx.vin[0].scriptSig = CScript() << nHeight << OP_0;
+    // Optional custom coinbase message: read first line of <datadir>/coinbase_msg.txt
+    // if present, append to scriptSig after BIP34 height push. Cap at 90 bytes to
+    // stay under the 100-byte scriptSig consensus limit (height push + push opcode).
+    std::string coinbase_msg;
+    {
+        std::ifstream msg_file(gArgs.GetDataDirNet() / "coinbase_msg.txt");
+        if (msg_file) std::getline(msg_file, coinbase_msg);
+    }
+    if (coinbase_msg.size() > 90) coinbase_msg.resize(90);
+    CScript script_sig = CScript() << nHeight << OP_0;
+    if (!coinbase_msg.empty()) {
+        script_sig << std::vector<uint8_t>(coinbase_msg.begin(), coinbase_msg.end());
+    }
+    coinbaseTx.vin[0].scriptSig = script_sig;
     Assert(nHeight > 0);
     coinbaseTx.nLockTime = static_cast<uint32_t>(nHeight - 1);
     pblock->vtx[0] = MakeTransactionRef(std::move(coinbaseTx));
