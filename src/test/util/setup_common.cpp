@@ -60,6 +60,10 @@
 #include <validationinterface.h>
 #include <walletinitinterface.h>
 
+#ifdef ENABLE_POCX
+#include <pocx/regtest/forging.h>
+#endif
+
 #include <algorithm>
 #include <future>
 #include <functional>
@@ -380,9 +384,15 @@ TestChain100Setup::TestChain100Setup(
 
     {
         LOCK(::cs_main);
+#ifdef ENABLE_POCX
+        assert(
+            m_node.chainman->ActiveChain().Tip()->GetBlockHash().ToString() ==
+            "6359451e004b0678ef72bd130977618923fff55ae29ce0a1198297908e27ad51");
+#else
         assert(
             m_node.chainman->ActiveChain().Tip()->GetBlockHash().ToString() ==
             "0c8c5f79505775a0f6aed6aca2350718ceb9c6f2c878667864d5c7a6d8ffa2a6");
+#endif
     }
 }
 
@@ -392,7 +402,10 @@ void TestChain100Setup::mineBlocks(int num_blocks)
     for (int i = 0; i < num_blocks; i++) {
         std::vector<CMutableTransaction> noTxns;
         CBlock b = CreateAndProcessBlock(noTxns, scriptPubKey);
+#ifndef ENABLE_POCX
+        // PoCX advances mocktime inside ForgeRegtestBlock; only nudge in non-PoCX builds.
         SetMockTime(GetTime() + 1);
+#endif
         m_coinbase_txns.push_back(b.vtx[0]);
     }
 }
@@ -412,7 +425,24 @@ CBlock TestChain100Setup::CreateBlock(
     }
     RegenerateCommitments(block, *Assert(m_node.chainman));
 
+#ifdef ENABLE_POCX
+    {
+        ChainstateManager& chainman = *Assert(m_node.chainman);
+        int64_t prev_time{0};
+        {
+            LOCK(::cs_main);
+            const CBlockIndex* pindexPrev = chainman.m_blockman.LookupBlockIndex(block.hashPrevBlock);
+            Assert(pindexPrev);
+            prev_time = pindexPrev->GetBlockTime();
+        }
+        std::string err;
+        if (!pocx::regtest::ForgeRegtestBlock(block, chainman.GetConsensus(), prev_time, err)) {
+            throw std::runtime_error("TestChain100Setup::CreateBlock: ForgeRegtestBlock failed: " + err);
+        }
+    }
+#else
     while (!CheckProofOfWork(block.GetHash(), block.nBits, m_node.chainman->GetConsensus())) ++block.nNonce;
+#endif
 
     return block;
 }

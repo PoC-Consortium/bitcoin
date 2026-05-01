@@ -71,10 +71,12 @@ add_executable(test_bitcoin
   pcp_tests.cpp
   peerman_tests.cpp
   pmt_tests.cpp
+  $<$<BOOL:${ENABLE_POCX}>:pocx_tests.cpp>
+  $<$<BOOL:${ENABLE_POCX}>:pocx_simd_tests.cpp>
   policy_fee_tests.cpp
   policyestimator_tests.cpp
   pool_tests.cpp
-  pow_tests.cpp
+  $<$<NOT:$<BOOL:${ENABLE_POCX}>>:pow_tests.cpp>
   prevector_tests.cpp
   raii_event_tests.cpp
   random_tests.cpp
@@ -160,6 +162,16 @@ target_link_libraries(test_bitcoin
   Boost::headers
   libevent::extra
 )
+
+# Enable AVX2 tests when PoCX and AVX2 are available
+if(ENABLE_POCX AND HAVE_AVX2)
+  target_compile_definitions(test_bitcoin PRIVATE ENABLE_AVX2)
+endif()
+
+# SSE2 is baseline on x86-64, no special compiler flags needed
+if(ENABLE_POCX AND CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|amd64")
+  target_compile_definitions(test_bitcoin PRIVATE ENABLE_SSE2)
+endif()
 
 if(ENABLE_WALLET)
   add_subdirectory(${PROJECT_SOURCE_DIR}/src/wallet/test wallet)

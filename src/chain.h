@@ -26,7 +26,11 @@
  * Maximum amount of time that a block timestamp is allowed to exceed the
  * current time before the block will be accepted.
  */
+#ifdef ENABLE_POCX
+static constexpr int64_t MAX_FUTURE_BLOCK_TIME = 15; // 15 seconds for PoCX (PoC timing is critical)
+#else
 static constexpr int64_t MAX_FUTURE_BLOCK_TIME = 2 * 60 * 60;
+#endif
 
 /**
  * Timestamp window used as a grace period by code that compares external
@@ -187,8 +191,19 @@ public:
     int32_t nVersion{0};
     uint256 hashMerkleRoot{};
     uint32_t nTime{0};
+#ifdef ENABLE_POCX
+    uint256 generationSignature{};
+    uint64_t nBaseTarget{0};
+    uint64_t nNextBaseTarget{0};  // Effective base target from hybrid formula (for work calculation)
+    PoCXProof pocxProof{};
+
+    // Block signature fields
+    std::array<uint8_t, 33> vchPubKey;
+    std::array<uint8_t, 65> vchSignature;
+#else
     uint32_t nBits{0};
     uint32_t nNonce{0};
+#endif
 
     //! (memory only) Sequential id assigned to distinguish order in which blocks are received.
     int32_t nSequenceId{0};
@@ -197,11 +212,23 @@ public:
     unsigned int nTimeMax{0};
 
     explicit CBlockIndex(const CBlockHeader& block)
-        : nVersion{block.nVersion},
+        :
+#ifdef ENABLE_POCX
+          nHeight{block.nHeight},
+#endif
+          nVersion{block.nVersion},
           hashMerkleRoot{block.hashMerkleRoot},
           nTime{block.nTime},
+#ifdef ENABLE_POCX
+          generationSignature{block.generationSignature},
+          nBaseTarget{block.nBaseTarget},
+          pocxProof{block.pocxProof},
+          vchPubKey{block.vchPubKey},
+          vchSignature{block.vchSignature}
+#else
           nBits{block.nBits},
           nNonce{block.nNonce}
+#endif
     {
     }
 
@@ -235,8 +262,17 @@ public:
             block.hashPrevBlock = pprev->GetBlockHash();
         block.hashMerkleRoot = hashMerkleRoot;
         block.nTime = nTime;
+#ifdef ENABLE_POCX
+        block.nHeight = nHeight;
+        block.generationSignature = generationSignature;
+        block.nBaseTarget = nBaseTarget;
+        block.pocxProof = pocxProof;
+        block.vchPubKey = vchPubKey;
+        block.vchSignature = vchSignature;
+#else
         block.nBits = nBits;
         block.nNonce = nNonce;
+#endif
         return block;
     }
 
@@ -392,8 +428,17 @@ public:
         READWRITE(obj.hashPrev);
         READWRITE(obj.hashMerkleRoot);
         READWRITE(obj.nTime);
+#ifdef ENABLE_POCX
+        READWRITE(obj.generationSignature);
+        READWRITE(obj.nBaseTarget);
+        READWRITE(obj.nNextBaseTarget);
+        READWRITE(obj.pocxProof);
+        READWRITE(obj.vchPubKey);
+        READWRITE(obj.vchSignature);
+#else
         READWRITE(obj.nBits);
         READWRITE(obj.nNonce);
+#endif
     }
 
     uint256 ConstructBlockHash() const
@@ -403,8 +448,17 @@ public:
         block.hashPrevBlock = hashPrev;
         block.hashMerkleRoot = hashMerkleRoot;
         block.nTime = nTime;
+#ifdef ENABLE_POCX
+        block.nHeight = nHeight;
+        block.generationSignature = generationSignature;
+        block.nBaseTarget = nBaseTarget;
+        block.pocxProof = pocxProof;
+        block.vchPubKey = vchPubKey;
+        block.vchSignature = vchSignature;
+#else
         block.nBits = nBits;
         block.nNonce = nNonce;
+#endif
         return block.GetHash();
     }
 

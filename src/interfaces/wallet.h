@@ -27,6 +27,7 @@
 #include <utility>
 #include <vector>
 
+class CBlock;
 class CFeeRate;
 class CKey;
 enum class FeeReason;
@@ -307,6 +308,16 @@ public:
 
     //! Return pointer to internal wallet class, useful for testing.
     virtual wallet::CWallet* wallet() { return nullptr; }
+
+#ifdef ENABLE_POCX
+    //! Return whether the wallet holds the signing key for the given PoCX
+    //! account (40-char hex of a 20-byte HASH160).
+    virtual bool haveAccountKey(const std::string& account_id) = 0;
+
+    //! Sign a PoCX block with the wallet key for the given account. On
+    //! success the block's pubkey and signature fields are populated.
+    virtual bool signPoCXBlock(const std::string& account_id, CBlock& block) = 0;
+#endif
 };
 
 //! Wallet chain client that in addition to having chain client methods for

@@ -211,6 +211,8 @@ if(ENABLE_WALLET)
       walletmodeltransaction.h
       walletview.cpp
       walletview.h
+      $<$<BOOL:${ENABLE_POCX}>:forgingassignmentdialog.cpp>
+      $<$<BOOL:${ENABLE_POCX}>:forgingassignmentdialog.h>
   )
   target_link_libraries(bitcoinqt
     PRIVATE
