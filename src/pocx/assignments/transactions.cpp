@@ -33,6 +33,7 @@
 #include <consensus/amount.h>
 #include <policy/policy.h>
 #include <policy/feerate.h>
+#include <policy/fees.h>
 #include <outputtype.h>
 #include <util/strencodings.h>
 #include <util/moneystr.h>
@@ -99,7 +100,11 @@ util::Result<CTransactionRef> CreateForgingTransactionImpl(
     // --- 3. Resolve feerate ---
     CCoinControl cc = coin_control;
     if (!cc.m_feerate.has_value()) {
-        cc.m_feerate = GetMinimumFeeRate(wallet, cc, nullptr);
+        FeeCalculation feeCalc;
+        cc.m_feerate = GetMinimumFeeRate(wallet, cc, &feeCalc);
+        if (feeCalc.reason == FeeReason::FALLBACK && !wallet.m_allow_fallback_fee) {
+            return util::Error{strprintf(_("Fee estimation failed. Fallbackfee is disabled. Wait a few blocks or enable %s."), "-fallbackfee")};
+        }
     }
     cc.m_min_depth = 1;
     const CFeeRate feerate = *cc.m_feerate;
@@ -210,7 +215,7 @@ util::Result<CTransactionRef> CreateForgingTransactionImpl(
     // --- 8. Sign ---
     std::map<COutPoint, Coin> coins;
     for (const auto& u : selected) {
-        coins[u.outpoint] = Coin(u.txout, /*height=*/1, /*coinbase=*/false);
+        coins[u.outpoint] = Coin(u.txout, /*nHeightIn=*/1, /*fCoinBaseIn=*/false);
     }
     std::map<int, bilingual_str> input_errors;
     if (!wallet.SignTransaction(mtx, coins, SIGHASH_ALL, input_errors)) {
