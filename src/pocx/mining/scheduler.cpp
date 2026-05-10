@@ -16,6 +16,7 @@
 #include <chain.h>
 #include <coins.h>
 #include <interfaces/wallet.h>
+#include <key_io.h>
 #include <logging.h>
 #include <node/context.h>
 #include <sync.h>
@@ -455,13 +456,19 @@ bool PoCXScheduler::ForgeBlock(bool defensive) {
     // Resolve effective signer (respect assignments) before handing off to
     // the wallet-side signer. Keeps the ChainstateManager access in node lib.
     std::string effective_signer = account_id;
-    if (context && context->chainman) {
+    std::string effective_signer_address = account_id;  // bech32 P2WPKH for user-facing log
+    {
         auto plot_id = pocx::algorithms::ParseAccountID(account_id.c_str());
         if (plot_id) {
-            LOCK(cs_main);
-            const CCoinsViewCache& view = context->chainman->ActiveChainstate().CoinsTip();
-            auto signer = pocx::assignments::GetEffectiveSigner(*plot_id, block->nHeight, view);
-            effective_signer = HexStr(signer);
+            std::array<uint8_t, 20> signer = *plot_id;
+            if (context && context->chainman) {
+                LOCK(cs_main);
+                const CCoinsViewCache& view = context->chainman->ActiveChainstate().CoinsTip();
+                signer = pocx::assignments::GetEffectiveSigner(*plot_id, block->nHeight, view);
+                effective_signer = HexStr(signer);
+            }
+            uint160 u; std::copy(signer.begin(), signer.end(), u.begin());
+            effective_signer_address = EncodeDestination(WitnessV0KeyHash{u});
         }
     }
 
@@ -471,7 +478,7 @@ bool PoCXScheduler::ForgeBlock(bool defensive) {
     if (context->wallet_loader) {
         auto wallets = context->wallet_loader->getWallets();
         LogPrintf("PoCX: [Scheduler] Trying %zu wallet(s) for effective signer %s\n",
-                  wallets.size(), effective_signer.c_str());
+                  wallets.size(), effective_signer_address);
         for (auto& wallet : wallets) {
             if (wallet->haveAccountKey(effective_signer) &&
                 wallet->signPoCXBlock(effective_signer, *block)) {
