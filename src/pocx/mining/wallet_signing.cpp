@@ -92,7 +92,8 @@ bool SignPoCXBlock(
     CTxDestination dest = WitnessV0KeyHash(pkhash);
     CScript script = GetScriptForDestination(dest);
 
-    LogPrintf("PoCX: Account ID: %s -> CKeyID: %s\n", account_id.c_str(), ckeyid.ToString().c_str());
+    const std::string account_address = EncodeDestination(dest);
+    LogPrintf("PoCX: Signing for account %s\n", account_address);
 
     CWallet* cwallet = wallet->wallet();
     if (!cwallet) {
@@ -147,7 +148,7 @@ bool SignPoCXBlock(
         }
     }
 
-    LogPrintf("PoCX: No ScriptPubKeyMan found that can sign for account %s\n", account_id.c_str());
+    LogPrintf("PoCX: No ScriptPubKeyMan found that can sign for account %s\n", account_address);
     return false;
 }
 

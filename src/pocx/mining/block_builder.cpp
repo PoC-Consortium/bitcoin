@@ -72,11 +72,20 @@ std::unique_ptr<CBlock> PoCXBlockBuilder::BuildBlock(
     uint32_t compression,
     node::NodeContext* context
 ) {
-    LogPrintf("PoCX: [BlockBuilder] Building block for account %s (quality=%llu, compression=%u)\n",
-             account_id.c_str(), quality, compression);
-
     // Parse account ID
     auto plot_id = pocx::algorithms::ParseAccountID(account_id.c_str());
+
+    // Render a 20-byte hash160 as its bech32 P2WPKH address for user-facing logs.
+    // Falls back to the raw input if the account_id failed to parse (logged below).
+    auto to_bech32 = [](const std::array<uint8_t, 20>& h) {
+        uint160 u; std::copy(h.begin(), h.end(), u.begin());
+        return EncodeDestination(WitnessV0KeyHash{u});
+    };
+    const std::string plot_address = plot_id ? to_bech32(*plot_id) : account_id;
+
+    LogPrintf("PoCX: [BlockBuilder] Building block for account %s (quality=%llu, compression=%u)\n",
+             plot_address, quality, compression);
+
     if (!plot_id) {
         LogPrintf("PoCX: [BlockBuilder] Invalid account ID format\n");
         return nullptr;
@@ -95,8 +104,8 @@ std::unique_ptr<CBlock> PoCXBlockBuilder::BuildBlock(
         effective_signer_account = HexStr(signer);
 
         LogPrintf("PoCX: [BlockBuilder] Plot: %s, Effective signer: %s at height %d\n",
-                  account_id.c_str(),
-                  effective_signer_account.c_str(),
+                  plot_address,
+                  to_bech32(signer),
                   current_height);
     }
 
