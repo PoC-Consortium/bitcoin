@@ -17,6 +17,7 @@
 #include <pocx/consensus/params.h>
 #include <pocx/consensus/difficulty.h>
 #include <pocx/mining/block_context.h>
+#include <pocx/mining/wallet_signing.h>
 #include <pocx/rpc/assignments.h>
 
 #ifdef ENABLE_WALLET
@@ -234,28 +235,29 @@ static RPCHelpMan submit_nonce()
                         }
                     }
 
-                    // Check if any unlocked wallet has the key for the effective signer.
-                    // Mirrors scheduler.cpp signing loop: an unlocked wallet anywhere in
-                    // the list is sufficient, but if every match is locked we must reject.
-                    bool found_locked_only = false;
+                    // Probe every loaded wallet. An Available outcome is enough to
+                    // proceed; if every match is Locked we route to RPC_WALLET_UNLOCK_NEEDED
+                    // so the operator gets the helpful "unlock first" message instead of
+                    // a generic "no key" error.
+                    auto availability = pocx::mining::AccountKeyAvailability::Absent;
                     for (auto& wallet : wallets) {
-                        if (wallet->haveAccountKey(effective_signer_account)) {
-                            if (wallet->isLocked()) {
-                                found_locked_only = true;
-                                continue;
-                            }
-                            has_key = true;
-                            found_locked_only = false;
+                        auto r = wallet->haveAccountKey(effective_signer_account);
+                        if (r == pocx::mining::AccountKeyAvailability::Available) {
+                            availability = r;
                             break;
                         }
-                    }
-                    if (!has_key) {
-                        if (found_locked_only) {
-                            throw JSONRPCError(RPC_WALLET_UNLOCK_NEEDED,
-                                strprintf("Wallet holding key for effective signer %s is locked - "
-                                          "unlock with walletpassphrase first",
-                                          effective_signer_address));
+                        if (r == pocx::mining::AccountKeyAvailability::Locked) {
+                            availability = r;
                         }
+                    }
+                    if (availability == pocx::mining::AccountKeyAvailability::Available) {
+                        has_key = true;
+                    } else if (availability == pocx::mining::AccountKeyAvailability::Locked) {
+                        throw JSONRPCError(RPC_WALLET_UNLOCK_NEEDED,
+                            strprintf("Wallet holding key for effective signer %s is locked - "
+                                      "unlock with walletpassphrase first",
+                                      effective_signer_address));
+                    } else {
                         throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY,
                             strprintf("No private key available for effective signer %s (plot: %s)",
                                      effective_signer_address, plot_address));
