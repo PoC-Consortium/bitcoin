@@ -535,7 +535,7 @@ public:
     CWallet* wallet() override { return m_wallet.get(); }
 
 #ifdef ENABLE_POCX
-    bool haveAccountKey(const std::string& account_id) override
+    pocx::mining::AccountKeyAvailability haveAccountKey(const std::string& account_id) override
     {
         return pocx::mining::HaveAccountKey(account_id, this);
     }
