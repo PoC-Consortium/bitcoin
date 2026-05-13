@@ -207,7 +207,6 @@ static RPCHelpMan submit_nonce()
                 // 4. Wallet verification (before expensive proof work)
                 if (node.wallet_loader) {
                     auto wallets = node.wallet_loader->getWallets();
-                    bool has_key = false;
                     std::string effective_signer_account = account_id;
 
                     // Render a 20-byte hash160 as its bech32 P2WPKH address for user-facing messages.
@@ -250,14 +249,13 @@ static RPCHelpMan submit_nonce()
                             availability = r;
                         }
                     }
-                    if (availability == pocx::mining::AccountKeyAvailability::Available) {
-                        has_key = true;
-                    } else if (availability == pocx::mining::AccountKeyAvailability::Locked) {
+                    if (availability == pocx::mining::AccountKeyAvailability::Locked) {
                         throw JSONRPCError(RPC_WALLET_UNLOCK_NEEDED,
                             strprintf("Wallet holding key for effective signer %s is locked - "
                                       "unlock with walletpassphrase first",
                                       effective_signer_address));
-                    } else {
+                    }
+                    if (availability == pocx::mining::AccountKeyAvailability::Absent) {
                         throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY,
                             strprintf("No private key available for effective signer %s (plot: %s)",
                                      effective_signer_address, plot_address));

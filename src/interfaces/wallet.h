@@ -49,6 +49,8 @@ struct WalletContext;
 } // namespace wallet
 #ifdef ENABLE_POCX
 namespace pocx::mining {
+// Forward-declared so this header does not pull in pocx/mining/wallet_signing.h.
+// The fixed underlying type must stay in sync with the definition there.
 enum class AccountKeyAvailability : uint8_t;
 } // namespace pocx::mining
 #endif
