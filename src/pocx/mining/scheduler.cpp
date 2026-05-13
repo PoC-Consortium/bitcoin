@@ -6,6 +6,7 @@
 #include <pocx/mining/submission.h>
 #include <pocx/mining/defensive_forge.h>
 #include <pocx/mining/block_context.h>
+#include <pocx/mining/wallet_signing.h>
 #include <pocx/consensus/difficulty.h>
 #include <pocx/consensus/signature.h>
 #include <pocx/consensus/params.h>
@@ -480,7 +481,7 @@ bool PoCXScheduler::ForgeBlock(bool defensive) {
         LogPrintf("PoCX: [Scheduler] Trying %zu wallet(s) for effective signer %s\n",
                   wallets.size(), effective_signer_address);
         for (auto& wallet : wallets) {
-            if (wallet->haveAccountKey(effective_signer) &&
+            if (wallet->haveAccountKey(effective_signer) == pocx::mining::AccountKeyAvailability::Available &&
                 wallet->signPoCXBlock(effective_signer, *block)) {
                 signed_successfully = true;
                 break;
