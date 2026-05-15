@@ -5434,6 +5434,9 @@ bool Chainstate::RollforwardBlock(const CBlockIndex* pindex, CCoinsViewCache& in
         return false;
     }
 
+#ifdef ENABLE_POCX
+    const Consensus::Params& consensus_params = m_chainman.GetConsensus();
+#endif
     for (const CTransactionRef& tx : block.vtx) {
         if (!tx->IsCoinBase()) {
             for (const CTxIn &txin : tx->vin) {
@@ -5442,6 +5445,12 @@ bool Chainstate::RollforwardBlock(const CBlockIndex* pindex, CCoinsViewCache& in
         }
         // Pass check = true as every addition may be an overwrite.
         AddCoins(inputs, *tx, pindex->nHeight, true);
+#ifdef ENABLE_POCX
+        // Re-apply assignment / revocation OP_RETURNs. Block was already validated when
+        // first connected; we just need to put the assignment-DB side effects back in
+        // place. Idempotent.
+        pocx::assignments::ApplyAssignmentEffectsForReplay(*tx, pindex->nHeight, consensus_params, inputs);
+#endif
     }
     return true;
 }

@@ -449,8 +449,14 @@ public:
     virtual std::vector<uint256> GetHeadBlocks() const;
 
     //! Do a bulk modification (multiple Coin changes + BestBlock change).
-    //! The passed cursor is used to iterate through the coins.
-    virtual bool BatchWrite(CoinsViewCacheCursor& cursor, const uint256& hashBlock);
+    //! The passed cursor is used to iterate through the coins. On ENABLE_POCX builds,
+    //! assignment updates can be passed and will be written atomically with BestBlock.
+    virtual bool BatchWrite(CoinsViewCacheCursor& cursor, const uint256& hashBlock
+#ifdef ENABLE_POCX
+        , const ForgingAssignmentsMap& assignments = {}
+        , const DeletedAssignmentsSet& deletedAssignments = {}
+#endif
+    );
 
     //! Get a cursor to iterate over the whole state
     virtual std::unique_ptr<CCoinsViewCursor> Cursor() const;
@@ -468,10 +474,6 @@ public:
 
     virtual std::vector<ForgingAssignment> GetForgingAssignmentHistory(
         const std::array<uint8_t, 20>& plotAddress) const { return std::vector<ForgingAssignment>(); }
-
-    virtual bool BatchWriteAssignments(
-        const ForgingAssignmentsMap& assignments,
-        const DeletedAssignmentsSet& deletedAssignments) { return false; }
 #endif
 };
 
@@ -489,7 +491,12 @@ public:
     uint256 GetBestBlock() const override;
     std::vector<uint256> GetHeadBlocks() const override;
     void SetBackend(CCoinsView &viewIn);
-    bool BatchWrite(CoinsViewCacheCursor& cursor, const uint256 &hashBlock) override;
+    bool BatchWrite(CoinsViewCacheCursor& cursor, const uint256& hashBlock
+#ifdef ENABLE_POCX
+        , const ForgingAssignmentsMap& assignments = {}
+        , const DeletedAssignmentsSet& deletedAssignments = {}
+#endif
+    ) override;
     std::unique_ptr<CCoinsViewCursor> Cursor() const override;
     size_t EstimateSize() const override;
 
@@ -500,10 +507,6 @@ public:
 
     std::vector<ForgingAssignment> GetForgingAssignmentHistory(
         const std::array<uint8_t, 20>& plotAddress) const override;
-
-    bool BatchWriteAssignments(
-        const ForgingAssignmentsMap& assignments,
-        const DeletedAssignmentsSet& deletedAssignments) override;
 #endif
 };
 
@@ -549,7 +552,12 @@ public:
     bool HaveCoin(const COutPoint &outpoint) const override;
     uint256 GetBestBlock() const override;
     void SetBestBlock(const uint256 &hashBlock);
-    bool BatchWrite(CoinsViewCacheCursor& cursor, const uint256 &hashBlock) override;
+    bool BatchWrite(CoinsViewCacheCursor& cursor, const uint256& hashBlock
+#ifdef ENABLE_POCX
+        , const ForgingAssignmentsMap& assignments = {}
+        , const DeletedAssignmentsSet& deletedAssignments = {}
+#endif
+    ) override;
     std::unique_ptr<CCoinsViewCursor> Cursor() const override {
         throw std::logic_error("CCoinsViewCache cursor iteration not supported.");
     }
@@ -644,6 +652,12 @@ public:
     std::optional<ForgingAssignment> GetForgingAssignment(
         const std::array<uint8_t, 20>& plotAddress, int height) const override;
 
+    //! Look up the most recent assignment for a plot, consulting pending writes first.
+    //! Used by RollforwardBlock during ReplayBlocks where pending writes have not yet
+    //! reached the backing DB.
+    std::optional<ForgingAssignment> LookupForgingAssignmentForReplay(
+        const std::array<uint8_t, 20>& plotAddress) const;
+
     //! Add a new forging assignment
     void AddForgingAssignment(const ForgingAssignment& assignment);
 
@@ -663,11 +677,6 @@ public:
 
     //! Restore forging assignment (for reorg undo of revocations)
     void RestoreForgingAssignment(const ForgingAssignment& assignment);
-
-    //! Batch write assignments (called from BatchWrite with same LevelDB batch)
-    bool BatchWriteAssignments(
-        const ForgingAssignmentsMap& assignments,
-        const DeletedAssignmentsSet& deletedAssignments) override;
 
 #endif // ENABLE_POCX
 

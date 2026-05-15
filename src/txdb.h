@@ -47,7 +47,12 @@ public:
     bool HaveCoin(const COutPoint &outpoint) const override;
     uint256 GetBestBlock() const override;
     std::vector<uint256> GetHeadBlocks() const override;
-    bool BatchWrite(CoinsViewCacheCursor& cursor, const uint256 &hashBlock) override;
+    bool BatchWrite(CoinsViewCacheCursor& cursor, const uint256& hashBlock
+#ifdef ENABLE_POCX
+        , const ForgingAssignmentsMap& assignments = {}
+        , const DeletedAssignmentsSet& deletedAssignments = {}
+#endif
+    ) override;
     std::unique_ptr<CCoinsViewCursor> Cursor() const override;
 
     //! Whether an unsupported database format is used.
@@ -68,21 +73,20 @@ public:
     //! Get full assignment history for a plot
     std::vector<ForgingAssignment> GetForgingAssignmentHistory(
         const std::array<uint8_t, 20>& plotAddress) const override;
-
-    //! Helper to write assignments to an existing batch (for atomicity)
-    void WriteAssignmentsToBatch(
-        CDBBatch& batch,
-        const ForgingAssignmentsMap& assignments,
-        const DeletedAssignmentsSet& deletedAssignments);
-
-    //! Write assignments in separate batch
-    bool BatchWriteAssignments(
-        const ForgingAssignmentsMap& assignments,
-        const DeletedAssignmentsSet& deletedAssignments) override;
 #endif
 
     //! @returns filesystem path to on-disk storage or std::nullopt if in memory.
     std::optional<fs::path> StoragePath() { return m_db->StoragePath(); }
+
+#ifdef ENABLE_POCX
+private:
+    //! Append assignment writes to an existing batch.
+    //! Called from BatchWrite to bundle assignment updates with the chainstate transition.
+    void WriteAssignmentsToBatch(
+        CDBBatch& batch,
+        const ForgingAssignmentsMap& assignments,
+        const DeletedAssignmentsSet& deletedAssignments);
+#endif
 };
 
 #endif // BITCOIN_TXDB_H

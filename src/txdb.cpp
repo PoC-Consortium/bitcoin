@@ -95,7 +95,12 @@ std::vector<uint256> CCoinsViewDB::GetHeadBlocks() const {
     return vhashHeadBlocks;
 }
 
-bool CCoinsViewDB::BatchWrite(CoinsViewCacheCursor& cursor, const uint256 &hashBlock) {
+bool CCoinsViewDB::BatchWrite(CoinsViewCacheCursor& cursor, const uint256& hashBlock
+#ifdef ENABLE_POCX
+    , const ForgingAssignmentsMap& assignments
+    , const DeletedAssignmentsSet& deletedAssignments
+#endif
+) {
     CDBBatch batch(*m_db);
     size_t count = 0;
     size_t changed = 0;
@@ -148,6 +153,13 @@ bool CCoinsViewDB::BatchWrite(CoinsViewCacheCursor& cursor, const uint256 &hashB
             }
         }
     }
+
+#ifdef ENABLE_POCX
+    // Bundle forging assignment updates into the final batch so they commit atomically
+    // with DB_BEST_BLOCK. If this batch is lost on crash, HEAD_BLOCKS replay rebuilds
+    // both coins and assignments from block data via RollforwardBlock.
+    WriteAssignmentsToBatch(batch, assignments, deletedAssignments);
+#endif
 
     // In the last batch, mark the database as consistent with hashBlock again.
     batch.Erase(DB_HEAD_BLOCKS);
@@ -367,22 +379,5 @@ void CCoinsViewDB::WriteAssignmentsToBatch(
                      txid.ToString(), HexStr(plot_addr));
         }
     }
-}
-
-bool CCoinsViewDB::BatchWriteAssignments(
-    const ForgingAssignmentsMap& assignments,
-    const DeletedAssignmentsSet& deletedAssignments)
-{
-    CDBBatch batch(*m_db);
-    WriteAssignmentsToBatch(batch, assignments, deletedAssignments);
-
-    bool ret = m_db->WriteBatch(batch);
-    if (ret) {
-        LogPrintf("PoCX: Successfully committed %zu assignment updates and %zu deletions to database\n",
-                 assignments.size(), deletedAssignments.size());
-    } else {
-        LogPrintf("PoCX: ERROR - Failed to commit assignments to database!\n");
-    }
-    return ret;
 }
 #endif

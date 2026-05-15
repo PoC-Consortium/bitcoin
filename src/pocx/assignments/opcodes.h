@@ -11,6 +11,7 @@
 #include <cstdint>
 
 class CCoinsViewCache;
+namespace Consensus { struct Params; }
 
 namespace pocx {
 namespace assignments {
@@ -51,6 +52,16 @@ bool VerifyPlotOwnership(
     const CTransaction& tx,
     const std::array<uint8_t, 20>& plotAddress,
     const CCoinsViewCache& view);
+
+/** Re-apply assignment/revocation OP_RETURN effects of a transaction during
+ *  RollforwardBlock / ReplayBlocks. Idempotent and skips consensus checks
+ *  (the block was already validated when first connected). Writes match the
+ *  side-effects performed by ConnectBlock for the same transaction. */
+void ApplyAssignmentEffectsForReplay(
+    const CTransaction& tx,
+    int nHeight,
+    const Consensus::Params& consensus_params,
+    CCoinsViewCache& view);
 
 } // namespace assignments
 } // namespace pocx
