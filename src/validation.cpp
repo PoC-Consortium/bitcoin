@@ -25,6 +25,7 @@
 #include <pocx/consensus/params.h>
 #include <pocx/consensus/difficulty.h>
 #include <pocx/assignments/opcodes.h>
+#include <pocx/assignments/replay.h>
 #include <pocx/algorithms/time_bending.h>
 #include <pocx/mining/defensive_forge.h>
 #ifndef BUILD_BITCOIN_KERNEL
