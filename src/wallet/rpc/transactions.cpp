@@ -13,6 +13,10 @@
 #include <wallet/rpc/util.h>
 #include <wallet/wallet.h>
 
+#ifdef ENABLE_POCX
+#include <pocx/assignments/opcodes.h>
+#endif
+
 using interfaces::FoundBlock;
 
 namespace wallet {
@@ -58,6 +62,19 @@ static void WalletTxToJSON(const CWallet& wallet, const CWalletTx& wtx, UniValue
             rbfStatus = "yes";
     }
     entry.pushKV("bip125-replaceable", rbfStatus);
+
+#ifdef ENABLE_POCX
+    for (const CTxOut& output : wtx.tx->vout) {
+        if (pocx::assignments::IsAssignmentOpReturn(output)) {
+            entry.pushKV("pocx_type", "assignment");
+            break;
+        }
+        if (pocx::assignments::IsRevocationOpReturn(output)) {
+            entry.pushKV("pocx_type", "revocation");
+            break;
+        }
+    }
+#endif
 
     for (const std::pair<const std::string, std::string>& item : wtx.mapValue)
         entry.pushKV(item.first, item.second);
@@ -409,6 +426,9 @@ static std::vector<RPCResult> TransactionDescriptionString()
            {RPCResult::Type::ARR, "parent_descs", /*optional=*/true, "Only if 'category' is 'received'. List of parent descriptors for the output script of this coin.", {
                {RPCResult::Type::STR, "desc", "The descriptor string."},
            }},
+#ifdef ENABLE_POCX
+           {RPCResult::Type::STR, "pocx_type", /*optional=*/true, "Set to 'assignment' or 'revocation' if the transaction encodes a PoCX OP_RETURN marker; absent otherwise."},
+#endif
            };
 }
 
