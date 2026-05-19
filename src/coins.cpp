@@ -587,7 +587,9 @@ void CCoinsViewCache::RemoveForgingAssignment(
     const std::array<uint8_t, 20>& plotAddress,
     const uint256& assignment_txid)
 {
-    // First try to remove from pending assignments (if in current block)
+    bool found_in_pending = false;
+
+    // Remove from pending assignments if present.
     auto it = pendingAssignments.find(plotAddress);
     if (it != pendingAssignments.end()) {
         auto& vec = it->second;
@@ -597,7 +599,7 @@ void CCoinsViewCache::RemoveForgingAssignment(
             vec.end());
 
         if (vec.size() < before_size) {
-            // Found and removed from pending
+            found_in_pending = true;
             if (vec.empty()) {
                 pendingAssignments.erase(it);
             } else {
@@ -607,15 +609,15 @@ void CCoinsViewCache::RemoveForgingAssignment(
             if (cachedAssignmentsUsage >= sizeof(ForgingAssignment)) {
                 cachedAssignmentsUsage -= sizeof(ForgingAssignment);
             }
-            return;  // Done - was in pending
         }
     }
 
-    // Not in pending - must be in base (LevelDB), query it to get height for deletion
+    // Also check base (LevelDB): a pending entry seeded by RestoreForgingAssignment
+    // during reorg-disconnect can coexist with a flushed copy of the same assignment
+    // in the DB, so removing only from pending would leak a stale row.
     auto history = base->GetForgingAssignmentHistory(plotAddress);
     for (const auto& assignment : history) {
         if (assignment.assignment_txid == assignment_txid) {
-            // Mark for deletion from base during flush
             auto key = std::make_pair(plotAddress, assignment_txid);
             deletedAssignments[key] = assignment;
             dirtyPlots.insert(plotAddress);
@@ -624,9 +626,10 @@ void CCoinsViewCache::RemoveForgingAssignment(
         }
     }
 
-    // Assignment not found - this can happen if it was already deleted, log for debugging
-    LogPrintf("PoCX: RemoveForgingAssignment - assignment not found: plot=%s txid=%s\n",
-             HexStr(plotAddress), assignment_txid.ToString());
+    if (!found_in_pending) {
+        LogPrintf("PoCX: RemoveForgingAssignment - assignment not found: plot=%s txid=%s\n",
+                 HexStr(plotAddress), assignment_txid.ToString());
+    }
 }
 
 void CCoinsViewCache::RestoreForgingAssignment(const ForgingAssignment& assignment)
