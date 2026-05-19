@@ -292,8 +292,10 @@ bool CCoinsViewCache::BatchWrite(CoinsViewCacheCursor& cursor, const uint256& ha
     // Merge child's assignment updates into our pending state. Skip entries the
     // child has queued for deletion — those are handled in the deletion loop below.
     // Upsert by txid so a repeated update doesn't accumulate duplicate pending rows.
+    // Cancel any prior deletion intent for the same key — pending dominates.
     for (const auto& [key, assignment] : assignments) {
         if (deletedAssignmentsIn.contains(key)) continue;
+        deletedAssignments.erase(key);
         auto& vec = pendingAssignments[assignment.plotAddress];
         auto same = std::find_if(vec.begin(), vec.end(),
             [&](const ForgingAssignment& p){ return p.assignment_txid == assignment.assignment_txid; });
@@ -591,7 +593,10 @@ std::optional<ForgingAssignment> CCoinsViewCache::LookupForgingAssignmentForRepl
 
 void CCoinsViewCache::AddForgingAssignment(const ForgingAssignment& assignment)
 {
-    // Append to plot's pending assignments (always at end - chronological order)
+    // Cancel any prior deletion intent for the same key — pending dominates.
+    // Without this, a tx re-mined into a new block during a same-tx reorg would
+    // be both written and erased in the next flush, and erase would win.
+    deletedAssignments.erase(std::make_pair(assignment.plotAddress, assignment.assignment_txid));
     pendingAssignments[assignment.plotAddress].push_back(assignment);
     dirtyPlots.insert(assignment.plotAddress);
     cachedAssignmentsUsage += sizeof(ForgingAssignment);
@@ -619,6 +624,9 @@ bool CCoinsViewCache::HasPendingRevocation(const std::array<uint8_t, 20>& plotAd
 
 void CCoinsViewCache::UpdateForgingAssignment(const ForgingAssignment& assignment)
 {
+    // Cancel any prior deletion intent for the same key — see AddForgingAssignment.
+    deletedAssignments.erase(std::make_pair(assignment.plotAddress, assignment.assignment_txid));
+
     // For revocation: find matching assignment in pending and update it
     auto it = pendingAssignments.find(assignment.plotAddress);
     if (it != pendingAssignments.end()) {
@@ -688,6 +696,8 @@ void CCoinsViewCache::RemoveForgingAssignment(
 
 void CCoinsViewCache::RestoreForgingAssignment(const ForgingAssignment& assignment)
 {
+    // Cancel any prior deletion intent for the same key — see AddForgingAssignment.
+    deletedAssignments.erase(std::make_pair(assignment.plotAddress, assignment.assignment_txid));
     // Restore assignment (for reorg undo)
     pendingAssignments[assignment.plotAddress].push_back(assignment);
     dirtyPlots.insert(assignment.plotAddress);
