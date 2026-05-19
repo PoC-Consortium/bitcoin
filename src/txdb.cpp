@@ -95,7 +95,7 @@ std::vector<uint256> CCoinsViewDB::GetHeadBlocks() const {
     return vhashHeadBlocks;
 }
 
-bool CCoinsViewDB::BatchWrite(CoinsViewCacheCursor& cursor, const uint256& hashBlock
+bool CCoinsViewDB::BatchWrite(CoinsViewCacheCursor& cursor, const uint256 &hashBlock
 #ifdef ENABLE_POCX
     , const ForgingAssignmentsMap& assignments
     , const DeletedAssignmentsSet& deletedAssignments

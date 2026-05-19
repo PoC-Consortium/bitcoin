@@ -454,7 +454,7 @@ public:
     //! Do a bulk modification (multiple Coin changes + BestBlock change).
     //! The passed cursor is used to iterate through the coins. On ENABLE_POCX builds,
     //! assignment updates can be passed and will be written atomically with BestBlock.
-    virtual bool BatchWrite(CoinsViewCacheCursor& cursor, const uint256& hashBlock
+    virtual bool BatchWrite(CoinsViewCacheCursor& cursor, const uint256 &hashBlock
 #ifdef ENABLE_POCX
         , const ForgingAssignmentsMap& assignments = {}
         , const DeletedAssignmentsSet& deletedAssignments = {}
@@ -494,7 +494,7 @@ public:
     uint256 GetBestBlock() const override;
     std::vector<uint256> GetHeadBlocks() const override;
     void SetBackend(CCoinsView &viewIn);
-    bool BatchWrite(CoinsViewCacheCursor& cursor, const uint256& hashBlock
+    bool BatchWrite(CoinsViewCacheCursor& cursor, const uint256 &hashBlock
 #ifdef ENABLE_POCX
         , const ForgingAssignmentsMap& assignments = {}
         , const DeletedAssignmentsSet& deletedAssignments = {}
@@ -559,7 +559,7 @@ public:
     bool HaveCoin(const COutPoint &outpoint) const override;
     uint256 GetBestBlock() const override;
     void SetBestBlock(const uint256 &hashBlock);
-    bool BatchWrite(CoinsViewCacheCursor& cursor, const uint256& hashBlock
+    bool BatchWrite(CoinsViewCacheCursor& cursor, const uint256 &hashBlock
 #ifdef ENABLE_POCX
         , const ForgingAssignmentsMap& assignments = {}
         , const DeletedAssignmentsSet& deletedAssignments = {}

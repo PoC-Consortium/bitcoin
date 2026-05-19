@@ -9,8 +9,6 @@
 #include <random.h>
 #include <util/trace.h>
 
-#include <limits>
-
 TRACEPOINT_SEMAPHORE(utxocache, add);
 TRACEPOINT_SEMAPHORE(utxocache, spent);
 TRACEPOINT_SEMAPHORE(utxocache, uncache);
@@ -18,7 +16,7 @@ TRACEPOINT_SEMAPHORE(utxocache, uncache);
 std::optional<Coin> CCoinsView::GetCoin(const COutPoint& outpoint) const { return std::nullopt; }
 uint256 CCoinsView::GetBestBlock() const { return uint256(); }
 std::vector<uint256> CCoinsView::GetHeadBlocks() const { return std::vector<uint256>(); }
-bool CCoinsView::BatchWrite(CoinsViewCacheCursor& cursor, const uint256& hashBlock
+bool CCoinsView::BatchWrite(CoinsViewCacheCursor& cursor, const uint256 &hashBlock
 #ifdef ENABLE_POCX
     , const ForgingAssignmentsMap& assignments
     , const DeletedAssignmentsSet& deletedAssignments
@@ -37,7 +35,7 @@ bool CCoinsViewBacked::HaveCoin(const COutPoint &outpoint) const { return base->
 uint256 CCoinsViewBacked::GetBestBlock() const { return base->GetBestBlock(); }
 std::vector<uint256> CCoinsViewBacked::GetHeadBlocks() const { return base->GetHeadBlocks(); }
 void CCoinsViewBacked::SetBackend(CCoinsView &viewIn) { base = &viewIn; }
-bool CCoinsViewBacked::BatchWrite(CoinsViewCacheCursor& cursor, const uint256& hashBlock
+bool CCoinsViewBacked::BatchWrite(CoinsViewCacheCursor& cursor, const uint256 &hashBlock
 #ifdef ENABLE_POCX
     , const ForgingAssignmentsMap& assignments
     , const DeletedAssignmentsSet& deletedAssignments
@@ -219,7 +217,7 @@ void CCoinsViewCache::SetBestBlock(const uint256 &hashBlockIn) {
     hashBlock = hashBlockIn;
 }
 
-bool CCoinsViewCache::BatchWrite(CoinsViewCacheCursor& cursor, const uint256& hashBlockIn
+bool CCoinsViewCache::BatchWrite(CoinsViewCacheCursor& cursor, const uint256 &hashBlockIn
 #ifdef ENABLE_POCX
     , const ForgingAssignmentsMap& assignments
     , const DeletedAssignmentsSet& deletedAssignmentsIn
@@ -373,10 +371,12 @@ bool CCoinsViewCache::Flush() {
         GatherDirtyAssignments(dirtyPlots, pendingAssignments, deletedAssignments,
                                assignmentsToWrite, deletedToWrite);
     }
-    bool fOk = base->BatchWrite(cursor, hashBlock, assignmentsToWrite, deletedToWrite);
-#else
-    bool fOk = base->BatchWrite(cursor, hashBlock);
 #endif
+    bool fOk = base->BatchWrite(cursor, hashBlock
+#ifdef ENABLE_POCX
+        , assignmentsToWrite, deletedToWrite
+#endif
+    );
     if (fOk) {
         cacheCoins.clear();
         ReallocateCache();
@@ -402,15 +402,19 @@ bool CCoinsViewCache::Sync()
         GatherDirtyAssignments(dirtyPlots, pendingAssignments, deletedAssignments,
                                assignmentsToWrite, deletedToWrite);
     }
-    bool fOk = base->BatchWrite(cursor, hashBlock, assignmentsToWrite, deletedToWrite);
+#endif
+    bool fOk = base->BatchWrite(cursor, hashBlock
+#ifdef ENABLE_POCX
+        , assignmentsToWrite, deletedToWrite
+#endif
+    );
+#ifdef ENABLE_POCX
     if (fOk) {
         // Sync keeps the cache contents (Flush wipes them), but the dirty bookkeeping
         // is consumed by the write — clear it so we don't re-write the same data next time.
         deletedAssignments.clear();
         dirtyPlots.clear();
     }
-#else
-    bool fOk = base->BatchWrite(cursor, hashBlock);
 #endif
 
     if (fOk) {
