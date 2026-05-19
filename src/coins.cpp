@@ -325,7 +325,12 @@ bool CCoinsViewCache::BatchWrite(CoinsViewCacheCursor& cursor, const uint256& ha
                 cachedAssignmentsUsage -= sizeof(ForgingAssignment);
             }
         }
-        deletedAssignments[key] = src->second;
+        auto [it, inserted] = deletedAssignments.try_emplace(key, src->second);
+        if (inserted) {
+            cachedAssignmentsUsage += sizeof(ForgingAssignment);
+        } else {
+            it->second = src->second;
+        }
         dirtyPlots.insert(key.first);
     }
 #endif
