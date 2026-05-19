@@ -11,6 +11,7 @@
 #include <crypto/hex_base.h>
 #include <logging.h>
 
+#include <limits>
 #include <utility>
 
 namespace pocx {
@@ -39,7 +40,7 @@ void ApplyAssignmentEffectsForReplay(
             auto plot_addr_opt = ParseRevocationOpReturn(output);
             if (!plot_addr_opt.has_value()) continue;
             const auto& plot_addr = *plot_addr_opt;
-            auto existing = view.LookupForgingAssignmentForReplay(plot_addr);
+            auto existing = view.GetForgingAssignment(plot_addr, std::numeric_limits<int>::max());
             if (!existing.has_value()) {
                 // The block was previously valid, so the assignment must exist somewhere
                 // in the replay window or DB. Reaching this branch indicates inconsistency.

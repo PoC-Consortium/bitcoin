@@ -201,12 +201,15 @@ struct ForgingAssignment {
     }
 };
 
-// Type definitions for forging assignments
-// Key: (plot_address, assignment_txid) for full history tracking (DB format)
+// Type definitions for forging assignments.
+// Map of (plot_address, assignment_txid) -> assignment, used both for the
+// on-disk history layout and for the per-flush "assignments to write" payload.
 typedef std::map<std::pair<std::array<uint8_t, 20>, uint256>, ForgingAssignment> ForgingAssignmentsMap;
-// Set of deleted assignments (for reorg undo)
+// Cache-side set of (plot_address, assignment_txid) keys queued for deletion
+// from base on the next flush. Kept disjoint from PendingAssignmentsMap.
 typedef std::set<std::pair<std::array<uint8_t, 20>, uint256>> DeletedAssignmentsSet;
-// Pending assignments per plot (cache only - for duplicate detection)
+// Cache-side pending assignment writes per plot. Each vector is appended to
+// in arrival order; reads in CCoinsViewCache merge this overlay with base.
 typedef std::map<std::array<uint8_t, 20>, std::vector<ForgingAssignment>> PendingAssignmentsMap;
 
 #endif // ENABLE_POCX
@@ -532,10 +535,14 @@ protected:
     mutable size_t cachedCoinsUsage{0};
 
 #ifdef ENABLE_POCX
-    /* Forging assignments storage (OP_RETURN-only architecture) */
-    mutable PendingAssignmentsMap pendingAssignments;  // Pending assignments per plot (for duplicate detection)
-    mutable ForgingAssignmentsMap deletedAssignments;  // Assignments to delete from base (for reorg handling)
-    mutable std::set<std::array<uint8_t, 20>> dirtyPlots;  // Plots with pending changes
+    /* Forging assignment cache (OP_RETURN-only architecture).
+     * Invariant: for any (plot, txid), at most one of pendingAssignments or
+     * deletedAssignments contains it. Reads merge pending over base and
+     * filter out keys in deletedAssignments; writes propagate atomically
+     * with the chainstate via BatchWrite. */
+    mutable PendingAssignmentsMap pendingAssignments;
+    mutable ForgingAssignmentsMap deletedAssignments;  // payload preserved to derive height-indexed DB key
+    mutable std::set<std::array<uint8_t, 20>> dirtyPlots;
     mutable size_t cachedAssignmentsUsage{0};
 #endif
 
@@ -655,12 +662,6 @@ public:
     //! History merged with this cache's pending modifications and deletions.
     std::vector<ForgingAssignment> GetForgingAssignmentHistory(
         const std::array<uint8_t, 20>& plotAddress) const override;
-
-    //! Look up the most recent assignment for a plot, consulting pending writes first.
-    //! Used by RollforwardBlock during ReplayBlocks where pending writes have not yet
-    //! reached the backing DB.
-    std::optional<ForgingAssignment> LookupForgingAssignmentForReplay(
-        const std::array<uint8_t, 20>& plotAddress) const;
 
     //! Add a new forging assignment
     void AddForgingAssignment(const ForgingAssignment& assignment);

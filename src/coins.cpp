@@ -583,19 +583,6 @@ std::optional<ForgingAssignment> CCoinsViewCache::GetForgingAssignment(
     return best;
 }
 
-std::optional<ForgingAssignment> CCoinsViewCache::LookupForgingAssignmentForReplay(
-    const std::array<uint8_t, 20>& plotAddress) const
-{
-    // Pending entries are appended in chronological order; the last entry is the most
-    // recent assignment (AddForgingAssignment) or in-place revocation update for this plot.
-    auto it = pendingAssignments.find(plotAddress);
-    if (it != pendingAssignments.end() && !it->second.empty()) {
-        return it->second.back();
-    }
-    // Nothing pending — fall back to the backing DB.
-    return base->GetForgingAssignment(plotAddress, std::numeric_limits<int>::max());
-}
-
 void CCoinsViewCache::AddForgingAssignment(const ForgingAssignment& assignment)
 {
     // Cancel any prior deletion intent for the same key — pending dominates.
