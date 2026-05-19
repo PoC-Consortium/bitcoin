@@ -62,6 +62,9 @@ public:
     //! Dynamically alter the underlying leveldb cache size.
     void ResizeCache(size_t new_cache_size) EXCLUSIVE_LOCKS_REQUIRED(cs_main);
 
+    //! @returns filesystem path to on-disk storage or std::nullopt if in memory.
+    std::optional<fs::path> StoragePath() { return m_db->StoragePath(); }
+
 #ifdef ENABLE_POCX
     //! Forging assignment database methods (OP_RETURN-only architecture)
 
@@ -73,12 +76,7 @@ public:
     //! Get full assignment history for a plot
     std::vector<ForgingAssignment> GetForgingAssignmentHistory(
         const std::array<uint8_t, 20>& plotAddress) const override;
-#endif
 
-    //! @returns filesystem path to on-disk storage or std::nullopt if in memory.
-    std::optional<fs::path> StoragePath() { return m_db->StoragePath(); }
-
-#ifdef ENABLE_POCX
 private:
     //! Append assignment writes to an existing batch.
     //! Called from BatchWrite to bundle assignment updates with the chainstate transition.

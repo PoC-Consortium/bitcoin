@@ -452,10 +452,10 @@ public:
     virtual std::vector<uint256> GetHeadBlocks() const;
 
     //! Do a bulk modification (multiple Coin changes + BestBlock change).
-    //! The passed cursor is used to iterate through the coins. On ENABLE_POCX builds,
-    //! assignment updates can be passed and will be written atomically with BestBlock.
-    virtual bool BatchWrite(CoinsViewCacheCursor& cursor, const uint256 &hashBlock
+    //! The passed cursor is used to iterate through the coins.
+    virtual bool BatchWrite(CoinsViewCacheCursor& cursor, const uint256& hashBlock
 #ifdef ENABLE_POCX
+        //! PoCX: assignment writes ride the same batch as BestBlock.
         , const ForgingAssignmentsMap& assignments = {}
         , const DeletedAssignmentsSet& deletedAssignments = {}
 #endif
