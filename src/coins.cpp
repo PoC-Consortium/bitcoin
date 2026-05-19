@@ -289,20 +289,42 @@ bool CCoinsViewCache::BatchWrite(CoinsViewCacheCursor& cursor, const uint256& ha
     }
     hashBlock = hashBlockIn;
 #ifdef ENABLE_POCX
-    // Merge incoming assignment updates from the child cache into our pending state.
+    // Merge child's assignment updates into our pending state. Skip entries the
+    // child has queued for deletion — those are handled in the deletion loop below.
+    // Upsert by txid so a repeated update doesn't accumulate duplicate pending rows.
     for (const auto& [key, assignment] : assignments) {
-        pendingAssignments[assignment.plotAddress].push_back(assignment);
-        dirtyPlots.insert(assignment.plotAddress);
-        cachedAssignmentsUsage += sizeof(ForgingAssignment);
-    }
-    for (const auto& key : deletedAssignmentsIn) {
-        // Record the deletion so it propagates on our next flush; the assignment payload
-        // (needed for the height key on disk) is preserved in the assignments map above.
-        auto src = assignments.find(key);
-        if (src != assignments.end()) {
-            deletedAssignments[key] = src->second;
-            dirtyPlots.insert(key.first);
+        if (deletedAssignmentsIn.contains(key)) continue;
+        auto& vec = pendingAssignments[assignment.plotAddress];
+        auto same = std::find_if(vec.begin(), vec.end(),
+            [&](const ForgingAssignment& p){ return p.assignment_txid == assignment.assignment_txid; });
+        if (same != vec.end()) {
+            *same = assignment;
+        } else {
+            vec.push_back(assignment);
+            cachedAssignmentsUsage += sizeof(ForgingAssignment);
         }
+        dirtyPlots.insert(assignment.plotAddress);
+    }
+    // Apply deletions: drop any pending row for the same key and record the
+    // deletion so it propagates on the next flush. The assignment payload is
+    // preserved (needed to derive the height-indexed DB key).
+    for (const auto& key : deletedAssignmentsIn) {
+        auto src = assignments.find(key);
+        if (src == assignments.end()) continue;
+        auto plotIt = pendingAssignments.find(key.first);
+        if (plotIt != pendingAssignments.end()) {
+            auto& vec = plotIt->second;
+            auto before = vec.size();
+            vec.erase(std::remove_if(vec.begin(), vec.end(),
+                [&](const ForgingAssignment& p){ return p.assignment_txid == key.second; }),
+                vec.end());
+            if (vec.empty()) pendingAssignments.erase(plotIt);
+            if (vec.size() < before && cachedAssignmentsUsage >= sizeof(ForgingAssignment)) {
+                cachedAssignmentsUsage -= sizeof(ForgingAssignment);
+            }
+        }
+        deletedAssignments[key] = src->second;
+        dirtyPlots.insert(key.first);
     }
 #endif
     return true;
@@ -514,12 +536,44 @@ bool CCoinsViewErrorCatcher::HaveCoin(const COutPoint& outpoint) const
 // Forging Assignment Cache Methods (OP_RETURN-only architecture)
 // ============================================================================
 
+std::vector<ForgingAssignment> CCoinsViewCache::GetForgingAssignmentHistory(
+    const std::array<uint8_t, 20>& plotAddress) const
+{
+    // Start from base, drop rows queued for deletion in this window, then
+    // overlay pending entries (in-place updates or new additions).
+    auto history = base->GetForgingAssignmentHistory(plotAddress);
+    std::erase_if(history, [&](const ForgingAssignment& a) {
+        return deletedAssignments.contains(std::make_pair(plotAddress, a.assignment_txid));
+    });
+    auto it = pendingAssignments.find(plotAddress);
+    if (it != pendingAssignments.end()) {
+        for (const auto& p : it->second) {
+            auto same = std::find_if(history.begin(), history.end(),
+                [&](const ForgingAssignment& h){ return h.assignment_txid == p.assignment_txid; });
+            if (same != history.end()) {
+                *same = p;
+            } else {
+                history.push_back(p);
+            }
+        }
+    }
+    return history;
+}
+
 std::optional<ForgingAssignment> CCoinsViewCache::GetForgingAssignment(
     const std::array<uint8_t, 20>& plotAddress, int height) const
 {
-    // Query base only - pending assignments not active yet (they activate after delay)
-    // Cache is only for duplicate detection, not state queries
-    return base->GetForgingAssignment(plotAddress, height);
+    // Walk the merged history and return the most recent entry whose
+    // assignment_height is at or before the requested height.
+    std::optional<ForgingAssignment> best;
+    int best_height = -1;
+    for (const auto& a : GetForgingAssignmentHistory(plotAddress)) {
+        if (a.assignment_height <= height && a.assignment_height > best_height) {
+            best = a;
+            best_height = a.assignment_height;
+        }
+    }
+    return best;
 }
 
 std::optional<ForgingAssignment> CCoinsViewCache::LookupForgingAssignmentForReplay(

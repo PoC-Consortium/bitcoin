@@ -652,6 +652,10 @@ public:
     std::optional<ForgingAssignment> GetForgingAssignment(
         const std::array<uint8_t, 20>& plotAddress, int height) const override;
 
+    //! History merged with this cache's pending modifications and deletions.
+    std::vector<ForgingAssignment> GetForgingAssignmentHistory(
+        const std::array<uint8_t, 20>& plotAddress) const override;
+
     //! Look up the most recent assignment for a plot, consulting pending writes first.
     //! Used by RollforwardBlock during ReplayBlocks where pending writes have not yet
     //! reached the backing DB.
