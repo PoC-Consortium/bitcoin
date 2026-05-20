@@ -47,7 +47,12 @@ public:
     bool HaveCoin(const COutPoint &outpoint) const override;
     uint256 GetBestBlock() const override;
     std::vector<uint256> GetHeadBlocks() const override;
-    bool BatchWrite(CoinsViewCacheCursor& cursor, const uint256 &hashBlock) override;
+    bool BatchWrite(CoinsViewCacheCursor& cursor, const uint256 &hashBlock
+#ifdef ENABLE_POCX
+        , const ForgingAssignmentsMap& assignments = {}
+        , const DeletedAssignmentsSet& deletedAssignments = {}
+#endif
+    ) override;
     std::unique_ptr<CCoinsViewCursor> Cursor() const override;
 
     //! Whether an unsupported database format is used.
@@ -56,6 +61,9 @@ public:
 
     //! Dynamically alter the underlying leveldb cache size.
     void ResizeCache(size_t new_cache_size) EXCLUSIVE_LOCKS_REQUIRED(cs_main);
+
+    //! @returns filesystem path to on-disk storage or std::nullopt if in memory.
+    std::optional<fs::path> StoragePath() { return m_db->StoragePath(); }
 
 #ifdef ENABLE_POCX
     //! Forging assignment database methods (OP_RETURN-only architecture)
@@ -69,20 +77,14 @@ public:
     std::vector<ForgingAssignment> GetForgingAssignmentHistory(
         const std::array<uint8_t, 20>& plotAddress) const override;
 
-    //! Helper to write assignments to an existing batch (for atomicity)
+private:
+    //! Append assignment writes to an existing batch.
+    //! Called from BatchWrite to bundle assignment updates with the chainstate transition.
     void WriteAssignmentsToBatch(
         CDBBatch& batch,
         const ForgingAssignmentsMap& assignments,
         const DeletedAssignmentsSet& deletedAssignments);
-
-    //! Write assignments in separate batch
-    bool BatchWriteAssignments(
-        const ForgingAssignmentsMap& assignments,
-        const DeletedAssignmentsSet& deletedAssignments) override;
 #endif
-
-    //! @returns filesystem path to on-disk storage or std::nullopt if in memory.
-    std::optional<fs::path> StoragePath() { return m_db->StoragePath(); }
 };
 
 #endif // BITCOIN_TXDB_H

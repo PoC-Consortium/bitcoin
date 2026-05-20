@@ -90,12 +90,6 @@ target_link_libraries(bitcoin_consensus
 # Enable AVX2 for PoCX batch validation if available
 if(ENABLE_POCX AND HAVE_AVX2)
   target_compile_definitions(bitcoin_consensus PRIVATE ENABLE_AVX2)
-  set_property(SOURCE pocx/consensus/batch_validation.cpp PROPERTY
-    COMPILE_OPTIONS ${AVX2_CXXFLAGS}
-  )
-  set_property(SOURCE pocx/algorithms/plot_generation.cpp PROPERTY
-    COMPILE_OPTIONS ${AVX2_CXXFLAGS}
-  )
 endif()
 # SSE2 is baseline on x86-64, no special compiler flags needed
 if(ENABLE_POCX AND CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|amd64")
@@ -297,6 +291,7 @@ add_library(bitcoin_node STATIC EXCLUDE_FROM_ALL
   $<$<TARGET_EXISTS:bitcoin_wallet>:wallet/init.cpp>
   $<$<NOT:$<TARGET_EXISTS:bitcoin_wallet>>:dummywallet.cpp>
   $<$<BOOL:${ENABLE_POCX}>:pocx/consensus/difficulty.cpp>
+  $<$<BOOL:${ENABLE_POCX}>:pocx/assignments/replay.cpp>
   $<$<BOOL:${ENABLE_POCX}>:pocx/mining/block_context.cpp>
   $<$<BOOL:${ENABLE_POCX}>:pocx/mining/defensive_forge.cpp>
   $<$<BOOL:${ENABLE_POCX}>:pocx/mining/key_signing.cpp>

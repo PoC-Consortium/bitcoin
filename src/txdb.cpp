@@ -95,7 +95,12 @@ std::vector<uint256> CCoinsViewDB::GetHeadBlocks() const {
     return vhashHeadBlocks;
 }
 
-bool CCoinsViewDB::BatchWrite(CoinsViewCacheCursor& cursor, const uint256 &hashBlock) {
+bool CCoinsViewDB::BatchWrite(CoinsViewCacheCursor& cursor, const uint256 &hashBlock
+#ifdef ENABLE_POCX
+    , const ForgingAssignmentsMap& assignments
+    , const DeletedAssignmentsSet& deletedAssignments
+#endif
+) {
     CDBBatch batch(*m_db);
     size_t count = 0;
     size_t changed = 0;
@@ -148,6 +153,13 @@ bool CCoinsViewDB::BatchWrite(CoinsViewCacheCursor& cursor, const uint256 &hashB
             }
         }
     }
+
+#ifdef ENABLE_POCX
+    // Bundle forging assignment updates into the final batch so they commit atomically
+    // with DB_BEST_BLOCK. If this batch is lost on crash, HEAD_BLOCKS replay rebuilds
+    // both coins and assignments from block data via RollforwardBlock.
+    WriteAssignmentsToBatch(batch, assignments, deletedAssignments);
+#endif
 
     // In the last batch, mark the database as consistent with hashBlock again.
     batch.Erase(DB_HEAD_BLOCKS);
@@ -342,47 +354,29 @@ void CCoinsViewDB::WriteAssignmentsToBatch(
     const ForgingAssignmentsMap& assignments,
     const DeletedAssignmentsSet& deletedAssignments)
 {
-    // Write all assignment history entries with new key format (includes height)
+    // Write history rows, but skip keys that are about to be erased — emitting
+    // both a Write and an Erase for the same key into one batch is wasted I/O.
     for (const auto& [key, assignment] : assignments) {
+        if (deletedAssignments.contains(key)) continue;
         const auto& [plot_addr, txid] = key;
         batch.Write(AssignmentHistoryKey(plot_addr, assignment.assignment_height, txid), assignment);
     }
 
-    // Erase deleted assignments from history
-    // Note: deletedAssignments still uses old key format (plot, txid)
-    // We need height for the new key - reconstruct from assignment data
-    for (const auto& [plot_addr, txid] : deletedAssignments) {
-        // Find the assignment in the map to get its height
-        auto it = std::find_if(assignments.begin(), assignments.end(),
-            [&](const auto& entry) {
-                return entry.first.first == plot_addr && entry.first.second == txid;
-            });
-
+    // Erase deleted assignments from history. The height comes from the
+    // assignment payload that the cache carried in `assignments` alongside the
+    // deletion key. assignments is a map keyed by (plot, txid), so the lookup
+    // is O(log N).
+    for (const auto& key : deletedAssignments) {
+        auto it = assignments.find(key);
         if (it != assignments.end()) {
+            const auto& [plot_addr, txid] = key;
             batch.Erase(AssignmentHistoryKey(plot_addr, it->second.assignment_height, txid));
         } else {
-            // Deletion without corresponding assignment - should not happen in normal operation
-            // For safety, we'd need to query the DB to get the height, but this is an error case
+            // Deletion without corresponding payload — the cache invariant says
+            // this shouldn't happen; log so we notice if it ever does.
             LogPrintf("PoCX: ERROR - Cannot delete assignment %s for plot %s without height information\n",
-                     txid.ToString(), HexStr(plot_addr));
+                     key.second.ToString(), HexStr(key.first));
         }
     }
-}
-
-bool CCoinsViewDB::BatchWriteAssignments(
-    const ForgingAssignmentsMap& assignments,
-    const DeletedAssignmentsSet& deletedAssignments)
-{
-    CDBBatch batch(*m_db);
-    WriteAssignmentsToBatch(batch, assignments, deletedAssignments);
-
-    bool ret = m_db->WriteBatch(batch);
-    if (ret) {
-        LogPrintf("PoCX: Successfully committed %zu assignment updates and %zu deletions to database\n",
-                 assignments.size(), deletedAssignments.size());
-    } else {
-        LogPrintf("PoCX: ERROR - Failed to commit assignments to database!\n");
-    }
-    return ret;
 }
 #endif

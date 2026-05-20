@@ -47,6 +47,13 @@ enum class AddressPurpose;
 struct CRecipient;
 struct WalletContext;
 } // namespace wallet
+#ifdef ENABLE_POCX
+namespace pocx::mining {
+// Forward-declared so this header does not pull in pocx/mining/wallet_signing.h.
+// The fixed underlying type must stay in sync with the definition there.
+enum class AccountKeyAvailability : uint8_t;
+} // namespace pocx::mining
+#endif
 
 namespace interfaces {
 
@@ -310,9 +317,11 @@ public:
     virtual wallet::CWallet* wallet() { return nullptr; }
 
 #ifdef ENABLE_POCX
-    //! Return whether the wallet holds the signing key for the given PoCX
-    //! account (40-char hex of a 20-byte HASH160).
-    virtual bool haveAccountKey(const std::string& account_id) = 0;
+    //! Probe the wallet for the signing key of the given PoCX account
+    //! (40-char hex of a 20-byte HASH160). Distinguishes "available",
+    //! "would be available if unlocked", and "absent" so callers can
+    //! surface a useful error.
+    virtual pocx::mining::AccountKeyAvailability haveAccountKey(const std::string& account_id) = 0;
 
     //! Sign a PoCX block with the wallet key for the given account. On
     //! success the block's pubkey and signature fields are populated.
