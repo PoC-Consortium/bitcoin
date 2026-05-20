@@ -58,7 +58,12 @@ public:
 
     uint256 GetBestBlock() const override { return hashBestBlock_; }
 
-    bool BatchWrite(CoinsViewCacheCursor& cursor, const uint256& hashBlock) override
+    bool BatchWrite(CoinsViewCacheCursor& cursor, const uint256& hashBlock
+#ifdef ENABLE_POCX
+        , const ForgingAssignmentsMap& /*assignments*/ = {}
+        , const DeletedAssignmentsSet& /*deletedAssignments*/ = {}
+#endif
+    ) override
     {
         for (auto it{cursor.Begin()}; it != cursor.End(); it = cursor.NextAndMaybeErase(*it)){
             if (it->second.IsDirty()) {
