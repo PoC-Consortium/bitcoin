@@ -5,11 +5,13 @@
 #ifndef BITCOIN_POCX_MINING_SUBMISSION_H
 #define BITCOIN_POCX_MINING_SUBMISSION_H
 
+#include <primitives/transaction.h>
 #include <uint256.h>
 
 #include <chrono>
 #include <optional>
 #include <string>
+#include <vector>
 
 namespace pocx {
 namespace mining {
@@ -23,6 +25,11 @@ struct NonceSubmission {
     uint32_t compression;
     uint256 block_hash;             // Tip block hash (sole staleness indicator)
     std::chrono::steady_clock::time_point submit_time;
+
+    // Optional pool payout split (Q1). Empty => single-output coinbase to the
+    // effective signer (legacy). When set, the node builds the coinbase from
+    // these outputs and routes any remainder (incl. fees) to the effective signer.
+    std::vector<CTxOut> coinbase_outputs;
 
     NonceSubmission() = default;
     NonceSubmission(const std::string& acc_id, const std::string& s, uint64_t n,
