@@ -874,6 +874,24 @@ int pocx_validate_blocks(
         return -1;
     }
 
+    // Defensive bound: each block expands to `1 << compression` work units, so
+    // reject out-of-range compression and refuse a size_t-overflowing total
+    // before any shift or allocation below.
+    size_t guarded_total_work = 0;
+    for (size_t i = 0; i < count; i++) {
+        const uint32_t compression = inputs[i].compression;
+        if (compression < POCX_MIN_COMPRESSION || compression > POCX_MAX_COMPRESSION) {
+            results[i].is_valid = false;
+            results[i].error_code = VALIDATION_ERROR_COMPRESSION_OUT_OF_RANGE;
+            return VALIDATION_ERROR_COMPRESSION_OUT_OF_RANGE;
+        }
+        const size_t work = static_cast<size_t>(1) << compression; // <= 1<<7 == 128
+        if (guarded_total_work > std::numeric_limits<size_t>::max() - work) {
+            return VALIDATION_ERROR_INVALID_INPUT;
+        }
+        guarded_total_work += work;
+    }
+
 #ifdef ENABLE_AVX2
     if (crypto::HaveAVX2()) {
         return pocx_validate_blocks_avx2_impl(inputs, count, results);

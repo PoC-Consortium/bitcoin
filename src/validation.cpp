@@ -4847,6 +4847,21 @@ bool ChainstateManager::ProcessNewBlockHeaders(std::span<const CBlockHeader> hea
             for (size_t i = 0; i < headers_to_validate.size(); i++) {
                 const CBlockHeader& hdr = *headers_to_validate[i];
 
+                // Reject out-of-range compression before the batch expands each
+                // block into 1<<compression work units (mirrors CheckBlockHeader).
+                const auto cbounds = pocx::consensus::GetPoCXCompressionBounds(
+                    hdr.nHeight, GetConsensus().nSubsidyHalvingInterval);
+                if (hdr.pocxProof.compression < cbounds.nPoCXMinCompression ||
+                    hdr.pocxProof.compression > cbounds.nPoCXTargetCompression) {
+                    return state.Invalid(BlockValidationResult::BLOCK_INVALID_HEADER,
+                                         "bad-pocx-compression",
+                                         strprintf("compression %u out of range [%u, %u] at height %d",
+                                                   hdr.pocxProof.compression,
+                                                   cbounds.nPoCXMinCompression,
+                                                   cbounds.nPoCXTargetCompression,
+                                                   hdr.nHeight));
+                }
+
                 // Reverse generation signature bytes to match ValidateProofOfCapacity behavior
                 // (uint256::ToString() reverses bytes, then DecodeGenerationSignature parses them)
                 for (size_t j = 0; j < 32; j++) {
