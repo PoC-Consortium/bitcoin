@@ -5464,8 +5464,12 @@ bool Chainstate::RollforwardBlock(const CBlockIndex* pindex, CCoinsViewCache& in
 #ifdef ENABLE_POCX
         // Re-apply assignment / revocation OP_RETURNs. Block was already validated when
         // first connected; we just need to put the assignment-DB side effects back in
-        // place. Idempotent.
-        pocx::assignments::ApplyAssignmentEffectsForReplay(*tx, pindex->nHeight, consensus_params, inputs);
+        // place. Idempotent. A false return means the assignment DB is inconsistent —
+        // fail the replay rather than continue with divergent state.
+        if (!pocx::assignments::ApplyAssignmentEffectsForReplay(*tx, pindex->nHeight, consensus_params, inputs)) {
+            LogError("RollforwardBlock(): assignment replay failed at %d, hash=%s\n", pindex->nHeight, pindex->GetBlockHash().ToString());
+            return false;
+        }
 #endif
     }
     return true;
