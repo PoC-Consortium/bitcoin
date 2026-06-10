@@ -40,6 +40,7 @@ struct ForgingState {
     uint256 tip_block_hash;         // Hash of chain tip (sole staleness indicator)
     std::chrono::system_clock::time_point forge_time;  // When to forge
     std::atomic<bool> cancelled;    // Cancellation flag
+    std::vector<CTxOut> coinbase_outputs;  // Optional pool payout split (Q1); empty => legacy single output
 
     ForgingState() : cancelled(false) {}
 };
@@ -77,13 +78,16 @@ public:
     explicit PoCXScheduler(interfaces::Mining& mining);
     ~PoCXScheduler();
 
-    /** Queue nonce submission for forging. Returns false if queue full. */
+    /** Queue nonce submission for forging. Returns false if queue full.
+     *  coinbase_outputs is an optional pool payout split; empty => legacy
+     *  single-output coinbase to the effective signer. */
     bool SubmitNonce(const std::string& account_id,
                      const std::string& seed,
                      uint64_t nonce,
                      uint64_t quality,
                      uint32_t compression,
-                     const uint256& block_hash);
+                     const uint256& block_hash,
+                     const std::vector<CTxOut>& coinbase_outputs = {});
 
     void Shutdown();
 

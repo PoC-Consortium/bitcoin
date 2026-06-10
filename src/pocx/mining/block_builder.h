@@ -10,6 +10,7 @@
 
 #include <memory>
 #include <string>
+#include <vector>
 
 namespace node {
 struct NodeContext;
@@ -29,6 +30,18 @@ private:
     /** Create block template using Bitcoin Core */
     std::unique_ptr<interfaces::BlockTemplate> CreateTemplate(
         const CScript& coinbase_script
+    );
+
+    /** Replace the template coinbase's payout output with a pool payout split.
+     *  Keeps the template's other coinbase outputs (e.g. the witness commitment),
+     *  routes any remainder (template payout value - sum of outputs, which includes
+     *  fees) to the effective signer, and rejects if the outputs exceed the
+     *  available coinbase value. Returns false (and leaves the block unchanged)
+     *  on error. */
+    bool ApplyCoinbaseOutputs(
+        CBlock& block,
+        const std::vector<CTxOut>& coinbase_outputs,
+        const std::string& effective_signer_account
     );
 
     /** Fill in PoCX proof fields and recalculate merkle root */
@@ -51,7 +64,8 @@ public:
         uint64_t nonce,
         uint64_t quality,
         uint32_t compression,
-        node::NodeContext* context
+        node::NodeContext* context,
+        const std::vector<CTxOut>& coinbase_outputs = {}
     );
 };
 

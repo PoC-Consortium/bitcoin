@@ -59,7 +59,8 @@ bool PoCXScheduler::SubmitNonce(const std::string& account_id,
                                 uint64_t nonce,
                                 uint64_t quality,
                                 uint32_t compression,
-                                const uint256& block_hash) {
+                                const uint256& block_hash,
+                                const std::vector<CTxOut>& coinbase_outputs) {
 
     // Create submission for queue (validation already done in RPC)
     NonceSubmission submission(
@@ -70,6 +71,7 @@ bool PoCXScheduler::SubmitNonce(const std::string& account_id,
         compression,
         block_hash
     );
+    submission.coinbase_outputs = coinbase_outputs;
 
     // Add to queue with DoS protection
     {
@@ -284,6 +286,7 @@ void PoCXScheduler::ProcessSubmission(const NonceSubmission& submission) {
         m_current_forging->nonce = submission.nonce;
         m_current_forging->quality = submission.quality;
         m_current_forging->compression = submission.compression;
+        m_current_forging->coinbase_outputs = submission.coinbase_outputs;
         m_current_forging->deadline_seconds = deadline_seconds;
         m_current_forging->base_target = current_context.base_target;
         m_current_forging->tip_block_hash = current_context.block_hash;
@@ -426,6 +429,7 @@ bool PoCXScheduler::ForgeBlock(bool defensive) {
     uint64_t nonce = m_current_forging->nonce;
     uint64_t quality = m_current_forging->quality;
     uint32_t compression = m_current_forging->compression;
+    std::vector<CTxOut> coinbase_outputs = m_current_forging->coinbase_outputs;
 
     // Get node context
     ::node::NodeContext* context = m_mining->context();
@@ -435,7 +439,7 @@ bool PoCXScheduler::ForgeBlock(bool defensive) {
     }
 
     // Build block using BlockBuilder with validated quality and compression
-    auto block = m_block_builder.BuildBlock(account_id, seed, nonce, quality, compression, context);
+    auto block = m_block_builder.BuildBlock(account_id, seed, nonce, quality, compression, context, coinbase_outputs);
 
     if (!block) {
         LogPrintf("PoCX: [Scheduler] Block building failed\n");
