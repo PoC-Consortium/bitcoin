@@ -59,10 +59,10 @@ struct BlockAccumulator {
     }
 };
 
-// Early surrender state - shared across threads
+// Early surrender abort latch - shared across threads. Raised when any block's
+// quality mismatches; the verdict itself lives on that block's ValidationResult.
 struct EarlySurrenderState {
     std::atomic<bool> triggered{false};
-    std::atomic<size_t> failed_block_index{0};
 };
 
 // Forward declarations
@@ -149,8 +149,10 @@ static bool check_block_completion(
 
     // Early surrender check: verify calculated quality matches claimed quality
     if (quality != acc.claimed_quality) {
-        // Quality mismatch - trigger early surrender
-        surrender_state.failed_block_index.store(block_index, std::memory_order_relaxed);
+        // Quality mismatch - record the verdict on this block's own result, then
+        // raise the shared abort latch so other threads stop processing.
+        result.is_valid = false;
+        result.error_code = VALIDATION_ERROR_QUALITY_MISMATCH;
         surrender_state.triggered.store(true, std::memory_order_release);
         return false;
     }
@@ -519,12 +521,9 @@ static int pocx_validate_blocks_scalar(
         }
     }
 
-    // Step 5: Check for early surrender
+    // Step 5: Check for early surrender. The failing block(s) already carry
+    // is_valid=false from check_block_completion; -2 lets the caller skip the scan.
     if (surrender_state.triggered.load(std::memory_order_acquire)) {
-        // Mark the failed block's result
-        size_t failed_idx = surrender_state.failed_block_index.load(std::memory_order_relaxed);
-        results[failed_idx].is_valid = false;
-        results[failed_idx].error_code = VALIDATION_ERROR_QUALITY_MISMATCH;
         return -2;  // Early surrender error code
     }
 
@@ -661,12 +660,9 @@ static int pocx_validate_blocks_avx2_impl(
         }
     }
 
-    // Step 5: Check for early surrender
+    // Step 5: Check for early surrender. The failing block(s) already carry
+    // is_valid=false from check_block_completion; -2 lets the caller skip the scan.
     if (surrender_state.triggered.load(std::memory_order_acquire)) {
-        // Mark the failed block's result
-        size_t failed_idx = surrender_state.failed_block_index.load(std::memory_order_relaxed);
-        results[failed_idx].is_valid = false;
-        results[failed_idx].error_code = VALIDATION_ERROR_QUALITY_MISMATCH;
         return -2;  // Early surrender error code
     }
 
@@ -832,12 +828,9 @@ static int pocx_validate_blocks_sse2_impl(
         }
     }
 
-    // Step 5: Check for early surrender
+    // Step 5: Check for early surrender. The failing block(s) already carry
+    // is_valid=false from check_block_completion; -2 lets the caller skip the scan.
     if (surrender_state.triggered.load(std::memory_order_acquire)) {
-        // Mark the failed block's result
-        size_t failed_idx = surrender_state.failed_block_index.load(std::memory_order_relaxed);
-        results[failed_idx].is_valid = false;
-        results[failed_idx].error_code = VALIDATION_ERROR_QUALITY_MISMATCH;
         return -2;  // Early surrender error code
     }
 
