@@ -915,7 +915,7 @@ bool MemPoolAccept::PreChecks(ATMPArgs& args, Workspace& ws)
             // Check #4: Check assignment state
             int current_height = m_active_chainstate.m_chain.Height() + 1;
             ForgingState plotState = pocx::assignments::GetAssignmentState(
-                plot_addr, current_height, m_view);
+                current_height, m_view.GetForgingAssignment(plot_addr, current_height));
 
             if (plotState != ForgingState::UNASSIGNED &&
                 plotState != ForgingState::REVOKED) {
@@ -961,7 +961,7 @@ bool MemPoolAccept::PreChecks(ATMPArgs& args, Workspace& ws)
             // Check #7: Check assignment is active (ASSIGNED only)
             int current_height = m_active_chainstate.m_chain.Height() + 1;
             ForgingState plotState = pocx::assignments::GetAssignmentState(
-                plot_addr, current_height, m_view);
+                current_height, m_view.GetForgingAssignment(plot_addr, current_height));
 
             if (plotState != ForgingState::ASSIGNED) {
                 return state.Invalid(TxValidationResult::TX_CONSENSUS,
@@ -2576,7 +2576,8 @@ bool Chainstate::ConnectBlock(const CBlock& block, BlockValidationState& state, 
     // Skip signature validation during template creation (fJustCheck=true)
     // The signature will be added after the template is created
     if (pindex->nHeight > 0 && !fJustCheck) {
-        if (!pocx::consensus::VerifyPoCXBlockCompactSignature(block, view, pindex->nHeight)) {
+        const auto plot_assignment = view.GetForgingAssignment(block.pocxProof.account_id, pindex->nHeight);
+        if (!pocx::consensus::VerifyPoCXBlockCompactSignature(block, plot_assignment, pindex->nHeight)) {
             return state.Invalid(BlockValidationResult::BLOCK_CONSENSUS, "bad-pocx-assignment-sig",
                                 "PoCX block signature validation failed with assignment check");
         }
@@ -2859,7 +2860,7 @@ bool Chainstate::ConnectBlock(const CBlock& block, BlockValidationState& state, 
                 }
 
                 // Check assignment state - only allow new assignment if UNASSIGNED or REVOKED
-                ForgingState plotState = pocx::assignments::GetAssignmentState(plot_addr, pindex->nHeight, view);
+                ForgingState plotState = pocx::assignments::GetAssignmentState(pindex->nHeight, view.GetForgingAssignment(plot_addr, pindex->nHeight));
                 if (plotState != ForgingState::UNASSIGNED && plotState != ForgingState::REVOKED) {
                     return state.Invalid(BlockValidationResult::BLOCK_CONSENSUS,
                                        "plot-not-available-for-assignment",
@@ -2910,7 +2911,7 @@ bool Chainstate::ConnectBlock(const CBlock& block, BlockValidationState& state, 
                 }
 
                 // Check assignment state - must be ASSIGNED to revoke
-                ForgingState plotState = pocx::assignments::GetAssignmentState(plot_addr, pindex->nHeight, view);
+                ForgingState plotState = pocx::assignments::GetAssignmentState(pindex->nHeight, view.GetForgingAssignment(plot_addr, pindex->nHeight));
                 if (plotState != ForgingState::ASSIGNED) {
                     return state.Invalid(BlockValidationResult::BLOCK_CONSENSUS,
                                        "cannot-revoke-inactive",

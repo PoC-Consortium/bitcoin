@@ -41,7 +41,9 @@ std::optional<std::string> MaybeSignPoCXBlock(CBlock& block,
     {
         LOCK(cs_main);
         const CCoinsViewCache& view = chainman.ActiveChainstate().CoinsTip();
-        signer = pocx::assignments::GetEffectiveSigner(block.pocxProof.account_id, block.nHeight, view);
+        signer = pocx::assignments::GetEffectiveSigner(
+            block.pocxProof.account_id, block.nHeight,
+            view.GetForgingAssignment(block.pocxProof.account_id, block.nHeight));
     }
     const std::string signer_hex = HexStr(signer);
 

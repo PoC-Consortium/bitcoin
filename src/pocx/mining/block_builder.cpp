@@ -151,7 +151,8 @@ std::unique_ptr<CBlock> PoCXBlockBuilder::BuildBlock(
         const CCoinsViewCache& view = context->chainman->ActiveChainstate().CoinsTip();
 
         // Get effective signer considering assignments
-        std::array<uint8_t, 20> signer = pocx::assignments::GetEffectiveSigner(*plot_id, current_height, view);
+        std::array<uint8_t, 20> signer = pocx::assignments::GetEffectiveSigner(
+            *plot_id, current_height, view.GetForgingAssignment(*plot_id, current_height));
         effective_signer_account = HexStr(signer);
 
         LogPrintf("PoCX: [BlockBuilder] Plot: %s, Effective signer: %s at height %d\n",

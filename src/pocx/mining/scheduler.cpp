@@ -469,7 +469,8 @@ bool PoCXScheduler::ForgeBlock(bool defensive) {
             if (context && context->chainman) {
                 LOCK(cs_main);
                 const CCoinsViewCache& view = context->chainman->ActiveChainstate().CoinsTip();
-                signer = pocx::assignments::GetEffectiveSigner(*plot_id, block->nHeight, view);
+                signer = pocx::assignments::GetEffectiveSigner(
+                    *plot_id, block->nHeight, view.GetForgingAssignment(*plot_id, block->nHeight));
                 effective_signer = HexStr(signer);
             }
             uint160 u; std::copy(signer.begin(), signer.end(), u.begin());

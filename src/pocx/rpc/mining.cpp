@@ -269,7 +269,8 @@ static RPCHelpMan submit_nonce()
                         const CCoinsViewCache& view = active_chainstate.CoinsTip();
 
                         // Get effective signer considering assignments
-                        std::array<uint8_t, 20> effective_signer = pocx::assignments::GetEffectiveSigner(*account_id_parsed, height, view);
+                        std::array<uint8_t, 20> effective_signer = pocx::assignments::GetEffectiveSigner(
+                            *account_id_parsed, height, view.GetForgingAssignment(*account_id_parsed, height));
                         effective_signer_account = HexStr(effective_signer);
                         effective_signer_address = to_bech32(effective_signer);
 

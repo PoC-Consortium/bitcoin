@@ -5,27 +5,29 @@
 #ifndef BITCOIN_POCX_ASSIGNMENTS_ASSIGNMENT_STATE_H
 #define BITCOIN_POCX_ASSIGNMENTS_ASSIGNMENT_STATE_H
 
+#include <coins.h>
+
 #include <array>
 #include <cstdint>
-
-class CCoinsViewCache;
-enum class ForgingState : uint8_t;
+#include <optional>
 
 namespace pocx {
 namespace assignments {
 
-/** Get the effective signer for a plot at a given height (considers forging assignments) */
+/** Get the effective signer for a plot at a given height. Pure: callers resolve
+ *  the assignment in effect via CCoinsViewCache::GetForgingAssignment and pass
+ *  it in, keeping the consensus library free of coins-view state access. */
 std::array<uint8_t, 20> GetEffectiveSigner(
     const std::array<uint8_t, 20>& plotAddress,
     int nHeight,
-    const CCoinsViewCache& view
+    const std::optional<ForgingAssignment>& assignment
 );
 
-/** Get the forging state for a plot address at a specific height */
+/** Get the forging state for a plot at a specific height. Pure: assignment is
+ *  resolved by the caller (see GetEffectiveSigner). */
 ForgingState GetAssignmentState(
-    const std::array<uint8_t, 20>& plotAddress,
     int height,
-    const CCoinsViewCache& view
+    const std::optional<ForgingAssignment>& assignment
 );
 
 } // namespace assignments
