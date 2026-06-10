@@ -256,9 +256,11 @@ void CCoinsViewDBCursor::Next()
 
 namespace {
 
-// Serialization structures for database keys
-// Key format: (prefix, plotAddress, height, txid)
-// Sorted by height for efficient "current assignment" queries
+// Serialization structures for database keys.
+// Key format: (prefix, plotAddress, height, txid). All rows for a plot share
+// the (prefix, plotAddress) byte-prefix, so they are contiguous and a single
+// Seek + scan reads exactly one plot's history. Iteration order within a plot
+// is unspecified (height is not byte-ordered), so readers must not assume it.
 struct AssignmentHistoryKey {
     uint8_t prefix;
     std::array<uint8_t, 20> plotAddress;
@@ -274,50 +276,6 @@ struct AssignmentHistoryKey {
 };
 
 } // namespace
-
-std::optional<ForgingAssignment> CCoinsViewDB::GetForgingAssignment(
-    const std::array<uint8_t, 20>& plotAddress, int height) const
-{
-    // Iterate assignments for this plot using height-indexed keys
-    // Keys are sorted: (prefix, plot, height, txid)
-    // We can stop early when height exceeds target
-    std::unique_ptr<CDBIterator> pcursor(m_db->NewIterator());
-
-    // Seek to first assignment for this plot (height=0)
-    AssignmentHistoryKey seek_key(plotAddress, 0, uint256());
-    pcursor->Seek(seek_key);
-
-    std::optional<ForgingAssignment> result;
-    int mostRecentHeight = -1;
-
-    while (pcursor->Valid()) {
-        AssignmentHistoryKey key(plotAddress, 0, uint256());
-        if (!pcursor->GetKey(key)) break;
-
-        // Stop if we've moved past this plot's assignments
-        if (key.prefix != DB_ASSIGNMENT_HISTORY || key.plotAddress != plotAddress) {
-            break;
-        }
-
-        // Stop if we've exceeded target height (optimization: entries sorted by height)
-        if (key.assignment_height > height) {
-            break;
-        }
-
-        // Track most recent assignment at or before target height
-        if (key.assignment_height > mostRecentHeight) {
-            ForgingAssignment assignment;
-            if (pcursor->GetValue(assignment)) {
-                result = assignment;
-                mostRecentHeight = key.assignment_height;
-            }
-        }
-
-        pcursor->Next();
-    }
-
-    return result;
-}
 
 std::vector<ForgingAssignment> CCoinsViewDB::GetForgingAssignmentHistory(
     const std::array<uint8_t, 20>& plotAddress) const

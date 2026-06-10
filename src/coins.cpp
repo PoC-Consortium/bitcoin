@@ -51,12 +51,7 @@ std::unique_ptr<CCoinsViewCursor> CCoinsViewBacked::Cursor() const { return base
 size_t CCoinsViewBacked::EstimateSize() const { return base->EstimateSize(); }
 
 #ifdef ENABLE_POCX
-// CCoinsViewBacked assignment methods - delegate to base view
-std::optional<ForgingAssignment> CCoinsViewBacked::GetForgingAssignment(
-    const std::array<uint8_t, 20>& plotAddress, int height) const {
-    return base->GetForgingAssignment(plotAddress, height);
-}
-
+// CCoinsViewBacked assignment history - delegate to base view
 std::vector<ForgingAssignment> CCoinsViewBacked::GetForgingAssignmentHistory(
     const std::array<uint8_t, 20>& plotAddress) const {
     return base->GetForgingAssignmentHistory(plotAddress);
