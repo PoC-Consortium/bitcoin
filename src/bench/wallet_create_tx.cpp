@@ -90,8 +90,12 @@ void generateFakeBlock(const CChainParams& params,
     block.hashPrevBlock = tip.prev_block_hash;
     block.hashMerkleRoot = BlockMerkleRoot(block);
     block.nTime = ++tip.prev_block_time;
+#ifdef ENABLE_POCX
+    block.nBaseTarget = params.GenesisBlock().nBaseTarget;
+#else
     block.nBits = params.GenesisBlock().nBits;
     block.nNonce = 0;
+#endif
 
     {
         LOCK(::cs_main);

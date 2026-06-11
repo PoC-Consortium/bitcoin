@@ -31,9 +31,15 @@ QList<BitcoinUnit> BitcoinUnits::availableUnits()
 QString BitcoinUnits::longName(Unit unit)
 {
     switch (unit) {
+#ifdef ENABLE_POCX
+    case Unit::BTC: return QString("BTCX");
+    case Unit::mBTC: return QString("mBTCX");
+    case Unit::uBTC: return QString::fromUtf8("µBTCX (bits)");
+#else
     case Unit::BTC: return QString("BTC");
     case Unit::mBTC: return QString("mBTC");
     case Unit::uBTC: return QString::fromUtf8("µBTC (bits)");
+#endif
     case Unit::SAT: return QString("Satoshi (sat)");
     } // no default case, so the compiler can warn about missing cases
     assert(false);

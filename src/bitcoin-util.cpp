@@ -85,6 +85,7 @@ static int AppInitUtil(ArgsManager& args, int argc, char* argv[])
     return CONTINUE_EXECUTION;
 }
 
+#ifndef ENABLE_POCX
 static void grind_task(uint32_t nBits, CBlockHeader header, uint32_t offset, uint32_t step, std::atomic<bool>& found, uint32_t& proposed_nonce)
 {
     arith_uint256 target;
@@ -109,9 +110,14 @@ static void grind_task(uint32_t nBits, CBlockHeader header, uint32_t offset, uin
         } while(header.nNonce != next);
     }
 }
+#endif
 
 static int Grind(const std::vector<std::string>& args, std::string& strPrint)
 {
+#ifdef ENABLE_POCX
+    strPrint = "Grind command not supported with PoCX (Proof of Capacity) consensus";
+    return EXIT_FAILURE;
+#else
     if (args.size() != 1) {
         strPrint = "Must specify block header to grind";
         return EXIT_FAILURE;
@@ -147,6 +153,7 @@ static int Grind(const std::vector<std::string>& args, std::string& strPrint)
     ss << header;
     strPrint = HexStr(ss);
     return EXIT_SUCCESS;
+#endif
 }
 
 MAIN_FUNCTION

@@ -27,6 +27,7 @@
 #include <utility>
 #include <vector>
 
+class CBlock;
 class CFeeRate;
 class CKey;
 enum class FeeReason;
@@ -47,6 +48,13 @@ enum class AddressPurpose;
 struct CRecipient;
 struct WalletContext;
 } // namespace wallet
+#ifdef ENABLE_POCX
+namespace pocx::mining {
+// Forward-declared so this header does not pull in pocx/mining/wallet_signing.h.
+// The fixed underlying type must stay in sync with the definition there.
+enum class AccountKeyAvailability : uint8_t;
+} // namespace pocx::mining
+#endif
 
 namespace interfaces {
 
@@ -307,6 +315,18 @@ public:
 
     //! Return pointer to internal wallet class, useful for testing.
     virtual wallet::CWallet* wallet() { return nullptr; }
+
+#ifdef ENABLE_POCX
+    //! Probe the wallet for the signing key of the given PoCX account
+    //! (40-char hex of a 20-byte HASH160). Distinguishes "available",
+    //! "would be available if unlocked", and "absent" so callers can
+    //! surface a useful error.
+    virtual pocx::mining::AccountKeyAvailability haveAccountKey(const std::string& account_id) = 0;
+
+    //! Sign a PoCX block with the wallet key for the given account. On
+    //! success the block's pubkey and signature fields are populated.
+    virtual bool signPoCXBlock(const std::string& account_id, CBlock& block) = 0;
+#endif
 };
 
 //! Wallet chain client that in addition to having chain client methods for

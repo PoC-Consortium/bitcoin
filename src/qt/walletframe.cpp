@@ -176,6 +176,15 @@ void WalletFrame::gotoSendCoinsPage(QString addr)
         i.value()->gotoSendCoinsPage(addr);
 }
 
+#ifdef ENABLE_POCX
+void WalletFrame::gotoForgingAssignmentPage()
+{
+    WalletView *walletView = currentWalletView();
+    if (walletView)
+        walletView->gotoForgingAssignmentPage();
+}
+#endif
+
 void WalletFrame::gotoSignMessageTab(QString addr)
 {
     WalletView *walletView = currentWalletView();

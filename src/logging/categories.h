@@ -46,6 +46,9 @@ enum LogFlags : CategoryMask {
     TXPACKAGES = (CategoryMask{1} << 28),
     KERNEL = (CategoryMask{1} << 29),
     PRIVBROADCAST = (CategoryMask{1} << 30),
+#ifdef ENABLE_POCX
+    POCX = (CategoryMask{1} << 31),
+#endif
     ALL = ~NONE,
 };
 

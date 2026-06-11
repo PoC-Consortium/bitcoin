@@ -9,10 +9,18 @@
 #include <util/check.h>
 #include <util/time.h>
 #include <util/vector.h>
+#ifdef ENABLE_POCX
+#include <pocx/consensus/difficulty.h>
+#endif
 
 // Our memory analysis in headerssync-params.py assumes this many bytes for a
 // CompressedHeader (we should re-calculate parameters if we compress further).
+#ifdef ENABLE_POCX
+static_assert(sizeof(CompressedHeader) == 264,
+              "CompressedHeader size changed - update memory analysis");
+#else
 static_assert(sizeof(CompressedHeader) == 48);
+#endif
 
 HeadersSyncState::HeadersSyncState(NodeId id,
                                    const Consensus::Params& consensus_params,
@@ -22,7 +30,9 @@ HeadersSyncState::HeadersSyncState(NodeId id,
     : m_commit_offset((assert(params.commitment_period > 0), // HeadersSyncParams field must be initialized to non-zero.
                        FastRandomContext().randrange(params.commitment_period))),
       m_id(id),
+#ifndef ENABLE_POCX
       m_consensus_params(consensus_params),
+#endif
       m_params(params),
       m_chain_start(chain_start),
       m_minimum_required_work(minimum_required_work),
@@ -186,11 +196,19 @@ bool HeadersSyncState::ValidateAndProcessSingleHeader(const CBlockHeader& curren
     // work chain if they compress the work into as few blocks as possible,
     // so don't let anyone give a chain that would violate the difficulty
     // adjustment maximum.
+#ifndef ENABLE_POCX
     if (!PermittedDifficultyTransition(m_consensus_params, next_height,
                 m_last_header_received.nBits, current.nBits)) {
         LogDebug(BCLog::NET, "Initial headers sync aborted with peer=%d: invalid difficulty transition at height=%i (presync phase)\n", m_id, next_height);
         return false;
     }
+#else
+    if (!pocx::consensus::PermittedBaseTargetTransition(
+                m_last_header_received.nBaseTarget, current.nBaseTarget)) {
+        LogDebug(BCLog::NET, "Initial headers sync aborted with peer=%d: invalid base target transition at height=%i (presync phase)\n", m_id, next_height);
+        return false;
+    }
+#endif
 
     if (next_height % m_params.commitment_period == m_commit_offset) {
         // Add a commitment.
@@ -226,6 +244,7 @@ bool HeadersSyncState::ValidateAndStoreRedownloadedHeader(const CBlockHeader& he
         return false;
     }
 
+#ifndef ENABLE_POCX
     // Check that the difficulty adjustments are within our tolerance:
     uint32_t previous_nBits{0};
     if (!m_redownloaded_headers.empty()) {
@@ -239,6 +258,19 @@ bool HeadersSyncState::ValidateAndStoreRedownloadedHeader(const CBlockHeader& he
         LogDebug(BCLog::NET, "Initial headers sync aborted with peer=%d: invalid difficulty transition at height=%i (redownload phase)\n", m_id, next_height);
         return false;
     }
+#else
+    uint64_t previous_base_target{0};
+    if (!m_redownloaded_headers.empty()) {
+        previous_base_target = m_redownloaded_headers.back().nBaseTarget;
+    } else {
+        previous_base_target = m_chain_start.nBaseTarget;
+    }
+
+    if (!pocx::consensus::PermittedBaseTargetTransition(previous_base_target, header.nBaseTarget)) {
+        LogDebug(BCLog::NET, "Initial headers sync aborted with peer=%d: invalid base target transition at height=%i (redownload phase)\n", m_id, next_height);
+        return false;
+    }
+#endif
 
     // Track work on the redownloaded chain
     m_redownload_chain_work += GetBlockProof(header);

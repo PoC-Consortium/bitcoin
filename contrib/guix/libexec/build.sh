@@ -50,6 +50,9 @@ OUTDIR="${DISTSRC}/output"
 # $HOSTs after successfully building.
 BASEPREFIX="${PWD}/depends"
 
+# Enable PoCX build by default. Set ENABLE_POCX=0 to build vanilla Bitcoin Core.
+ENABLE_POCX="${ENABLE_POCX:-1}"
+
 # Given a package name and an output name, return the path of that output in our
 # current guix environment
 store_path() {
@@ -206,6 +209,9 @@ mkdir -p "$OUTDIR"
 
 # CONFIGFLAGS
 CONFIGFLAGS="-DREDUCE_EXPORTS=ON -DBUILD_BENCH=OFF -DBUILD_GUI_TESTS=OFF -DBUILD_FUZZ_BINARY=OFF -DCMAKE_SKIP_RPATH=TRUE"
+if [ "$ENABLE_POCX" = "1" ]; then
+    CONFIGFLAGS="-DENABLE_POCX=ON $CONFIGFLAGS"
+fi
 
 # CFLAGS
 HOST_CFLAGS="-O2 -g"
@@ -260,7 +266,11 @@ mkdir -p "$DISTSRC"
     case "$HOST" in
         *mingw*)
             cmake --build build -j "$JOBS" -t deploy ${V:+--verbose}
-            mv build/bitcoin-win64-setup.exe "${OUTDIR}/${DISTNAME}-win64-setup-unsigned.exe"
+            if [ "$ENABLE_POCX" = "1" ]; then
+                mv build/bitcoin-pocx-win64-setup.exe "${OUTDIR}/${DISTNAME}-win64-setup-unsigned.exe"
+            else
+                mv build/bitcoin-win64-setup.exe "${OUTDIR}/${DISTNAME}-win64-setup-unsigned.exe"
+            fi
             ;;
     esac
 

@@ -50,4 +50,9 @@ std::string SHA256AutoDetect(sha256_implementation::UseImplementation use_implem
  */
 void SHA256D64(unsigned char* output, const unsigned char* input, size_t blocks);
 
+#ifdef ENABLE_POCX
+/** Whether AVX2 is available and OS-enabled. Set during SHA256AutoDetect(). */
+bool SHA256HaveAVX2();
+#endif
+
 #endif // BITCOIN_CRYPTO_SHA256_H

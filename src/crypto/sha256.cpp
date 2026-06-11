@@ -582,6 +582,12 @@ bool AVXEnabled()
 } // namespace
 
 
+#ifdef ENABLE_POCX
+static bool g_pocx_have_avx2 = false;
+
+bool SHA256HaveAVX2() { return g_pocx_have_avx2; }
+#endif
+
 std::string SHA256AutoDetect(sha256_implementation::UseImplementation use_implementation)
 {
     std::string ret = "standard";
@@ -619,6 +625,10 @@ std::string SHA256AutoDetect(sha256_implementation::UseImplementation use_implem
             have_x86_shani = (ebx >> 29) & 1;
         }
     }
+
+#ifdef ENABLE_POCX
+    g_pocx_have_avx2 = have_avx2 && have_avx && enabled_avx;
+#endif
 
 #if defined(ENABLE_SSE41) && defined(ENABLE_X86_SHANI)
     if (have_x86_shani) {

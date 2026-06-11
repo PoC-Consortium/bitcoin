@@ -41,7 +41,7 @@ add_library(bitcoinkernel
   ../policy/rbf.cpp
   ../policy/settings.cpp
   ../policy/truc_policy.cpp
-  ../pow.cpp
+  $<$<NOT:$<BOOL:${ENABLE_POCX}>>:../pow.cpp>
   ../primitives/block.cpp
   ../primitives/transaction.cpp
   ../pubkey.cpp
@@ -78,6 +78,19 @@ add_library(bitcoinkernel
   ../validation.cpp
   ../validationinterface.cpp
   ../versionbits.cpp
+  $<$<BOOL:${ENABLE_POCX}>:../pocx/consensus/signature.cpp>
+  $<$<BOOL:${ENABLE_POCX}>:../pocx/consensus/proof.cpp>
+  $<$<BOOL:${ENABLE_POCX}>:../pocx/consensus/params.cpp>
+  $<$<BOOL:${ENABLE_POCX}>:../pocx/consensus/batch_validation.cpp>
+  $<$<BOOL:${ENABLE_POCX}>:../pocx/consensus/difficulty.cpp>
+  $<$<BOOL:${ENABLE_POCX}>:../pocx/algorithms/time_bending.cpp>
+  $<$<BOOL:${ENABLE_POCX}>:../pocx/algorithms/plot_generation.cpp>
+  $<$<BOOL:${ENABLE_POCX}>:../pocx/algorithms/quality.cpp>
+  $<$<BOOL:${ENABLE_POCX}>:../pocx/algorithms/encoding.cpp>
+  $<$<BOOL:${ENABLE_POCX}>:../pocx/assignments/assignment_state.cpp>
+  $<$<BOOL:${ENABLE_POCX}>:../pocx/assignments/opcodes.cpp>
+  $<$<BOOL:${ENABLE_POCX}>:../pocx/assignments/replay.cpp>
+  $<$<BOOL:${ENABLE_POCX}>:../pocx/mining/defensive_forge.cpp>
   $<TARGET_OBJECTS:bitcoin_clientversion>
   $<TARGET_OBJECTS:bitcoin_crypto>
   $<TARGET_OBJECTS:leveldb>
@@ -107,6 +120,22 @@ target_link_libraries(bitcoinkernel
     $<TARGET_NAME_IF_EXISTS:USDT::headers>
     Boost::headers
 )
+
+# Mark this TU as kernel-library build so validation.cpp can skip code
+# paths that depend on symbols only present in bitcoin_node/bitcoin_common
+# (e.g. Params(), regtest hot-path forger).
+if(ENABLE_POCX)
+  target_compile_definitions(bitcoinkernel PRIVATE BUILD_BITCOIN_KERNEL)
+endif()
+
+# Enable AVX2 for PoCX batch validation if available
+if(ENABLE_POCX AND HAVE_AVX2)
+  target_compile_definitions(bitcoinkernel PRIVATE ENABLE_AVX2)
+endif()
+# SSE2 is baseline on x86-64, no special compiler flags needed
+if(ENABLE_POCX AND CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|amd64")
+  target_compile_definitions(bitcoinkernel PRIVATE ENABLE_SSE2)
+endif()
 
 target_include_directories(bitcoinkernel PRIVATE $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src/leveldb/include>)
 
