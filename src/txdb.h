@@ -68,12 +68,7 @@ public:
 #ifdef ENABLE_POCX
     //! Forging assignment database methods (OP_RETURN-only architecture)
 
-    //! Get current active assignment for a plot at specific height
-    std::optional<ForgingAssignment> GetForgingAssignment(
-        const std::array<uint8_t, 20>& plotAddress,
-        int height) const override;
-
-    //! Get full assignment history for a plot
+    //! Get full committed assignment history for a plot
     std::vector<ForgingAssignment> GetForgingAssignmentHistory(
         const std::array<uint8_t, 20>& plotAddress) const override;
 

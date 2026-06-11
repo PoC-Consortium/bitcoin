@@ -20,6 +20,11 @@ namespace consensus {
 /** Get next base target (difficulty adjustment) */
 uint64_t GetNextBaseTarget(const CBlockIndex* pindexLast, const Consensus::Params& params);
 
+/** Whether a base target step between consecutive blocks is within the per-block
+ *  ±20% envelope GetNextBaseTarget enforces. Used as the headers-sync analog of
+ *  PermittedDifficultyTransition to bound claimed per-header work. */
+bool PermittedBaseTargetTransition(uint64_t prev_base_target, uint64_t new_base_target);
+
 /** Get next generation signature (deterministic, transaction-independent) */
 uint256 GetNextGenerationSignature(const CBlockIndex* pindexLast);
 

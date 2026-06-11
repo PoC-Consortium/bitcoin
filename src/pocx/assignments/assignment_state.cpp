@@ -4,18 +4,14 @@
 
 #include <pocx/assignments/assignment_state.h>
 
-#include <coins.h>
-
 namespace pocx {
 namespace assignments {
 
 std::array<uint8_t, 20> GetEffectiveSigner(
     const std::array<uint8_t, 20>& plotAddress,
     int nHeight,
-    const CCoinsViewCache& view
+    const std::optional<ForgingAssignment>& assignment
 ) {
-    auto assignment = view.GetForgingAssignment(plotAddress, nHeight);
-
     if (assignment.has_value() && assignment->IsActiveAtHeight(nHeight)) {
         return assignment->forgingAddress;
     }
@@ -24,11 +20,9 @@ std::array<uint8_t, 20> GetEffectiveSigner(
 }
 
 ForgingState GetAssignmentState(
-    const std::array<uint8_t, 20>& plotAddress,
     int height,
-    const CCoinsViewCache& view
+    const std::optional<ForgingAssignment>& assignment
 ) {
-    auto assignment = view.GetForgingAssignment(plotAddress, height);
     if (!assignment.has_value()) {
         return ForgingState::UNASSIGNED;
     }

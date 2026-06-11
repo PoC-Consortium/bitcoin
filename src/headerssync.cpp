@@ -8,6 +8,9 @@
 #include <util/check.h>
 #include <util/time.h>
 #include <util/vector.h>
+#ifdef ENABLE_POCX
+#include <pocx/consensus/difficulty.h>
+#endif
 
 // The two constants below are computed using the simulation script in
 // contrib/devtools/headerssync-params.py.
@@ -202,6 +205,12 @@ bool HeadersSyncState::ValidateAndProcessSingleHeader(const CBlockHeader& curren
         LogDebug(BCLog::NET, "Initial headers sync aborted with peer=%d: invalid difficulty transition at height=%i (presync phase)\n", m_id, next_height);
         return false;
     }
+#else
+    if (!pocx::consensus::PermittedBaseTargetTransition(
+                m_last_header_received.nBaseTarget, current.nBaseTarget)) {
+        LogDebug(BCLog::NET, "Initial headers sync aborted with peer=%d: invalid base target transition at height=%i (presync phase)\n", m_id, next_height);
+        return false;
+    }
 #endif
 
     if (next_height % HEADER_COMMITMENT_PERIOD == m_commit_offset) {
@@ -250,6 +259,18 @@ bool HeadersSyncState::ValidateAndStoreRedownloadedHeader(const CBlockHeader& he
     if (!PermittedDifficultyTransition(m_consensus_params, next_height,
                 previous_nBits, header.nBits)) {
         LogDebug(BCLog::NET, "Initial headers sync aborted with peer=%d: invalid difficulty transition at height=%i (redownload phase)\n", m_id, next_height);
+        return false;
+    }
+#else
+    uint64_t previous_base_target{0};
+    if (!m_redownloaded_headers.empty()) {
+        previous_base_target = m_redownloaded_headers.back().nBaseTarget;
+    } else {
+        previous_base_target = m_chain_start->nBaseTarget;
+    }
+
+    if (!pocx::consensus::PermittedBaseTargetTransition(previous_base_target, header.nBaseTarget)) {
+        LogDebug(BCLog::NET, "Initial headers sync aborted with peer=%d: invalid base target transition at height=%i (redownload phase)\n", m_id, next_height);
         return false;
     }
 #endif

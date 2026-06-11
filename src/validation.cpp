@@ -915,7 +915,7 @@ bool MemPoolAccept::PreChecks(ATMPArgs& args, Workspace& ws)
             // Check #4: Check assignment state
             int current_height = m_active_chainstate.m_chain.Height() + 1;
             ForgingState plotState = pocx::assignments::GetAssignmentState(
-                plot_addr, current_height, m_view);
+                current_height, m_view.GetForgingAssignment(plot_addr, current_height));
 
             if (plotState != ForgingState::UNASSIGNED &&
                 plotState != ForgingState::REVOKED) {
@@ -961,7 +961,7 @@ bool MemPoolAccept::PreChecks(ATMPArgs& args, Workspace& ws)
             // Check #7: Check assignment is active (ASSIGNED only)
             int current_height = m_active_chainstate.m_chain.Height() + 1;
             ForgingState plotState = pocx::assignments::GetAssignmentState(
-                plot_addr, current_height, m_view);
+                current_height, m_view.GetForgingAssignment(plot_addr, current_height));
 
             if (plotState != ForgingState::ASSIGNED) {
                 return state.Invalid(TxValidationResult::TX_CONSENSUS,
@@ -2576,7 +2576,8 @@ bool Chainstate::ConnectBlock(const CBlock& block, BlockValidationState& state, 
     // Skip signature validation during template creation (fJustCheck=true)
     // The signature will be added after the template is created
     if (pindex->nHeight > 0 && !fJustCheck) {
-        if (!pocx::consensus::VerifyPoCXBlockCompactSignature(block, view, pindex->nHeight)) {
+        const auto plot_assignment = view.GetForgingAssignment(block.pocxProof.account_id, pindex->nHeight);
+        if (!pocx::consensus::VerifyPoCXBlockCompactSignature(block, plot_assignment, pindex->nHeight)) {
             return state.Invalid(BlockValidationResult::BLOCK_CONSENSUS, "bad-pocx-assignment-sig",
                                 "PoCX block signature validation failed with assignment check");
         }
@@ -2859,7 +2860,7 @@ bool Chainstate::ConnectBlock(const CBlock& block, BlockValidationState& state, 
                 }
 
                 // Check assignment state - only allow new assignment if UNASSIGNED or REVOKED
-                ForgingState plotState = pocx::assignments::GetAssignmentState(plot_addr, pindex->nHeight, view);
+                ForgingState plotState = pocx::assignments::GetAssignmentState(pindex->nHeight, view.GetForgingAssignment(plot_addr, pindex->nHeight));
                 if (plotState != ForgingState::UNASSIGNED && plotState != ForgingState::REVOKED) {
                     return state.Invalid(BlockValidationResult::BLOCK_CONSENSUS,
                                        "plot-not-available-for-assignment",
@@ -2910,7 +2911,7 @@ bool Chainstate::ConnectBlock(const CBlock& block, BlockValidationState& state, 
                 }
 
                 // Check assignment state - must be ASSIGNED to revoke
-                ForgingState plotState = pocx::assignments::GetAssignmentState(plot_addr, pindex->nHeight, view);
+                ForgingState plotState = pocx::assignments::GetAssignmentState(pindex->nHeight, view.GetForgingAssignment(plot_addr, pindex->nHeight));
                 if (plotState != ForgingState::ASSIGNED) {
                     return state.Invalid(BlockValidationResult::BLOCK_CONSENSUS,
                                        "cannot-revoke-inactive",
@@ -4827,9 +4828,63 @@ bool ChainstateManager::ProcessNewBlockHeaders(std::span<const CBlockHeader> hea
         std::vector<const CBlockHeader*> headers_to_validate;
         {
             LOCK(::cs_main);
+
+            // Cheap anti-DoS gate, run before the proof-expensive batch below.
+            // The batch regenerates up to 2^compression nonces per header, so we
+            // must not let a peer make us do that work for headers we can already
+            // tell are doomed. ContextualCheckBlockHeader still performs the
+            // authoritative (exact) checks for accepted headers; the rejects
+            // here only short-circuit before any proof work.
+            //
+            // Anchor the first header to its prev block. For the p2p path this is
+            // guaranteed to be in the index (ProcessHeadersMessage looked it up);
+            // for RPC/loadblk callers it may be absent, in which case we skip the
+            // anchor-relative leg and rely on the inter-header checks below.
+            int prev_height = -1;
+            uint64_t prev_base_target = 0;
+            if (const CBlockIndex* anchor = m_blockman.LookupBlockIndex(headers.front().hashPrevBlock)) {
+                if (anchor->nStatus & BLOCK_FAILED_MASK) {
+                    return state.Invalid(BlockValidationResult::BLOCK_INVALID_PREV, "bad-prevblk",
+                                         "headers build on a known-invalid block");
+                }
+                prev_height = anchor->nHeight;
+                prev_base_target = anchor->nBaseTarget;
+            }
+
             for (const auto& header : headers) {
                 if (header.nHeight == 0) continue;
-                if (m_blockman.LookupBlockIndex(header.GetHash()) != nullptr) continue;
+
+                // Bound attacker-controlled height/base-target before they reach
+                // the batch (and CalculateClaimedHeadersWork). A valid chain
+                // always increments height by one and keeps base-target within
+                // the +/-20% per-block envelope that GetNextBaseTarget enforces,
+                // so this never rejects an honest chain. prev_height < 0 means we
+                // had no anchor and this is the first header: skip its relative
+                // check and seed the running values from it.
+                if (prev_height >= 0) {
+                    if (header.nHeight != prev_height + 1 ||
+                        !pocx::consensus::PermittedBaseTargetTransition(prev_base_target, header.nBaseTarget)) {
+                        return state.Invalid(BlockValidationResult::BLOCK_INVALID_HEADER, "bad-header-transition",
+                                             strprintf("bad height/base-target transition at height %d", header.nHeight));
+                    }
+                }
+                prev_height = header.nHeight;
+                prev_base_target = header.nBaseTarget;
+
+                // Already in the index? Peers re-send batches during catch-up,
+                // reconnects and overlapping tip announcements; skipping known
+                // headers avoids redoing the full 2^compression regeneration for
+                // each one. But a header marked invalid fails the whole batch:
+                // CheckHeadersAreContinuous guarantees one chain, so every later
+                // header descends from it and is equally doomed. Keyed on
+                // GetHash(), matching m_block_index and handling forks correctly.
+                if (const CBlockIndex* known = m_blockman.LookupBlockIndex(header.GetHash())) {
+                    if (known->nStatus & BLOCK_FAILED_MASK) {
+                        return state.Invalid(BlockValidationResult::BLOCK_CACHED_INVALID, "duplicate-invalid",
+                                             "batch contains a known-invalid header");
+                    }
+                    continue;
+                }
                 headers_to_validate.push_back(&header);
             }
         }
@@ -4846,6 +4901,21 @@ bool ChainstateManager::ProcessNewBlockHeaders(std::span<const CBlockHeader> hea
 
             for (size_t i = 0; i < headers_to_validate.size(); i++) {
                 const CBlockHeader& hdr = *headers_to_validate[i];
+
+                // Reject out-of-range compression before the batch expands each
+                // block into 1<<compression work units (mirrors CheckBlockHeader).
+                const auto cbounds = pocx::consensus::GetPoCXCompressionBounds(
+                    hdr.nHeight, GetConsensus().nSubsidyHalvingInterval);
+                if (hdr.pocxProof.compression < cbounds.nPoCXMinCompression ||
+                    hdr.pocxProof.compression > cbounds.nPoCXTargetCompression) {
+                    return state.Invalid(BlockValidationResult::BLOCK_INVALID_HEADER,
+                                         "bad-pocx-compression",
+                                         strprintf("compression %u out of range [%u, %u] at height %d",
+                                                   hdr.pocxProof.compression,
+                                                   cbounds.nPoCXMinCompression,
+                                                   cbounds.nPoCXTargetCompression,
+                                                   hdr.nHeight));
+                }
 
                 // Reverse generation signature bytes to match ValidateProofOfCapacity behavior
                 // (uint256::ToString() reverses bytes, then DecodeGenerationSignature parses them)
@@ -5449,8 +5519,12 @@ bool Chainstate::RollforwardBlock(const CBlockIndex* pindex, CCoinsViewCache& in
 #ifdef ENABLE_POCX
         // Re-apply assignment / revocation OP_RETURNs. Block was already validated when
         // first connected; we just need to put the assignment-DB side effects back in
-        // place. Idempotent.
-        pocx::assignments::ApplyAssignmentEffectsForReplay(*tx, pindex->nHeight, consensus_params, inputs);
+        // place. Idempotent. A false return means the assignment DB is inconsistent —
+        // fail the replay rather than continue with divergent state.
+        if (!pocx::assignments::ApplyAssignmentEffectsForReplay(*tx, pindex->nHeight, consensus_params, inputs)) {
+            LogError("RollforwardBlock(): assignment replay failed at %d, hash=%s\n", pindex->nHeight, pindex->GetBlockHash().ToString());
+            return false;
+        }
 #endif
     }
     return true;

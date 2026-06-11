@@ -49,6 +49,7 @@
 #include <pocx/rpc/mining.h>
 #include <pocx/consensus/difficulty.h>
 #include <pocx/mining/block_context.h>
+#include <pocx/mining/block_signing.h>
 #include <pocx/consensus/params.h>
 #include <pocx/regtest/forging.h>
 #include <key.h>
@@ -1119,7 +1120,13 @@ static RPCHelpMan submitblock()
     return RPCHelpMan{
         "submitblock",
         "Attempts to submit new block to network.\n"
-        "See https://en.bitcoin.it/wiki/BIP_0022 for full specification.\n",
+        "See https://en.bitcoin.it/wiki/BIP_0022 for full specification.\n"
+#ifdef ENABLE_POCX
+        "PoCX: if the block has no signature, the node signs it in place with the wallet key for "
+        "the effective signer (the holding wallet must be loaded and unlocked); a block that is "
+        "already signed is processed as-is.\n"
+#endif
+        ,
         {
             {"hexdata", RPCArg::Type::STR_HEX, RPCArg::Optional::NO, "the hex-encoded block data to submit"},
             {"dummy", RPCArg::Type::STR, RPCArg::DefaultHint{"ignored"}, "dummy value, for compatibility with BIP22. This value is ignored."},
@@ -1148,6 +1155,18 @@ static RPCHelpMan submitblock()
             chainman.UpdateUncommittedBlockStructures(block, pindex);
         }
     }
+
+#ifdef ENABLE_POCX
+    // PoCX: if the submitted block carries no signature, sign it in place using a
+    // loaded, unlocked wallet that holds the effective signer's key (same wallet
+    // path as the forger). Done after UpdateUncommittedBlockStructures so the
+    // signature covers the final merkle/commitment, and before the StateCatcher
+    // so it captures the final hash. Already-signed blocks are processed as-is.
+    if (auto pocx_err = pocx::mining::MaybeSignPoCXBlock(
+            block, chainman, EnsureAnyNodeContext(request.context))) {
+        throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, *pocx_err);
+    }
+#endif
 
     bool new_block;
     auto sc = std::make_shared<submitblock_StateCatcher>(block.GetHash());

@@ -18,10 +18,15 @@ namespace assignments {
  *  (the block was already validated when first connected). Writes match the
  *  side-effects performed by ConnectBlock for the same transaction.
  *
+ *  Returns false if replay cannot reproduce those effects (e.g. a revocation
+ *  whose prior assignment is missing) — a corrupt/inconsistent assignment DB
+ *  the caller must treat as a fatal replay failure rather than continue with
+ *  divergent state.
+ *
  *  Lives outside opcodes.cpp because it mutates CCoinsViewCache (common lib)
  *  and logs (util lib), neither of which the consensus library may depend on.
  */
-void ApplyAssignmentEffectsForReplay(
+bool ApplyAssignmentEffectsForReplay(
     const CTransaction& tx,
     int nHeight,
     const Consensus::Params& consensus_params,

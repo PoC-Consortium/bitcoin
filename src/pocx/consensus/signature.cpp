@@ -137,7 +137,7 @@ bool VerifyPoCXBlockCompactSignature(const CBlock& block) {
     return true;
 }
 
-bool VerifyPoCXBlockCompactSignature(const CBlock& block, const CCoinsViewCache& view, int nHeight) {
+bool VerifyPoCXBlockCompactSignature(const CBlock& block, const std::optional<ForgingAssignment>& plot_assignment, int nHeight) {
     if (!VerifyPoCXBlockCompactSignature(block)) {
         return false;
     }
@@ -145,7 +145,7 @@ bool VerifyPoCXBlockCompactSignature(const CBlock& block, const CCoinsViewCache&
     CPubKey stored_pubkey(block.vchPubKey);
     std::array<uint8_t, 20> pubkey_account = ExtractAccountIDFromPubKey(stored_pubkey);
 
-    std::array<uint8_t, 20> effective_signer = pocx::assignments::GetEffectiveSigner(block.pocxProof.account_id, nHeight, view);
+    std::array<uint8_t, 20> effective_signer = pocx::assignments::GetEffectiveSigner(block.pocxProof.account_id, nHeight, plot_assignment);
 
     if (!AccountIDsMatch(pubkey_account, effective_signer)) {
         return false;

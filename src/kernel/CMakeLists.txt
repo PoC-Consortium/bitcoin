@@ -90,6 +90,7 @@ add_library(bitcoinkernel
   $<$<BOOL:${ENABLE_POCX}>:../pocx/algorithms/encoding.cpp>
   $<$<BOOL:${ENABLE_POCX}>:../pocx/assignments/assignment_state.cpp>
   $<$<BOOL:${ENABLE_POCX}>:../pocx/assignments/opcodes.cpp>
+  $<$<BOOL:${ENABLE_POCX}>:../pocx/assignments/replay.cpp>
   $<$<BOOL:${ENABLE_POCX}>:../pocx/mining/defensive_forge.cpp>
   $<TARGET_OBJECTS:bitcoin_clientversion>
   $<TARGET_OBJECTS:bitcoin_crypto>

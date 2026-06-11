@@ -110,6 +110,15 @@ uint64_t GetNextBaseTarget(const CBlockIndex* pindexLast, const Consensus::Param
 }
 
 
+bool PermittedBaseTargetTransition(uint64_t prev_base_target, uint64_t new_base_target) {
+    // Mirror of the ±20% clamp in GetNextBaseTarget (keep in sync). base_target is
+    // always <= genesis_base_target, so prev + prev/5 cannot overflow uint64.
+    const uint64_t lower = prev_base_target - prev_base_target / 5;
+    const uint64_t upper = prev_base_target + prev_base_target / 5;
+    return new_base_target >= lower && new_base_target <= upper;
+}
+
+
 uint256 GetNextGenerationSignature(const CBlockIndex* pindexLast) {
     assert(pindexLast != nullptr);
 
