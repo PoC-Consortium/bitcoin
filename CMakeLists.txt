@@ -30,7 +30,7 @@ set(CLIENT_NAME "Bitcoin Core")
 set(CLIENT_VERSION_MAJOR 31)
 set(CLIENT_VERSION_MINOR 0)
 set(CLIENT_VERSION_BUILD 0)
-set(CLIENT_VERSION_RC 0)
+set(CLIENT_VERSION_RC 1)
 set(CLIENT_VERSION_IS_RELEASE "true")
 set(COPYRIGHT_YEAR "2026")
 
@@ -145,6 +145,8 @@ endif()
 
 option(ENABLE_EXTERNAL_SIGNER "Enable external signer support." ON)
 
+option(ENABLE_POCX "Enable PoCX Proof of Capacity consensus support." ON)
+
 cmake_dependent_option(WITH_QRENCODE "Enable QR code support." ON "BUILD_GUI" OFF)
 if(WITH_QRENCODE)
   find_package(QRencode MODULE REQUIRED)
@@ -237,6 +239,12 @@ if(BUILD_FOR_FUZZING)
   target_compile_definitions(core_interface INTERFACE
     FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION
   )
+endif()
+
+if(ENABLE_POCX)
+  set(CLIENT_NAME "Bitcoin PoCX")
+  target_compile_definitions(core_interface INTERFACE ENABLE_POCX=1)
+  message(STATUS "PoCX Proof of Capacity support enabled")
 endif()
 
 include(TryAppendCXXFlags)
@@ -655,6 +663,7 @@ message("  kernel-test (experimental) .......... ${BUILD_KERNEL_TEST}")
 message("Optional features:")
 message("  wallet support ...................... ${ENABLE_WALLET}")
 message("  external signer ..................... ${ENABLE_EXTERNAL_SIGNER}")
+message("  PoCX consensus ...................... ${ENABLE_POCX}")
 message("  ZeroMQ .............................. ${WITH_ZMQ}")
 if(ENABLE_IPC)
   if (WITH_EXTERNAL_LIBMULTIPROCESS)

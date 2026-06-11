@@ -41,6 +41,10 @@
 #include <util/translation.h>
 #include <validation.h>
 
+#ifdef ENABLE_POCX
+#include <pocx/consensus/difficulty.h>
+#endif
+
 #include <cerrno>
 #include <compare>
 #include <cstddef>
@@ -140,15 +144,26 @@ bool BlockTreeDB::LoadBlockIndexGuts(const Consensus::Params& consensusParams, s
                 pindexNew->nVersion       = diskindex.nVersion;
                 pindexNew->hashMerkleRoot = diskindex.hashMerkleRoot;
                 pindexNew->nTime          = diskindex.nTime;
+#ifdef ENABLE_POCX
+                pindexNew->generationSignature = diskindex.generationSignature;
+                pindexNew->nBaseTarget    = diskindex.nBaseTarget;
+                pindexNew->nNextBaseTarget = diskindex.nNextBaseTarget;
+                pindexNew->pocxProof      = diskindex.pocxProof;
+                pindexNew->vchPubKey      = diskindex.vchPubKey;
+                pindexNew->vchSignature   = diskindex.vchSignature;
+#else
                 pindexNew->nBits          = diskindex.nBits;
                 pindexNew->nNonce         = diskindex.nNonce;
+#endif
                 pindexNew->nStatus        = diskindex.nStatus;
                 pindexNew->nTx            = diskindex.nTx;
 
+#ifndef ENABLE_POCX
                 if (!CheckProofOfWork(pindexNew->GetBlockHash(), pindexNew->nBits, consensusParams)) {
                     LogError("%s: CheckProofOfWork failed: %s\n", __func__, pindexNew->ToString());
                     return false;
                 }
+#endif
 
                 pcursor->Next();
             } else {
@@ -243,6 +258,10 @@ CBlockIndex* BlockManager::AddToBlockIndex(const CBlockHeader& block, CBlockInde
         pindexNew->nHeight = pindexNew->pprev->nHeight + 1;
         pindexNew->BuildSkip();
     }
+#ifdef ENABLE_POCX
+    // Calculate nNextBaseTarget before GetBlockProof (uses hybrid formula for work calculation)
+    pindexNew->nNextBaseTarget = pocx::consensus::GetNextBaseTarget(pindexNew, GetConsensus());
+#endif
     pindexNew->nTimeMax = (pindexNew->pprev ? std::max(pindexNew->pprev->nTimeMax, pindexNew->nTime) : pindexNew->nTime);
     pindexNew->nChainWork = (pindexNew->pprev ? pindexNew->pprev->nChainWork : 0) + GetBlockProof(*pindexNew);
     pindexNew->RaiseValidity(BLOCK_VALID_TREE);
@@ -1054,10 +1073,12 @@ bool BlockManager::ReadBlock(CBlock& block, const FlatFilePos& pos, const std::o
     const auto block_hash{block.GetHash()};
 
     // Check the header
+#ifndef ENABLE_POCX
     if (!CheckProofOfWork(block_hash, block.nBits, GetConsensus())) {
         LogError("Errors in block header at %s while reading block", pos.ToString());
         return false;
     }
+#endif
 
     // Signet only: check block solution
     if (GetConsensus().signet_blocks && !CheckSignetBlockSolution(block, GetConsensus())) {

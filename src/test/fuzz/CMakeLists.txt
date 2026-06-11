@@ -2,6 +2,12 @@
 # Distributed under the MIT software license, see the accompanying
 # file COPYING or https://opensource.org/license/mit/.
 
+if(ENABLE_POCX)
+  file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/stub.cpp "int main(){return 0;}")
+  add_executable(fuzz ${CMAKE_CURRENT_BINARY_DIR}/stub.cpp)
+  return()
+endif()
+
 add_subdirectory(util)
 
 add_executable(fuzz

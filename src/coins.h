@@ -89,6 +89,133 @@ public:
     }
 };
 
+#ifdef ENABLE_POCX
+// Forward declaration for consensus params
+namespace Consensus { struct Params; }
+
+/**
+ * Forging rights assignment states
+ * Height-based derivation with transition states
+ */
+enum class ForgingState : uint8_t {
+    UNASSIGNED = 0, // No assignment exists
+    ASSIGNING = 1,  // Assignment pending activation (delay period)
+    ASSIGNED = 2,   // Assignment active, forging allowed
+    REVOKING = 3,   // Revocation pending (delay period, still active)
+    REVOKED = 4     // Revocation complete, assignment no longer active
+};
+
+/** Convert ForgingState enum to human-readable string */
+inline const char* ForgingStateToString(ForgingState state) {
+    switch(state) {
+        case ForgingState::UNASSIGNED: return "UNASSIGNED";
+        case ForgingState::ASSIGNING: return "ASSIGNING";
+        case ForgingState::ASSIGNED: return "ASSIGNED";
+        case ForgingState::REVOKING: return "REVOKING";
+        case ForgingState::REVOKED: return "REVOKED";
+        default: return "UNKNOWN";
+    }
+}
+
+/**
+ * Forging rights assignment entry (OP_RETURN-only architecture)
+ * No special UTXOs - assignment state stored separately from UTXO set
+ * Full history tracking: multiple assignments per plot over time
+ */
+struct ForgingAssignment {
+    // Identity
+    std::array<uint8_t, 20> plotAddress;     // Plot owner address (20-byte bech32 payload)
+    std::array<uint8_t, 20> forgingAddress;  // Assigned forging address (20-byte bech32 payload)
+
+    // Assignment lifecycle
+    uint256 assignment_txid;                  // Transaction that created this assignment
+    int assignment_height;                    // Block height when assignment was created
+    int assignment_effective_height;          // Block height when assignment becomes active
+
+    // Revocation lifecycle
+    bool revoked;                             // Has this assignment been revoked?
+    uint256 revocation_txid;                  // Transaction that revoked this assignment
+    int revocation_height;                    // Block height when revocation occurred
+    int revocation_effective_height;          // Block height when revocation becomes effective
+
+    // Default constructor
+    ForgingAssignment() : assignment_height(-1), assignment_effective_height(-1),
+                         revoked(false), revocation_height(-1), revocation_effective_height(-1) {
+        plotAddress.fill(0);
+        forgingAddress.fill(0);
+        assignment_txid.SetNull();
+        revocation_txid.SetNull();
+    }
+
+    // Constructor for new assignments
+    ForgingAssignment(const std::array<uint8_t, 20>& plotAddress_,
+                     const std::array<uint8_t, 20>& forgingAddress_,
+                     const uint256& assignment_txid_,
+                     int assignment_height_,
+                     int assignment_effective_height_) :
+        plotAddress(plotAddress_),
+        forgingAddress(forgingAddress_),
+        assignment_txid(assignment_txid_),
+        assignment_height(assignment_height_),
+        assignment_effective_height(assignment_effective_height_),
+        revoked(false),
+        revocation_height(-1),
+        revocation_effective_height(-1) {
+        revocation_txid.SetNull();
+    }
+
+    // Get state at specific height
+    ForgingState GetStateAtHeight(int height) const {
+        // Check if assignment has been activated yet
+        if (height < assignment_effective_height) {
+            return ForgingState::ASSIGNING;
+        }
+
+        // Assignment is activated - check revocation status
+        if (!revoked) {
+            return ForgingState::ASSIGNED;  // Active, no revocation
+        }
+
+        // Revocation exists - check if revocation TX is in chain yet
+        if (height < revocation_height) {
+            return ForgingState::ASSIGNED;  // Revocation TX not yet at this height
+        }
+
+        // Revocation TX is in chain - check if delay period has passed
+        if (height < revocation_effective_height) {
+            return ForgingState::REVOKING;  // In delay period, still active
+        }
+
+        return ForgingState::REVOKED;  // Fully revoked
+    }
+
+    // Check if assignment is active at specific height
+    bool IsActiveAtHeight(int height) const {
+        ForgingState state = GetStateAtHeight(height);
+        return state == ForgingState::ASSIGNED || state == ForgingState::REVOKING;
+    }
+
+    SERIALIZE_METHODS(ForgingAssignment, obj)
+    {
+        READWRITE(obj.plotAddress, obj.forgingAddress,
+                  obj.assignment_txid, obj.assignment_height, obj.assignment_effective_height,
+                  obj.revoked, obj.revocation_txid, obj.revocation_height, obj.revocation_effective_height);
+    }
+};
+
+// Type definitions for forging assignments.
+// Map of (plot_address, assignment_txid) -> assignment, used both for the
+// on-disk history layout and for the per-flush "assignments to write" payload.
+typedef std::map<std::pair<std::array<uint8_t, 20>, uint256>, ForgingAssignment> ForgingAssignmentsMap;
+// Cache-side set of (plot_address, assignment_txid) keys queued for deletion
+// from base on the next flush. Kept disjoint from PendingAssignmentsMap.
+typedef std::set<std::pair<std::array<uint8_t, 20>, uint256>> DeletedAssignmentsSet;
+// Cache-side pending assignment writes per plot. Each vector is appended to
+// in arrival order; reads in CCoinsViewCache merge this overlay with base.
+typedef std::map<std::array<uint8_t, 20>, std::vector<ForgingAssignment>> PendingAssignmentsMap;
+
+#endif // ENABLE_POCX
+
 struct CCoinsCacheEntry;
 using CoinsCachePair = std::pair<const COutPoint, CCoinsCacheEntry>;
 
@@ -330,7 +457,13 @@ public:
 
     //! Do a bulk modification (multiple Coin changes + BestBlock change).
     //! The passed cursor is used to iterate through the coins.
-    virtual void BatchWrite(CoinsViewCacheCursor& cursor, const uint256& hashBlock);
+    virtual void BatchWrite(CoinsViewCacheCursor& cursor, const uint256& hashBlock
+#ifdef ENABLE_POCX
+        //! PoCX: assignment writes ride the same batch as BestBlock.
+        , const ForgingAssignmentsMap& assignments = {}
+        , const DeletedAssignmentsSet& deletedAssignments = {}
+#endif
+    );
 
     //! Get a cursor to iterate over the whole state
     virtual std::unique_ptr<CCoinsViewCursor> Cursor() const;
@@ -340,6 +473,14 @@ public:
 
     //! Estimate database size (0 if not implemented)
     virtual size_t EstimateSize() const { return 0; }
+
+#ifdef ENABLE_POCX
+    //! Raw committed assignment history for a plot. "Assignment in effect at a
+    //! given height" is a cache-only query (CCoinsViewCache::GetForgingAssignment),
+    //! since only the cache holds the pending/deleted overlay.
+    virtual std::vector<ForgingAssignment> GetForgingAssignmentHistory(
+        const std::array<uint8_t, 20>& plotAddress) const { return std::vector<ForgingAssignment>(); }
+#endif
 };
 
 
@@ -357,9 +498,20 @@ public:
     uint256 GetBestBlock() const override;
     std::vector<uint256> GetHeadBlocks() const override;
     void SetBackend(CCoinsView &viewIn);
-    void BatchWrite(CoinsViewCacheCursor& cursor, const uint256& hashBlock) override;
+    void BatchWrite(CoinsViewCacheCursor& cursor, const uint256& hashBlock
+#ifdef ENABLE_POCX
+        , const ForgingAssignmentsMap& assignments = {}
+        , const DeletedAssignmentsSet& deletedAssignments = {}
+#endif
+    ) override;
     std::unique_ptr<CCoinsViewCursor> Cursor() const override;
     size_t EstimateSize() const override;
+
+#ifdef ENABLE_POCX
+    //! Delegate assignment history to base view
+    std::vector<ForgingAssignment> GetForgingAssignmentHistory(
+        const std::array<uint8_t, 20>& plotAddress) const override;
+#endif
 };
 
 
@@ -394,6 +546,18 @@ protected:
     /* Fetch the coin from base. Used for cache misses in FetchCoin. */
     virtual std::optional<Coin> FetchCoinFromBase(const COutPoint& outpoint) const;
 
+#ifdef ENABLE_POCX
+    /* Forging assignment cache (OP_RETURN-only architecture).
+     * Invariant: for any (plot, txid), at most one of pendingAssignments or
+     * deletedAssignments contains it. Reads merge pending over base and
+     * filter out keys in deletedAssignments; writes propagate atomically
+     * with the chainstate via BatchWrite. */
+    mutable PendingAssignmentsMap pendingAssignments;
+    mutable ForgingAssignmentsMap deletedAssignments;  // payload preserved to derive height-indexed DB key
+    mutable std::set<std::array<uint8_t, 20>> dirtyPlots;
+    mutable size_t cachedAssignmentsUsage{0};
+#endif
+
 public:
     CCoinsViewCache(CCoinsView *baseIn, bool deterministic = false);
 
@@ -408,7 +572,12 @@ public:
     bool HaveCoin(const COutPoint &outpoint) const override;
     uint256 GetBestBlock() const override;
     void SetBestBlock(const uint256 &hashBlock);
-    void BatchWrite(CoinsViewCacheCursor& cursor, const uint256& hashBlock) override;
+    void BatchWrite(CoinsViewCacheCursor& cursor, const uint256& hashBlock
+#ifdef ENABLE_POCX
+        , const ForgingAssignmentsMap& assignments = {}
+        , const DeletedAssignmentsSet& deletedAssignments = {}
+#endif
+    ) override;
     std::unique_ptr<CCoinsViewCursor> Cursor() const override {
         throw std::logic_error("CCoinsViewCache cursor iteration not supported.");
     }
@@ -498,6 +667,40 @@ public:
 
     //! Run an internal sanity check on the cache data structure. */
     void SanityCheck() const;
+
+#ifdef ENABLE_POCX
+    // Forging assignment methods (OP_RETURN-only architecture)
+
+    //! Get current active assignment for a plot at specific height. Cache-only:
+    //! resolves the raw history against this cache's pending/deleted overlay.
+    std::optional<ForgingAssignment> GetForgingAssignment(
+        const std::array<uint8_t, 20>& plotAddress, int height) const;
+
+    //! History merged with this cache's pending modifications and deletions.
+    std::vector<ForgingAssignment> GetForgingAssignmentHistory(
+        const std::array<uint8_t, 20>& plotAddress) const override;
+
+    //! Add a new forging assignment
+    void AddForgingAssignment(const ForgingAssignment& assignment);
+
+    //! Check if plot has pending assignment in current block
+    bool HasPendingAssignment(const std::array<uint8_t, 20>& plotAddress) const;
+
+    //! Check if plot has pending revocation in current block
+    bool HasPendingRevocation(const std::array<uint8_t, 20>& plotAddress) const;
+
+    //! Update existing forging assignment (for revocation)
+    void UpdateForgingAssignment(const ForgingAssignment& assignment);
+
+    //! Remove a forging assignment (for reorg undo)
+    void RemoveForgingAssignment(
+        const std::array<uint8_t, 20>& plotAddress,
+        const uint256& assignment_txid);
+
+    //! Restore forging assignment (for reorg undo of revocations)
+    void RestoreForgingAssignment(const ForgingAssignment& assignment);
+
+#endif // ENABLE_POCX
 
     class ResetGuard
     {

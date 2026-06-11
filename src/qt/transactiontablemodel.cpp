@@ -378,6 +378,12 @@ QString TransactionTableModel::formatTxType(const TransactionRecord *wtx) const
         return tr("Sent to");
     case TransactionRecord::Generated:
         return tr("Mined");
+#ifdef ENABLE_POCX
+    case TransactionRecord::PoCXAssignment:
+        return tr("Assignment");
+    case TransactionRecord::PoCXRevocation:
+        return tr("Revocation");
+#endif
     default:
         return QString();
     }
@@ -389,6 +395,11 @@ QVariant TransactionTableModel::txAddressDecoration(const TransactionRecord *wtx
     {
     case TransactionRecord::Generated:
         return QIcon(":/icons/tx_mined");
+#ifdef ENABLE_POCX
+    case TransactionRecord::PoCXAssignment:
+    case TransactionRecord::PoCXRevocation:
+        return QIcon(":/icons/tx_mined");
+#endif
     case TransactionRecord::RecvWithAddress:
     case TransactionRecord::RecvFromOther:
         return QIcon(":/icons/tx_input");
@@ -410,6 +421,11 @@ QString TransactionTableModel::formatTxToAddress(const TransactionRecord *wtx, b
     case TransactionRecord::SendToAddress:
     case TransactionRecord::Generated:
         return lookupAddress(wtx->address, tooltip);
+#ifdef ENABLE_POCX
+    case TransactionRecord::PoCXAssignment:
+    case TransactionRecord::PoCXRevocation:
+        return lookupAddress(wtx->address, tooltip);
+#endif
     case TransactionRecord::SendToOther:
         return QString::fromStdString(wtx->address);
     default:
@@ -425,6 +441,10 @@ QVariant TransactionTableModel::addressColor(const TransactionRecord *wtx) const
     case TransactionRecord::RecvWithAddress:
     case TransactionRecord::SendToAddress:
     case TransactionRecord::Generated:
+#ifdef ENABLE_POCX
+    case TransactionRecord::PoCXAssignment:
+    case TransactionRecord::PoCXRevocation:
+#endif
         {
         QString label = walletModel->getAddressTableModel()->labelForAddress(QString::fromStdString(wtx->address));
         if(label.isEmpty())
@@ -486,7 +506,11 @@ QString TransactionTableModel::formatTooltip(const TransactionRecord *rec) const
 {
     QString tooltip = formatTxStatus(rec) + QString("\n") + formatTxType(rec);
     if(rec->type==TransactionRecord::RecvFromOther || rec->type==TransactionRecord::SendToOther ||
-       rec->type==TransactionRecord::SendToAddress || rec->type==TransactionRecord::RecvWithAddress)
+       rec->type==TransactionRecord::SendToAddress || rec->type==TransactionRecord::RecvWithAddress
+#ifdef ENABLE_POCX
+       || rec->type==TransactionRecord::PoCXAssignment || rec->type==TransactionRecord::PoCXRevocation
+#endif
+       )
     {
         tooltip += QString(" ") + formatTxToAddress(rec, true);
     }

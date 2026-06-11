@@ -1,0 +1,195 @@
+// Copyright (c) 2025 The Proof of Capacity Consortium
+// Distributed under the MIT software license, see the accompanying
+// file COPYING or http://www.opensource.org/licenses/mit-license.php.
+
+#include <pocx/mining/block_builder.h>
+#include <pocx/assignments/assignment_state.h>
+#include <pocx/algorithms/encoding.h>
+
+#include <addresstype.h>
+#include <consensus/amount.h>
+#include <consensus/merkle.h>
+#include <key_io.h>
+#include <logging.h>
+#include <node/context.h>
+#include <node/chainstate.h>
+#include <primitives/transaction.h>
+#include <script/script.h>
+#include <sync.h>
+#include <util/strencodings.h>
+
+namespace pocx {
+namespace mining {
+
+PoCXBlockBuilder::PoCXBlockBuilder(interfaces::Mining& mining)
+    : m_mining(&mining) {
+}
+
+CScript PoCXBlockBuilder::CreateCoinbaseScript(const std::string& effective_signer_account) {
+    std::vector<uint8_t> effective_signer_bytes = ParseHex(effective_signer_account);
+    uint160 hash160(effective_signer_bytes);
+    return GetScriptForDestination(WitnessV0KeyHash(hash160));
+}
+
+bool PoCXBlockBuilder::ApplyCoinbaseOutputs(
+    CBlock& block,
+    const std::vector<CTxOut>& coinbase_outputs,
+    const std::string& effective_signer_account
+) {
+    if (block.vtx.empty() || !block.vtx[0]->IsCoinBase()) {
+        LogInfo("PoCX: [BlockBuilder] Payout split rejected: template has no coinbase\n");
+        return false;
+    }
+
+    CMutableTransaction coinbase(*block.vtx[0]);
+    if (coinbase.vout.empty()) {
+        LogInfo("PoCX: [BlockBuilder] Payout split rejected: coinbase has no outputs\n");
+        return false;
+    }
+
+    // The template's first output carries the full claimable reward (subsidy + fees).
+    // Any further outputs (e.g. the BIP141 witness commitment) must be preserved.
+    const CAmount budget = coinbase.vout[0].nValue;
+    const std::vector<CTxOut> preserved(coinbase.vout.begin() + 1, coinbase.vout.end());
+
+    CAmount total = 0;
+    for (const CTxOut& out : coinbase_outputs) {
+        total += out.nValue;  // each value pre-validated (MoneyRange) at the RPC boundary
+        if (total > budget) {
+            LogInfo("PoCX: [BlockBuilder] Payout split rejected: outputs sum > coinbase value %d sat\n", budget);
+            return false;
+        }
+    }
+
+    coinbase.vout.assign(coinbase_outputs.begin(), coinbase_outputs.end());
+
+    // Route the remainder (unallocated reward + all fees) to the effective signer.
+    const CAmount remainder = budget - total;
+    if (remainder > 0) {
+        coinbase.vout.emplace_back(remainder, CreateCoinbaseScript(effective_signer_account));
+    }
+
+    // Re-append preserved template outputs (witness commitment) last, so the BIP141
+    // commitment stays the highest-index matching output.
+    coinbase.vout.insert(coinbase.vout.end(), preserved.begin(), preserved.end());
+
+    block.vtx[0] = MakeTransactionRef(std::move(coinbase));
+    LogInfo("PoCX: [BlockBuilder] Pool payout split applied: %zu output(s), remainder %d sat to signer\n",
+              coinbase_outputs.size(), remainder);
+    return true;
+}
+
+std::unique_ptr<interfaces::BlockTemplate> PoCXBlockBuilder::CreateTemplate(
+    const CScript& coinbase_script
+) {
+    ::node::BlockCreateOptions options;
+    options.coinbase_output_script = coinbase_script;
+    options.use_mempool = true;
+
+    return m_mining->createNewBlock(options);
+}
+
+void PoCXBlockBuilder::FillPoCXProof(
+    CBlock& block,
+    const std::string& account_id,
+    const std::string& seed,
+    uint64_t nonce,
+    uint64_t quality,
+    uint32_t compression
+) {
+    // Parse and fill account ID
+    std::vector<uint8_t> account_bytes = ParseHex(account_id);
+    std::copy(account_bytes.begin(), account_bytes.end(), block.pocxProof.account_id.begin());
+
+    // Parse and fill seed
+    std::vector<uint8_t> seed_bytes = ParseHex(seed);
+    std::copy(seed_bytes.begin(), seed_bytes.end(), block.pocxProof.seed.begin());
+
+    // Fill nonce, quality, compression
+    block.pocxProof.nonce = nonce;
+    block.pocxProof.quality = quality;
+    block.pocxProof.compression = compression;
+
+    // Recalculate merkle root (required after modifying block)
+    block.hashMerkleRoot = BlockMerkleRoot(block);
+}
+
+std::unique_ptr<CBlock> PoCXBlockBuilder::BuildBlock(
+    const std::string& account_id,
+    const std::string& seed,
+    uint64_t nonce,
+    uint64_t quality,
+    uint32_t compression,
+    node::NodeContext* context,
+    const std::vector<CTxOut>& coinbase_outputs
+) {
+    // Parse account ID
+    auto plot_id = pocx::algorithms::ParseAccountID(account_id.c_str());
+
+    // Render a 20-byte hash160 as its bech32 P2WPKH address for user-facing logs.
+    // Falls back to the raw input if the account_id failed to parse (logged below).
+    auto to_bech32 = [](const std::array<uint8_t, 20>& h) {
+        uint160 u; std::copy(h.begin(), h.end(), u.begin());
+        return EncodeDestination(WitnessV0KeyHash{u});
+    };
+    const std::string plot_address = plot_id ? to_bech32(*plot_id) : account_id;
+
+    LogInfo("PoCX: [BlockBuilder] Building block for account %s (quality=%llu, compression=%u)\n",
+             plot_address, quality, compression);
+
+    if (!plot_id) {
+        LogInfo("PoCX: [BlockBuilder] Invalid account ID format\n");
+        return nullptr;
+    }
+
+    // Determine effective signer for coinbase (considering assignments)
+    std::string effective_signer_account = account_id;
+
+    if (context && context->chainman) {
+        LOCK(cs_main);
+        int current_height = context->chainman->ActiveChainstate().m_chain.Height() + 1;
+        const CCoinsViewCache& view = context->chainman->ActiveChainstate().CoinsTip();
+
+        // Get effective signer considering assignments
+        std::array<uint8_t, 20> signer = pocx::assignments::GetEffectiveSigner(
+            *plot_id, current_height, view.GetForgingAssignment(*plot_id, current_height));
+        effective_signer_account = HexStr(signer);
+
+        LogInfo("PoCX: [BlockBuilder] Plot: %s, Effective signer: %s at height %d\n",
+                  plot_address,
+                  to_bech32(signer),
+                  current_height);
+    }
+
+    // Create coinbase script
+    CScript coinbase_script = CreateCoinbaseScript(effective_signer_account);
+
+    // Create block template
+    std::unique_ptr<interfaces::BlockTemplate> pblocktemplate = CreateTemplate(coinbase_script);
+
+    if (!pblocktemplate) {
+        LogInfo("PoCX: [BlockBuilder] Failed to create block template\n");
+        return nullptr;
+    }
+
+    // Get block from template
+    auto block = std::make_unique<CBlock>(pblocktemplate->getBlock());
+
+    // Optional pool payout split (Q1): replace the single coinbase payout with the
+    // caller-supplied outputs before the proof/merkle are finalized. Absent => legacy.
+    if (!coinbase_outputs.empty()) {
+        if (!ApplyCoinbaseOutputs(*block, coinbase_outputs, effective_signer_account)) {
+            return nullptr;  // over-budget / malformed; error already logged
+        }
+    }
+
+    // Fill PoCX proof fields with validated quality and compression
+    FillPoCXProof(*block, account_id, seed, nonce, quality, compression);
+
+    LogInfo("PoCX: [BlockBuilder] Block built successfully (unsigned)\n");
+
+    return block;
+}
+
+} // namespace mining
+} // namespace pocx
