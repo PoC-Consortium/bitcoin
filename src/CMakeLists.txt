@@ -293,6 +293,7 @@ add_library(bitcoin_node STATIC EXCLUDE_FROM_ALL
   $<$<BOOL:${ENABLE_POCX}>:pocx/consensus/difficulty.cpp>
   $<$<BOOL:${ENABLE_POCX}>:pocx/assignments/replay.cpp>
   $<$<BOOL:${ENABLE_POCX}>:pocx/mining/block_context.cpp>
+  $<$<BOOL:${ENABLE_POCX}>:pocx/mining/block_signing.cpp>
   $<$<BOOL:${ENABLE_POCX}>:pocx/mining/defensive_forge.cpp>
   $<$<BOOL:${ENABLE_POCX}>:pocx/mining/key_signing.cpp>
   $<$<BOOL:${ENABLE_POCX}>:pocx/regtest/forging.cpp>

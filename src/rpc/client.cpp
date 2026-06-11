@@ -321,6 +321,7 @@ static const CRPCConvertParam vRPCConvertParams[] =
     { "submit_nonce", 6, "nonce" },
     { "submit_nonce", 7, "compression" },
     { "submit_nonce", 8, "raw_quality" },
+    { "submit_nonce", 9, "coinbase_outputs" },
     #endif
 };
 // clang-format on

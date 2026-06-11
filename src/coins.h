@@ -471,10 +471,9 @@ public:
     virtual size_t EstimateSize() const { return 0; }
 
 #ifdef ENABLE_POCX
-    //! Forging assignment methods (OP_RETURN-only architecture)
-    virtual std::optional<ForgingAssignment> GetForgingAssignment(
-        const std::array<uint8_t, 20>& plotAddress, int height) const { return std::nullopt; }
-
+    //! Raw committed assignment history for a plot. "Assignment in effect at a
+    //! given height" is a cache-only query (CCoinsViewCache::GetForgingAssignment),
+    //! since only the cache holds the pending/deleted overlay.
     virtual std::vector<ForgingAssignment> GetForgingAssignmentHistory(
         const std::array<uint8_t, 20>& plotAddress) const { return std::vector<ForgingAssignment>(); }
 #endif
@@ -504,10 +503,7 @@ public:
     size_t EstimateSize() const override;
 
 #ifdef ENABLE_POCX
-    //! Delegate assignment methods to base view
-    std::optional<ForgingAssignment> GetForgingAssignment(
-        const std::array<uint8_t, 20>& plotAddress, int height) const override;
-
+    //! Delegate assignment history to base view
     std::vector<ForgingAssignment> GetForgingAssignmentHistory(
         const std::array<uint8_t, 20>& plotAddress) const override;
 #endif
@@ -655,9 +651,10 @@ public:
 #ifdef ENABLE_POCX
     // Forging assignment methods (OP_RETURN-only architecture)
 
-    //! Get current active assignment for a plot at specific height
+    //! Get current active assignment for a plot at specific height. Cache-only:
+    //! resolves the raw history against this cache's pending/deleted overlay.
     std::optional<ForgingAssignment> GetForgingAssignment(
-        const std::array<uint8_t, 20>& plotAddress, int height) const override;
+        const std::array<uint8_t, 20>& plotAddress, int height) const;
 
     //! History merged with this cache's pending modifications and deletions.
     std::vector<ForgingAssignment> GetForgingAssignmentHistory(

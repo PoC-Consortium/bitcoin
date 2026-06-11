@@ -13,9 +13,9 @@
 #include <pubkey.h>
 #include <script/script.h>
 #include <pocx/consensus/proof.h>
+#include <coins.h>
 #include <array>
-
-class CCoinsViewCache;
+#include <optional>
 
 namespace interfaces {
 class Wallet;
@@ -52,8 +52,10 @@ uint256 PoCXBlockSignatureHash(const uint256& block_hash);
 /** Verify compact signature of a PoCX block */
 bool VerifyPoCXBlockCompactSignature(const CBlock& block);
 
-/** Verify compact signature of a PoCX block with assignment support */
-bool VerifyPoCXBlockCompactSignature(const CBlock& block, const CCoinsViewCache& view, int nHeight);
+/** Verify compact signature of a PoCX block with assignment support. Pure:
+ *  the caller resolves the plot's assignment in effect (see
+ *  CCoinsViewCache::GetForgingAssignment) and passes it in. */
+bool VerifyPoCXBlockCompactSignature(const CBlock& block, const std::optional<ForgingAssignment>& plot_assignment, int nHeight);
 
 
 

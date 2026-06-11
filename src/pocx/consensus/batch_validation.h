@@ -12,6 +12,12 @@
 namespace pocx {
 namespace consensus {
 
+// Defensive allocation ceiling for the batch validator (expands each block to
+// `1 << compression` work units). Not authoritative; the height-dependent rule
+// is GetPoCXCompressionBounds(), whose max is 7. Raise in lockstep if that grows.
+static constexpr uint32_t POCX_MIN_COMPRESSION = 1;
+static constexpr uint32_t POCX_MAX_COMPRESSION = 7;
+
 /**
  * Input for batch block validation.
  * Contains all data needed to validate a single block's PoC proof.

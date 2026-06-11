@@ -51,12 +51,7 @@ std::unique_ptr<CCoinsViewCursor> CCoinsViewBacked::Cursor() const { return base
 size_t CCoinsViewBacked::EstimateSize() const { return base->EstimateSize(); }
 
 #ifdef ENABLE_POCX
-// CCoinsViewBacked assignment methods - delegate to base view
-std::optional<ForgingAssignment> CCoinsViewBacked::GetForgingAssignment(
-    const std::array<uint8_t, 20>& plotAddress, int height) const {
-    return base->GetForgingAssignment(plotAddress, height);
-}
-
+// CCoinsViewBacked assignment history - delegate to base view
 std::vector<ForgingAssignment> CCoinsViewBacked::GetForgingAssignmentHistory(
     const std::array<uint8_t, 20>& plotAddress) const {
     return base->GetForgingAssignmentHistory(plotAddress);
@@ -694,7 +689,21 @@ void CCoinsViewCache::RestoreForgingAssignment(const ForgingAssignment& assignme
 {
     // Cancel any prior deletion intent for the same key — see AddForgingAssignment.
     deletedAssignments.erase(std::make_pair(assignment.plotAddress, assignment.assignment_txid));
-    // Restore assignment (for reorg undo)
+
+    // Reorg undo. Replace the existing pending row for this txid in place if one
+    // exists (e.g. undoing a revocation that is still pending in this cache),
+    // preserving the one-row-per-(plot,txid) invariant; only append otherwise.
+    auto it = pendingAssignments.find(assignment.plotAddress);
+    if (it != pendingAssignments.end()) {
+        for (auto& pending : it->second) {
+            if (pending.assignment_txid == assignment.assignment_txid) {
+                pending = assignment;
+                dirtyPlots.insert(assignment.plotAddress);
+                return;
+            }
+        }
+    }
+
     pendingAssignments[assignment.plotAddress].push_back(assignment);
     dirtyPlots.insert(assignment.plotAddress);
     cachedAssignmentsUsage += sizeof(ForgingAssignment);

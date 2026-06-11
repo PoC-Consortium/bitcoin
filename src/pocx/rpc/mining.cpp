@@ -21,8 +21,11 @@
 #include <pocx/rpc/assignments.h>
 
 #ifdef ENABLE_WALLET
+#include <addresstype.h>
+#include <consensus/amount.h>
 #include <interfaces/wallet.h>
 #include <key_io.h>
+#include <primitives/transaction.h>
 #include <pocx/algorithms/time_bending.h>
 #include <pocx/algorithms/encoding.h>
 #include <pocx/consensus/proof.h>
@@ -127,6 +130,19 @@ static RPCHelpMan submit_nonce()
             {"nonce", RPCArg::Type::NUM, RPCArg::Optional::NO, "Mining nonce"},
             {"compression", RPCArg::Type::NUM, RPCArg::Optional::NO, "Compression level used (1-6)"},
             {"raw_quality", RPCArg::Type::NUM, RPCArg::Optional::NO, "Raw quality from proof validation (advisory; server re-validates)"},
+            {"coinbase_outputs", RPCArg::Type::ARR, RPCArg::Optional::OMITTED,
+                "Optional pool payout split. If provided, the node builds the coinbase from these outputs and "
+                "routes any remainder (unallocated reward plus all fees) to the effective signer. Absent => a "
+                "single output to the effective signer (legacy behavior, unchanged).",
+                {
+                    {"", RPCArg::Type::OBJ, RPCArg::Optional::OMITTED, "",
+                        {
+                            {"address", RPCArg::Type::STR, RPCArg::Optional::NO, "Payout destination address"},
+                            {"amount_sat", RPCArg::Type::NUM, RPCArg::Optional::NO, "Payout amount in satoshis"},
+                        },
+                    },
+                },
+            },
         },
         RPCResult{
             RPCResult::Type::OBJ, "", "",
@@ -154,6 +170,35 @@ static RPCHelpMan submit_nonce()
             uint64_t nonce = request.params[6].getInt<uint64_t>();
             uint32_t compression = static_cast<uint32_t>(request.params[7].getInt<int>());
             uint64_t submitted_raw_quality = request.params[8].getInt<uint64_t>();
+
+            // Optional pool payout split (Q1): [{address, amount_sat}, ...].
+            // Validate at the boundary (Core won't reject a bad address downstream -
+            // it would silently pay an unspendable script). Amounts are satoshis;
+            // MoneyRange rejects negative / out-of-range. Absent => legacy path.
+            std::vector<CTxOut> coinbase_outputs;
+            if (request.params.size() > 9 && !request.params[9].isNull()) {
+                for (const UniValue& entry : request.params[9].get_array().getValues()) {
+                    const UniValue& addr_v = entry.find_value("address");
+                    const UniValue& amt_v = entry.find_value("amount_sat");
+                    if (!addr_v.isStr()) {
+                        throw JSONRPCError(RPC_INVALID_PARAMETER, "coinbase_outputs: each entry needs a string 'address'");
+                    }
+                    CTxDestination dest = DecodeDestination(addr_v.get_str());
+                    if (!IsValidDestination(dest)) {
+                        throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY,
+                                           strprintf("coinbase_outputs: invalid address %s", addr_v.get_str()));
+                    }
+                    if (!amt_v.isNum()) {
+                        throw JSONRPCError(RPC_INVALID_PARAMETER, "coinbase_outputs: each entry needs an integer 'amount_sat'");
+                    }
+                    const int64_t amount_sat = amt_v.getInt<int64_t>();
+                    if (!MoneyRange(amount_sat)) {
+                        throw JSONRPCError(RPC_TYPE_ERROR,
+                                           strprintf("coinbase_outputs: amount_sat %d out of range", amount_sat));
+                    }
+                    coinbase_outputs.emplace_back(amount_sat, GetScriptForDestination(dest));
+                }
+            }
 
             UniValue result(UniValue::VOBJ);
 
@@ -224,7 +269,8 @@ static RPCHelpMan submit_nonce()
                         const CCoinsViewCache& view = active_chainstate.CoinsTip();
 
                         // Get effective signer considering assignments
-                        std::array<uint8_t, 20> effective_signer = pocx::assignments::GetEffectiveSigner(*account_id_parsed, height, view);
+                        std::array<uint8_t, 20> effective_signer = pocx::assignments::GetEffectiveSigner(
+                            *account_id_parsed, height, view.GetForgingAssignment(*account_id_parsed, height));
                         effective_signer_account = HexStr(effective_signer);
                         effective_signer_address = to_bech32(effective_signer);
 
@@ -317,7 +363,7 @@ static RPCHelpMan submit_nonce()
                 }
 
                 bool queued = g_pocx_scheduler->SubmitNonce(
-                    account_id, seed, nonce, raw_quality, compression, *submitted_block_hash
+                    account_id, seed, nonce, raw_quality, compression, *submitted_block_hash, coinbase_outputs
                 );
 
                 if (!queued) {

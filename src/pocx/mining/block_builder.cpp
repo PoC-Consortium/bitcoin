@@ -7,11 +7,13 @@
 #include <pocx/algorithms/encoding.h>
 
 #include <addresstype.h>
+#include <consensus/amount.h>
 #include <consensus/merkle.h>
 #include <key_io.h>
 #include <logging.h>
 #include <node/context.h>
 #include <node/chainstate.h>
+#include <primitives/transaction.h>
 #include <script/script.h>
 #include <sync.h>
 #include <util/strencodings.h>
@@ -27,6 +29,54 @@ CScript PoCXBlockBuilder::CreateCoinbaseScript(const std::string& effective_sign
     std::vector<uint8_t> effective_signer_bytes = ParseHex(effective_signer_account);
     uint160 hash160(effective_signer_bytes);
     return GetScriptForDestination(WitnessV0KeyHash(hash160));
+}
+
+bool PoCXBlockBuilder::ApplyCoinbaseOutputs(
+    CBlock& block,
+    const std::vector<CTxOut>& coinbase_outputs,
+    const std::string& effective_signer_account
+) {
+    if (block.vtx.empty() || !block.vtx[0]->IsCoinBase()) {
+        LogPrintf("PoCX: [BlockBuilder] Payout split rejected: template has no coinbase\n");
+        return false;
+    }
+
+    CMutableTransaction coinbase(*block.vtx[0]);
+    if (coinbase.vout.empty()) {
+        LogPrintf("PoCX: [BlockBuilder] Payout split rejected: coinbase has no outputs\n");
+        return false;
+    }
+
+    // The template's first output carries the full claimable reward (subsidy + fees).
+    // Any further outputs (e.g. the BIP141 witness commitment) must be preserved.
+    const CAmount budget = coinbase.vout[0].nValue;
+    const std::vector<CTxOut> preserved(coinbase.vout.begin() + 1, coinbase.vout.end());
+
+    CAmount total = 0;
+    for (const CTxOut& out : coinbase_outputs) {
+        total += out.nValue;  // each value pre-validated (MoneyRange) at the RPC boundary
+        if (total > budget) {
+            LogPrintf("PoCX: [BlockBuilder] Payout split rejected: outputs sum > coinbase value %d sat\n", budget);
+            return false;
+        }
+    }
+
+    coinbase.vout.assign(coinbase_outputs.begin(), coinbase_outputs.end());
+
+    // Route the remainder (unallocated reward + all fees) to the effective signer.
+    const CAmount remainder = budget - total;
+    if (remainder > 0) {
+        coinbase.vout.emplace_back(remainder, CreateCoinbaseScript(effective_signer_account));
+    }
+
+    // Re-append preserved template outputs (witness commitment) last, so the BIP141
+    // commitment stays the highest-index matching output.
+    coinbase.vout.insert(coinbase.vout.end(), preserved.begin(), preserved.end());
+
+    block.vtx[0] = MakeTransactionRef(std::move(coinbase));
+    LogPrintf("PoCX: [BlockBuilder] Pool payout split applied: %zu output(s), remainder %d sat to signer\n",
+              coinbase_outputs.size(), remainder);
+    return true;
 }
 
 std::unique_ptr<interfaces::BlockTemplate> PoCXBlockBuilder::CreateTemplate(
@@ -70,7 +120,8 @@ std::unique_ptr<CBlock> PoCXBlockBuilder::BuildBlock(
     uint64_t nonce,
     uint64_t quality,
     uint32_t compression,
-    node::NodeContext* context
+    node::NodeContext* context,
+    const std::vector<CTxOut>& coinbase_outputs
 ) {
     // Parse account ID
     auto plot_id = pocx::algorithms::ParseAccountID(account_id.c_str());
@@ -100,7 +151,8 @@ std::unique_ptr<CBlock> PoCXBlockBuilder::BuildBlock(
         const CCoinsViewCache& view = context->chainman->ActiveChainstate().CoinsTip();
 
         // Get effective signer considering assignments
-        std::array<uint8_t, 20> signer = pocx::assignments::GetEffectiveSigner(*plot_id, current_height, view);
+        std::array<uint8_t, 20> signer = pocx::assignments::GetEffectiveSigner(
+            *plot_id, current_height, view.GetForgingAssignment(*plot_id, current_height));
         effective_signer_account = HexStr(signer);
 
         LogPrintf("PoCX: [BlockBuilder] Plot: %s, Effective signer: %s at height %d\n",
@@ -122,6 +174,14 @@ std::unique_ptr<CBlock> PoCXBlockBuilder::BuildBlock(
 
     // Get block from template
     auto block = std::make_unique<CBlock>(pblocktemplate->getBlock());
+
+    // Optional pool payout split (Q1): replace the single coinbase payout with the
+    // caller-supplied outputs before the proof/merkle are finalized. Absent => legacy.
+    if (!coinbase_outputs.empty()) {
+        if (!ApplyCoinbaseOutputs(*block, coinbase_outputs, effective_signer_account)) {
+            return nullptr;  // over-budget / malformed; error already logged
+        }
+    }
 
     // Fill PoCX proof fields with validated quality and compression
     FillPoCXProof(*block, account_id, seed, nonce, quality, compression);
