@@ -23,20 +23,45 @@ struct CompressedHeader {
     int32_t nVersion{0};
     uint256 hashMerkleRoot;
     uint32_t nTime{0};
+#ifdef ENABLE_POCX
+    // PoCX-specific fields (excluding hashPrevBlock)
+    uint256 generationSignature;
+    uint64_t nHeight{0};
+    uint64_t nBaseTarget{0};
+    PoCXProof pocxProof;
+    std::array<uint8_t, 33> vchPubKey;
+    std::array<uint8_t, 65> vchSignature;
+#else
     uint32_t nBits{0};
     uint32_t nNonce{0};
+#endif
 
     CompressedHeader()
     {
         hashMerkleRoot.SetNull();
+#ifdef ENABLE_POCX
+        generationSignature.SetNull();
+        pocxProof.SetNull();
+        vchPubKey.fill(0);
+        vchSignature.fill(0);
+#endif
     }
 
     explicit CompressedHeader(const CBlockHeader& header)
         : nVersion{header.nVersion},
           hashMerkleRoot{header.hashMerkleRoot},
           nTime{header.nTime},
+#ifdef ENABLE_POCX
+          generationSignature{header.generationSignature},
+          nHeight{header.nHeight},
+          nBaseTarget{header.nBaseTarget},
+          pocxProof{header.pocxProof},
+          vchPubKey{header.vchPubKey},
+          vchSignature{header.vchSignature}
+#else
           nBits{header.nBits},
           nNonce{header.nNonce}
+#endif
     {
     }
 
@@ -47,8 +72,17 @@ struct CompressedHeader {
         ret.hashPrevBlock = hash_prev_block;
         ret.hashMerkleRoot = hashMerkleRoot;
         ret.nTime = nTime;
+#ifdef ENABLE_POCX
+        ret.generationSignature = generationSignature;
+        ret.nHeight = nHeight;
+        ret.nBaseTarget = nBaseTarget;
+        ret.pocxProof = pocxProof;
+        ret.vchPubKey = vchPubKey;
+        ret.vchSignature = vchSignature;
+#else
         ret.nBits = nBits;
         ret.nNonce = nNonce;
+#endif
         return ret;
     };
 };
@@ -213,8 +247,10 @@ private:
     /** NodeId of the peer (used for log messages) **/
     const NodeId m_id;
 
+#ifndef ENABLE_POCX
     /** We use the consensus params in our anti-DoS calculations */
     const Consensus::Params& m_consensus_params;
+#endif
 
     /** Parameters that impact memory usage for a given chain, especially when attacked. */
     const HeadersSyncParams m_params;

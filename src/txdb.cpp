@@ -26,6 +26,11 @@ static constexpr uint8_t DB_HEAD_BLOCKS{'H'};
 // Keys used in previous version that might still be found in the DB:
 static constexpr uint8_t DB_COINS{'c'};
 
+#ifdef ENABLE_POCX
+// PoCX forging assignment database keys (OP_RETURN-only architecture)
+static constexpr uint8_t DB_ASSIGNMENT_HISTORY{'A'};    // (plotAddress, txid) -> ForgingAssignment
+#endif
+
 // Threshold for warning when writing this many dirty cache entries to disk.
 static constexpr size_t WARN_FLUSH_COINS_COUNT{10'000'000};
 
@@ -97,7 +102,12 @@ std::vector<uint256> CCoinsViewDB::GetHeadBlocks() const {
     return vhashHeadBlocks;
 }
 
-void CCoinsViewDB::BatchWrite(CoinsViewCacheCursor& cursor, const uint256& hashBlock)
+void CCoinsViewDB::BatchWrite(CoinsViewCacheCursor& cursor, const uint256& hashBlock
+#ifdef ENABLE_POCX
+    , const ForgingAssignmentsMap& assignments
+    , const DeletedAssignmentsSet& deletedAssignments
+#endif
+)
 {
     CDBBatch batch(*m_db);
     size_t count = 0;
@@ -153,6 +163,13 @@ void CCoinsViewDB::BatchWrite(CoinsViewCacheCursor& cursor, const uint256& hashB
             }
         }
     }
+
+#ifdef ENABLE_POCX
+    // Bundle forging assignment updates into the final batch so they commit atomically
+    // with DB_BEST_BLOCK. If this batch is lost on crash, HEAD_BLOCKS replay rebuilds
+    // both coins and assignments from block data via RollforwardBlock.
+    WriteAssignmentsToBatch(batch, assignments, deletedAssignments);
+#endif
 
     // In the last batch, mark the database as consistent with hashBlock again.
     batch.Erase(DB_HEAD_BLOCKS);
@@ -240,3 +257,93 @@ void CCoinsViewDBCursor::Next()
         keyTmp.first = entry.key;
     }
 }
+
+#ifdef ENABLE_POCX
+// ============================================================================
+// PoCX Forging Assignment Database Implementation (OP_RETURN-only architecture)
+// ============================================================================
+
+namespace {
+
+// Serialization structures for database keys.
+// Key format: (prefix, plotAddress, height, txid). All rows for a plot share
+// the (prefix, plotAddress) byte-prefix, so they are contiguous and a single
+// Seek + scan reads exactly one plot's history. Iteration order within a plot
+// is unspecified (height is not byte-ordered), so readers must not assume it.
+struct AssignmentHistoryKey {
+    uint8_t prefix;
+    std::array<uint8_t, 20> plotAddress;
+    int assignment_height;
+    uint256 assignment_txid;
+
+    AssignmentHistoryKey(const std::array<uint8_t, 20>& plot, int height, const uint256& txid)
+        : prefix(DB_ASSIGNMENT_HISTORY), plotAddress(plot), assignment_height(height), assignment_txid(txid) {}
+
+    SERIALIZE_METHODS(AssignmentHistoryKey, obj) {
+        READWRITE(obj.prefix, obj.plotAddress, obj.assignment_height, obj.assignment_txid);
+    }
+};
+
+} // namespace
+
+std::vector<ForgingAssignment> CCoinsViewDB::GetForgingAssignmentHistory(
+    const std::array<uint8_t, 20>& plotAddress) const
+{
+    std::vector<ForgingAssignment> history;
+    std::unique_ptr<CDBIterator> pcursor(m_db->NewIterator());
+
+    // Seek to first assignment for this plot (height=0)
+    AssignmentHistoryKey seek_key(plotAddress, 0, uint256());
+    pcursor->Seek(seek_key);
+
+    while (pcursor->Valid()) {
+        AssignmentHistoryKey key(plotAddress, 0, uint256());
+        if (!pcursor->GetKey(key)) break;
+
+        // Stop if we've moved past this plot's assignments
+        if (key.prefix != DB_ASSIGNMENT_HISTORY || key.plotAddress != plotAddress) {
+            break;
+        }
+
+        ForgingAssignment assignment;
+        if (pcursor->GetValue(assignment)) {
+            history.push_back(assignment);
+        }
+
+        pcursor->Next();
+    }
+
+    return history;
+}
+
+void CCoinsViewDB::WriteAssignmentsToBatch(
+    CDBBatch& batch,
+    const ForgingAssignmentsMap& assignments,
+    const DeletedAssignmentsSet& deletedAssignments)
+{
+    // Write history rows, but skip keys that are about to be erased — emitting
+    // both a Write and an Erase for the same key into one batch is wasted I/O.
+    for (const auto& [key, assignment] : assignments) {
+        if (deletedAssignments.contains(key)) continue;
+        const auto& [plot_addr, txid] = key;
+        batch.Write(AssignmentHistoryKey(plot_addr, assignment.assignment_height, txid), assignment);
+    }
+
+    // Erase deleted assignments from history. The height comes from the
+    // assignment payload that the cache carried in `assignments` alongside the
+    // deletion key. assignments is a map keyed by (plot, txid), so the lookup
+    // is O(log N).
+    for (const auto& key : deletedAssignments) {
+        auto it = assignments.find(key);
+        if (it != assignments.end()) {
+            const auto& [plot_addr, txid] = key;
+            batch.Erase(AssignmentHistoryKey(plot_addr, it->second.assignment_height, txid));
+        } else {
+            // Deletion without corresponding payload — the cache invariant says
+            // this shouldn't happen; log so we notice if it ever does.
+            LogError("PoCX: Cannot delete assignment %s for plot %s without height information\n",
+                     key.second.ToString(), HexStr(key.first));
+        }
+    }
+}
+#endif

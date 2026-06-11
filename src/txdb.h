@@ -44,7 +44,12 @@ public:
     bool HaveCoin(const COutPoint &outpoint) const override;
     uint256 GetBestBlock() const override;
     std::vector<uint256> GetHeadBlocks() const override;
-    void BatchWrite(CoinsViewCacheCursor& cursor, const uint256& hashBlock) override;
+    void BatchWrite(CoinsViewCacheCursor& cursor, const uint256& hashBlock
+#ifdef ENABLE_POCX
+        , const ForgingAssignmentsMap& assignments = {}
+        , const DeletedAssignmentsSet& deletedAssignments = {}
+#endif
+    ) override;
     std::unique_ptr<CCoinsViewCursor> Cursor() const override;
 
     //! Whether an unsupported database format is used.
@@ -53,6 +58,22 @@ public:
 
     //! Dynamically alter the underlying leveldb cache size.
     void ResizeCache(size_t new_cache_size) EXCLUSIVE_LOCKS_REQUIRED(cs_main);
+
+#ifdef ENABLE_POCX
+    //! Forging assignment database methods (OP_RETURN-only architecture)
+
+    //! Get full committed assignment history for a plot
+    std::vector<ForgingAssignment> GetForgingAssignmentHistory(
+        const std::array<uint8_t, 20>& plotAddress) const override;
+
+private:
+    //! Append assignment writes to an existing batch.
+    //! Called from BatchWrite to bundle assignment updates with the chainstate transition.
+    void WriteAssignmentsToBatch(
+        CDBBatch& batch,
+        const ForgingAssignmentsMap& assignments,
+        const DeletedAssignmentsSet& deletedAssignments);
+#endif
 };
 
 #endif // BITCOIN_TXDB_H

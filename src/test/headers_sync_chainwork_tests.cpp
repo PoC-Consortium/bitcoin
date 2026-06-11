@@ -63,19 +63,31 @@ struct HeadersGeneratorSetup : public RegTestingSetup {
         // roughly as the coefficient 0x7fffff with the exponent 0x20 (32 bytes).
         // This implies around every 2nd hash attempt should succeed, which
         // is why CHAIN_WORK == TARGET_BLOCKS * 2.
+#ifndef ENABLE_POCX
         assert(genesis.nBits == 0x207fffff);
+#endif
 
         // Subtract 1 since the genesis block also contributes work so we reach
         // the CHAIN_WORK target.
+#ifdef ENABLE_POCX
+        static const auto first_chain{GenerateHeaders(/*count=*/TARGET_BLOCKS - 1, genesis.GetHash(),
+                genesis.nVersion, genesis.nTime, /*merkle_root=*/uint256::ZERO, 0x207fffff)};
+#else
         static const auto first_chain{GenerateHeaders(/*count=*/TARGET_BLOCKS - 1, genesis.GetHash(),
                 genesis.nVersion, genesis.nTime, /*merkle_root=*/uint256::ZERO, genesis.nBits)};
+#endif
         return first_chain;
     }
     const std::vector<CBlockHeader>& SecondChain()
     {
         // Subtract 2 to keep total work below the target.
+#ifdef ENABLE_POCX
+        static const auto second_chain{GenerateHeaders(/*count=*/TARGET_BLOCKS - 2, genesis.GetHash(),
+                genesis.nVersion, genesis.nTime, /*merkle_root=*/uint256::ONE, 0x207fffff)};
+#else
         static const auto second_chain{GenerateHeaders(/*count=*/TARGET_BLOCKS - 2, genesis.GetHash(),
                 genesis.nVersion, genesis.nTime, /*merkle_root=*/uint256::ONE, genesis.nBits)};
+#endif
         return second_chain;
     }
 
@@ -106,9 +118,11 @@ private:
 
 void HeadersGeneratorSetup::FindProofOfWork(CBlockHeader& starting_header)
 {
+#ifndef ENABLE_POCX
     while (!CheckProofOfWork(starting_header.GetHash(), starting_header.nBits, Params().GetConsensus())) {
         ++starting_header.nNonce;
     }
+#endif
 }
 
 std::vector<CBlockHeader> HeadersGeneratorSetup::GenerateHeaders(
@@ -121,7 +135,9 @@ std::vector<CBlockHeader> HeadersGeneratorSetup::GenerateHeaders(
         next_header.hashPrevBlock = prev_hash;
         next_header.hashMerkleRoot = merkle_root;
         next_header.nTime = ++prev_time;
+#ifndef ENABLE_POCX
         next_header.nBits = nBits;
+#endif
 
         FindProofOfWork(next_header);
         prev_hash = next_header.GetHash();

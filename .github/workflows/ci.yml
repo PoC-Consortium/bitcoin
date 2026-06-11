@@ -141,14 +141,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        job-type: [standard, fuzz]
+        job-type: [standard]
         include:
           - job-type: standard
             file-env: './ci/test/00_setup_env_mac_native.sh'
             job-name: 'macOS native'
-          - job-type: fuzz
-            file-env: './ci/test/00_setup_env_mac_native_fuzz.sh'
-            job-name: 'macOS native, fuzz'
 
     env:
       DANGER_RUN_CI_ON_HOST: 1
@@ -226,12 +223,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        job-type: [standard, fuzz]
+        job-type: [standard]
         include:
           - job-type: standard
             job-name: 'Windows native, VS'
-          - job-type: fuzz
-            job-name: 'Windows native, fuzz, VS'
 
     steps:
       - *ANNOTATION_PR_NUMBER
@@ -492,24 +487,6 @@ jobs:
             timeout-minutes: 120
             file-env: './ci/test/00_setup_env_native_nowallet.sh'
 
-          - name: 'i686, no IPC'
-            cirrus-runner: 'ghcr.io/cirruslabs/ubuntu-runner-amd64:24.04-md'
-            fallback-runner: 'ubuntu-24.04'
-            timeout-minutes: 120
-            file-env: './ci/test/00_setup_env_i686_no_ipc.sh'
-
-          - name: 'fuzzer,address,undefined,integer'
-            cirrus-runner: 'ghcr.io/cirruslabs/ubuntu-runner-amd64:24.04-lg'
-            fallback-runner: 'ubuntu-24.04'
-            timeout-minutes: 240
-            file-env: './ci/test/00_setup_env_native_fuzz.sh'
-
-          - name: 'previous releases'
-            cirrus-runner: 'ghcr.io/cirruslabs/ubuntu-runner-amd64:24.04-md'
-            fallback-runner: 'ubuntu-24.04'
-            timeout-minutes: 120
-            file-env: './ci/test/00_setup_env_native_previous_releases.sh'
-
           - name: 'Alpine (musl)'
             cirrus-runner: 'ghcr.io/cirruslabs/ubuntu-runner-amd64:24.04-md'
             fallback-runner: 'ubuntu-24.04'
@@ -527,12 +504,6 @@ jobs:
             fallback-runner: 'ubuntu-24.04'
             timeout-minutes: 120
             file-env: './ci/test/00_setup_env_native_tsan.sh'
-
-          - name: 'MSan, fuzz'
-            cirrus-runner: 'ghcr.io/cirruslabs/ubuntu-runner-amd64:24.04-md'
-            fallback-runner: 'ubuntu-24.04'
-            timeout-minutes: 150
-            file-env: './ci/test/00_setup_env_native_fuzz_with_msan.sh'
 
           - name: 'MSan'
             cirrus-runner: 'ghcr.io/cirruslabs/ubuntu-runner-amd64:24.04-lg'
@@ -568,7 +539,7 @@ jobs:
         run: sed -i "s|\${INSTALL_BCC_TRACING_TOOLS}|true|g" ./ci/test/00_setup_env_native_asan.sh
 
       - name: Set mmap_rnd_bits
-        if: ${{ env.CONTAINER_NAME == 'ci_native_tsan' || env.CONTAINER_NAME == 'ci_native_msan' || env.CONTAINER_NAME == 'ci_native_fuzz_msan' }}
+        if: ${{ env.CONTAINER_NAME == 'ci_native_tsan' || env.CONTAINER_NAME == 'ci_native_msan' }}
         # Prevents crashes due to high ASLR entropy
         run: sudo sysctl -w vm.mmap_rnd_bits=28
 

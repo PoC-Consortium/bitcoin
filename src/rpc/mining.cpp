@@ -44,18 +44,34 @@
 #include <validationinterface.h>
 
 #include <cstdint>
+
+#ifdef ENABLE_POCX
+#include <pocx/rpc/mining.h>
+#include <pocx/consensus/difficulty.h>
+#include <pocx/mining/block_context.h>
+#include <pocx/mining/block_signing.h>
+#include <pocx/consensus/params.h>
+#include <pocx/regtest/forging.h>
+#include <key.h>
+#include <pubkey.h>
+#include <hash.h>
+#include <coins.h>
+#endif
 #include <memory>
 
 using interfaces::BlockRef;
 using interfaces::BlockTemplate;
 using interfaces::Mining;
+#ifndef ENABLE_POCX
 using node::BlockAssembler;
+#endif
 using node::GetMinimumTime;
 using node::NodeContext;
 using node::RegenerateCommitments;
 using node::UpdateTime;
 using util::ToString;
 
+#ifndef ENABLE_POCX
 /**
  * Return average network hashes per second based on the last 'lookup' blocks,
  * or from the last difficulty change if 'lookup' is -1.
@@ -133,12 +149,36 @@ static RPCHelpMan getnetworkhashps()
 },
     };
 }
+#endif
 
 static bool GenerateBlock(ChainstateManager& chainman, CBlock&& block, uint64_t& max_tries, std::shared_ptr<const CBlock>& block_out, bool process_new_block)
 {
     block_out.reset();
     block.hashMerkleRoot = BlockMerkleRoot(block);
 
+#ifdef ENABLE_POCX
+    if (chainman.GetParams().GetChainType() == ChainType::REGTEST) {
+        int64_t prev_time{0};
+        {
+            LOCK(cs_main);
+            const CBlockIndex* pindexPrev = chainman.m_blockman.LookupBlockIndex(block.hashPrevBlock);
+            if (!pindexPrev) {
+                throw JSONRPCError(RPC_INTERNAL_ERROR, "Previous block not found");
+            }
+            prev_time = pindexPrev->GetBlockTime();
+        }
+
+        std::string err;
+        if (!pocx::regtest::ForgeRegtestBlock(block, chainman.GetConsensus(), prev_time, err)) {
+            throw JSONRPCError(RPC_MISC_ERROR, err);
+        }
+        if (chainman.m_interrupt) return false;
+        if (max_tries > 0) --max_tries;
+    } else {
+        // Non-regtest PoCX mining requires plot files and an external miner.
+        return false;
+    }
+#else
     while (max_tries > 0 && block.nNonce < std::numeric_limits<uint32_t>::max() && !CheckProofOfWork(block.GetHash(), block.nBits, chainman.GetConsensus()) && !chainman.m_interrupt) {
         ++block.nNonce;
         --max_tries;
@@ -149,6 +189,7 @@ static bool GenerateBlock(ChainstateManager& chainman, CBlock&& block, uint64_t&
     if (block.nNonce == std::numeric_limits<uint32_t>::max()) {
         return true;
     }
+#endif
 
     block_out = std::make_shared<const CBlock>(std::move(block));
 
@@ -412,6 +453,7 @@ static RPCHelpMan generateblock()
     };
 }
 
+#ifndef ENABLE_POCX
 static RPCHelpMan getmininginfo()
 {
     return RPCHelpMan{
@@ -495,6 +537,7 @@ static RPCHelpMan getmininginfo()
 },
     };
 }
+#endif // ENABLE_POCX
 
 
 // NOTE: Unlike wallet RPC (which use BTC values), mining RPCs follow GBT (BIP 22) in using satoshi amounts
@@ -682,18 +725,27 @@ static RPCHelpMan getblocktemplate()
                 }},
                 {RPCResult::Type::NUM, "coinbasevalue", "maximum allowable input to coinbase transaction, including the generation award and transaction fees (in satoshis)"},
                 {RPCResult::Type::STR, "longpollid", "an id to include with a request to longpoll on an update to this template"},
+#ifdef ENABLE_POCX
+                {RPCResult::Type::STR_HEX, "generation_signature", "The PoCX generation signature for the next block"},
+                {RPCResult::Type::NUM, "base_target", "The PoCX difficulty base target for the next block"},
+#else
                 {RPCResult::Type::STR, "target", "The hash target"},
+#endif
                 {RPCResult::Type::NUM_TIME, "mintime", "The minimum timestamp appropriate for the next block time, expressed in " + UNIX_EPOCH_TIME + ". Adjusted for the proposed BIP94 timewarp rule."},
                 {RPCResult::Type::ARR, "mutable", "list of ways the block template may be changed",
                 {
                     {RPCResult::Type::STR, "value", "A way the block template may be changed, e.g. 'time', 'transactions', 'prevblock'"},
                 }},
+#ifndef ENABLE_POCX
                 {RPCResult::Type::STR_HEX, "noncerange", "A range of valid nonces"},
+#endif
                 {RPCResult::Type::NUM, "sigoplimit", "limit of sigops in blocks"},
                 {RPCResult::Type::NUM, "sizelimit", "limit of block size"},
                 {RPCResult::Type::NUM, "weightlimit", /*optional=*/true, "limit of block weight"},
                 {RPCResult::Type::NUM_TIME, "curtime", "current timestamp in " + UNIX_EPOCH_TIME + ". Adjusted for the proposed BIP94 timewarp rule."},
+#ifndef ENABLE_POCX
                 {RPCResult::Type::STR, "bits", "compressed target of next block"},
+#endif
                 {RPCResult::Type::NUM, "height", "The height of the next block"},
                 {RPCResult::Type::STR_HEX, "signet_challenge", /*optional=*/true, "Only on signet"},
                 {RPCResult::Type::STR_HEX, "default_witness_commitment", /*optional=*/true, "a valid witness commitment for the unmodified block template"},
@@ -886,7 +938,9 @@ static RPCHelpMan getblocktemplate()
 
     // Update nTime
     UpdateTime(&block, consensusParams, pindexPrev);
+#ifndef ENABLE_POCX
     block.nNonce = 0;
+#endif
 
     // NOTE: If at some point we support pre-segwit miners post-segwit-activation, this needs to take segwit support into consideration
     const bool fPreSegWit = !DeploymentActiveAfter(pindexPrev, chainman, Consensus::DEPLOYMENT_SEGWIT);
@@ -936,7 +990,14 @@ static RPCHelpMan getblocktemplate()
 
     UniValue aux(UniValue::VOBJ);
 
+#ifdef ENABLE_POCX
+    // Get actual PoCX context for current mining parameters
+    auto pocx_context = pocx::mining::GetNewBlockContext(chainman);
+    uint64_t base_target = pocx_context.base_target;
+    uint256 generation_signature = pocx_context.generation_signature;
+#else
     arith_uint256 hashTarget = arith_uint256().SetCompact(block.nBits);
+#endif
 
     UniValue aMutable(UniValue::VARR);
     aMutable.push_back("time");
@@ -993,10 +1054,19 @@ static RPCHelpMan getblocktemplate()
     result.pushKV("coinbaseaux", std::move(aux));
     result.pushKV("coinbasevalue", block.vtx[0]->vout[0].nValue);
     result.pushKV("longpollid", tip.GetHex() + ToString(nTransactionsUpdatedLast));
+#ifdef ENABLE_POCX
+    // PoCX-specific fields for pool mining
+    result.pushKV("generation_signature", generation_signature.GetHex());
+    result.pushKV("base_target", base_target);
+#else
+    // PoW-specific fields
     result.pushKV("target", hashTarget.GetHex());
+#endif
     result.pushKV("mintime", GetMinimumTime(pindexPrev, consensusParams.DifficultyAdjustmentInterval()));
     result.pushKV("mutable", std::move(aMutable));
+#ifndef ENABLE_POCX
     result.pushKV("noncerange", "00000000ffffffff");
+#endif
     int64_t nSigOpLimit = MAX_BLOCK_SIGOPS_COST;
     int64_t nSizeLimit = MAX_BLOCK_SERIALIZED_SIZE;
     if (fPreSegWit) {
@@ -1011,7 +1081,9 @@ static RPCHelpMan getblocktemplate()
         result.pushKV("weightlimit", MAX_BLOCK_WEIGHT);
     }
     result.pushKV("curtime", block.GetBlockTime());
+#ifndef ENABLE_POCX
     result.pushKV("bits", strprintf("%08x", block.nBits));
+#endif
     result.pushKV("height", pindexPrev->nHeight + 1);
 
     if (consensusParams.signet_blocks) {
@@ -1052,7 +1124,13 @@ static RPCHelpMan submitblock()
     return RPCHelpMan{
         "submitblock",
         "Attempts to submit new block to network.\n"
-        "See https://en.bitcoin.it/wiki/BIP_0022 for full specification.\n",
+        "See https://en.bitcoin.it/wiki/BIP_0022 for full specification.\n"
+#ifdef ENABLE_POCX
+        "PoCX: if the block has no signature, the node signs it in place with the wallet key for "
+        "the effective signer (the holding wallet must be loaded and unlocked); a block that is "
+        "already signed is processed as-is.\n"
+#endif
+        ,
         {
             {"hexdata", RPCArg::Type::STR_HEX, RPCArg::Optional::NO, "the hex-encoded block data to submit"},
             {"dummy", RPCArg::Type::STR, RPCArg::DefaultHint{"ignored"}, "dummy value, for compatibility with BIP22. This value is ignored."},
@@ -1081,6 +1159,18 @@ static RPCHelpMan submitblock()
             chainman.UpdateUncommittedBlockStructures(block, pindex);
         }
     }
+
+#ifdef ENABLE_POCX
+    // PoCX: if the submitted block carries no signature, sign it in place using a
+    // loaded, unlocked wallet that holds the effective signer's key (same wallet
+    // path as the forger). Done after UpdateUncommittedBlockStructures so the
+    // signature covers the final merkle/commitment, and before the StateCatcher
+    // so it captures the final hash. Already-signed blocks are processed as-is.
+    if (auto pocx_err = pocx::mining::MaybeSignPoCXBlock(
+            block, chainman, EnsureAnyNodeContext(request.context))) {
+        throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, *pocx_err);
+    }
+#endif
 
     bool new_block;
     auto sc = std::make_shared<submitblock_StateCatcher>(block.GetHash());
@@ -1141,8 +1231,10 @@ static RPCHelpMan submitheader()
 void RegisterMiningRPCCommands(CRPCTable& t)
 {
     static const CRPCCommand commands[]{
+#ifndef ENABLE_POCX
         {"mining", &getnetworkhashps},
         {"mining", &getmininginfo},
+#endif
         {"mining", &prioritisetransaction},
         {"mining", &getprioritisedtransactions},
         {"mining", &getblocktemplate},
@@ -1157,4 +1249,8 @@ void RegisterMiningRPCCommands(CRPCTable& t)
     for (const auto& c : commands) {
         t.appendCommand(c.name, &c);
     }
+
+#ifdef ENABLE_POCX
+    pocx::rpc::RegisterPoCXRPCCommands(t);
+#endif
 }
