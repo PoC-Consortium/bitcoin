@@ -4762,9 +4762,63 @@ bool ChainstateManager::ProcessNewBlockHeaders(std::span<const CBlockHeader> hea
         std::vector<const CBlockHeader*> headers_to_validate;
         {
             LOCK(::cs_main);
+
+            // Cheap anti-DoS gate, run before the proof-expensive batch below.
+            // The batch regenerates up to 2^compression nonces per header, so we
+            // must not let a peer make us do that work for headers we can already
+            // tell are doomed. ContextualCheckBlockHeader still performs the
+            // authoritative (exact) checks for accepted headers; the rejects
+            // here only short-circuit before any proof work.
+            //
+            // Anchor the first header to its prev block. For the p2p path this is
+            // guaranteed to be in the index (ProcessHeadersMessage looked it up);
+            // for RPC/loadblk callers it may be absent, in which case we skip the
+            // anchor-relative leg and rely on the inter-header checks below.
+            int prev_height = -1;
+            uint64_t prev_base_target = 0;
+            if (const CBlockIndex* anchor = m_blockman.LookupBlockIndex(headers.front().hashPrevBlock)) {
+                if (anchor->nStatus & BLOCK_FAILED_MASK) {
+                    return state.Invalid(BlockValidationResult::BLOCK_INVALID_PREV, "bad-prevblk",
+                                         "headers build on a known-invalid block");
+                }
+                prev_height = anchor->nHeight;
+                prev_base_target = anchor->nBaseTarget;
+            }
+
             for (const auto& header : headers) {
                 if (header.nHeight == 0) continue;
-                if (m_blockman.LookupBlockIndex(header.GetHash()) != nullptr) continue;
+
+                // Bound attacker-controlled height/base-target before they reach
+                // the batch (and CalculateClaimedHeadersWork). A valid chain
+                // always increments height by one and keeps base-target within
+                // the +/-20% per-block envelope that GetNextBaseTarget enforces,
+                // so this never rejects an honest chain. prev_height < 0 means we
+                // had no anchor and this is the first header: skip its relative
+                // check and seed the running values from it.
+                if (prev_height >= 0) {
+                    if (header.nHeight != prev_height + 1 ||
+                        !pocx::consensus::PermittedBaseTargetTransition(prev_base_target, header.nBaseTarget)) {
+                        return state.Invalid(BlockValidationResult::BLOCK_INVALID_HEADER, "bad-header-transition",
+                                             strprintf("bad height/base-target transition at height %d", header.nHeight));
+                    }
+                }
+                prev_height = header.nHeight;
+                prev_base_target = header.nBaseTarget;
+
+                // Already in the index? Peers re-send batches during catch-up,
+                // reconnects and overlapping tip announcements; skipping known
+                // headers avoids redoing the full 2^compression regeneration for
+                // each one. But a header marked invalid fails the whole batch:
+                // CheckHeadersAreContinuous guarantees one chain, so every later
+                // header descends from it and is equally doomed. Keyed on
+                // GetHash(), matching m_block_index and handling forks correctly.
+                if (const CBlockIndex* known = m_blockman.LookupBlockIndex(header.GetHash())) {
+                    if (known->nStatus & BLOCK_FAILED_MASK) {
+                        return state.Invalid(BlockValidationResult::BLOCK_CACHED_INVALID, "duplicate-invalid",
+                                             "batch contains a known-invalid header");
+                    }
+                    continue;
+                }
                 headers_to_validate.push_back(&header);
             }
         }
