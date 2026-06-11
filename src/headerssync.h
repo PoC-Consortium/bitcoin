@@ -53,7 +53,7 @@ struct CompressedHeader {
           nTime{header.nTime},
 #ifdef ENABLE_POCX
           generationSignature{header.generationSignature},
-          nHeight{header.nHeight},
+          nHeight{static_cast<uint64_t>(header.nHeight)},
           nBaseTarget{header.nBaseTarget},
           pocxProof{header.pocxProof},
           vchPubKey{header.vchPubKey},
