@@ -271,13 +271,13 @@ namespace {
 // Seek + scan reads exactly one plot's history. Iteration order within a plot
 // is unspecified (height is not byte-ordered), so readers must not assume it.
 struct AssignmentHistoryKey {
-    uint8_t prefix;
+    uint8_t prefix{DB_ASSIGNMENT_HISTORY};
     std::array<uint8_t, 20> plotAddress;
     int assignment_height;
     uint256 assignment_txid;
 
     AssignmentHistoryKey(const std::array<uint8_t, 20>& plot, int height, const uint256& txid)
-        : prefix(DB_ASSIGNMENT_HISTORY), plotAddress(plot), assignment_height(height), assignment_txid(txid) {}
+        : plotAddress(plot), assignment_height(height), assignment_txid(txid) {}
 
     SERIALIZE_METHODS(AssignmentHistoryKey, obj) {
         READWRITE(obj.prefix, obj.plotAddress, obj.assignment_height, obj.assignment_txid);

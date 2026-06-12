@@ -5048,7 +5048,7 @@ bool ChainstateManager::ProcessNewBlock(const std::shared_ptr<const CBlock>& blo
         // not very expensive, the anti-DoS benefits of caching failure (of a definitely-invalid block) are not substantial.
 #ifdef ENABLE_POCX
         // PoCX: Skip proof validation if header is already in block index (validated during header sync)
-        bool skip_pocx = m_blockman.m_block_index.count(block->GetHash()) > 0;
+        bool skip_pocx = m_blockman.m_block_index.contains(block->GetHash());
         bool ret = CheckBlock(*block, state, GetConsensus(), /*fCheckPOW=*/true, /*fCheckMerkleRoot=*/true, skip_pocx);
 #else
         bool ret = CheckBlock(*block, state, GetConsensus());
