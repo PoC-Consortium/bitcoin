@@ -4803,6 +4803,10 @@ bool ChainstateManager::ProcessNewBlockHeaders(std::span<const CBlockHeader> hea
     // already microseconds. The kernel-library build can't see Params()
     // and never processes regtest anyway, so just run the batch there.
     bool skip_pocx_proof = false;
+    // First far-future header in the batch: the prefix before it is processed
+    // normally, it and the rest wait for a later batch (temporary, non-punishing).
+    std::optional<size_t> future_cutoff;
+    int future_height = 0;
 #ifdef BUILD_BITCOIN_KERNEL
     if (!headers.empty() && headers.size() >= 2) {
 #else
@@ -4852,11 +4856,20 @@ bool ChainstateManager::ProcessNewBlockHeaders(std::span<const CBlockHeader> hea
                 prev_account_id = anchor->pocxProof.account_id;
             }
 
-            for (const auto& header : headers) {
+            const auto future_limit = NodeClock::now() + std::chrono::seconds{MAX_FUTURE_BLOCK_TIME};
+            for (size_t i = 0; i < headers.size(); ++i) {
+                const CBlockHeader& header = headers[i];
                 if (header.nHeight == 0) continue;
                 if (header.nBaseTarget == 0) {
                     return state.Invalid(BlockValidationResult::BLOCK_INVALID_HEADER, "bad-header-transition",
                                          strprintf("zero base target at height %d", header.nHeight));
+                }
+                // Same rule as ContextualCheckBlockHeader. Stop collecting: the
+                // prefix is still processed, this header and the rest are not.
+                if (header.Time() > future_limit) {
+                    future_cutoff = i;
+                    future_height = header.nHeight;
+                    break;
                 }
 
                 // A valid chain always increments height by one, keeps base-target
@@ -4867,7 +4880,7 @@ bool ChainstateManager::ProcessNewBlockHeaders(std::span<const CBlockHeader> hea
                 // had no anchor and this is the first header: skip its relative
                 // checks and seed the running values from it.
                 if (prev_height >= 0) {
-                    const bool base_target_ok = (anchor && &header == &headers.front())
+                    const bool base_target_ok = (anchor && i == 0)
                         ? header.nBaseTarget == anchor->nNextBaseTarget
                         : pocx::consensus::PermittedBaseTargetTransition(prev_base_target, header.nBaseTarget);
                     if (header.nHeight != prev_height + 1 || !base_target_ok) {
@@ -4907,7 +4920,7 @@ bool ChainstateManager::ProcessNewBlockHeaders(std::span<const CBlockHeader> hea
                 headers_to_validate.push_back(&header);
             }
         }
-
+        if (future_cutoff) headers = headers.first(*future_cutoff);
         if (!headers_to_validate.empty()) {
             // Prepare batch validation inputs
             std::vector<pocx::consensus::BlockValidationInput> inputs(headers_to_validate.size());
@@ -5032,6 +5045,12 @@ bool ChainstateManager::ProcessNewBlockHeaders(std::span<const CBlockHeader> hea
             LogInfo("Synchronizing blockheaders, height: %d (~%.2f%%)\n", last_accepted.nHeight, progress);
         }
     }
+#ifdef ENABLE_POCX
+    if (future_cutoff) {
+        return state.Invalid(BlockValidationResult::BLOCK_TIME_FUTURE, "time-too-new",
+                             strprintf("block timestamp too far in the future at height %d", future_height));
+    }
+#endif
     return true;
 }
 
