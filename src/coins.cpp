@@ -319,9 +319,7 @@ bool CCoinsViewCache::BatchWrite(CoinsViewCacheCursor& cursor, const uint256 &ha
             }
             if (vec.empty()) pendingAssignments.erase(plotIt);
         }
-        if (deletedAssignments.insert(row).second) {
-            cachedAssignmentsUsage += sizeof(ForgingAssignment);
-        }
+        deletedAssignments.insert(row);
         dirtyPlots.insert(row.plotAddress);
     }
 #endif
@@ -662,9 +660,7 @@ void CCoinsViewCache::RemoveForgingAssignment(
     for (const auto& assignment : base->GetForgingAssignmentHistory(plotAddress)) {
         if (assignment.assignment_txid != assignment_txid) continue;
         found_in_base = true;
-        if (deletedAssignments.insert(AssignmentRowKey(assignment)).second) {
-            cachedAssignmentsUsage += sizeof(ForgingAssignment);
-        }
+        deletedAssignments.insert(AssignmentRowKey(assignment));
         dirtyPlots.insert(plotAddress);
     }
 

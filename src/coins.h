@@ -569,6 +569,9 @@ protected:
     mutable PendingAssignmentsMap pendingAssignments;
     mutable DeletedAssignmentsSet deletedAssignments;
     mutable std::set<std::array<uint8_t, 20>> dirtyPlots;
+    /* Heap storage of the pending vectors' elements, which DynamicUsage of the
+     * map does not see. Tombstones and dirtyPlots are fully covered by their
+     * set nodes, so they are not charged here. */
     mutable size_t cachedAssignmentsUsage{0};
 #endif
 
