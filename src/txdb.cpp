@@ -27,7 +27,7 @@ static constexpr uint8_t DB_COINS{'c'};
 
 #ifdef ENABLE_POCX
 // PoCX forging assignment database keys (OP_RETURN-only architecture)
-static constexpr uint8_t DB_ASSIGNMENT_HISTORY{'A'};    // (plotAddress, txid) -> ForgingAssignment
+static constexpr uint8_t DB_ASSIGNMENT_HISTORY{'A'};    // (plotAddress, height, txid) -> ForgingAssignment
 #endif
 
 bool CCoinsViewDB::NeedsUpgrade()
@@ -312,29 +312,18 @@ void CCoinsViewDB::WriteAssignmentsToBatch(
     const ForgingAssignmentsMap& assignments,
     const DeletedAssignmentsSet& deletedAssignments)
 {
-    // Write history rows, but skip keys that are about to be erased — emitting
+    // Write history rows, but skip rows that are about to be erased — emitting
     // both a Write and an Erase for the same key into one batch is wasted I/O.
     for (const auto& [key, assignment] : assignments) {
-        if (deletedAssignments.contains(key)) continue;
-        const auto& [plot_addr, txid] = key;
-        batch.Write(AssignmentHistoryKey(plot_addr, assignment.assignment_height, txid), assignment);
+        if (deletedAssignments.contains(AssignmentRowKey(assignment))) continue;
+        batch.Write(AssignmentHistoryKey(assignment.plotAddress, assignment.assignment_height,
+                                         assignment.assignment_txid), assignment);
     }
 
-    // Erase deleted assignments from history. The height comes from the
-    // assignment payload that the cache carried in `assignments` alongside the
-    // deletion key. assignments is a map keyed by (plot, txid), so the lookup
-    // is O(log N).
-    for (const auto& key : deletedAssignments) {
-        auto it = assignments.find(key);
-        if (it != assignments.end()) {
-            const auto& [plot_addr, txid] = key;
-            batch.Erase(AssignmentHistoryKey(plot_addr, it->second.assignment_height, txid));
-        } else {
-            // Deletion without corresponding payload — the cache invariant says
-            // this shouldn't happen; log so we notice if it ever does.
-            LogPrintf("PoCX: ERROR - Cannot delete assignment %s for plot %s without height information\n",
-                     key.second.ToString(), HexStr(key.first));
-        }
+    // Erase tombstoned rows. Each tombstone names its physical row, so a txid
+    // re-mined at another height erases the old row and writes the new one.
+    for (const auto& row : deletedAssignments) {
+        batch.Erase(AssignmentHistoryKey(row.plotAddress, row.assignment_height, row.assignment_txid));
     }
 }
 #endif
