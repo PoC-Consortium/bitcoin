@@ -142,7 +142,9 @@ arith_uint256 GetBlockProof(const CBlockIndex& block)
     if (block.nNextBaseTarget > 0) {
         return TWO64 / arith_uint256(block.nNextBaseTarget);
     }
-    // Headerssync fallback; one-block offset, negligible for chain comparison
+    // Headerssync/claimed-work fallback; one-block offset, negligible for chain comparison.
+    // The header's base target is attacker-chosen for network headers: zero is zero work, not a throw.
+    if (block.nBaseTarget == 0) return 0;
     return TWO64 / arith_uint256(block.nBaseTarget);
 }
 

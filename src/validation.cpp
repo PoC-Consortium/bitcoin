@@ -26,7 +26,6 @@
 #include <pocx/consensus/difficulty.h>
 #include <pocx/assignments/opcodes.h>
 #include <pocx/assignments/replay.h>
-#include <pocx/algorithms/time_bending.h>
 #include <pocx/mining/defensive_forge.h>
 #ifndef BUILD_BITCOIN_KERNEL
 #include <chainparams.h> // For Params() in the regtest hot path (not visible to the kernel lib)
@@ -4512,9 +4511,8 @@ static bool ContextualCheckBlockHeader(const CBlockHeader& block, BlockValidatio
     }
 
     // Step 2: Verify generation signature matches expected value
-    uint256 expected_generation_signature = pocx::consensus::GetNextGenerationSignature(pindexPrev);
-
-    if (block.generationSignature != expected_generation_signature) {
+    if (!pocx::consensus::PermittedGenerationSignatureTransition(
+            pindexPrev->generationSignature, pindexPrev->pocxProof.account_id, block.generationSignature)) {
         return state.Invalid(BlockValidationResult::BLOCK_INVALID_HEADER, "bad-gensig", "incorrect generation signature");
     }
 
@@ -4539,17 +4537,11 @@ static bool ContextualCheckBlockHeader(const CBlockHeader& block, BlockValidatio
         }
 
         // Step 4b: Verify deadline timing using stored quality
-        uint64_t poc_time = pocx::algorithms::CalculateTimeBendedDeadline(
-            block.pocxProof.quality,
-            block.nBaseTarget,
-            consensusParams.nPowTargetSpacing
-        );
-
-        uint32_t elapsed_time = block.nTime - pindexPrev->nTime;
-        if (poc_time > elapsed_time) {
+        if (!pocx::consensus::PermittedTimingTransition(pindexPrev->nTime, block.nTime, block.pocxProof.quality,
+                                                        block.nBaseTarget, consensusParams.nPowTargetSpacing)) {
             return state.Invalid(BlockValidationResult::BLOCK_INVALID_HEADER, "bad-pocx-timing",
-                                strprintf("poc_time %llu exceeds elapsed time %u since previous block",
-                                         poc_time, elapsed_time));
+                                strprintf("claimed deadline exceeds elapsed time %u since previous block",
+                                         block.nTime - pindexPrev->nTime));
         }
 
         // Defensive forging check - if we have a better solution, signal rush-forge
@@ -4766,9 +4758,11 @@ bool ChainstateManager::ProcessNewBlockHeaders(std::span<const CBlockHeader> hea
             // Cheap anti-DoS gate, run before the proof-expensive batch below.
             // The batch regenerates up to 2^compression nonces per header, so we
             // must not let a peer make us do that work for headers we can already
-            // tell are doomed. ContextualCheckBlockHeader still performs the
-            // authoritative (exact) checks for accepted headers; the rejects
-            // here only short-circuit before any proof work.
+            // tell are doomed. Height, base target, generation signature and
+            // timing are all checked here against the predecessor's claimed
+            // fields, leaving only the proof itself to the batch.
+            // ContextualCheckBlockHeader still performs the authoritative checks
+            // for accepted headers; the rejects here only short-circuit early.
             //
             // Anchor the first header to its prev block. For the p2p path this is
             // guaranteed to be in the index (ProcessHeadersMessage looked it up);
@@ -4776,34 +4770,59 @@ bool ChainstateManager::ProcessNewBlockHeaders(std::span<const CBlockHeader> hea
             // anchor-relative leg and rely on the inter-header checks below.
             int prev_height = -1;
             uint64_t prev_base_target = 0;
-            if (const CBlockIndex* anchor = m_blockman.LookupBlockIndex(headers.front().hashPrevBlock)) {
-                if (anchor->nStatus & BLOCK_FAILED_VALID) {
+            uint32_t prev_time = 0;
+            uint256 prev_gensig;
+            std::array<uint8_t, 20> prev_account_id{};
+            const CBlockIndex* anchor = m_blockman.LookupBlockIndex(headers.front().hashPrevBlock);
+            if (anchor) {
+                if (anchor->nStatus & BLOCK_FAILED_MASK) {
                     return state.Invalid(BlockValidationResult::BLOCK_INVALID_PREV, "bad-prevblk",
                                          "headers build on a known-invalid block");
                 }
                 prev_height = anchor->nHeight;
                 prev_base_target = anchor->nBaseTarget;
+                prev_time = anchor->nTime;
+                prev_gensig = anchor->generationSignature;
+                prev_account_id = anchor->pocxProof.account_id;
             }
 
             for (const auto& header : headers) {
                 if (header.nHeight == 0) continue;
+                if (header.nBaseTarget == 0) {
+                    return state.Invalid(BlockValidationResult::BLOCK_INVALID_HEADER, "bad-header-transition",
+                                         strprintf("zero base target at height %d", header.nHeight));
+                }
 
-                // Bound attacker-controlled height/base-target before they reach
-                // the batch (and CalculateClaimedHeadersWork). A valid chain
-                // always increments height by one and keeps base-target within
-                // the +/-20% per-block envelope that GetNextBaseTarget enforces,
+                // A valid chain always increments height by one, keeps base-target
+                // within the +/-20% per-block envelope that GetNextBaseTarget
+                // enforces (exactly nNextBaseTarget off an indexed anchor), and
+                // derives generation signature and timing from its predecessor,
                 // so this never rejects an honest chain. prev_height < 0 means we
                 // had no anchor and this is the first header: skip its relative
-                // check and seed the running values from it.
+                // checks and seed the running values from it.
                 if (prev_height >= 0) {
-                    if (header.nHeight != prev_height + 1 ||
-                        !pocx::consensus::PermittedBaseTargetTransition(prev_base_target, header.nBaseTarget)) {
+                    const bool base_target_ok = (anchor && &header == &headers.front())
+                        ? header.nBaseTarget == anchor->nNextBaseTarget
+                        : pocx::consensus::PermittedBaseTargetTransition(prev_base_target, header.nBaseTarget);
+                    if (header.nHeight != prev_height + 1 || !base_target_ok) {
                         return state.Invalid(BlockValidationResult::BLOCK_INVALID_HEADER, "bad-header-transition",
                                              strprintf("bad height/base-target transition at height %d", header.nHeight));
+                    }
+                    if (!pocx::consensus::PermittedGenerationSignatureTransition(prev_gensig, prev_account_id, header.generationSignature)) {
+                        return state.Invalid(BlockValidationResult::BLOCK_INVALID_HEADER, "bad-gensig",
+                                             strprintf("bad generation signature transition at height %d", header.nHeight));
+                    }
+                    if (!pocx::consensus::PermittedTimingTransition(prev_time, header.nTime, header.pocxProof.quality,
+                                                                    header.nBaseTarget, GetConsensus().nPowTargetSpacing)) {
+                        return state.Invalid(BlockValidationResult::BLOCK_INVALID_HEADER, "bad-pocx-timing",
+                                             strprintf("bad timing transition at height %d", header.nHeight));
                     }
                 }
                 prev_height = header.nHeight;
                 prev_base_target = header.nBaseTarget;
+                prev_time = header.nTime;
+                prev_gensig = header.generationSignature;
+                prev_account_id = header.pocxProof.account_id;
 
                 // Already in the index? Peers re-send batches during catch-up,
                 // reconnects and overlapping tip announcements; skipping known

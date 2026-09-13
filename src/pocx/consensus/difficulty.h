@@ -8,6 +8,7 @@
 #include <primitives/block.h>
 #include <uint256.h>
 #include <consensus/params.h>
+#include <array>
 #include <cstdint>
 
 class CBlockIndex;
@@ -27,6 +28,17 @@ bool PermittedBaseTargetTransition(uint64_t prev_base_target, uint64_t new_base_
 
 /** Get next generation signature (deterministic, transaction-independent) */
 uint256 GetNextGenerationSignature(const CBlockIndex* pindexLast);
+uint256 GetNextGenerationSignature(const uint256& prev_generation_signature, const std::array<uint8_t, 20>& prev_account_id);
+
+/** Whether a header's generation signature is the one derived from its predecessor. */
+bool PermittedGenerationSignatureTransition(const uint256& prev_generation_signature,
+                                            const std::array<uint8_t, 20>& prev_account_id,
+                                            const uint256& generation_signature);
+
+/** Whether a header's time does not go backwards and its claimed deadline fits the
+ *  elapsed time since the predecessor. base_target must be > 0. */
+bool PermittedTimingTransition(uint32_t prev_time, uint32_t time, uint64_t quality,
+                               uint64_t base_target, int64_t target_spacing);
 
 
 } // namespace consensus
