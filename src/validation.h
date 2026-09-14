@@ -837,6 +837,13 @@ protected:
         DisconnectedBlockTransactions& disconnectpool,
         bool fAddToMempool) EXCLUSIVE_LOCKS_REQUIRED(cs_main, m_mempool->cs);
 
+#ifdef ENABLE_POCX
+    /** Evict mempool assignment/revocation transactions whose plot state at
+     *  next_block_height no longer admits them (re-runs the admission state
+     *  check only), with their descendants. */
+    void RemoveInvalidAssignmentTxsFromMempool(int next_block_height) EXCLUSIVE_LOCKS_REQUIRED(cs_main, m_mempool->cs);
+#endif
+
     /** Check warning conditions and do some notifications on new chain tip set. */
     void UpdateTip(const CBlockIndex* pindexNew)
         EXCLUSIVE_LOCKS_REQUIRED(::cs_main);
