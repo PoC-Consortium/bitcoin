@@ -224,10 +224,10 @@ bool VerifyPlotOwnership(
     // Check that at least one input is signed by plot owner with plain
     // SIGHASH_ALL. Script validation remains authoritative for the signature
     // itself; here only the hash type byte is inspected. NONE and SINGLE do
-    // not commit to the marker output, so they cannot authorize it; the
-    // ANYONECANPAY variants do commit to all outputs and are excluded as a
-    // deliberate stricter rule (the owner's signature then covers the whole
-    // transaction, not just the outputs).
+    // not commit to the marker output, so they cannot authorize it.
+    // SIGHASH_ALL | ANYONECANPAY does commit to all outputs and is excluded as
+    // a deliberate stricter rule (the owner's signature then covers the whole
+    // transaction, inputs included).
 
     for (const auto& input : tx.vin) {
         // Get the coin being spent
