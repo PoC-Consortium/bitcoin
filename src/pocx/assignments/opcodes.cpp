@@ -5,6 +5,7 @@
 #include <pocx/assignments/opcodes.h>
 
 #include <coins.h>
+#include <script/interpreter.h>
 #include <script/script.h>
 
 #include <algorithm>
@@ -220,9 +221,13 @@ bool VerifyPlotOwnership(
     const std::array<uint8_t, 20>& plotAddress,
     const CCoinsViewCache& view)
 {
-    // Check that at least one input is signed by plot owner
-    // Bitcoin Core's script validation already verified signatures are valid
-    // We just need to check if any input is from the plot address
+    // Check that at least one input is signed by plot owner with plain
+    // SIGHASH_ALL. Script validation remains authoritative for the signature
+    // itself; here only the hash type byte is inspected. NONE and SINGLE do
+    // not commit to the marker output, so they cannot authorize it; the
+    // ANYONECANPAY variants do commit to all outputs and are excluded as a
+    // deliberate stricter rule (the owner's signature then covers the whole
+    // transaction, not just the outputs).
 
     for (const auto& input : tx.vin) {
         // Get the coin being spent
@@ -242,9 +247,12 @@ bool VerifyPlotOwnership(
             std::copy(wit_program.begin(), wit_program.end(), input_addr.begin());
 
             if (input_addr == plotAddress) {
-                // Found input controlled by plot owner
-                // Signature was already validated by Bitcoin Core
-                return true;
+                // P2WPKH witness is <signature> <pubkey>; the last signature
+                // byte is the hash type.
+                const auto& stack = input.scriptWitness.stack;
+                if (stack.size() == 2 && !stack[0].empty() && stack[0].back() == SIGHASH_ALL) {
+                    return true;
+                }
             }
         }
     }
