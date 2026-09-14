@@ -2831,6 +2831,13 @@ bool Chainstate::ConnectBlock(const CBlock& block, BlockValidationState& state, 
     int nInputs = 0;
     int64_t nSigOpsCost = 0;
     blockundo.vtxundo.reserve(block.vtx.size() - 1);
+#ifdef ENABLE_POCX
+    // Same-block assignment/revocation guards. Tracked per ConnectBlock call:
+    // the view's pending rows are not block-local when one cache is reused
+    // across blocks (VerifyDB level 4 reconnects through a shared cache).
+    std::set<std::array<uint8_t, 20>> plots_assigned_in_block;
+    std::set<std::array<uint8_t, 20>> plots_revoked_in_block;
+#endif
     for (unsigned int i = 0; i < block.vtx.size(); i++)
     {
         if (!state.IsValid()) break;
@@ -2940,7 +2947,7 @@ bool Chainstate::ConnectBlock(const CBlock& block, BlockValidationState& state, 
                 }
 
                 // Check for duplicate assignment in same block
-                if (view.HasPendingAssignment(plot_addr)) {
+                if (plots_assigned_in_block.count(plot_addr)) {
                     return state.Invalid(BlockValidationResult::BLOCK_CONSENSUS,
                                        "duplicate-assignment-in-block",
                                        strprintf("Plot %s already has pending assignment in this block", HexStr(plot_addr)));
@@ -2952,6 +2959,7 @@ bool Chainstate::ConnectBlock(const CBlock& block, BlockValidationState& state, 
                                            pindex->nHeight, activation_height);
 
                 view.AddForgingAssignment(assignment);
+                plots_assigned_in_block.insert(plot_addr);
 
                 // Capture for undo: this assignment was added
                 blockundo.vforgingundo.emplace_back(ForgingUndo::UndoType::ADDED, assignment);
@@ -2991,14 +2999,14 @@ bool Chainstate::ConnectBlock(const CBlock& block, BlockValidationState& state, 
                 }
 
                 // Check for duplicate revocation in same block
-                if (view.HasPendingRevocation(plot_addr)) {
+                if (plots_revoked_in_block.count(plot_addr)) {
                     return state.Invalid(BlockValidationResult::BLOCK_CONSENSUS,
                                        "duplicate-revocation-in-block",
                                        strprintf("Plot %s already has pending revocation in this block", HexStr(plot_addr)));
                 }
 
                 // Check for pending assignment in same block (can't revoke and assign in same block)
-                if (view.HasPendingAssignment(plot_addr)) {
+                if (plots_assigned_in_block.count(plot_addr)) {
                     return state.Invalid(BlockValidationResult::BLOCK_CONSENSUS,
                                        "revoke-after-assign-in-block",
                                        strprintf("Plot %s has pending assignment in this block, cannot revoke", HexStr(plot_addr)));
@@ -3018,6 +3026,7 @@ bool Chainstate::ConnectBlock(const CBlock& block, BlockValidationState& state, 
                 revoked.revocation_effective_height = pindex->nHeight + params.GetConsensus().nForgingRevocationDelay;
 
                 view.UpdateForgingAssignment(revoked);
+                plots_revoked_in_block.insert(plot_addr);
 
                 LogPrintf("PoCX: Assignment revoked - plot=%s txid=%s effective=%d\n",
                          HexStr(plot_addr), tx.GetHash().ToString(),
