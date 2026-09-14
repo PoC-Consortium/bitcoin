@@ -12,6 +12,7 @@
 #include <random.h>
 #include <serialize.h>
 #include <uint256.h>
+#include <util/strencodings.h>
 #include <util/vector.h>
 
 #include <cassert>
@@ -297,9 +298,16 @@ std::vector<ForgingAssignment> CCoinsViewDB::GetForgingAssignmentHistory(
         }
 
         ForgingAssignment assignment;
-        if (pcursor->GetValue(assignment)) {
-            history.push_back(assignment);
+        if (!pcursor->GetValue(assignment)) {
+            // Consensus state that cannot be read must not be treated as absent
+            // and an exception could be swallowed by an RPC or p2p handler, so
+            // terminate here, like the crash path in BatchWrite above.
+            LogError("PoCX: unreadable assignment record for plot %s at height %d, txid %s; "
+                     "the chainstate database is corrupted, refusing to continue\n",
+                     HexStr(plotAddress), key.assignment_height, key.assignment_txid.ToString());
+            _Exit(EXIT_FAILURE);
         }
+        history.push_back(assignment);
 
         pcursor->Next();
     }
