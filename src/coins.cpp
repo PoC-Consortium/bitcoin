@@ -618,26 +618,6 @@ void CCoinsViewCache::AddForgingAssignment(const ForgingAssignment& assignment)
     cachedAssignmentsUsage += sizeof(ForgingAssignment);
 }
 
-bool CCoinsViewCache::HasPendingAssignment(const std::array<uint8_t, 20>& plotAddress) const
-{
-    auto it = pendingAssignments.find(plotAddress);
-    if (it == pendingAssignments.end() || it->second.empty()) {
-        return false;
-    }
-    // Check if most recent pending entry is a non-revoked assignment
-    return !it->second.back().revoked;
-}
-
-bool CCoinsViewCache::HasPendingRevocation(const std::array<uint8_t, 20>& plotAddress) const
-{
-    auto it = pendingAssignments.find(plotAddress);
-    if (it == pendingAssignments.end() || it->second.empty()) {
-        return false;
-    }
-    // Check if most recent pending entry is revoked
-    return it->second.back().revoked;
-}
-
 void CCoinsViewCache::UpdateForgingAssignment(const ForgingAssignment& assignment)
 {
     // Cancel any prior deletion intent for the same physical row — see AddForgingAssignment.
