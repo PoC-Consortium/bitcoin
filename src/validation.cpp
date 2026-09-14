@@ -4845,6 +4845,11 @@ bool ChainstateManager::AcceptBlockHeader(const CBlockHeader& block, BlockValida
         }
 
 #ifdef ENABLE_POCX
+        // Far-future headers are rejected before proof regeneration. Same rule and
+        // result as ContextualCheckBlockHeader: temporary, non-punishing, nothing marked.
+        if (block.Time() > NodeClock::now() + std::chrono::seconds{MAX_FUTURE_BLOCK_TIME}) {
+            return state.Invalid(BlockValidationResult::BLOCK_TIME_FUTURE, "time-too-new", "block timestamp too far in the future");
+        }
         if (!CheckBlockHeader(block, state, GetConsensus(), /*fCheckPOW=*/true, skip_pocx_proof)) {
 #else
         if (!CheckBlockHeader(block, state, GetConsensus(), /*fCheckPOW=*/true)) {
@@ -5298,7 +5303,11 @@ bool ChainstateManager::ProcessNewBlock(const std::shared_ptr<const CBlock>& blo
 #ifdef ENABLE_POCX
         // PoCX: Skip proof validation if header is already in block index (validated during header sync)
         bool skip_pocx = m_blockman.m_block_index.count(block->GetHash()) > 0;
-        bool ret = CheckBlock(*block, state, GetConsensus(), /*fCheckPOW=*/true, /*fCheckMerkleRoot=*/true, skip_pocx);
+        // Far-future blocks are rejected before proof regeneration (see AcceptBlockHeader).
+        bool ret = block->hashPrevBlock.IsNull() ||
+                   block->Time() <= NodeClock::now() + std::chrono::seconds{MAX_FUTURE_BLOCK_TIME} ||
+                   state.Invalid(BlockValidationResult::BLOCK_TIME_FUTURE, "time-too-new", "block timestamp too far in the future");
+        if (ret) ret = CheckBlock(*block, state, GetConsensus(), /*fCheckPOW=*/true, /*fCheckMerkleRoot=*/true, skip_pocx);
 #else
         bool ret = CheckBlock(*block, state, GetConsensus());
 #endif
