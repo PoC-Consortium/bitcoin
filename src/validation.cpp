@@ -4596,6 +4596,12 @@ static bool ContextualCheckBlockHeader(const CBlockHeader& block, BlockValidatio
     bool is_genesis = block.hashPrevBlock.IsNull();
 
     if (!is_genesis) {
+        // Far-future headers must not reach the defensive-forge callback below
+        // (same check as at the end of this function, applied early).
+        if (block.Time() > NodeClock::now() + std::chrono::seconds{MAX_FUTURE_BLOCK_TIME}) {
+            return state.Invalid(BlockValidationResult::BLOCK_TIME_FUTURE, "time-too-new", "block timestamp too far in the future");
+        }
+
         // Step 4a: Verify timestamp does not go backwards
         if (block.nTime < pindexPrev->nTime) {
             return state.Invalid(BlockValidationResult::BLOCK_INVALID_HEADER, "time-too-old",
