@@ -16,6 +16,27 @@
 namespace pocx {
 namespace rpc {
 
+// CommitTransaction records the transaction and logs, but does not report,
+// a failed mempool submission. Re-submit through the same chain interface:
+// a transaction the commit already got into the mempool is reported as
+// accepted; otherwise the local rejection reason is surfaced. The wallet
+// record is not rolled back.
+static void ThrowIfRejectedByMempool(const ::wallet::CWallet& wallet, const CTransactionRef& tx)
+{
+    std::string err_string;
+    if (!wallet.chain().broadcastTransaction(tx, wallet.m_default_max_tx_fee, /*relay=*/true, err_string)) {
+        throw JSONRPCError(RPC_TRANSACTION_REJECTED,
+                           strprintf("Transaction %s was recorded in the wallet but rejected by the local mempool: %s",
+                                     tx->GetHash().GetHex(), err_string));
+    }
+}
+
+} // namespace rpc
+} // namespace pocx
+
+namespace pocx {
+namespace rpc {
+
 using ::wallet::GetWalletForJSONRPCRequest;
 
 //
@@ -28,7 +49,8 @@ static RPCHelpMan create_assignment()
         "Create a forging assignment transaction (OP_RETURN-only architecture)\n"
         "Creates an OP_RETURN output with POCX marker + plot address + forging address (46 bytes total).\n"
         "Transaction must be signed by plot owner to prove ownership.\n"
-        "Assignment becomes active after nForgingAssignmentDelay blocks.\n",
+        "Assignment becomes active after nForgingAssignmentDelay blocks.\n"
+        "Fails if the local mempool rejects the transaction; the wallet still records it.\n",
         {
             {"plot_address", RPCArg::Type::STR, RPCArg::Optional::NO, "The plot owner address (bech32)"},
             {"forging_address", RPCArg::Type::STR, RPCArg::Optional::NO, "The address to assign forging rights to (bech32)"},
@@ -76,6 +98,7 @@ static RPCHelpMan create_assignment()
             const auto& tx = *tx_result;
 
             pwallet->CommitTransaction(tx, /*mapValue=*/{}, /*orderForm=*/{});
+            ThrowIfRejectedByMempool(*pwallet, tx);
 
             UniValue result(UniValue::VOBJ);
             result.pushKV("txid", tx->GetHash().GetHex());
@@ -94,7 +117,8 @@ static RPCHelpMan revoke_assignment()
         "Revoke a forging assignment (OP_RETURN-only architecture)\n"
         "Creates an OP_RETURN output with XCOP marker + plot address (26 bytes total).\n"
         "Transaction must be signed by plot owner to prove ownership.\n"
-        "Revocation becomes effective after nForgingRevocationDelay blocks.\n",
+        "Revocation becomes effective after nForgingRevocationDelay blocks.\n"
+        "Fails if the local mempool rejects the transaction; the wallet still records it.\n",
         {
             {"plot_address", RPCArg::Type::STR, RPCArg::Optional::NO, "The plot address to revoke assignment for"},
             {"fee_rate", RPCArg::Type::AMOUNT, RPCArg::Default{0}, "Fee rate in " + CURRENCY_UNIT + "/kvB"},
@@ -138,6 +162,7 @@ static RPCHelpMan revoke_assignment()
             const auto& tx = *tx_result;
 
             pwallet->CommitTransaction(tx, /*mapValue=*/{}, /*orderForm=*/{});
+            ThrowIfRejectedByMempool(*pwallet, tx);
 
             UniValue result(UniValue::VOBJ);
             result.pushKV("txid", tx->GetHash().GetHex());
