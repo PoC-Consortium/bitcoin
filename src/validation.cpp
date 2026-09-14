@@ -5238,7 +5238,7 @@ bool ChainstateManager::ProcessNewBlock(const std::shared_ptr<const CBlock>& blo
         // PoCX: Skip proof validation if header is already in block index (validated during header sync)
         bool skip_pocx = m_blockman.m_block_index.contains(block->GetHash());
         // Far-future blocks are rejected before proof regeneration (see AcceptBlockHeader).
-        bool ret = block->hashPrevBlock.IsNull() ||
+        bool ret = block->GetHash() == GetConsensus().hashGenesisBlock ||
                    block->Time() <= NodeClock::now() + std::chrono::seconds{MAX_FUTURE_BLOCK_TIME} ||
                    state.Invalid(BlockValidationResult::BLOCK_TIME_FUTURE, "time-too-new", "block timestamp too far in the future");
         if (ret) ret = CheckBlock(*block, state, GetConsensus(), /*fCheckPOW=*/true, /*fCheckMerkleRoot=*/true, skip_pocx);
