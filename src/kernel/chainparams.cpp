@@ -821,7 +821,11 @@ public:
         m_chain_type = ChainType::REGTEST;
         consensus.signet_blocks = false;
         consensus.signet_challenge.clear();
+#ifdef ENABLE_POCX
         consensus.nSubsidyHalvingInterval = 500;
+#else
+        consensus.nSubsidyHalvingInterval = 150;
+#endif
         consensus.BIP34Height = 1; // Always active unless overridden
         consensus.BIP34Hash = uint256();
         consensus.BIP65Height = 1;  // Always active unless overridden
