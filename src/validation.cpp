@@ -398,9 +398,51 @@ void Chainstate::MaybeUpdateMempoolForReorg(
 
     // We also need to remove any now-immature transactions
     m_mempool->removeForReorg(m_chain, filter_final_and_mature);
+#ifdef ENABLE_POCX
+    // Chain and coins view are consistent again here.
+    RemoveInvalidAssignmentTxsFromMempool(m_chain.Height() + 1);
+#endif
     // Re-limit mempool size, in case we added any transactions
     LimitMempoolSize(*m_mempool, this->CoinsTip());
 }
+
+#ifdef ENABLE_POCX
+void Chainstate::RemoveInvalidAssignmentTxsFromMempool(int next_block_height)
+{
+    if (!m_mempool) return;
+    AssertLockHeld(cs_main);
+    AssertLockHeld(m_mempool->cs);
+
+    const CCoinsViewCache& view = CoinsTip();
+    // Collect first: removeRecursive erases descendants elsewhere in mapTx.
+    std::vector<CTransactionRef> to_remove;
+    for (const auto& entry : m_mempool->mapTx) {
+        for (const CTxOut& output : entry.GetTx().vout) {
+            bool invalid = false;
+            if (pocx::assignments::IsAssignmentOpReturn(output)) {
+                auto parsed = pocx::assignments::ParseAssignmentOpReturn(output);
+                if (!parsed) continue;
+                const ForgingState state = pocx::assignments::GetAssignmentState(
+                    next_block_height, view.GetForgingAssignment(parsed->first, next_block_height));
+                invalid = state != ForgingState::UNASSIGNED && state != ForgingState::REVOKED;
+            } else if (pocx::assignments::IsRevocationOpReturn(output)) {
+                auto plot = pocx::assignments::ParseRevocationOpReturn(output);
+                if (!plot) continue;
+                const ForgingState state = pocx::assignments::GetAssignmentState(
+                    next_block_height, view.GetForgingAssignment(*plot, next_block_height));
+                invalid = state != ForgingState::ASSIGNED;
+            }
+            if (invalid) {
+                to_remove.push_back(entry.GetSharedTx());
+                break;
+            }
+        }
+    }
+    for (const auto& tx : to_remove) {
+        m_mempool->removeRecursive(*tx, MemPoolRemovalReason::CONFLICT);
+    }
+}
+#endif
 
 /**
 * Checks to avoid mempool polluting consensus critical paths since cached
@@ -923,6 +965,7 @@ bool MemPoolAccept::PreChecks(ATMPArgs& args, Workspace& ws)
 
             // Check #5: Check mempool conflicts (assignment)
             for (const auto& mempool_entry : m_pool.mapTx) {
+                if (ws.m_conflicts.count(mempool_entry.GetTx().GetHash())) continue; // being replaced by this tx
                 for (const auto& mempool_output : mempool_entry.GetTx().vout) {
                     if (pocx::assignments::IsAssignmentOpReturn(mempool_output)) {
                         auto mempool_parsed = pocx::assignments::ParseAssignmentOpReturn(mempool_output);
@@ -968,6 +1011,7 @@ bool MemPoolAccept::PreChecks(ATMPArgs& args, Workspace& ws)
 
             // Check #8: Check mempool conflicts (revocation)
             for (const auto& mempool_entry : m_pool.mapTx) {
+                if (ws.m_conflicts.count(mempool_entry.GetTx().GetHash())) continue; // being replaced by this tx
                 for (const auto& mempool_output : mempool_entry.GetTx().vout) {
                     if (pocx::assignments::IsRevocationOpReturn(mempool_output)) {
                         auto mempool_parsed = pocx::assignments::ParseRevocationOpReturn(mempool_output);
@@ -1585,6 +1629,34 @@ PackageMempoolAcceptResult MemPoolAccept::AcceptMultipleTransactionsInternal(con
         // package RBF.
         m_viewmempool.PackageAddTransaction(ws.m_ptx);
     }
+
+#ifdef ENABLE_POCX
+    // PreChecks only sees mapTx, not package siblings: two markers of either
+    // type for one plot cannot be mined together (ConnectBlock rejects them).
+    {
+        std::map<std::array<uint8_t, 20>, size_t> plot_first_member;
+        for (size_t i = 0; i < txns.size(); ++i) {
+            for (const CTxOut& output : txns[i]->vout) {
+                std::optional<std::array<uint8_t, 20>> plot;
+                if (pocx::assignments::IsAssignmentOpReturn(output)) {
+                    if (auto parsed = pocx::assignments::ParseAssignmentOpReturn(output)) plot = parsed->first;
+                } else if (pocx::assignments::IsRevocationOpReturn(output)) {
+                    plot = pocx::assignments::ParseRevocationOpReturn(output);
+                }
+                if (!plot) continue;
+                auto [it, inserted] = plot_first_member.try_emplace(*plot, i);
+                if (!inserted && it->second != i) {
+                    Workspace& ws = workspaces[i];
+                    ws.m_state.Invalid(TxValidationResult::TX_MEMPOOL_POLICY, "package-assignment-conflict",
+                                       "another package member carries a marker for this plot");
+                    package_state.Invalid(PackageValidationResult::PCKG_TX, "transaction failed");
+                    results.emplace(ws.m_ptx->GetWitnessHash(), MempoolAcceptResult::Failure(ws.m_state));
+                    return PackageMempoolAcceptResult(package_state, std::move(results));
+                }
+            }
+        }
+    }
+#endif
 
     // At this point we have all in-mempool parents, and we know every transaction's vsize.
     // Run the TRUC checks on the package.
@@ -3400,6 +3472,10 @@ bool Chainstate::ConnectTip(
     if (m_mempool) {
         m_mempool->removeForBlock(block_to_connect->vtx, pindexNew->nHeight);
         disconnectpool.removeForBlock(block_to_connect->vtx);
+#ifdef ENABLE_POCX
+        // CoinsTip() already holds the new block's state; m_chain does not yet.
+        RemoveInvalidAssignmentTxsFromMempool(pindexNew->nHeight + 1);
+#endif
     }
     // Update m_chain & related variables.
     m_chain.SetTip(*pindexNew);
