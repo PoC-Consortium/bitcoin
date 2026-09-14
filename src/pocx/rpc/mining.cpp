@@ -49,15 +49,25 @@ namespace rpc {
 // Global scheduler instance for handling PoCX mining deadlines
 static std::unique_ptr<pocx::mining::PoCXScheduler> g_pocx_scheduler;
 static std::mutex g_scheduler_init_mutex;  // Protects scheduler initialization
+static bool g_scheduler_shutdown{false};   // Set once by ShutdownPoCXScheduler; no re-initialization afterwards
 
 // Initialize PoCX scheduler (called from RPC when first needed)
 static void EnsurePoCXScheduler(interfaces::Mining& mining) {
     std::lock_guard<std::mutex> lock(g_scheduler_init_mutex);
+    if (g_scheduler_shutdown) return;
     if (!g_pocx_scheduler) {
         g_pocx_scheduler = std::make_unique<pocx::mining::PoCXScheduler>(mining);
         LogPrintf("PoCX: Scheduler initialized\n");
     }
 }
+
+void ShutdownPoCXScheduler() {
+    std::lock_guard<std::mutex> lock(g_scheduler_init_mutex);
+    g_scheduler_shutdown = true;
+    g_pocx_scheduler.reset();  // destructor joins the worker and unregisters the callback
+}
+#else
+void ShutdownPoCXScheduler() {}
 #endif
 
 /**
