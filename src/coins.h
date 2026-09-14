@@ -696,12 +696,6 @@ public:
     //! Add a new forging assignment
     void AddForgingAssignment(const ForgingAssignment& assignment);
 
-    //! Check if plot has pending assignment in current block
-    bool HasPendingAssignment(const std::array<uint8_t, 20>& plotAddress) const;
-
-    //! Check if plot has pending revocation in current block
-    bool HasPendingRevocation(const std::array<uint8_t, 20>& plotAddress) const;
-
     //! Update existing forging assignment (for revocation)
     void UpdateForgingAssignment(const ForgingAssignment& assignment);
 
