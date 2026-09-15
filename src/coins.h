@@ -23,6 +23,12 @@
 
 #include <functional>
 #include <unordered_map>
+#ifdef ENABLE_POCX
+#include <map>
+#include <set>
+#include <tuple>
+#include <vector>
+#endif
 
 /**
  * A UTXO entry.
@@ -203,13 +209,36 @@ struct ForgingAssignment {
     }
 };
 
+// Physical identity of a persisted assignment row, mirroring the on-disk key
+// layout (plot_address, assignment_height, assignment_txid). A reorg can re-mine
+// the same txid at another height, so a deletion must name the exact row it
+// erases; (plot, txid) alone is not enough.
+struct AssignmentRowKey {
+    std::array<uint8_t, 20> plotAddress;
+    int assignment_height;
+    uint256 assignment_txid;
+
+    AssignmentRowKey(const std::array<uint8_t, 20>& plot, int height, const uint256& txid)
+        : plotAddress(plot), assignment_height(height), assignment_txid(txid) {}
+    explicit AssignmentRowKey(const ForgingAssignment& a)
+        : AssignmentRowKey(a.plotAddress, a.assignment_height, a.assignment_txid) {}
+
+    friend bool operator<(const AssignmentRowKey& a, const AssignmentRowKey& b)
+    {
+        return std::tie(a.plotAddress, a.assignment_height, a.assignment_txid) <
+               std::tie(b.plotAddress, b.assignment_height, b.assignment_txid);
+    }
+};
+
 // Type definitions for forging assignments.
-// Map of (plot_address, assignment_txid) -> assignment, used both for the
-// on-disk history layout and for the per-flush "assignments to write" payload.
+// Map of (plot_address, assignment_txid) -> assignment: the per-flush
+// "assignments to write" payload. At most one row per (plot, txid) is live in
+// any consistent state; the physical row it maps to is AssignmentRowKey(payload).
 typedef std::map<std::pair<std::array<uint8_t, 20>, uint256>, ForgingAssignment> ForgingAssignmentsMap;
-// Cache-side set of (plot_address, assignment_txid) keys queued for deletion
-// from base on the next flush. Kept disjoint from PendingAssignmentsMap.
-typedef std::set<std::pair<std::array<uint8_t, 20>, uint256>> DeletedAssignmentsSet;
+// Cache-side set of physical rows queued for deletion from base on the next
+// flush (tombstones). A tombstone and a pending row may share (plot, txid)
+// only when their heights differ (txid re-mined at another height).
+typedef std::set<AssignmentRowKey> DeletedAssignmentsSet;
 // Cache-side pending assignment writes per plot. Each vector is appended to
 // in arrival order; reads in CCoinsViewCache merge this overlay with base.
 typedef std::map<std::array<uint8_t, 20>, std::vector<ForgingAssignment>> PendingAssignmentsMap;
@@ -548,13 +577,17 @@ protected:
 
 #ifdef ENABLE_POCX
     /* Forging assignment cache (OP_RETURN-only architecture).
-     * Invariant: for any (plot, txid), at most one of pendingAssignments or
-     * deletedAssignments contains it. Reads merge pending over base and
-     * filter out keys in deletedAssignments; writes propagate atomically
+     * Invariant: for any physical row (plot, height, txid), at most one of
+     * pendingAssignments or deletedAssignments contains it; pendingAssignments
+     * holds at most one row per (plot, txid). Reads merge pending over base and
+     * filter out rows in deletedAssignments; writes propagate atomically
      * with the chainstate via BatchWrite. */
     mutable PendingAssignmentsMap pendingAssignments;
-    mutable ForgingAssignmentsMap deletedAssignments;  // payload preserved to derive height-indexed DB key
+    mutable DeletedAssignmentsSet deletedAssignments;
     mutable std::set<std::array<uint8_t, 20>> dirtyPlots;
+    /* Heap storage of the pending vectors' elements, which DynamicUsage of the
+     * map does not see. Tombstones and dirtyPlots are fully covered by their
+     * set nodes, so they are not charged here. */
     mutable size_t cachedAssignmentsUsage{0};
 #endif
 
@@ -682,12 +715,6 @@ public:
 
     //! Add a new forging assignment
     void AddForgingAssignment(const ForgingAssignment& assignment);
-
-    //! Check if plot has pending assignment in current block
-    bool HasPendingAssignment(const std::array<uint8_t, 20>& plotAddress) const;
-
-    //! Check if plot has pending revocation in current block
-    bool HasPendingRevocation(const std::array<uint8_t, 20>& plotAddress) const;
 
     //! Update existing forging assignment (for revocation)
     void UpdateForgingAssignment(const ForgingAssignment& assignment);

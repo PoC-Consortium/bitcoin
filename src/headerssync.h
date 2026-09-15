@@ -247,10 +247,8 @@ private:
     /** NodeId of the peer (used for log messages) **/
     const NodeId m_id;
 
-#ifndef ENABLE_POCX
     /** We use the consensus params in our anti-DoS calculations */
     const Consensus::Params& m_consensus_params;
-#endif
 
     /** Parameters that impact memory usage for a given chain, especially when attacked. */
     const HeadersSyncParams m_params;

@@ -26,7 +26,6 @@
 #include <pocx/consensus/difficulty.h>
 #include <pocx/assignments/opcodes.h>
 #include <pocx/assignments/replay.h>
-#include <pocx/algorithms/time_bending.h>
 #include <pocx/mining/defensive_forge.h>
 #ifndef BUILD_BITCOIN_KERNEL
 #include <chainparams.h> // For Params() in the regtest hot path (not visible to the kernel lib)
@@ -399,9 +398,51 @@ void Chainstate::MaybeUpdateMempoolForReorg(
 
     // We also need to remove any now-immature transactions
     m_mempool->removeForReorg(m_chain, filter_final_and_mature);
+#ifdef ENABLE_POCX
+    // Chain and coins view are consistent again here.
+    RemoveInvalidAssignmentTxsFromMempool(m_chain.Height() + 1);
+#endif
     // Re-limit mempool size, in case we added any transactions
     LimitMempoolSize(*m_mempool, this->CoinsTip());
 }
+
+#ifdef ENABLE_POCX
+void Chainstate::RemoveInvalidAssignmentTxsFromMempool(int next_block_height)
+{
+    if (!m_mempool) return;
+    AssertLockHeld(cs_main);
+    AssertLockHeld(m_mempool->cs);
+
+    const CCoinsViewCache& view = CoinsTip();
+    // Collect first: removeRecursive erases descendants elsewhere in mapTx.
+    std::vector<CTransactionRef> to_remove;
+    for (const auto& entry : m_mempool->mapTx) {
+        for (const CTxOut& output : entry.GetTx().vout) {
+            bool invalid = false;
+            if (pocx::assignments::IsAssignmentOpReturn(output)) {
+                auto parsed = pocx::assignments::ParseAssignmentOpReturn(output);
+                if (!parsed) continue;
+                const ForgingState state = pocx::assignments::GetAssignmentState(
+                    next_block_height, view.GetForgingAssignment(parsed->first, next_block_height));
+                invalid = state != ForgingState::UNASSIGNED && state != ForgingState::REVOKED;
+            } else if (pocx::assignments::IsRevocationOpReturn(output)) {
+                auto plot = pocx::assignments::ParseRevocationOpReturn(output);
+                if (!plot) continue;
+                const ForgingState state = pocx::assignments::GetAssignmentState(
+                    next_block_height, view.GetForgingAssignment(*plot, next_block_height));
+                invalid = state != ForgingState::ASSIGNED;
+            }
+            if (invalid) {
+                to_remove.push_back(entry.GetSharedTx());
+                break;
+            }
+        }
+    }
+    for (const auto& tx : to_remove) {
+        m_mempool->removeRecursive(*tx, MemPoolRemovalReason::CONFLICT);
+    }
+}
+#endif
 
 /**
 * Checks to avoid mempool polluting consensus critical paths since cached
@@ -924,6 +965,7 @@ bool MemPoolAccept::PreChecks(ATMPArgs& args, Workspace& ws)
 
             // Check #5: Check mempool conflicts (assignment)
             for (const auto& mempool_entry : m_pool.mapTx) {
+                if (ws.m_conflicts.count(mempool_entry.GetTx().GetHash())) continue; // being replaced by this tx
                 for (const auto& mempool_output : mempool_entry.GetTx().vout) {
                     if (pocx::assignments::IsAssignmentOpReturn(mempool_output)) {
                         auto mempool_parsed = pocx::assignments::ParseAssignmentOpReturn(mempool_output);
@@ -969,6 +1011,7 @@ bool MemPoolAccept::PreChecks(ATMPArgs& args, Workspace& ws)
 
             // Check #8: Check mempool conflicts (revocation)
             for (const auto& mempool_entry : m_pool.mapTx) {
+                if (ws.m_conflicts.count(mempool_entry.GetTx().GetHash())) continue; // being replaced by this tx
                 for (const auto& mempool_output : mempool_entry.GetTx().vout) {
                     if (pocx::assignments::IsRevocationOpReturn(mempool_output)) {
                         auto mempool_parsed = pocx::assignments::ParseRevocationOpReturn(mempool_output);
@@ -1586,6 +1629,34 @@ PackageMempoolAcceptResult MemPoolAccept::AcceptMultipleTransactionsInternal(con
         // package RBF.
         m_viewmempool.PackageAddTransaction(ws.m_ptx);
     }
+
+#ifdef ENABLE_POCX
+    // PreChecks only sees mapTx, not package siblings: two markers of either
+    // type for one plot cannot be mined together (ConnectBlock rejects them).
+    {
+        std::map<std::array<uint8_t, 20>, size_t> plot_first_member;
+        for (size_t i = 0; i < txns.size(); ++i) {
+            for (const CTxOut& output : txns[i]->vout) {
+                std::optional<std::array<uint8_t, 20>> plot;
+                if (pocx::assignments::IsAssignmentOpReturn(output)) {
+                    if (auto parsed = pocx::assignments::ParseAssignmentOpReturn(output)) plot = parsed->first;
+                } else if (pocx::assignments::IsRevocationOpReturn(output)) {
+                    plot = pocx::assignments::ParseRevocationOpReturn(output);
+                }
+                if (!plot) continue;
+                auto [it, inserted] = plot_first_member.try_emplace(*plot, i);
+                if (!inserted && it->second != i) {
+                    Workspace& ws = workspaces[i];
+                    ws.m_state.Invalid(TxValidationResult::TX_MEMPOOL_POLICY, "package-assignment-conflict",
+                                       "another package member carries a marker for this plot");
+                    package_state.Invalid(PackageValidationResult::PCKG_TX, "transaction failed");
+                    results.emplace(ws.m_ptx->GetWitnessHash(), MempoolAcceptResult::Failure(ws.m_state));
+                    return PackageMempoolAcceptResult(package_state, std::move(results));
+                }
+            }
+        }
+    }
+#endif
 
     // At this point we have all in-mempool parents, and we know every transaction's vsize.
     // Run the TRUC checks on the package.
@@ -2692,6 +2763,13 @@ bool Chainstate::ConnectBlock(const CBlock& block, BlockValidationState& state, 
     int nInputs = 0;
     int64_t nSigOpsCost = 0;
     blockundo.vtxundo.reserve(block.vtx.size() - 1);
+#ifdef ENABLE_POCX
+    // Same-block assignment/revocation guards. Tracked per ConnectBlock call:
+    // the view's pending rows are not block-local when one cache is reused
+    // across blocks (VerifyDB level 4 reconnects through a shared cache).
+    std::set<std::array<uint8_t, 20>> plots_assigned_in_block;
+    std::set<std::array<uint8_t, 20>> plots_revoked_in_block;
+#endif
     for (unsigned int i = 0; i < block.vtx.size(); i++)
     {
         if (!state.IsValid()) break;
@@ -2801,7 +2879,7 @@ bool Chainstate::ConnectBlock(const CBlock& block, BlockValidationState& state, 
                 }
 
                 // Check for duplicate assignment in same block
-                if (view.HasPendingAssignment(plot_addr)) {
+                if (plots_assigned_in_block.count(plot_addr)) {
                     return state.Invalid(BlockValidationResult::BLOCK_CONSENSUS,
                                        "duplicate-assignment-in-block",
                                        strprintf("Plot %s already has pending assignment in this block", HexStr(plot_addr)));
@@ -2813,6 +2891,7 @@ bool Chainstate::ConnectBlock(const CBlock& block, BlockValidationState& state, 
                                            pindex->nHeight, activation_height);
 
                 view.AddForgingAssignment(assignment);
+                plots_assigned_in_block.insert(plot_addr);
 
                 // Capture for undo: this assignment was added
                 blockundo.vforgingundo.emplace_back(ForgingUndo::UndoType::ADDED, assignment);
@@ -2852,14 +2931,14 @@ bool Chainstate::ConnectBlock(const CBlock& block, BlockValidationState& state, 
                 }
 
                 // Check for duplicate revocation in same block
-                if (view.HasPendingRevocation(plot_addr)) {
+                if (plots_revoked_in_block.count(plot_addr)) {
                     return state.Invalid(BlockValidationResult::BLOCK_CONSENSUS,
                                        "duplicate-revocation-in-block",
                                        strprintf("Plot %s already has pending revocation in this block", HexStr(plot_addr)));
                 }
 
                 // Check for pending assignment in same block (can't revoke and assign in same block)
-                if (view.HasPendingAssignment(plot_addr)) {
+                if (plots_assigned_in_block.count(plot_addr)) {
                     return state.Invalid(BlockValidationResult::BLOCK_CONSENSUS,
                                        "revoke-after-assign-in-block",
                                        strprintf("Plot %s has pending assignment in this block, cannot revoke", HexStr(plot_addr)));
@@ -2879,6 +2958,7 @@ bool Chainstate::ConnectBlock(const CBlock& block, BlockValidationState& state, 
                 revoked.revocation_effective_height = pindex->nHeight + params.GetConsensus().nForgingRevocationDelay;
 
                 view.UpdateForgingAssignment(revoked);
+                plots_revoked_in_block.insert(plot_addr);
 
                 LogInfo("PoCX: Assignment revoked - plot=%s txid=%s effective=%d\n",
                          HexStr(plot_addr), tx.GetHash().ToString(),
@@ -3401,6 +3481,10 @@ bool Chainstate::ConnectTip(
     if (m_mempool) {
         m_mempool->removeForBlock(block_to_connect->vtx, pindexNew->nHeight);
         disconnectpool.removeForBlock(block_to_connect->vtx);
+#ifdef ENABLE_POCX
+        // CoinsTip() already holds the new block's state; m_chain does not yet.
+        RemoveInvalidAssignmentTxsFromMempool(pindexNew->nHeight + 1);
+#endif
     }
     // Update m_chain & related variables.
     m_chain.SetTip(*pindexNew);
@@ -4512,9 +4596,8 @@ static bool ContextualCheckBlockHeader(const CBlockHeader& block, BlockValidatio
     }
 
     // Step 2: Verify generation signature matches expected value
-    uint256 expected_generation_signature = pocx::consensus::GetNextGenerationSignature(pindexPrev);
-
-    if (block.generationSignature != expected_generation_signature) {
+    if (!pocx::consensus::PermittedGenerationSignatureTransition(
+            pindexPrev->generationSignature, pindexPrev->pocxProof.account_id, block.generationSignature)) {
         return state.Invalid(BlockValidationResult::BLOCK_INVALID_HEADER, "bad-gensig", "incorrect generation signature");
     }
 
@@ -4531,6 +4614,12 @@ static bool ContextualCheckBlockHeader(const CBlockHeader& block, BlockValidatio
     bool is_genesis = block.hashPrevBlock.IsNull();
 
     if (!is_genesis) {
+        // Far-future headers must not reach the defensive-forge callback below
+        // (same check as at the end of this function, applied early).
+        if (block.Time() > NodeClock::now() + std::chrono::seconds{MAX_FUTURE_BLOCK_TIME}) {
+            return state.Invalid(BlockValidationResult::BLOCK_TIME_FUTURE, "time-too-new", "block timestamp too far in the future");
+        }
+
         // Step 4a: Verify timestamp does not go backwards
         if (block.nTime < pindexPrev->nTime) {
             return state.Invalid(BlockValidationResult::BLOCK_INVALID_HEADER, "time-too-old",
@@ -4539,17 +4628,11 @@ static bool ContextualCheckBlockHeader(const CBlockHeader& block, BlockValidatio
         }
 
         // Step 4b: Verify deadline timing using stored quality
-        uint64_t poc_time = pocx::algorithms::CalculateTimeBendedDeadline(
-            block.pocxProof.quality,
-            block.nBaseTarget,
-            consensusParams.nPowTargetSpacing
-        );
-
-        uint32_t elapsed_time = block.nTime - pindexPrev->nTime;
-        if (poc_time > elapsed_time) {
+        if (!pocx::consensus::PermittedTimingTransition(pindexPrev->nTime, block.nTime, block.pocxProof.quality,
+                                                        block.nBaseTarget, consensusParams.nPowTargetSpacing)) {
             return state.Invalid(BlockValidationResult::BLOCK_INVALID_HEADER, "bad-pocx-timing",
-                                strprintf("poc_time %llu exceeds elapsed time %u since previous block",
-                                         poc_time, elapsed_time));
+                                strprintf("claimed deadline exceeds elapsed time %u since previous block",
+                                         block.nTime - pindexPrev->nTime));
         }
 
         // Defensive forging check - if we have a better solution, signal rush-forge
@@ -4696,6 +4779,11 @@ bool ChainstateManager::AcceptBlockHeader(const CBlockHeader& block, BlockValida
         }
 
 #ifdef ENABLE_POCX
+        // Far-future headers are rejected before proof regeneration. Same rule and
+        // result as ContextualCheckBlockHeader: temporary, non-punishing, nothing marked.
+        if (block.Time() > NodeClock::now() + std::chrono::seconds{MAX_FUTURE_BLOCK_TIME}) {
+            return state.Invalid(BlockValidationResult::BLOCK_TIME_FUTURE, "time-too-new", "block timestamp too far in the future");
+        }
         if (!CheckBlockHeader(block, state, GetConsensus(), /*fCheckPOW=*/true, skip_pocx_proof)) {
 #else
         if (!CheckBlockHeader(block, state, GetConsensus(), /*fCheckPOW=*/true)) {
@@ -4745,6 +4833,10 @@ bool ChainstateManager::ProcessNewBlockHeaders(std::span<const CBlockHeader> hea
     // already microseconds. The kernel-library build can't see Params()
     // and never processes regtest anyway, so just run the batch there.
     bool skip_pocx_proof = false;
+    // First far-future header in the batch: the prefix before it is processed
+    // normally, it and the rest wait for a later batch (temporary, non-punishing).
+    std::optional<size_t> future_cutoff;
+    int future_height = 0;
 #ifdef BUILD_BITCOIN_KERNEL
     if (!headers.empty() && headers.size() >= 2) {
 #else
@@ -4766,9 +4858,11 @@ bool ChainstateManager::ProcessNewBlockHeaders(std::span<const CBlockHeader> hea
             // Cheap anti-DoS gate, run before the proof-expensive batch below.
             // The batch regenerates up to 2^compression nonces per header, so we
             // must not let a peer make us do that work for headers we can already
-            // tell are doomed. ContextualCheckBlockHeader still performs the
-            // authoritative (exact) checks for accepted headers; the rejects
-            // here only short-circuit before any proof work.
+            // tell are doomed. Height, base target, generation signature and
+            // timing are all checked here against the predecessor's claimed
+            // fields, leaving only the proof itself to the batch.
+            // ContextualCheckBlockHeader still performs the authoritative checks
+            // for accepted headers; the rejects here only short-circuit early.
             //
             // Anchor the first header to its prev block. For the p2p path this is
             // guaranteed to be in the index (ProcessHeadersMessage looked it up);
@@ -4776,34 +4870,68 @@ bool ChainstateManager::ProcessNewBlockHeaders(std::span<const CBlockHeader> hea
             // anchor-relative leg and rely on the inter-header checks below.
             int prev_height = -1;
             uint64_t prev_base_target = 0;
-            if (const CBlockIndex* anchor = m_blockman.LookupBlockIndex(headers.front().hashPrevBlock)) {
+            uint32_t prev_time = 0;
+            uint256 prev_gensig;
+            std::array<uint8_t, 20> prev_account_id{};
+            const CBlockIndex* anchor = m_blockman.LookupBlockIndex(headers.front().hashPrevBlock);
+            if (anchor) {
                 if (anchor->nStatus & BLOCK_FAILED_VALID) {
                     return state.Invalid(BlockValidationResult::BLOCK_INVALID_PREV, "bad-prevblk",
                                          "headers build on a known-invalid block");
                 }
                 prev_height = anchor->nHeight;
                 prev_base_target = anchor->nBaseTarget;
+                prev_time = anchor->nTime;
+                prev_gensig = anchor->generationSignature;
+                prev_account_id = anchor->pocxProof.account_id;
             }
 
-            for (const auto& header : headers) {
+            const auto future_limit = NodeClock::now() + std::chrono::seconds{MAX_FUTURE_BLOCK_TIME};
+            for (size_t i = 0; i < headers.size(); ++i) {
+                const CBlockHeader& header = headers[i];
                 if (header.nHeight == 0) continue;
+                if (header.nBaseTarget == 0) {
+                    return state.Invalid(BlockValidationResult::BLOCK_INVALID_HEADER, "bad-header-transition",
+                                         strprintf("zero base target at height %d", header.nHeight));
+                }
+                // Same rule as ContextualCheckBlockHeader. Stop collecting: the
+                // prefix is still processed, this header and the rest are not.
+                if (header.Time() > future_limit) {
+                    future_cutoff = i;
+                    future_height = header.nHeight;
+                    break;
+                }
 
-                // Bound attacker-controlled height/base-target before they reach
-                // the batch (and CalculateClaimedHeadersWork). A valid chain
-                // always increments height by one and keeps base-target within
-                // the +/-20% per-block envelope that GetNextBaseTarget enforces,
+                // A valid chain always increments height by one, keeps base-target
+                // within the +/-20% per-block envelope that GetNextBaseTarget
+                // enforces (exactly nNextBaseTarget off an indexed anchor), and
+                // derives generation signature and timing from its predecessor,
                 // so this never rejects an honest chain. prev_height < 0 means we
                 // had no anchor and this is the first header: skip its relative
-                // check and seed the running values from it.
+                // checks and seed the running values from it.
                 if (prev_height >= 0) {
-                    if (header.nHeight != prev_height + 1 ||
-                        !pocx::consensus::PermittedBaseTargetTransition(prev_base_target, header.nBaseTarget)) {
+                    const bool base_target_ok = (anchor && i == 0)
+                        ? header.nBaseTarget == anchor->nNextBaseTarget
+                        : pocx::consensus::PermittedBaseTargetTransition(prev_base_target, header.nBaseTarget);
+                    if (header.nHeight != prev_height + 1 || !base_target_ok) {
                         return state.Invalid(BlockValidationResult::BLOCK_INVALID_HEADER, "bad-header-transition",
                                              strprintf("bad height/base-target transition at height %d", header.nHeight));
+                    }
+                    if (!pocx::consensus::PermittedGenerationSignatureTransition(prev_gensig, prev_account_id, header.generationSignature)) {
+                        return state.Invalid(BlockValidationResult::BLOCK_INVALID_HEADER, "bad-gensig",
+                                             strprintf("bad generation signature transition at height %d", header.nHeight));
+                    }
+                    if (!pocx::consensus::PermittedTimingTransition(prev_time, header.nTime, header.pocxProof.quality,
+                                                                    header.nBaseTarget, GetConsensus().nPowTargetSpacing)) {
+                        return state.Invalid(BlockValidationResult::BLOCK_INVALID_HEADER, "bad-pocx-timing",
+                                             strprintf("bad timing transition at height %d", header.nHeight));
                     }
                 }
                 prev_height = header.nHeight;
                 prev_base_target = header.nBaseTarget;
+                prev_time = header.nTime;
+                prev_gensig = header.generationSignature;
+                prev_account_id = header.pocxProof.account_id;
 
                 // Already in the index? Peers re-send batches during catch-up,
                 // reconnects and overlapping tip announcements; skipping known
@@ -4822,7 +4950,7 @@ bool ChainstateManager::ProcessNewBlockHeaders(std::span<const CBlockHeader> hea
                 headers_to_validate.push_back(&header);
             }
         }
-
+        if (future_cutoff) headers = headers.first(*future_cutoff);
         if (!headers_to_validate.empty()) {
             // Prepare batch validation inputs
             std::vector<pocx::consensus::BlockValidationInput> inputs(headers_to_validate.size());
@@ -4947,6 +5075,12 @@ bool ChainstateManager::ProcessNewBlockHeaders(std::span<const CBlockHeader> hea
             LogInfo("Synchronizing blockheaders, height: %d (~%.2f%%)\n", last_accepted.nHeight, progress);
         }
     }
+#ifdef ENABLE_POCX
+    if (future_cutoff) {
+        return state.Invalid(BlockValidationResult::BLOCK_TIME_FUTURE, "time-too-new",
+                             strprintf("block timestamp too far in the future at height %d", future_height));
+    }
+#endif
     return true;
 }
 
@@ -5103,7 +5237,11 @@ bool ChainstateManager::ProcessNewBlock(const std::shared_ptr<const CBlock>& blo
 #ifdef ENABLE_POCX
         // PoCX: Skip proof validation if header is already in block index (validated during header sync)
         bool skip_pocx = m_blockman.m_block_index.contains(block->GetHash());
-        bool ret = CheckBlock(*block, state, GetConsensus(), /*fCheckPOW=*/true, /*fCheckMerkleRoot=*/true, skip_pocx);
+        // Far-future blocks are rejected before proof regeneration (see AcceptBlockHeader).
+        bool ret = block->GetHash() == GetConsensus().hashGenesisBlock ||
+                   block->Time() <= NodeClock::now() + std::chrono::seconds{MAX_FUTURE_BLOCK_TIME} ||
+                   state.Invalid(BlockValidationResult::BLOCK_TIME_FUTURE, "time-too-new", "block timestamp too far in the future");
+        if (ret) ret = CheckBlock(*block, state, GetConsensus(), /*fCheckPOW=*/true, /*fCheckMerkleRoot=*/true, skip_pocx);
 #else
         bool ret = CheckBlock(*block, state, GetConsensus());
 #endif
