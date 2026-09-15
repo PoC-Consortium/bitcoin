@@ -684,7 +684,7 @@ void CCoinsViewCache::RemoveForgingAssignment(
 
     if (!found_in_pending && !found_in_base) {
         LogWarning("PoCX: RemoveForgingAssignment - assignment not found: plot=%s txid=%s",
-                 HexStr(plotAddress), assignment_txid.ToString());
+                   HexStr(plotAddress), assignment_txid.ToString());
     }
 }
 

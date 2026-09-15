@@ -4875,7 +4875,7 @@ bool ChainstateManager::ProcessNewBlockHeaders(std::span<const CBlockHeader> hea
             std::array<uint8_t, 20> prev_account_id{};
             const CBlockIndex* anchor = m_blockman.LookupBlockIndex(headers.front().hashPrevBlock);
             if (anchor) {
-                if (anchor->nStatus & BLOCK_FAILED_MASK) {
+                if (anchor->nStatus & BLOCK_FAILED_VALID) {
                     return state.Invalid(BlockValidationResult::BLOCK_INVALID_PREV, "bad-prevblk",
                                          "headers build on a known-invalid block");
                 }
