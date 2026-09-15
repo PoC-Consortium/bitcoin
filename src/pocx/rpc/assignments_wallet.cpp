@@ -92,6 +92,9 @@ static RPCHelpMan create_assignment()
                 throw JSONRPCError(RPC_WALLET_NOT_FOUND, "No wallet available");
             }
 
+            // Include confirmations observed by earlier RPCs before selecting plot-owner coins.
+            pwallet->BlockUntilSyncedToCurrentChain();
+
             if (pwallet->IsLocked()) {
                 throw JSONRPCError(RPC_WALLET_UNLOCK_NEEDED, "Error: Please enter the wallet passphrase with walletpassphrase first.");
             }
@@ -157,6 +160,9 @@ static RPCHelpMan revoke_assignment()
             if (!pwallet) {
                 throw JSONRPCError(RPC_WALLET_NOT_FOUND, "No wallet available");
             }
+
+            // Include confirmations observed by earlier RPCs before selecting plot-owner coins.
+            pwallet->BlockUntilSyncedToCurrentChain();
 
             if (pwallet->IsLocked()) {
                 throw JSONRPCError(RPC_WALLET_UNLOCK_NEEDED, "Error: Please enter the wallet passphrase with walletpassphrase first.");
