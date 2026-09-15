@@ -153,6 +153,8 @@ arith_uint256 GetBlockProof(const CBlockHeader& header)
     // Headers only carry nBaseTarget; the one-block offset vs nNextBaseTarget
     // is negligible for chain-work comparison (same fallback as above).
     const arith_uint256 TWO64 = arith_uint256(1) << 64;
+    // Claimed work is computed from untrusted headers before contextual validation.
+    if (header.nBaseTarget == 0) return 0;
     return TWO64 / arith_uint256(header.nBaseTarget);
 }
 #endif
