@@ -245,10 +245,8 @@ private:
     /** NodeId of the peer (used for log messages) **/
     const NodeId m_id;
 
-#ifndef ENABLE_POCX
     /** We use the consensus params in our anti-DoS calculations */
     const Consensus::Params& m_consensus_params;
-#endif
 
     /** Store the last block in our block index that the peer's chain builds from */
     const CBlockIndex* m_chain_start{nullptr};

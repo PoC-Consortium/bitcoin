@@ -55,6 +55,9 @@
 #include <node/mempool_args.h>
 #include <node/mempool_persist.h>
 #include <node/mempool_persist_args.h>
+#ifdef ENABLE_POCX
+#include <pocx/rpc/mining.h>
+#endif
 #include <node/miner.h>
 #include <node/peerman_args.h>
 #include <policy/feerate.h>
@@ -299,6 +302,11 @@ void Shutdown(NodeContext& node)
     StopREST();
     StopRPC();
     StopHTTPServer();
+#ifdef ENABLE_POCX
+    // The forging worker uses the wallets (chain clients), node.mining and the
+    // validation path; stop it before any of those go away.
+    pocx::rpc::ShutdownPoCXScheduler();
+#endif
     for (auto& client : node.chain_clients) {
         try {
             client->stop();
