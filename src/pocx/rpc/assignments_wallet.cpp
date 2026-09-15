@@ -12,6 +12,7 @@
 #include <chainparams.h>
 #include <util/translation.h>
 #include <core_io.h>
+#include <node/types.h>
 
 namespace pocx {
 namespace rpc {
@@ -30,7 +31,7 @@ static void ThrowIfRejectedByMempool(const ::wallet::CWallet& wallet, const CTra
 {
     if (!wallet.GetBroadcastTransactions()) return;
     std::string err_string;
-    if (wallet.chain().broadcastTransaction(tx, wallet.m_default_max_tx_fee, /*relay=*/true, err_string)) return;
+    if (wallet.chain().broadcastTransaction(tx, wallet.m_default_max_tx_fee, node::TxBroadcast::MEMPOOL_AND_BROADCAST_TO_ALL, err_string)) return;
     const Txid txid = tx->GetHash();
     if (wallet.chain().isInMempool(txid)) return;
     std::map<COutPoint, Coin> coins;
