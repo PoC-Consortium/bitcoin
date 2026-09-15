@@ -16,6 +16,11 @@ namespace rpc {
 std::span<const CRPCCommand> GetMiningRPCCommands();
 void RegisterPoCXRPCCommands(CRPCTable& t);
 
+/** Stop and destroy the forging scheduler (joins its worker, unregisters the
+ *  defensive-forge callback) and refuse any later initialization. Safe to call
+ *  when never initialized and safe to call repeatedly. */
+void ShutdownPoCXScheduler();
+
 } // namespace rpc
 } // namespace pocx
 

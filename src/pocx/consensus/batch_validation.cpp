@@ -116,21 +116,21 @@ static int generate_nonce_scoop(
     return 0;
 }
 
-// Check if a block just completed and validate its quality (early surrender check)
+// Finalize a block once its last nonce has been accumulated and validate its
+// quality (early surrender check). `completed` is decided by the caller from the
+// value returned by its own fetch_add, so exactly one worker finalizes a block.
 // Returns true if block completed and quality MATCHES (or was skipped), false if mismatch
 static bool check_block_completion(
     size_t block_index,
     std::vector<BlockAccumulator>& accumulators,
     ValidationResult* results,
-    EarlySurrenderState& surrender_state
+    EarlySurrenderState& surrender_state,
+    bool completed
 ) {
-    BlockAccumulator& acc = accumulators[block_index];
-
-    // Check if this block just completed
-    size_t received = acc.nonces_received.load(std::memory_order_acquire);
-    if (received != acc.nonces_expected) {
+    if (!completed) {
         return true;  // Not complete yet, continue processing
     }
+    BlockAccumulator& acc = accumulators[block_index];
 
     // Block is complete - calculate quality
     uint64_t quality = crypto::Shabal256Lite(acc.xor_result, acc.input->generation_sig);
@@ -186,10 +186,11 @@ static bool process_single_work_unit(
             acc.xor_result[k] ^= wu.scoop_data[k];
         }
     }
-    acc.nonces_received.fetch_add(1, std::memory_order_release);
+    const size_t previously_received = acc.nonces_received.fetch_add(1, std::memory_order_acq_rel);
+    const bool completed = previously_received + 1 == acc.nonces_expected;
 
-    // Check if this block just completed
-    return check_block_completion(wu.block_index, accumulators, results, surrender_state);
+    // Only the worker that accumulated the last nonce finalizes the block
+    return check_block_completion(wu.block_index, accumulators, results, surrender_state, completed);
 }
 
 #ifdef ENABLE_AVX2
@@ -254,8 +255,8 @@ static bool process_8_work_units_avx2(
     }
 
     // Extract scoops and accumulate
-    // Track which blocks we updated so we can check completion
-    std::set<size_t> updated_blocks;
+    // Track which blocks this batch completed (last nonce accumulated here)
+    std::set<size_t> completed_blocks;
 
     for (int i = 0; i < 8; i++) {
         NonceWorkUnit& wu = work_units[batch_start + i];
@@ -269,15 +270,17 @@ static bool process_8_work_units_avx2(
                 acc.xor_result[k] ^= wu.scoop_data[k];
             }
         }
-        acc.nonces_received.fetch_add(1, std::memory_order_release);
-        updated_blocks.insert(wu.block_index);
+        const size_t previously_received = acc.nonces_received.fetch_add(1, std::memory_order_acq_rel);
+        if (previously_received + 1 == acc.nonces_expected) {
+            completed_blocks.insert(wu.block_index);
+        }
 
         std::free(nonce_buffers[i]);
     }
 
-    // Check completion for all blocks we updated
-    for (size_t block_idx : updated_blocks) {
-        if (!check_block_completion(block_idx, accumulators, results, surrender_state)) {
+    // Finalize the blocks whose last nonce this batch accumulated
+    for (size_t block_idx : completed_blocks) {
+        if (!check_block_completion(block_idx, accumulators, results, surrender_state, /*completed=*/true)) {
             return false;
         }
     }
@@ -348,8 +351,8 @@ static bool process_4_work_units_sse2(
     }
 
     // Extract scoops and accumulate
-    // Track which blocks we updated so we can check completion
-    std::set<size_t> updated_blocks;
+    // Track which blocks this batch completed (last nonce accumulated here)
+    std::set<size_t> completed_blocks;
 
     for (int i = 0; i < 4; i++) {
         NonceWorkUnit& wu = work_units[batch_start + i];
@@ -363,15 +366,17 @@ static bool process_4_work_units_sse2(
                 acc.xor_result[k] ^= wu.scoop_data[k];
             }
         }
-        acc.nonces_received.fetch_add(1, std::memory_order_release);
-        updated_blocks.insert(wu.block_index);
+        const size_t previously_received = acc.nonces_received.fetch_add(1, std::memory_order_acq_rel);
+        if (previously_received + 1 == acc.nonces_expected) {
+            completed_blocks.insert(wu.block_index);
+        }
 
         std::free(nonce_buffers[i]);
     }
 
-    // Check completion for all blocks we updated
-    for (size_t block_idx : updated_blocks) {
-        if (!check_block_completion(block_idx, accumulators, results, surrender_state)) {
+    // Finalize the blocks whose last nonce this batch accumulated
+    for (size_t block_idx : completed_blocks) {
+        if (!check_block_completion(block_idx, accumulators, results, surrender_state, /*completed=*/true)) {
             return false;
         }
     }
@@ -499,20 +504,28 @@ static int pocx_validate_blocks_scalar(
         size_t remaining = total_work % num_threads;
 
         size_t start_idx = 0;
-        for (size_t t = 0; t < num_threads; t++) {
-            size_t chunk_size = work_per_thread + (t < remaining ? 1 : 0);
-            size_t end_idx = start_idx + chunk_size;
+        try {
+            for (size_t t = 0; t < num_threads; t++) {
+                size_t chunk_size = work_per_thread + (t < remaining ? 1 : 0);
+                size_t end_idx = start_idx + chunk_size;
 
-            threads.emplace_back(process_work_range,
-                std::ref(work_units),
-                std::ref(accumulators),
-                results,
-                start_idx,
-                end_idx,
-                use_avx2_scalar,
-                std::ref(surrender_state));
+                threads.emplace_back(process_work_range,
+                    std::ref(work_units),
+                    std::ref(accumulators),
+                    results,
+                    start_idx,
+                    end_idx,
+                    use_avx2_scalar,
+                    std::ref(surrender_state));
 
-            start_idx = end_idx;
+                start_idx = end_idx;
+            }
+        } catch (...) {
+            // Do not leak running workers: join what was started, then rethrow.
+            for (auto& thread : threads) {
+                if (thread.joinable()) thread.join();
+            }
+            throw;
         }
 
         // Wait for all threads to complete
@@ -638,20 +651,28 @@ static int pocx_validate_blocks_avx2_impl(
         size_t remaining = total_work % num_threads;
 
         size_t start_idx = 0;
-        for (size_t t = 0; t < num_threads; t++) {
-            size_t chunk_size = work_per_thread + (t < remaining ? 1 : 0);
-            size_t end_idx = start_idx + chunk_size;
+        try {
+            for (size_t t = 0; t < num_threads; t++) {
+                size_t chunk_size = work_per_thread + (t < remaining ? 1 : 0);
+                size_t end_idx = start_idx + chunk_size;
 
-            threads.emplace_back(process_work_range,
-                std::ref(work_units),
-                std::ref(accumulators),
-                results,
-                start_idx,
-                end_idx,
-                use_avx2_impl,
-                std::ref(surrender_state));
+                threads.emplace_back(process_work_range,
+                    std::ref(work_units),
+                    std::ref(accumulators),
+                    results,
+                    start_idx,
+                    end_idx,
+                    use_avx2_impl,
+                    std::ref(surrender_state));
 
-            start_idx = end_idx;
+                start_idx = end_idx;
+            }
+        } catch (...) {
+            // Do not leak running workers: join what was started, then rethrow.
+            for (auto& thread : threads) {
+                if (thread.joinable()) thread.join();
+            }
+            throw;
         }
 
         // Wait for all threads to complete
@@ -807,19 +828,27 @@ static int pocx_validate_blocks_sse2_impl(
         size_t remaining = total_work % num_threads;
 
         size_t start_idx = 0;
-        for (size_t t = 0; t < num_threads; t++) {
-            size_t chunk_size = work_per_thread + (t < remaining ? 1 : 0);
-            size_t end_idx = start_idx + chunk_size;
+        try {
+            for (size_t t = 0; t < num_threads; t++) {
+                size_t chunk_size = work_per_thread + (t < remaining ? 1 : 0);
+                size_t end_idx = start_idx + chunk_size;
 
-            threads.emplace_back(process_work_range_sse2,
-                std::ref(work_units),
-                std::ref(accumulators),
-                results,
-                start_idx,
-                end_idx,
-                std::ref(surrender_state));
+                threads.emplace_back(process_work_range_sse2,
+                    std::ref(work_units),
+                    std::ref(accumulators),
+                    results,
+                    start_idx,
+                    end_idx,
+                    std::ref(surrender_state));
 
-            start_idx = end_idx;
+                start_idx = end_idx;
+            }
+        } catch (...) {
+            // Do not leak running workers: join what was started, then rethrow.
+            for (auto& thread : threads) {
+                if (thread.joinable()) thread.join();
+            }
+            throw;
         }
 
         // Wait for all threads to complete

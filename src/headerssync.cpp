@@ -30,9 +30,7 @@ HeadersSyncState::HeadersSyncState(NodeId id,
     : m_commit_offset((assert(params.commitment_period > 0), // HeadersSyncParams field must be initialized to non-zero.
                        FastRandomContext().randrange(params.commitment_period))),
       m_id(id),
-#ifndef ENABLE_POCX
       m_consensus_params(consensus_params),
-#endif
       m_params(params),
       m_chain_start(chain_start),
       m_minimum_required_work(minimum_required_work),
@@ -203,9 +201,22 @@ bool HeadersSyncState::ValidateAndProcessSingleHeader(const CBlockHeader& curren
         return false;
     }
 #else
-    if (!pocx::consensus::PermittedBaseTargetTransition(
-                m_last_header_received.nBaseTarget, current.nBaseTarget)) {
+    // First header: exact match with the chain start's nNextBaseTarget; later ones a permitted step.
+    const bool base_target_ok = (m_current_height == m_chain_start.nHeight)
+        ? current.nBaseTarget == m_chain_start.nNextBaseTarget
+        : pocx::consensus::PermittedBaseTargetTransition(m_last_header_received.nBaseTarget, current.nBaseTarget);
+    if (!base_target_ok) {
         LogDebug(BCLog::NET, "Initial headers sync aborted with peer=%d: invalid base target transition at height=%i (presync phase)\n", m_id, next_height);
+        return false;
+    }
+    if (!pocx::consensus::PermittedGenerationSignatureTransition(
+                m_last_header_received.generationSignature, m_last_header_received.pocxProof.account_id, current.generationSignature)) {
+        LogDebug(BCLog::NET, "Initial headers sync aborted with peer=%d: invalid generation signature transition at height=%i (presync phase)\n", m_id, next_height);
+        return false;
+    }
+    if (!pocx::consensus::PermittedTimingTransition(m_last_header_received.nTime, current.nTime, current.pocxProof.quality,
+                                                    current.nBaseTarget, m_consensus_params.nPowTargetSpacing)) {
+        LogDebug(BCLog::NET, "Initial headers sync aborted with peer=%d: invalid timing transition at height=%i (presync phase)\n", m_id, next_height);
         return false;
     }
 #endif
@@ -259,15 +270,25 @@ bool HeadersSyncState::ValidateAndStoreRedownloadedHeader(const CBlockHeader& he
         return false;
     }
 #else
-    uint64_t previous_base_target{0};
-    if (!m_redownloaded_headers.empty()) {
-        previous_base_target = m_redownloaded_headers.back().nBaseTarget;
-    } else {
-        previous_base_target = m_chain_start.nBaseTarget;
-    }
+    const bool first = m_redownloaded_headers.empty();
+    const uint256& prev_gensig = first ? m_chain_start.generationSignature : m_redownloaded_headers.back().generationSignature;
+    const auto& prev_account_id = first ? m_chain_start.pocxProof.account_id : m_redownloaded_headers.back().pocxProof.account_id;
+    const uint32_t prev_time = first ? m_chain_start.nTime : m_redownloaded_headers.back().nTime;
+    const bool base_target_ok = first
+        ? header.nBaseTarget == m_chain_start.nNextBaseTarget
+        : pocx::consensus::PermittedBaseTargetTransition(m_redownloaded_headers.back().nBaseTarget, header.nBaseTarget);
 
-    if (!pocx::consensus::PermittedBaseTargetTransition(previous_base_target, header.nBaseTarget)) {
+    if (!base_target_ok) {
         LogDebug(BCLog::NET, "Initial headers sync aborted with peer=%d: invalid base target transition at height=%i (redownload phase)\n", m_id, next_height);
+        return false;
+    }
+    if (!pocx::consensus::PermittedGenerationSignatureTransition(prev_gensig, prev_account_id, header.generationSignature)) {
+        LogDebug(BCLog::NET, "Initial headers sync aborted with peer=%d: invalid generation signature transition at height=%i (redownload phase)\n", m_id, next_height);
+        return false;
+    }
+    if (!pocx::consensus::PermittedTimingTransition(prev_time, header.nTime, header.pocxProof.quality,
+                                                    header.nBaseTarget, m_consensus_params.nPowTargetSpacing)) {
+        LogDebug(BCLog::NET, "Initial headers sync aborted with peer=%d: invalid timing transition at height=%i (redownload phase)\n", m_id, next_height);
         return false;
     }
 #endif

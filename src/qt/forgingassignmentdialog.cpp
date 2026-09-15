@@ -601,21 +601,24 @@ bool ForgingAssignmentDialog::createAssignmentTransaction()
         return false;
     }
 
+    // Copy the state under cs_main; the dialogs below must not hold the lock.
+    std::optional<ForgingAssignment> assignment;
+    int currentHeight{0};
     {
         LOCK(cs_main);
         const CCoinsViewCache& view = nodeContext->chainman->ActiveChainstate().CoinsTip();
-        int currentHeight = nodeContext->chainman->ActiveChainstate().m_chain.Height();
-        auto assignment = view.GetForgingAssignment(plotAccountId, currentHeight);
+        currentHeight = nodeContext->chainman->ActiveChainstate().m_chain.Height();
+        assignment = view.GetForgingAssignment(plotAccountId, currentHeight);
+    }
 
-        if (assignment.has_value()) {
-            ForgingState state = assignment->GetStateAtHeight(currentHeight);
-            if (state != ForgingState::UNASSIGNED && state != ForgingState::REVOKED) {
-                QMessageBox::critical(this, tr("Invalid State"),
-                    tr("Cannot create assignment: plot is in %1 state.\n\n"
-                       "Assignments can only be created when the plot is UNASSIGNED or REVOKED.")
-                    .arg(ForgingStateToString(state)));
-                return false;
-            }
+    if (assignment.has_value()) {
+        ForgingState state = assignment->GetStateAtHeight(currentHeight);
+        if (state != ForgingState::UNASSIGNED && state != ForgingState::REVOKED) {
+            QMessageBox::critical(this, tr("Invalid State"),
+                tr("Cannot create assignment: plot is in %1 state.\n\n"
+                   "Assignments can only be created when the plot is UNASSIGNED or REVOKED.")
+                .arg(ForgingStateToString(state)));
+            return false;
         }
     }
 
@@ -714,27 +717,30 @@ bool ForgingAssignmentDialog::createRevocationTransaction()
         return false;
     }
 
+    // Copy the state under cs_main; the dialogs below must not hold the lock.
+    std::optional<ForgingAssignment> assignment;
+    int currentHeight{0};
     {
         LOCK(cs_main);
         const CCoinsViewCache& view = nodeContext->chainman->ActiveChainstate().CoinsTip();
-        int currentHeight = nodeContext->chainman->ActiveChainstate().m_chain.Height();
-        auto assignment = view.GetForgingAssignment(plotAccountId, currentHeight);
+        currentHeight = nodeContext->chainman->ActiveChainstate().m_chain.Height();
+        assignment = view.GetForgingAssignment(plotAccountId, currentHeight);
+    }
 
-        if (!assignment.has_value()) {
-            QMessageBox::critical(this, tr("Invalid State"),
-                tr("Cannot revoke assignment: plot has no assignment.\n\n"
-                   "The plot is currently UNASSIGNED."));
-            return false;
-        }
+    if (!assignment.has_value()) {
+        QMessageBox::critical(this, tr("Invalid State"),
+            tr("Cannot revoke assignment: plot has no assignment.\n\n"
+               "The plot is currently UNASSIGNED."));
+        return false;
+    }
 
-        ForgingState state = assignment->GetStateAtHeight(currentHeight);
-        if (state != ForgingState::ASSIGNED) {
-            QMessageBox::critical(this, tr("Invalid State"),
-                tr("Cannot revoke assignment: plot is in %1 state.\n\n"
-                   "Revocations can only be created when the plot is ASSIGNED (active).")
-                .arg(ForgingStateToString(state)));
-            return false;
-        }
+    ForgingState state = assignment->GetStateAtHeight(currentHeight);
+    if (state != ForgingState::ASSIGNED) {
+        QMessageBox::critical(this, tr("Invalid State"),
+            tr("Cannot revoke assignment: plot is in %1 state.\n\n"
+               "Revocations can only be created when the plot is ASSIGNED (active).")
+            .arg(ForgingStateToString(state)));
+        return false;
     }
 
     // Create the revocation transaction

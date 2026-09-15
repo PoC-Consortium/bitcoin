@@ -121,21 +121,28 @@ bool PermittedBaseTargetTransition(uint64_t prev_base_target, uint64_t new_base_
 
 uint256 GetNextGenerationSignature(const CBlockIndex* pindexLast) {
     assert(pindexLast != nullptr);
+    return GetNextGenerationSignature(pindexLast->generationSignature, pindexLast->pocxProof.account_id);
+}
 
+uint256 GetNextGenerationSignature(const uint256& prev_generation_signature, const std::array<uint8_t, 20>& prev_account_id) {
     // Standard PoC generation signature calculation:
     // next_gen_sig = hash(current_block_gen_sig + current_block_account_id)
-
     HashWriter hasher{};
+    hasher << prev_generation_signature;
+    hasher << std::span<const uint8_t>(prev_account_id);
+    return hasher.GetHash();
+}
 
-    // Add current block's generation signature
-    hasher << pindexLast->generationSignature;
+bool PermittedGenerationSignatureTransition(const uint256& prev_generation_signature,
+                                            const std::array<uint8_t, 20>& prev_account_id,
+                                            const uint256& generation_signature) {
+    return generation_signature == GetNextGenerationSignature(prev_generation_signature, prev_account_id);
+}
 
-    // Add current block's account ID
-    hasher << std::span<const uint8_t>(pindexLast->pocxProof.account_id);
-
-    uint256 next_gen_sig = hasher.GetHash();
-
-    return next_gen_sig;
+bool PermittedTimingTransition(uint32_t prev_time, uint32_t time, uint64_t quality,
+                               uint64_t base_target, int64_t target_spacing) {
+    if (time < prev_time) return false;
+    return pocx::algorithms::CalculateTimeBendedDeadline(quality, base_target, target_spacing) <= time - prev_time;
 }
 
 } // namespace consensus
