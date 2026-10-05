@@ -273,7 +273,11 @@ void BitcoinGUI::createActions()
     tabGroup->addAction(sendCoinsAction);
 
     receiveCoinsAction = new QAction(platformStyle->SingleColorIcon(":/icons/receiving_addresses"), tr("&Receive"), this);
+#ifdef ENABLE_POCX
+    receiveCoinsAction->setStatusTip(tr("Request payments (generates QR codes and btcx: URIs)"));
+#else
     receiveCoinsAction->setStatusTip(tr("Request payments (generates QR codes and bitcoin: URIs)"));
+#endif
     receiveCoinsAction->setToolTip(receiveCoinsAction->statusTip());
     receiveCoinsAction->setCheckable(true);
     receiveCoinsAction->setShortcut(QKeySequence(QStringLiteral("Alt+3")));
@@ -355,7 +359,11 @@ void BitcoinGUI::createActions()
     usedReceivingAddressesAction->setStatusTip(tr("Show the list of used receiving addresses and labels"));
 
     openAction = new QAction(tr("Open &URI…"), this);
+#ifdef ENABLE_POCX
+    openAction->setStatusTip(tr("Open a btcx: URI"));
+#else
     openAction->setStatusTip(tr("Open a bitcoin: URI"));
+#endif
 
     m_open_wallet_action = new QAction(tr("Open Wallet"), this);
     m_open_wallet_action->setEnabled(false);
