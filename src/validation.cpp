@@ -972,7 +972,7 @@ bool MemPoolAccept::PreChecks(ATMPArgs& args, Workspace& ws)
 
             // Check #5: Check mempool conflicts (assignment)
             for (const auto& mempool_entry : m_pool.mapTx) {
-                if (ws.m_conflicts.count(mempool_entry.GetTx().GetHash())) continue; // being replaced by this tx
+                if (ws.m_conflicts.contains(mempool_entry.GetTx().GetHash())) continue; // being replaced by this tx
                 for (const auto& mempool_output : mempool_entry.GetTx().vout) {
                     if (pocx::assignments::IsAssignmentOpReturn(mempool_output)) {
                         auto mempool_parsed = pocx::assignments::ParseAssignmentOpReturn(mempool_output);
@@ -1018,7 +1018,7 @@ bool MemPoolAccept::PreChecks(ATMPArgs& args, Workspace& ws)
 
             // Check #8: Check mempool conflicts (revocation)
             for (const auto& mempool_entry : m_pool.mapTx) {
-                if (ws.m_conflicts.count(mempool_entry.GetTx().GetHash())) continue; // being replaced by this tx
+                if (ws.m_conflicts.contains(mempool_entry.GetTx().GetHash())) continue; // being replaced by this tx
                 for (const auto& mempool_output : mempool_entry.GetTx().vout) {
                     if (pocx::assignments::IsRevocationOpReturn(mempool_output)) {
                         auto mempool_parsed = pocx::assignments::ParseRevocationOpReturn(mempool_output);
@@ -2885,7 +2885,7 @@ bool Chainstate::ConnectBlock(const CBlock& block, BlockValidationState& state, 
                 }
 
                 // Check for duplicate assignment in same block
-                if (plots_assigned_in_block.count(plot_addr)) {
+                if (plots_assigned_in_block.contains(plot_addr)) {
                     return state.Invalid(BlockValidationResult::BLOCK_CONSENSUS,
                                        "duplicate-assignment-in-block",
                                        strprintf("Plot %s already has pending assignment in this block", HexStr(plot_addr)));
@@ -2937,14 +2937,14 @@ bool Chainstate::ConnectBlock(const CBlock& block, BlockValidationState& state, 
                 }
 
                 // Check for duplicate revocation in same block
-                if (plots_revoked_in_block.count(plot_addr)) {
+                if (plots_revoked_in_block.contains(plot_addr)) {
                     return state.Invalid(BlockValidationResult::BLOCK_CONSENSUS,
                                        "duplicate-revocation-in-block",
                                        strprintf("Plot %s already has pending revocation in this block", HexStr(plot_addr)));
                 }
 
                 // Check for pending assignment in same block (can't revoke and assign in same block)
-                if (plots_assigned_in_block.count(plot_addr)) {
+                if (plots_assigned_in_block.contains(plot_addr)) {
                     return state.Invalid(BlockValidationResult::BLOCK_CONSENSUS,
                                        "revoke-after-assign-in-block",
                                        strprintf("Plot %s has pending assignment in this block, cannot revoke", HexStr(plot_addr)));
