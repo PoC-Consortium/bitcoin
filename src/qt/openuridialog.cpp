@@ -18,6 +18,9 @@ OpenURIDialog::OpenURIDialog(const PlatformStyle* platformStyle, QWidget* parent
                                                                                     m_platform_style(platformStyle)
 {
     ui->setupUi(this);
+#ifdef ENABLE_POCX
+    ui->uriEdit->setPlaceholderText(QStringLiteral("btcx:"));
+#endif
     ui->pasteButton->setIcon(m_platform_style->SingleColorIcon(":/icons/editpaste"));
     QObject::connect(ui->pasteButton, &QAbstractButton::clicked, ui->uriEdit, &QLineEdit::paste);
 

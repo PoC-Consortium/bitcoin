@@ -89,4 +89,28 @@ void URITests::uriTests()
     QVERIFY(rv.address == QString("175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W"));
     QVERIFY(rv.amount == 10000000000LL);
     QVERIFY(rv.label == QString("%3F"));
+
+#ifdef ENABLE_POCX
+    // PoCX: btcx: is the native scheme, bitcoin: is still accepted on parse.
+    uri.setUrl(QString("btcx:175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W?amount=100&label=Wikipedia Example"));
+    QVERIFY(GUIUtil::parseBitcoinURI(uri, &rv));
+    QVERIFY(rv.address == QString("175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W"));
+    QVERIFY(rv.amount == 10000000000LL);
+    QVERIFY(rv.label == QString("Wikipedia Example"));
+
+    uri.setUrl(QString("BTCX:175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W"));
+    QVERIFY(GUIUtil::parseBitcoinURI(uri, &rv));
+    QVERIFY(rv.address == QString("175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W"));
+
+    uri.setUrl(QString("pocx:175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W"));
+    QVERIFY(!GUIUtil::parseBitcoinURI(uri, &rv));
+
+    // Formatting always emits btcx:
+    SendCoinsRecipient out;
+    out.address = QString("175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W");
+    out.amount = 10000000000LL;
+    out.label = QString("Wikipedia Example");
+    QVERIFY(GUIUtil::formatBitcoinURI(out).startsWith("btcx:175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W?"));
+    QVERIFY(!GUIUtil::formatBitcoinURI(out).startsWith("bitcoin:"));
+#endif
 }
