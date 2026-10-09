@@ -1073,7 +1073,16 @@ bool BlockManager::ReadBlock(CBlock& block, const FlatFilePos& pos, const std::o
     const auto block_hash{block.GetHash()};
 
     // Check the header
-#ifndef ENABLE_POCX
+#ifdef ENABLE_POCX
+    BlockValidationState header_state;
+    // Only the actual genesis may omit the height-dependent PoCX checks.
+    // Disk reads must not accept junk headers merely because PoW is disabled.
+    if ((block.nHeight <= 0 && block_hash != GetConsensus().hashGenesisBlock) ||
+        !CheckBlockHeader(block, header_state, GetConsensus())) {
+        LogError("Errors in block header at %s while reading block", pos.ToString());
+        return false;
+    }
+#else
     if (!CheckProofOfWork(block_hash, block.nBits, GetConsensus())) {
         LogError("Errors in block header at %s while reading block", pos.ToString());
         return false;

@@ -390,6 +390,8 @@ public:
 
 /** Context-independent validity checks */
 #ifdef ENABLE_POCX
+/** Reuse context-free PoCX header checks when reading untrusted block files. */
+bool CheckBlockHeader(const CBlockHeader& block, BlockValidationState& state, const Consensus::Params& consensusParams, bool fCheckPOW = true, bool skip_pocx_proof = false);
 bool CheckBlock(const CBlock& block, BlockValidationState& state, const Consensus::Params& consensusParams, bool fCheckPOW = true, bool fCheckMerkleRoot = true, bool skip_pocx_proof = false);
 #else
 bool CheckBlock(const CBlock& block, BlockValidationState& state, const Consensus::Params& consensusParams, bool fCheckPOW = true, bool fCheckMerkleRoot = true);

@@ -4254,7 +4254,11 @@ void ChainstateManager::ReceivedBlockTransactions(const CBlock& block, CBlockInd
     }
 }
 
+#ifdef ENABLE_POCX
+bool CheckBlockHeader(const CBlockHeader& block, BlockValidationState& state, const Consensus::Params& consensusParams, bool fCheckPOW, bool skip_pocx_proof)
+#else
 static bool CheckBlockHeader(const CBlockHeader& block, BlockValidationState& state, const Consensus::Params& consensusParams, bool fCheckPOW = true, [[maybe_unused]] bool skip_pocx_proof = false)
+#endif
 {
 #ifndef ENABLE_POCX
     // Check proof of work matches claimed amount
