@@ -4,11 +4,20 @@
 
 set(CMAKE_AUTOMOC_MOC_OPTIONS "-p${CMAKE_CURRENT_SOURCE_DIR}")
 
+set(qt_rpcnested_sources rpcnestedtests.cpp)
+set(qt_wallet_sources wallettests.cpp)
+set(qt_main_sources test_main.cpp)
+set(qt_native_sources)
+if(ENABLE_POCX)
+  include(${PROJECT_SOURCE_DIR}/src/pocx/test/qt/sources.cmake)
+endif()
+
 add_executable(test_bitcoin-qt
   apptests.cpp
   optiontests.cpp
-  rpcnestedtests.cpp
-  test_main.cpp
+  ${qt_rpcnested_sources}
+  ${qt_main_sources}
+  ${qt_native_sources}
   uritests.cpp
   util.cpp
   ../../init/bitcoin-qt.cpp
@@ -31,7 +40,7 @@ if(ENABLE_WALLET)
   target_sources(test_bitcoin-qt
     PRIVATE
       addressbooktests.cpp
-      wallettests.cpp
+      ${qt_wallet_sources}
       ../../wallet/test/wallet_test_fixture.cpp
   )
 endif()

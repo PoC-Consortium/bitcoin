@@ -117,6 +117,28 @@
       "review_diff": "artifacts/ownership-cleanup-20261009/coins-adaptation.diff",
       "upstream_cases": 15,
       "owned_cases": 15
+    },
+    "src/qt/test/wallettests.cpp": {
+      "upstream_revision": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
+      "baseline_sha256": "a311efef339f926e2775f2c5f105c70fff6b1401384e68cd1b0b4845616a4f4c",
+      "restored_sha256": "3482b5feae0639d009e756a6e7f2104cf151866c6937bb279d16d19ff8ce6e6f",
+      "replacement": "src/pocx/test/qt/wallettests.cpp",
+      "replacement_sha256": "92e76293cf6ee3f50f549b7b12d9ba8102e7f08948632bbd9897c4f667b20ddb",
+      "evidence": "artifacts/qt-package-20261009/pocx-verification.json",
+      "parity_review": "Only the payment-link QCOMPARE scheme changes from bitcoin: to btcx:. Original wallet file restored exactly; all original assertions retained in its selected owned adaptation.",
+      "upstream_cases": 1,
+      "owned_cases": 1
+    },
+    "src/qt/test/uritests.cpp": {
+      "upstream_revision": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
+      "baseline_sha256": "1bc8110f02e44887c4d754dd24333a8e31db9dcf9de6a04a5cdb0a601aecbea8",
+      "restored_sha256": "4eb3e3b3fef31a03886e4d8a28bce2077340ac4ed3106b7ccea729bfa9d768cf",
+      "replacement": "src/pocx/test/qt/pocxuritests.cpp",
+      "replacement_sha256": "67d1b5d7f54024ff2d018a8d4015fcc66ffe0f1ce653ee194d49c32ac88c5051",
+      "evidence": "artifacts/qt-package-20261009/pocx-verification.json",
+      "parity_review": "Original URI source restored exactly and still selected directly. Nine existing native assertions moved into a separately registered native case; no original assertion removed or changed.",
+      "upstream_cases": 1,
+      "owned_cases": 1
     }
   },
   "bitcoin_verification": {

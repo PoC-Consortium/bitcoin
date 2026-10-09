@@ -1,0 +1,27 @@
+{
+  "scope": "Reviewed Qt source ownership and original-case preservation; runtime results are recorded separately.",
+  "baseline_sha256": "21ad5232554abc391ed9e49923532fa20053d51895180b5e8ac3410c88350396",
+  "additional": [
+    "PoCXURITests::nativePaymentURIs"
+  ],
+  "original_reused_cases": 7,
+  "original_adapted_cases": 2,
+  "owned_sources": {
+    "src/pocx/test/qt/pocxuritests.cpp": "67d1b5d7f54024ff2d018a8d4015fcc66ffe0f1ce653ee194d49c32ac88c5051",
+    "src/pocx/test/qt/pocxuritests.h": "e2638fb8aa10c10ab1e3cf7a6a4fd417d8f36b7c6d4dd7ebd3062b850819a3d1",
+    "src/pocx/test/qt/rpcnestedtests.cpp": "440cc2a1c83f72890e5069cecf452f30a34d4a1d2b3d0316bd97ec985c8a3c41",
+    "src/pocx/test/qt/sources.cmake": "7e1873697243425725e567b04892e04f72a3cc2f87391b18e281e2abc601fa94",
+    "src/pocx/test/qt/test_main.cpp": "0932eefdafd1ea93ced18bcbbf08eb0f975a53bac1aa4578a2e6511478c59e64",
+    "src/pocx/test/qt/wallettests.cpp": "92e76293cf6ee3f50f549b7b12d9ba8102e7f08948632bbd9897c4f667b20ddb"
+  },
+  "reviewed_build_sources": {
+    "src/qt/test/CMakeLists.txt": "0a5db589fc2346d33c896783161ad6d69c07e3af2c892301e513ae8b7bdd315a"
+  },
+  "reviews": {
+    "src/pocx/test/qt/rpcnestedtests.cpp": "One fixed expected mainnet genesis transaction ID changes; every other line and assertion matches upstream.",
+    "src/pocx/test/qt/wallettests.cpp": "Only one QCOMPARE expects btcx: instead of bitcoin:. Every original assertion and case retained.",
+    "src/pocx/test/qt/test_main.cpp": "Only adds the native URI header and one qExec registration. All original class registrations and fixture/lifecycle handling retained.",
+    "src/pocx/test/qt/pocxuritests.cpp": "Moves exactly the nine existing native URI assertions into one dedicated case, with their existing setup and expectations unchanged.",
+    "src/pocx/test/qt/sources.cmake": "Select owned RPC/wallet/runner and additional native URI sources. Use default AUTOMOC include paths so reused and owned headers in different directories both resolve correctly; original Bitcoin configuration retains its upstream moc option."
+  }
+}
