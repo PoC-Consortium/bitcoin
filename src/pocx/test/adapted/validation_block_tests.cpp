@@ -8,7 +8,7 @@
 #include <consensus/merkle.h>
 #include <consensus/validation.h>
 #include <node/miner.h>
-#include <pow.h>
+#include <pocx/test/util/forging.h>
 #include <random.h>
 #include <test/util/common.h>
 #include <test/util/random.h>
@@ -70,6 +70,9 @@ std::shared_ptr<CBlock> MinerTestingSetup::Block(const uint256& prev_hash)
     BlockAssembler::Options options;
     options.coinbase_output_script = CScript{} << i++ << OP_TRUE;
     options.include_dummy_extranonce = true;
+    // This template will be retargeted to a chosen fork and fully validated
+    // after forging; validating against the active tip here is premature.
+    options.test_block_validity = false;
     auto ptemplate = BlockAssembler{m_node.chainman->ActiveChainstate(), m_node.mempool.get(), options}.CreateNewBlock();
     auto pblock = std::make_shared<CBlock>(ptemplate->block);
     pblock->hashPrevBlock = prev_hash;
@@ -100,9 +103,7 @@ std::shared_ptr<CBlock> MinerTestingSetup::FinalizeBlock(std::shared_ptr<CBlock>
 
     pblock->hashMerkleRoot = BlockMerkleRoot(*pblock);
 
-    while (!CheckProofOfWork(pblock->GetHash(), pblock->nBits, Params().GetConsensus())) {
-        ++(pblock->nNonce);
-    }
+    ForgeTestBlock(*pblock, *prev_block, Params().GetConsensus());
 
     // submit block header, so that miner can get the block height from the
     // global state and the node has the topology of the chain

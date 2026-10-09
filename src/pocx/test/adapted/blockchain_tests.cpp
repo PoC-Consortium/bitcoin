@@ -13,69 +13,47 @@
 
 #include <cstdlib>
 
-using util::ToString;
-
-/* Equality between doubles is imprecise. Comparison should be done
- * with a small threshold of tolerance, rather than exact equality.
- */
-static bool DoubleEquals(double a, double b, double epsilon)
+// PoCX difficulty is the 1-TiB reference base target divided by the header's
+// base target. Independently fixed reference: floor(2^42 / 120) = 36650387592.
+// Keep all five original difficulty ranges with PoCX fields instead of nBits.
+static void TestDifficulty(uint64_t base_target, double expected)
 {
-    return std::abs(a - b) < epsilon;
-}
-
-static CBlockIndex* CreateBlockIndexWithNbits(uint32_t nbits)
-{
-    CBlockIndex* block_index = new CBlockIndex();
-    block_index->nHeight = 46367;
-    block_index->nTime = 1269211443;
-    block_index->nBits = nbits;
-    return block_index;
-}
-
-static void RejectDifficultyMismatch(double difficulty, double expected_difficulty) {
-     BOOST_CHECK_MESSAGE(
-        DoubleEquals(difficulty, expected_difficulty, 0.00001),
-        "Difficulty was " + ToString(difficulty)
-            + " but was expected to be " + ToString(expected_difficulty));
-}
-
-/* Given a BlockIndex with the provided nbits,
- * verify that the expected difficulty results.
- */
-static void TestDifficulty(uint32_t nbits, double expected_difficulty)
-{
-    CBlockIndex* block_index = CreateBlockIndexWithNbits(nbits);
-    double difficulty = GetDifficulty(*block_index);
-    delete block_index;
-
-    RejectDifficultyMismatch(difficulty, expected_difficulty);
+    CBlockIndex block_index;
+    block_index.nHeight = 46367;
+    block_index.nTime = 1269211443;
+    block_index.nBaseTarget = base_target;
+    BOOST_CHECK_CLOSE_FRACTION(GetDifficulty(block_index), expected, 1e-12);
 }
 
 BOOST_FIXTURE_TEST_SUITE(blockchain_tests, BasicTestingSetup)
 
 BOOST_AUTO_TEST_CASE(get_difficulty_for_very_low_target)
 {
-    TestDifficulty(0x1f111111, 0.000001);
+    TestDifficulty(36650387592000000ULL, 0.000001);
 }
-
 BOOST_AUTO_TEST_CASE(get_difficulty_for_low_target)
 {
-    TestDifficulty(0x1ef88f6f, 0.000016);
+    TestDifficulty(2401919801229312ULL, 1.0 / 65536);
 }
-
 BOOST_AUTO_TEST_CASE(get_difficulty_for_mid_target)
 {
-    TestDifficulty(0x1df88f6f, 0.004023);
+    TestDifficulty(9382499223552ULL, 1.0 / 256);
 }
-
 BOOST_AUTO_TEST_CASE(get_difficulty_for_high_target)
 {
-    TestDifficulty(0x1cf88f6f, 1.029916);
+    TestDifficulty(18325193796ULL, 2.0);
 }
-
 BOOST_AUTO_TEST_CASE(get_difficulty_for_very_high_target)
 {
-    TestDifficulty(0x12345678, 5913134931067755359633408.0);
+    TestDifficulty(1, 36650387592.0);
+}
+BOOST_AUTO_TEST_CASE(get_difficulty_invalid_and_reference_target)
+{
+    CBlockIndex block_index;
+    block_index.nBaseTarget = 0;
+    BOOST_CHECK_EQUAL(GetDifficulty(block_index), 0.0);
+    TestDifficulty(36650387592ULL, 1.0);
+    TestDifficulty(UINT64_MAX, 36650387592.0 / 18446744073709551615.0);
 }
 
 //! Prune chain from height down to genesis block and check that

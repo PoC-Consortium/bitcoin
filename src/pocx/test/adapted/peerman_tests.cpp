@@ -5,7 +5,8 @@
 #include <chainparams.h>
 #include <node/miner.h>
 #include <net_processing.h>
-#include <pow.h>
+#include <pocx/consensus/difficulty.h>
+#include <pocx/regtest/forging.h>
 #include <test/util/setup_common.h>
 #include <validation.h>
 
@@ -16,16 +17,25 @@ BOOST_FIXTURE_TEST_SUITE(peerman_tests, RegTestingSetup)
 /** Window, in blocks, for connecting to NODE_NETWORK_LIMITED peers */
 static constexpr int64_t NODE_NETWORK_LIMITED_ALLOW_CONN_BLOCKS = 144;
 
-static void mineBlock(const node::NodeContext& node, std::chrono::seconds block_time)
+static void mineBlock(const node::NodeContext& node, std::chrono::seconds block_time, std::chrono::seconds minimum_age = 0s)
 {
     auto curr_time = GetTime<std::chrono::seconds>();
     node::BlockAssembler::Options options;
     options.include_dummy_extranonce = true;
+    // The template is unsigned; validate after forging the complete block.
+    options.test_block_validity = false;
     SetMockTime(block_time); // update time so the block is created with it
     CBlock block = node::BlockAssembler{node.chainman->ActiveChainstate(), nullptr, options}.CreateNewBlock()->block;
-    while (!CheckProofOfWork(block.GetHash(), block.nBits, node.chainman->GetConsensus())) ++block.nNonce;
-    block.fChecked = true; // little speedup
-    SetMockTime(curr_time); // process block at current time
+    const auto* prev = WITH_LOCK(cs_main, return node.chainman->ActiveChain().Tip());
+    block.nHeight = prev->nHeight + 1;
+    block.generationSignature = pocx::consensus::GetNextGenerationSignature(prev);
+    block.nBaseTarget = prev->nNextBaseTarget;
+    std::string error;
+    const bool forged = pocx::regtest::ForgeRegtestBlock(block, node.chainman->GetConsensus(), prev->GetBlockTime(), error);
+    // Forging may move the requested timestamp forward to its deadline.
+    // Preserve the old-block precondition relative to that actual timestamp.
+    SetMockTime(std::max(curr_time, std::chrono::seconds{block.nTime} + minimum_age));
+    BOOST_REQUIRE_MESSAGE(forged, error);
     Assert(node.chainman->ProcessNewBlock(std::make_shared<const CBlock>(block), /*force_processing=*/true, /*min_pow_checked=*/true, nullptr));
     node.validation_signals->SyncWithValidationInterfaceQueue(); // drain events queue
 }
@@ -62,8 +72,9 @@ BOOST_AUTO_TEST_CASE(connections_desirable_service_flags)
     m_node.validation_signals->RegisterValidationInterface(peerman.get());
 
     // First, verify a block in the past doesn't enable limited peers connections
-    // At this point, our time is (NODE_NETWORK_LIMITED_ALLOW_CONN_BLOCKS + 1) * 10 minutes ahead the tip's time.
-    mineBlock(m_node, /*block_time=*/std::chrono::seconds{tip_block_time + 1});
+    // Submit beyond the limited-peer window, accounting for the forging deadline.
+    mineBlock(m_node, /*block_time=*/std::chrono::seconds{tip_block_time + 1},
+              /*minimum_age=*/std::chrono::seconds{consensus.nPowTargetSpacing * NODE_NETWORK_LIMITED_ALLOW_CONN_BLOCKS + 1});
     BOOST_CHECK(peerman->GetDesirableServiceFlags(peer_flags) == ServiceFlags(NODE_NETWORK | NODE_WITNESS));
 
     // Verify a block close to the tip enables limited peers connections

@@ -10,7 +10,7 @@
 #include <index/blockfilterindex.h>
 #include <interfaces/chain.h>
 #include <node/miner.h>
-#include <pow.h>
+#include <pocx/test/util/forging.h>
 #include <test/util/blockfilter.h>
 #include <test/util/common.h>
 #include <test/util/setup_common.h>
@@ -71,6 +71,9 @@ CBlock BuildChainTestingSetup::CreateBlock(const CBlockIndex* prev,
     BlockAssembler::Options options;
     options.coinbase_output_script = scriptPubKey;
     options.include_dummy_extranonce = true;
+    // This template will be retargeted to a chosen fork and fully validated
+    // after forging; validating against the active tip here is premature.
+    options.test_block_validity = false;
     std::unique_ptr<CBlockTemplate> pblocktemplate = BlockAssembler{m_node.chainman->ActiveChainstate(), m_node.mempool.get(), options}.CreateNewBlock();
     CBlock& block = pblocktemplate->block;
     block.hashPrevBlock = prev->GetBlockHash();
@@ -89,7 +92,7 @@ CBlock BuildChainTestingSetup::CreateBlock(const CBlockIndex* prev,
         block.hashMerkleRoot = BlockMerkleRoot(block);
     }
 
-    while (!CheckProofOfWork(block.GetHash(), block.nBits, m_node.chainman->GetConsensus())) ++block.nNonce;
+    ForgeTestBlock(block, *prev, m_node.chainman->GetConsensus());
 
     return block;
 }
@@ -351,6 +354,16 @@ BOOST_FIXTURE_TEST_CASE(index_reorg_crash, BuildChainTestingSetup)
     int blocking_height = WITH_LOCK(cs_main, return m_node.chainman->ActiveChain().Tip()->nHeight);
 
     IndexReorgCrash index(interfaces::MakeChain(m_node), blocker, blocking_height);
+    // Release the deliberately blocked worker even if fixture construction
+    // throws, so the original failure is reported rather than hidden by join().
+    struct UnblockOnExit {
+        std::promise<void>& promise;
+        BaseIndex& index;
+        ~UnblockOnExit() {
+            try { promise.set_value(); } catch (const std::future_error&) {}
+            index.Stop();
+        }
+    } unblock_on_exit{promise, index};
     BOOST_REQUIRE(index.Init());
     BOOST_REQUIRE(index.StartBackgroundSync());
 

@@ -5,7 +5,8 @@
 #include <blockencodings.h>
 #include <chainparams.h>
 #include <consensus/merkle.h>
-#include <pow.h>
+#include <pocx/regtest/forging.h>
+#include <validation.h>
 #include <streams.h>
 #include <test/util/random.h>
 #include <test/util/txmempool.h>
@@ -18,6 +19,24 @@
 const std::vector<std::pair<Wtxid, CTransactionRef>> empty_extra_txn;
 
 BOOST_FIXTURE_TEST_SUITE(blockencodings_tests, RegTestingSetup)
+
+static void SolveHeader(CBlock& block)
+{
+    // Preserve the original context-free valid-header precondition. Parent
+    // hashes are deliberately arbitrary in these reconstruction fixtures.
+    const auto& params = Params();
+    const auto saved_time = GetMockTime();
+    SetMockTime(std::chrono::seconds{params.GenesisBlock().nTime + 1});
+    block.nHeight = 1;
+    block.generationSignature = uint256{1};
+    block.nBaseTarget = params.GenesisBlock().nBaseTarget;
+    std::string error;
+    const bool forged = pocx::regtest::ForgeRegtestBlock(block, params.GetConsensus(), params.GenesisBlock().nTime, error);
+    SetMockTime(saved_time);
+    BOOST_REQUIRE_MESSAGE(forged, error);
+    BlockValidationState state;
+    BOOST_REQUIRE_MESSAGE(CheckBlockHeader(block, state, params.GetConsensus()), state.ToString());
+}
 
 static CMutableTransaction BuildTransactionTestCase() {
     CMutableTransaction tx;
@@ -36,7 +55,6 @@ static CBlock BuildBlockTestCase(FastRandomContext& ctx) {
     block.vtx[0] = MakeTransactionRef(tx);
     block.nVersion = 42;
     block.hashPrevBlock = ctx.rand256();
-    block.nBits = 0x207fffff;
 
     tx.vin[0].prevout.hash = Txid::FromUint256(ctx.rand256());
     tx.vin[0].prevout.n = 0;
@@ -52,7 +70,7 @@ static CBlock BuildBlockTestCase(FastRandomContext& ctx) {
     bool mutated;
     block.hashMerkleRoot = BlockMerkleRoot(block, &mutated);
     assert(!mutated);
-    while (!CheckProofOfWork(block.GetHash(), block.nBits, Params().GetConsensus())) ++block.nNonce;
+    SolveHeader(block);
     return block;
 }
 
@@ -278,12 +296,11 @@ BOOST_AUTO_TEST_CASE(EmptyBlockRoundTripTest)
     block.vtx[0] = MakeTransactionRef(std::move(coinbase));
     block.nVersion = 42;
     block.hashPrevBlock = rand_ctx.rand256();
-    block.nBits = 0x207fffff;
 
     bool mutated;
     block.hashMerkleRoot = BlockMerkleRoot(block, &mutated);
     assert(!mutated);
-    while (!CheckProofOfWork(block.GetHash(), block.nBits, Params().GetConsensus())) ++block.nNonce;
+    SolveHeader(block);
 
     // Test simple header round-trip with only coinbase
     {

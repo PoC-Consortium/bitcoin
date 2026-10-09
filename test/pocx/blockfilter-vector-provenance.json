@@ -1,0 +1,11 @@
+{
+  "vectors": 10,
+  "original_hash_filter_header_verified": true,
+  "sha256": {
+    "src/test/data/blockfilters.json": "d9049756f744e561b882a8eff507582fb7cd74ed9cf5542bdac58257449ee2a2",
+    "test/pocx/adapt_blockfilter_vectors.py": "b46ae8c8c61257fcaf6ed93d12fd14a044144e4adb28bf1a3c9f95ae2ff3af24",
+    "test/functional/test_framework/messages.py": "c786651a517a49dd084b1d76072f755d40c5483f5be53b7322ca4f3403548b26",
+    "test/functional/test_framework/blockfilter.py": "d759d7c22eb1fd5e517902d01a30938a991c3a34e6672c9d44a0b4f936a8fcfc",
+    "test/functional/test_framework/crypto/siphash.py": "7af3111be53124afb78a607cb9bfe3fdd5a64717c95a279d5962cda9a0853ab1"
+  }
+}

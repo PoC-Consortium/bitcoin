@@ -7,7 +7,7 @@
 #include <consensus/params.h>
 #include <headerssync.h>
 #include <net_processing.h>
-#include <pow.h>
+#include <pocx/consensus/difficulty.h>
 #include <test/util/common.h>
 #include <test/util/setup_common.h>
 #include <validation.h>
@@ -43,7 +43,6 @@ using State = HeadersSyncState::State;
     } while (false)
 
 constexpr size_t TARGET_BLOCKS{15'000};
-constexpr arith_uint256 CHAIN_WORK{TARGET_BLOCKS * 2};
 
 // Subtract MAX_HEADERS_RESULTS (2000 headers/message) + an arbitrary smaller
 // value (123) so our redownload buffer is well below the number of blocks
@@ -55,32 +54,26 @@ struct HeadersGeneratorSetup : public RegTestingSetup {
     const CBlock& genesis{Params().GenesisBlock()};
     CBlockIndex& chain_start{WITH_LOCK(::cs_main, return *Assert(m_node.chainman->m_blockman.LookupBlockIndex(genesis.GetHash())))};
 
-    // Generate headers for two different chains (using differing merkle roots
-    // to ensure the headers are different).
+    // HeadersSyncState checks claimed work and transitions. Proof/signature
+    // validation belongs to the caller; these are deliberately header-only fixtures.
     const std::vector<CBlockHeader>& FirstChain()
     {
-        // Block header hash target is half of max uint256 (2**256 / 2), expressible
-        // roughly as the coefficient 0x7fffff with the exponent 0x20 (32 bytes).
-        // This implies around every 2nd hash attempt should succeed, which
-        // is why CHAIN_WORK == TARGET_BLOCKS * 2.
-        assert(genesis.nBits == 0x207fffff);
-
-        // Subtract 1 since the genesis block also contributes work so we reach
-        // the CHAIN_WORK target.
-        static const auto first_chain{GenerateHeaders(/*count=*/TARGET_BLOCKS - 1, genesis.GetHash(),
-                genesis.nVersion, genesis.nTime, /*merkle_root=*/uint256::ZERO, genesis.nBits)};
-        return first_chain;
+        static const auto headers{GenerateHeaders(TARGET_BLOCKS - 1, uint256::ZERO)};
+        return headers;
     }
     const std::vector<CBlockHeader>& SecondChain()
     {
-        // Subtract 2 to keep total work below the target.
-        static const auto second_chain{GenerateHeaders(/*count=*/TARGET_BLOCKS - 2, genesis.GetHash(),
-                genesis.nVersion, genesis.nTime, /*merkle_root=*/uint256::ONE, genesis.nBits)};
-        return second_chain;
+        static const auto headers{GenerateHeaders(TARGET_BLOCKS - 2, uint256::ONE)};
+        return headers;
     }
 
     HeadersSyncState CreateState()
     {
+        // PoCX claimed work is floor(2^64 / base_target), not two per header.
+        // Include the genesis work exactly once; the shorter chain stays one
+        // header below the threshold, as in the upstream regression.
+        const auto work_per_header = (arith_uint256{1} << 64) / arith_uint256{chain_start.nNextBaseTarget};
+        const auto required_work = chain_start.nChainWork + work_per_header * (TARGET_BLOCKS - 1);
         return {/*id=*/0,
                 Params().GetConsensus(),
                 HeadersSyncParams{
@@ -88,46 +81,29 @@ struct HeadersGeneratorSetup : public RegTestingSetup {
                     .redownload_buffer_size = REDOWNLOAD_BUFFER_SIZE,
                 },
                 chain_start,
-                /*minimum_required_work=*/CHAIN_WORK};
+                /*minimum_required_work=*/required_work};
     }
 
 private:
-    /** Search for a nonce to meet (regtest) proof of work */
-    void FindProofOfWork(CBlockHeader& starting_header);
-    /**
-     * Generate headers in a chain that build off a given starting hash, using
-     * the given nVersion, advancing time by 1 second from the starting
-     * prev_time, and with a fixed merkle root hash.
-     */
-    std::vector<CBlockHeader> GenerateHeaders(size_t count,
-            uint256 prev_hash, int32_t nVersion, uint32_t prev_time,
-            const uint256& merkle_root, uint32_t nBits);
+    std::vector<CBlockHeader> GenerateHeaders(size_t count, const uint256& merkle_root)
+    {
+        std::vector<CBlockHeader> headers(count);
+        CBlockHeader prev{genesis};
+        int height{0};
+        for (auto& next : headers) {
+            next.nVersion = genesis.nVersion;
+            next.hashPrevBlock = prev.GetHash();
+            next.hashMerkleRoot = merkle_root;
+            next.nTime = prev.nTime + 1;
+            next.nHeight = ++height;
+            next.nBaseTarget = chain_start.nNextBaseTarget;
+            next.generationSignature = pocx::consensus::GetNextGenerationSignature(prev.generationSignature, prev.pocxProof.account_id);
+            next.pocxProof.quality = 0; // Claimed zero deadline fits a one-second interval.
+            prev = next;
+        }
+        return headers;
+    }
 };
-
-void HeadersGeneratorSetup::FindProofOfWork(CBlockHeader& starting_header)
-{
-    while (!CheckProofOfWork(starting_header.GetHash(), starting_header.nBits, Params().GetConsensus())) {
-        ++starting_header.nNonce;
-    }
-}
-
-std::vector<CBlockHeader> HeadersGeneratorSetup::GenerateHeaders(
-        const size_t count, uint256 prev_hash, const int32_t nVersion,
-        uint32_t prev_time, const uint256& merkle_root, const uint32_t nBits)
-{
-    std::vector<CBlockHeader> headers(count);
-    for (auto& next_header : headers) {
-        next_header.nVersion = nVersion;
-        next_header.hashPrevBlock = prev_hash;
-        next_header.hashMerkleRoot = merkle_root;
-        next_header.nTime = ++prev_time;
-        next_header.nBits = nBits;
-
-        FindProofOfWork(next_header);
-        prev_hash = next_header.GetHash();
-    }
-    return headers;
-}
 
 // In this test, we construct two sets of headers from genesis, one with
 // sufficient proof of work and one without.
@@ -140,6 +116,31 @@ std::vector<CBlockHeader> HeadersGeneratorSetup::GenerateHeaders(
 // 3. Repeat the second set of headers in both phases to demonstrate behavior
 //    when the chain a peer provides has too little work.
 BOOST_FIXTURE_TEST_SUITE(headers_sync_chainwork_tests, HeadersGeneratorSetup)
+
+// Invalid PoCX transitions must fail in both sync phases, before any header
+// is released for permanent storage. Valid controls are covered by happy_path.
+BOOST_AUTO_TEST_CASE(pocx_invalid_transitions)
+{
+    for (const bool redownload : {false, true}) {
+        for (int mutation = 0; mutation < 4; ++mutation) {
+            auto hss = CreateState();
+            if (redownload) {
+                const auto presync = hss.ProcessNextHeaders(FirstChain(), true);
+                BOOST_REQUIRE(presync.success);
+                BOOST_REQUIRE_EQUAL(hss.GetState(), State::REDOWNLOAD);
+            }
+            auto header = FirstChain().front();
+            switch (mutation) {
+            case 0: header.nBaseTarget = 0; break;
+            case 1: ++header.nBaseTarget; break; // first header must match exactly
+            case 2: header.generationSignature = uint256::ONE; break;
+            case 3: header.nTime = genesis.nTime - 1; break;
+            }
+            CHECK_RESULT(hss.ProcessNextHeaders(std::span{&header, 1}, true),
+                hss, State::FINAL, false, false, 0, std::nullopt, std::nullopt);
+        }
+    }
+}
 
 BOOST_AUTO_TEST_CASE(sneaky_redownload)
 {

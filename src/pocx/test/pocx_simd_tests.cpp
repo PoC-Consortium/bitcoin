@@ -12,7 +12,7 @@
 #include <pocx/algorithms/plot_generation.h>
 #include <primitives/block.h>
 #include <uint256.h>
-#include <test/util/setup_common.h>
+#include <pocx/test/util/setup_pocx.h>
 #include <util/strencodings.h>
 
 #include <boost/test/unit_test.hpp>
@@ -24,11 +24,6 @@
 using namespace pocx::crypto;
 using namespace pocx::consensus;
 using namespace pocx::algorithms;
-
-// PoCX requires regtest for testing (mainnet is disabled)
-struct PoCXTestingSetup : BasicTestingSetup {
-    PoCXTestingSetup() : BasicTestingSetup{ChainType::REGTEST, {.extra_args = {"-regtest"}}} {}
-};
 
 BOOST_FIXTURE_TEST_SUITE(pocx_simd_tests, PoCXTestingSetup)
 

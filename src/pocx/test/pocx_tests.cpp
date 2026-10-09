@@ -8,7 +8,7 @@
 #include <pocx/algorithms/plot_generation.h>
 #include <pocx/algorithms/encoding.h>
 #include <pocx/consensus/proof.h>
-#include <test/util/setup_common.h>
+#include <pocx/test/util/setup_pocx.h>
 #include <crypto/sha256.h>
 #include <util/strencodings.h>
 
@@ -21,11 +21,6 @@
 using namespace pocx::crypto;
 using namespace pocx::consensus;
 using namespace pocx::algorithms;
-
-// PoCX requires regtest for testing (mainnet is disabled)
-struct PoCXTestingSetup : BasicTestingSetup {
-    PoCXTestingSetup() : BasicTestingSetup{ChainType::REGTEST, {.extra_args = {"-regtest"}}} {}
-};
 
 BOOST_FIXTURE_TEST_SUITE(pocx_tests, PoCXTestingSetup)
 

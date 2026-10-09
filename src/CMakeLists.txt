@@ -444,13 +444,21 @@ if(BUILD_KERNEL_LIB)
 endif()
 
 
-add_subdirectory(test/util)
+if(ENABLE_POCX)
+  add_subdirectory(pocx/test/util)
+else()
+  add_subdirectory(test/util)
+endif()
 if(BUILD_BENCH)
   add_subdirectory(bench)
 endif()
 
 if(BUILD_TESTS)
-  add_subdirectory(test)
+  if(ENABLE_POCX)
+    add_subdirectory(pocx/test)
+  else()
+    add_subdirectory(test)
+  endif()
 endif()
 
 if(BUILD_FUZZ_BINARY)

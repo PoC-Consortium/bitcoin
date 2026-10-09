@@ -1,0 +1,129 @@
+{
+  "scope": "Reviewed restoration of upstream files after verified owned replacement; not automatic inventory approval",
+  "upstream_revision": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
+  "files": {
+    "src/test/blockchain_tests.cpp": {
+      "upstream_revision": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
+      "baseline_sha256": "870e87bb7bbfdc08c3f74b6e68a77024059748dc8e5b8babc04fed89583c712b",
+      "restored_sha256": "613c4f9158dfddb5b6cbdbc07d71f2043d8295eec18869591ea5550b0aea1e25",
+      "replacement": "src/pocx/test/adapted/blockchain_tests.cpp",
+      "replacement_sha256": "849f6dcb05b546b2f495644fd0d7aa1964cbaa5cc1f8c10491b910816ff366d2",
+      "evidence": "build-pocx-clean/pocx-unit-5r01tzf8/junit.xml",
+      "parity_review": "All five difficulty ranges now check fixed independent PoCX base-target ratios; original pruning checks retained; zero/reference/full-width boundaries added.",
+      "review_diff": "artifacts/m2-restore-blockchain_tests.diff",
+      "upstream_cases": 8,
+      "owned_cases": 9
+    },
+    "src/test/blockencodings_tests.cpp": {
+      "upstream_revision": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
+      "baseline_sha256": "8bcd7d1e1316dcbd67d4afbecc0766840191be73a20dcef1a8bd0b11ed37d999",
+      "restored_sha256": "99b75d6b4152d27d26a808eeabdb358915abe9a5e8644893acebc5650f8a04b0",
+      "replacement": "src/pocx/test/adapted/blockencodings_tests.cpp",
+      "replacement_sha256": "223fc329b35ffd8d52c1a9988373e2099d0e79b342624bf02fe67c8699d6f9c0",
+      "evidence": "build-pocx-clean/pocx-unit-5r01tzf8/junit.xml",
+      "parity_review": "All original assertions retained; original valid context-free header precondition restored via signed regtest forging and explicit CheckBlockHeader. Arbitrary parent hashes still model reconstruction without full contextual chain validity.",
+      "review_diff": "artifacts/unit-completion-blockencodings.diff",
+      "upstream_cases": 8,
+      "owned_cases": 8
+    },
+    "src/test/blockfilter_index_tests.cpp": {
+      "upstream_revision": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
+      "baseline_sha256": "5daa1fcf214b9c97af36ce51b7d5e68fc16a6999e38776520ce4dcaf46a0e2b1",
+      "restored_sha256": "bab95e7e09189a1c0a12422f9259c3f29d3d0eaa5b0c07502d43e3d969e33b5d",
+      "replacement": "src/pocx/test/adapted/blockfilter_index_tests.cpp",
+      "replacement_sha256": "dcdde2b5096f41c8667940fd7e59b8557edc92062de27cdea9ddc5a1e78703a0",
+      "evidence": "build-pocx-clean/pocx-unit-5r01tzf8/junit.xml",
+      "parity_review": "Retargeted fork templates are signed/forged before full chain acceptance; all index/reorg/restart assertions retained; blocked worker cleanup preserves failures.",
+      "review_diff": "artifacts/m2-restore-blockfilter_index_tests.diff",
+      "upstream_cases": 3,
+      "owned_cases": 3
+    },
+    "src/test/headers_sync_chainwork_tests.cpp": {
+      "upstream_revision": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
+      "baseline_sha256": "5e218a44702daca56cd6db45e12e87b9435a247bda5aa1ca25c790933edcbc09",
+      "restored_sha256": "a89651be5aa24c5e52d64bdb17ca6ddaf2d775ba5248941490ea0d3bf55a0eca",
+      "replacement": "src/pocx/test/adapted/headers_sync_chainwork_tests.cpp",
+      "replacement_sha256": "f90142cf9f90fc871848fa19e986273de6d4ced3bc5bfc845d6753ac9b76fe82",
+      "evidence": "build-pocx-clean/pocx-unit-5r01tzf8/junit.xml",
+      "parity_review": "Threshold includes genesis plus independent floor(2^64/base_target) work per header, retaining the one-header-short chain and all original sync-state assertions; invalid-transition tests added.",
+      "review_diff": "artifacts/m2-restore-headers_sync_chainwork_tests.diff",
+      "upstream_cases": 3,
+      "owned_cases": 4
+    },
+    "src/test/miner_tests.cpp": {
+      "upstream_revision": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
+      "baseline_sha256": "d699c66780dbb41ded30c42df791d728aa12fc6e8e0f58016766615e64d52dae",
+      "restored_sha256": "8a464a68fb426b69d24057738044cdf2ee7d570a437eba6993eecab9187a0e69",
+      "replacement": "src/pocx/test/adapted/miner_tests.cpp",
+      "replacement_sha256": "93592aefe0dafefeae35fd797371c2a9f2c8c10c892eed73d43ba685729ea252",
+      "evidence": "build-pocx-clean/pocx-unit-5r01tzf8/junit.xml",
+      "parity_review": "Preserve package fees, priority, absolute/relative locks and membership; use 10-coin subsidy and active-from-height-one BIP68; reject unsigned headers and unsupported PoW solution interface, then accept signed PoCX blocks.",
+      "review_diff": "artifacts/m2-restore-miner_tests.diff",
+      "upstream_cases": 1,
+      "owned_cases": 1
+    },
+    "src/test/peerman_tests.cpp": {
+      "upstream_revision": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
+      "baseline_sha256": "f3713bf001beb45d50cac9be0fc515c4553714f1e54053f5291ed0d862ba07ed",
+      "restored_sha256": "e8d42b687099dc3f503b1be000c564e452d2a612d025aa9ef33aec234babaa5b",
+      "replacement": "src/pocx/test/adapted/peerman_tests.cpp",
+      "replacement_sha256": "764a41a53eb6a5ddec5a03327b663a1e3549e4f6c0b91c5756d798c1b27881f0",
+      "evidence": "build-pocx-clean/pocx-unit-5r01tzf8/junit.xml",
+      "parity_review": "Forge valid PoCX blocks and preserve old/recent limited-peer connection preconditions relative to actual forging timestamps.",
+      "review_diff": "artifacts/m2-restore-peerman_tests.diff",
+      "upstream_cases": 1,
+      "owned_cases": 1
+    },
+    "src/test/validation_block_tests.cpp": {
+      "upstream_revision": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
+      "baseline_sha256": "de10c5bf37b659956fa385ad899318661d49a125188af6740a6d50f5b07e4969",
+      "restored_sha256": "01a87f9ce6037878705dd076c30d83f80b3c3cf9dc830fd84c902ff10ae4cdf4",
+      "replacement": "src/pocx/test/adapted/validation_block_tests.cpp",
+      "replacement_sha256": "7d06a080e18dd6db67e436c14f080bf7c389e3fc69b89c0390e14ea2564f4194",
+      "evidence": "build-pocx-clean/pocx-unit-5r01tzf8/junit.xml",
+      "parity_review": "Preserve original fork topology, header acceptance and validation callbacks using parent-relative signed PoCX blocks.",
+      "review_diff": "artifacts/m2-restore-validation_block_tests.diff",
+      "upstream_cases": 3,
+      "owned_cases": 3
+    },
+    "src/test/util/mining.cpp": {
+      "upstream_revision": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
+      "baseline_sha256": "3742814daabb8eb8c5b9b1ad4940bc9668697cc98944a62ce8e9225af38b9b65",
+      "restored_sha256": "5951e4d4337ee74b417878eadd2d02aff6ee1b7d20b5ea6a4728d0570bac863b",
+      "replacement": "src/pocx/test/util/mining.cpp",
+      "replacement_sha256": "3742814daabb8eb8c5b9b1ad4940bc9668697cc98944a62ce8e9225af38b9b65",
+      "evidence": "build-pocx-clean/pocx-unit-5r01tzf8/results.json",
+      "parity_review": "Owned mining support exactly matches inherited PoCX support.",
+      "scope": "Support exercised by the complete153-suite run; the unrelated storage regression remains required and failing."
+    },
+    "src/test/util/setup_common.cpp": {
+      "upstream_revision": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
+      "baseline_sha256": "988f561034e2caf5082cfcb703e40c94b4ff6b093308e69d08bb775eecabe7e7",
+      "restored_sha256": "a884eb720d379077b1934952d39430bf40ffcef05ec037a8cd06879409027122",
+      "replacement": "src/pocx/test/util/setup_common.cpp",
+      "replacement_sha256": "65870c0b8831c2fec046dd4daef069a096e97a73e93f5cd105d9044e08a6cdf4",
+      "evidence": "build-pocx-clean/pocx-unit-5r01tzf8/results.json",
+      "parity_review": "Owned setup matches inherited PoCX support except explicit Bitcoin fixture deserialization preserving its transaction assertions.",
+      "scope": "Support exercised by the complete153-suite run; the unrelated storage regression remains required and failing."
+    },
+    "src/test/coins_tests.cpp": {
+      "upstream_revision": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
+      "baseline_sha256": "b408eebcb1804192e4c1831385ca9c6bb3784b4f271eabcd069f4e44c85b5bdc",
+      "restored_sha256": "64fd623bf07a9a604ce50a21886ad83fb60393b506f7a5e5275ac29ceefccb1d",
+      "replacement": "src/pocx/test/adapted/coins_tests.cpp",
+      "replacement_sha256": "5216dfec9e40a762b1372433236aded7671ae5daae5248175e177f3f75ed97ce",
+      "evidence": "artifacts/ownership-cleanup-20261009/unit-verification.json",
+      "parity_review": "Only the native mock method signature is adapted. All 15 original cases and all assertions remain unchanged. No inline PoCX changes remain in any of the 168 original unit/support sources.",
+      "review_diff": "artifacts/ownership-cleanup-20261009/coins-adaptation.diff",
+      "upstream_cases": 15,
+      "owned_cases": 15
+    }
+  },
+  "bitcoin_verification": {
+    "unit": "artifacts/unit-completion-bitcoin-ctest1.xml",
+    "qt": "build-ci-bitcoin-qt/ci-results-pzxrrf7c/results.json",
+    "status": "passed",
+    "unit_scope": "155 CTest entries allPASS;737 original unit cases and6 auxiliary groups,zeroFAIL zeroSKIP with pinned external dataset",
+    "qt_scope": "All six Qt classes passed after rebuilding restored support"
+  }
+}
