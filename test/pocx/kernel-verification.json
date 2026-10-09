@@ -1,0 +1,49 @@
+{
+  "status": "passed",
+  "verified_at_utc": "2026-10-09T11:54:57.575017+00:00",
+  "source_revision": "2019969136678bfdf7852bc25e0ca2e15f3ad726",
+  "upstream_revision": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
+  "scope": "Linux Release kernel API original-suite parity at the recorded source revision. No claim of additional PoCX behavior coverage.",
+  "bitcoin_original_green": 16,
+  "bitcoin_assertions_passed": 3582,
+  "pocx_original_green": 16,
+  "pocx_original_unchanged_case_logic_green": 10,
+  "pocx_original_adapted_fixtures_or_checks_green": 6,
+  "pocx_assertions_passed": 20703,
+  "failed": 0,
+  "skipped": 0,
+  "inactive": 0,
+  "missing_original": 0,
+  "excluded_original": 0,
+  "additional_native_cases": 0,
+  "source_ownership": {
+    "original_kernel_test_build_fixture_files_upstream_identical": 3,
+    "public_api_headers_upstream_identical": 2,
+    "original_inline_pocx_adaptations": 0,
+    "original_source_directly_reused_cases": 0,
+    "cases_in_owned_monolithic_copy": 16
+  },
+  "native_fixture_blocks": {
+    "mainnet": 1,
+    "regtest": 206
+  },
+  "fixture_sha256": "0069f80997408a2a13739afe46775c4a5e2cc799a8b963006fdd30c299a7d35f",
+  "review": "test/pocx/kernel-parity.json",
+  "standalone_infrastructure_checks_passed": 7,
+  "raw_evidence": {
+    "bitcoin": "artifacts/kernel-baseline-20261009/verification.json",
+    "pocx_source_fixture_runtime_review": "artifacts/kernel-pocx-review-20261009/verification.json",
+    "standalone_package": "artifacts/kernel-package-20261009/verification.json",
+    "source_audit": "artifacts/kernel-pocx-review-20261009/package-source-audit.json",
+    "standalone_infrastructure": "artifacts/kernel-package-20261009/infrastructure.log"
+  },
+  "limitations": [
+    "All native cases are currently in one owned adaptation file, including the ten with unchanged logic.",
+    "Frozen proof fixtures match the prior independent Rust verification exactly; that unchanged proof comparison was not rerun.",
+    "Further signer transition/revocation, competing-branch, scheduler and persistence-fault coverage remains separate.",
+    "Other platforms and build-option combinations were not established by this Linux Release checkpoint."
+  ],
+  "standalone_execution_seconds": 184.58162172301672,
+  "runner_review": "Complete standalone execution passed; subsequent failure-path hardening covered by infrastructure regression check.",
+  "source_review_sha256": "e146f7aeaa004996aaea999939b2117df6d5e351f1c780bb2c8b23452a22f8df"
+}

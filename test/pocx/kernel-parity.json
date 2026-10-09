@@ -1,0 +1,205 @@
+{
+  "scope": "Fixed kernel baseline, reviewed native fixture/ABI adaptations and complete execution; no claim of additional native behavior coverage.",
+  "baseline_sha256": "a32650e8ac40ed89b2ff3c2fe296499cdc4eb0fb6c7d1ad26a3492566d9b2782",
+  "applicable": [
+    "btck_block",
+    "btck_block_hash_tests",
+    "btck_block_header_tests",
+    "btck_block_tree_entry_tests",
+    "btck_chainman_in_memory_tests",
+    "btck_chainman_mainnet_tests",
+    "btck_chainman_regtest_tests",
+    "btck_chainman_tests",
+    "btck_context_tests",
+    "btck_precomputed_txdata",
+    "btck_script_pubkey",
+    "btck_script_verify_tests",
+    "btck_transaction_input",
+    "btck_transaction_output",
+    "btck_transaction_tests",
+    "logging_tests"
+  ],
+  "excluded": {},
+  "additional": [],
+  "case_review": [
+    {
+      "case": "btck_block",
+      "body_byte_identical": true,
+      "classification": "adapted fixtures/checks",
+      "selection": "PoCX-owned monolithic source"
+    },
+    {
+      "case": "btck_block_hash_tests",
+      "body_byte_identical": true,
+      "classification": "unchanged case logic",
+      "selection": "PoCX-owned monolithic source"
+    },
+    {
+      "case": "btck_block_header_tests",
+      "body_byte_identical": false,
+      "classification": "adapted fixtures/checks",
+      "selection": "PoCX-owned monolithic source"
+    },
+    {
+      "case": "btck_block_tree_entry_tests",
+      "body_byte_identical": false,
+      "classification": "adapted fixtures/checks",
+      "selection": "PoCX-owned monolithic source"
+    },
+    {
+      "case": "btck_chainman_in_memory_tests",
+      "body_byte_identical": false,
+      "classification": "adapted fixtures/checks",
+      "selection": "PoCX-owned monolithic source"
+    },
+    {
+      "case": "btck_chainman_mainnet_tests",
+      "body_byte_identical": true,
+      "classification": "adapted fixtures/checks",
+      "selection": "PoCX-owned monolithic source"
+    },
+    {
+      "case": "btck_chainman_regtest_tests",
+      "body_byte_identical": false,
+      "classification": "adapted fixtures/checks",
+      "selection": "PoCX-owned monolithic source"
+    },
+    {
+      "case": "btck_chainman_tests",
+      "body_byte_identical": true,
+      "classification": "unchanged case logic",
+      "selection": "PoCX-owned monolithic source"
+    },
+    {
+      "case": "btck_context_tests",
+      "body_byte_identical": true,
+      "classification": "unchanged case logic",
+      "selection": "PoCX-owned monolithic source"
+    },
+    {
+      "case": "btck_precomputed_txdata",
+      "body_byte_identical": true,
+      "classification": "unchanged case logic",
+      "selection": "PoCX-owned monolithic source"
+    },
+    {
+      "case": "btck_script_pubkey",
+      "body_byte_identical": true,
+      "classification": "unchanged case logic",
+      "selection": "PoCX-owned monolithic source"
+    },
+    {
+      "case": "btck_script_verify_tests",
+      "body_byte_identical": true,
+      "classification": "unchanged case logic",
+      "selection": "PoCX-owned monolithic source"
+    },
+    {
+      "case": "btck_transaction_input",
+      "body_byte_identical": true,
+      "classification": "unchanged case logic",
+      "selection": "PoCX-owned monolithic source"
+    },
+    {
+      "case": "btck_transaction_output",
+      "body_byte_identical": true,
+      "classification": "unchanged case logic",
+      "selection": "PoCX-owned monolithic source"
+    },
+    {
+      "case": "btck_transaction_tests",
+      "body_byte_identical": true,
+      "classification": "unchanged case logic",
+      "selection": "PoCX-owned monolithic source"
+    },
+    {
+      "case": "logging_tests",
+      "body_byte_identical": true,
+      "classification": "unchanged case logic",
+      "selection": "PoCX-owned monolithic source"
+    }
+  ],
+  "case_logic_counts": {
+    "unchanged": 10,
+    "adapted_fixtures_or_checks": 6
+  },
+  "source_ownership": {
+    "original_source_directly_reused_cases": 0,
+    "cases_in_owned_monolithic_copy": 16,
+    "note": "Case-logic reuse is distinct from source reuse. The single original test translation unit mixes generic and block/chain cases; the owned adaptation currently contains all 16 cases."
+  },
+  "reviewed_sources": {
+    "test/pocx/kernel/reference.rs": "af1cb2d2abd1b353f508a4891acbeab8b2e85e1b777ffe973cd091a0df89b5b7",
+    "test/pocx/kernel/verify_fixtures.py": "f93ed8f7fbd1e60f4aa837a8f9d20b4bc68bee5977a5c674b026f2df00245b55",
+    "test/pocx/vectors/Cargo.lock": "2a959ccaa2c4c3fbddef9b0328e9c21a111ec13739bfc1beb441a194760e3786",
+    "src/pocx/test/kernel/fixture_generator.cpp": "f8068cac4ef12f25d3ba326e95837d2b4dc5bb12a2bc5f3e0099af02f3f62067",
+    "test/pocx/kernel/render_fixtures.py": "7f88dc854ac1002b18ca2f6412b01d66b8c220f312db00a2dc3d4b7d3b63ba48",
+    "src/pocx/test/kernel/test_kernel.cpp": "cc6dfb7c2e3efa767b9061e62ca9bd8c3704e09fbf222d0d9b71cea5f47cb373",
+    "src/pocx/test/kernel/CMakeLists.txt": "53a723e6d34a9389b1fe021a3ec2750f5f46cd5c72fc44c26d6bc45f809a215a",
+    "src/test/kernel/test_kernel.cpp": "b239ffd7977a3390d024745b00b5ab485817c26648f0d5328d94c60730c1dbc4",
+    "src/test/kernel/block_data.h": "37237946a7f8174b99f08390daea444e03d3557342f0a65dfc6c68a4a5ae16f5",
+    "src/kernel/bitcoinkernel.cpp": "174890768e31e67bb8decb166b40b61c51e097a41ef5cb80708bc423eb8a788f",
+    "src/kernel/chainparams.cpp": "6518be84d9ad5661a252b41c655730086049bca280e7eff452577c4d153ce9b9",
+    "src/pocx/consensus/difficulty.cpp": "9769f411840097321c9dce8b715922152003ff6a18273905bc5060146f563e56",
+    "src/pocx/consensus/proof.cpp": "7c0b3c643d674c373590ea9b37a116722f2c674c2abe4a51d815217cc0487247",
+    "src/pocx/consensus/proof.h": "f80eb5096e477e6147e4f3b04b705ac5886da245cb55fc4203f006d5c9ff95cd",
+    "src/pocx/consensus/signature.cpp": "866c14307754479278dd46307a847994669d6b572e1011d09a1d8b3fb84fae69",
+    "src/pocx/consensus/signature.h": "f0e3e40246292dbc21d5e130ad99ee9c37f2d8a7a16a8d9a63e2951edc1ddadd",
+    "src/pocx/consensus/difficulty.h": "31c7c1dafa9dc734466667b2316e2c19b1321273d7b11679afd8a21c91fdb48e",
+    "src/pocx/algorithms/time_bending.cpp": "ddb84fb7bd2ce8760223b26cf6aaaee20b5b6ff0ac5e4f754bff8511ebad10ba",
+    "src/pocx/algorithms/time_bending.h": "8bcfede6f1e23d2e63fce7eddc773c6e9822076decccba43803263ca46d70085",
+    "src/pocx/algorithms/quality.cpp": "8d5f73c7296364da7eb2300f3b9a5ea5c4b6e79d51541049618c55781eaf620b",
+    "src/pocx/algorithms/quality.h": "d12a4660b34fbf9c60470e4a1ca1f00787c1d77ccb283bb7ce97642cefe438ab",
+    "src/pocx/mining/key_signing.cpp": "672a85926f29aab29f447b61902cf767329949784fa71155eddbfb1ddd575f58",
+    "src/pocx/mining/key_signing.h": "af0c2ed945006bbf52392c286b5c17b9835cea0e1d1cc0e528bc38fc66be98f4",
+    "src/primitives/block.cpp": "b82d4cada356ec14071813598e989a3aa3c4b304510304408dee63abf6854629",
+    "src/primitives/block.h": "e4e9fb810eb62093584253ee5617e80a4d536dee05ff0f205248c21cab66d334",
+    "src/validation.cpp": "8089acb11dbfededfdd5448e07d1f07a6322d0915aa03e8e6fd6736a643435af",
+    "src/CMakeLists.txt": "604ffe7d1d44a98db1327ca3caf63c2d5e0ee9a3c2ff6828d52d33960c0dac0e",
+    "src/kernel/CMakeLists.txt": "fc48423fde9fc7144ae4918550b6cf456713e50afb8d9f20aca2094d2c5e8498",
+    "src/kernel/bitcoinkernel.h": "0e7ea4f635392299da9aff3cd505736b956349407340559aadbdade9a9c60e0c",
+    "src/kernel/bitcoinkernel_wrapper.h": "726819acb849b7542dc559c570ccfed8b32887b27931379cacd6e6b86df20419",
+    "test/pocx/kernel/parity.json": "6c05a2fdf6713ab0e1f2ae041e2183b6d611e678056882561a3bfcdd12b15410",
+    "test/pocx/kernel/provenance.json": "40884bb072cd0560d1d299510f73e3668e57c38fc7607793ece8a12410dbd173",
+    "test/pocx/kernel_parity.py": "cd71be38083b6fa9dd150e5ce6354b8ea89fe53d4027ddc5b490d63957f840b3",
+    "test/pocx/run_kernel.py": "c14e2aa5e8c881d99058c5e8c5ac955a3428364f1cf02f868a22022409f31001",
+    "test/pocx/test_kernel_infrastructure.py": "7b59d5d16d11f2ca366956eef8a721aa6af5e74e6fff50bfd9619d4cd4cc162f"
+  },
+  "execution_inputs": {
+    "test/pocx/kernel/reference.rs": "af1cb2d2abd1b353f508a4891acbeab8b2e85e1b777ffe973cd091a0df89b5b7",
+    "test/pocx/kernel/verify_fixtures.py": "f93ed8f7fbd1e60f4aa837a8f9d20b4bc68bee5977a5c674b026f2df00245b55",
+    "test/pocx/vectors/Cargo.lock": "2a959ccaa2c4c3fbddef9b0328e9c21a111ec13739bfc1beb441a194760e3786",
+    "src/pocx/test/kernel/fixture_generator.cpp": "f8068cac4ef12f25d3ba326e95837d2b4dc5bb12a2bc5f3e0099af02f3f62067",
+    "test/pocx/kernel/render_fixtures.py": "7f88dc854ac1002b18ca2f6412b01d66b8c220f312db00a2dc3d4b7d3b63ba48",
+    "src/pocx/test/kernel/test_kernel.cpp": "cc6dfb7c2e3efa767b9061e62ca9bd8c3704e09fbf222d0d9b71cea5f47cb373",
+    "src/pocx/test/kernel/CMakeLists.txt": "53a723e6d34a9389b1fe021a3ec2750f5f46cd5c72fc44c26d6bc45f809a215a",
+    "src/test/kernel/test_kernel.cpp": "b239ffd7977a3390d024745b00b5ab485817c26648f0d5328d94c60730c1dbc4",
+    "src/test/kernel/block_data.h": "37237946a7f8174b99f08390daea444e03d3557342f0a65dfc6c68a4a5ae16f5",
+    "src/kernel/bitcoinkernel.cpp": "174890768e31e67bb8decb166b40b61c51e097a41ef5cb80708bc423eb8a788f",
+    "src/kernel/chainparams.cpp": "6518be84d9ad5661a252b41c655730086049bca280e7eff452577c4d153ce9b9",
+    "src/pocx/consensus/difficulty.cpp": "9769f411840097321c9dce8b715922152003ff6a18273905bc5060146f563e56",
+    "src/pocx/consensus/proof.cpp": "7c0b3c643d674c373590ea9b37a116722f2c674c2abe4a51d815217cc0487247",
+    "src/pocx/consensus/proof.h": "f80eb5096e477e6147e4f3b04b705ac5886da245cb55fc4203f006d5c9ff95cd",
+    "src/pocx/consensus/signature.cpp": "866c14307754479278dd46307a847994669d6b572e1011d09a1d8b3fb84fae69",
+    "src/pocx/consensus/signature.h": "f0e3e40246292dbc21d5e130ad99ee9c37f2d8a7a16a8d9a63e2951edc1ddadd",
+    "src/pocx/consensus/difficulty.h": "31c7c1dafa9dc734466667b2316e2c19b1321273d7b11679afd8a21c91fdb48e",
+    "src/pocx/algorithms/time_bending.cpp": "ddb84fb7bd2ce8760223b26cf6aaaee20b5b6ff0ac5e4f754bff8511ebad10ba",
+    "src/pocx/algorithms/time_bending.h": "8bcfede6f1e23d2e63fce7eddc773c6e9822076decccba43803263ca46d70085",
+    "src/pocx/algorithms/quality.cpp": "8d5f73c7296364da7eb2300f3b9a5ea5c4b6e79d51541049618c55781eaf620b",
+    "src/pocx/algorithms/quality.h": "d12a4660b34fbf9c60470e4a1ca1f00787c1d77ccb283bb7ce97642cefe438ab",
+    "src/pocx/mining/key_signing.cpp": "672a85926f29aab29f447b61902cf767329949784fa71155eddbfb1ddd575f58",
+    "src/pocx/mining/key_signing.h": "af0c2ed945006bbf52392c286b5c17b9835cea0e1d1cc0e528bc38fc66be98f4",
+    "src/primitives/block.cpp": "b82d4cada356ec14071813598e989a3aa3c4b304510304408dee63abf6854629",
+    "src/primitives/block.h": "e4e9fb810eb62093584253ee5617e80a4d536dee05ff0f205248c21cab66d334",
+    "src/validation.cpp": "8089acb11dbfededfdd5448e07d1f07a6322d0915aa03e8e6fd6736a643435af",
+    "src/CMakeLists.txt": "604ffe7d1d44a98db1327ca3caf63c2d5e0ee9a3c2ff6828d52d33960c0dac0e",
+    "src/kernel/CMakeLists.txt": "fc48423fde9fc7144ae4918550b6cf456713e50afb8d9f20aca2094d2c5e8498",
+    "src/kernel/bitcoinkernel.h": "0e7ea4f635392299da9aff3cd505736b956349407340559aadbdade9a9c60e0c",
+    "src/kernel/bitcoinkernel_wrapper.h": "726819acb849b7542dc559c570ccfed8b32887b27931379cacd6e6b86df20419"
+  },
+  "review_notes": {
+    "checks": "All original check sites retained, with native expected fixture values and explicit zero legacy PoW accessor contract. Four additional check sites strengthen truncation, ProcessBlock acceptance and lookup-read validity.",
+    "lookup_cache": "Only fixed-chain transaction lookup reads are memoized. All explicit full-chain reads, validation/reindex/undo/script/UTXO assertions and post-file-deletion error checks remain uncached.",
+    "fixtures": "Frozen independently verified one-mainnet/206-regtest real-proof snapshot; current Python structure checks and header rendering match. Earlier scalar/public Rust proof evidence retained without unnecessary rerun."
+  }
+}

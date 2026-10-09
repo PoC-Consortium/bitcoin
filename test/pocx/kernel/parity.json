@@ -1,0 +1,148 @@
+{
+  "upstream_revision": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
+  "baseline_revision": "5de2720ca47b3a753081e5ce545113cd3b616018",
+  "source": "src/test/kernel/test_kernel.cpp",
+  "replacement": "src/pocx/test/kernel/test_kernel.cpp",
+  "cases": [
+    "btck_transaction_tests",
+    "btck_script_pubkey",
+    "btck_transaction_output",
+    "btck_transaction_input",
+    "btck_precomputed_txdata",
+    "btck_script_verify_tests",
+    "logging_tests",
+    "btck_context_tests",
+    "btck_block_header_tests",
+    "btck_block",
+    "btck_chainman_tests",
+    "btck_chainman_mainnet_tests",
+    "btck_block_hash_tests",
+    "btck_block_tree_entry_tests",
+    "btck_chainman_in_memory_tests",
+    "btck_chainman_regtest_tests"
+  ],
+  "case_names_and_order_preserved": true,
+  "source_check_counts": {
+    "original": 160,
+    "adapted": 164
+  },
+  "review": "Macro counts are accounting only. Reviewed adaptations replace Bitcoin block fixtures and fixed header/hash/txid expectations; rejection, callback, reindex, UTXO/undo, handle-copy/move and chain-tree checks remain required.",
+  "adaptations": {
+    "btck_block_header_tests": "Replace PoW 80-byte fixtures with independently hashed 286-byte signed PoCX headers. Preserve empty/one-byte rejection and add rejection for every truncated header. Legacy Bits/Nonce accessors are specified as zero by current PoCX C API.",
+    "btck_chainman_mainnet_tests": "One actual mainnet real-proof block, independently verified quality and timing; preserve accept/duplicate/incompatible-regtest rejection, read-tip and both reindex modes.",
+    "btck_chainman_regtest_tests": "206 actual real-proof blocks retain coinbase maturity, witness spend chain, final spent-coin height 205 and one-coin amount, interrupted resume, undo and UTXO/script checks. Transaction lookup still scans the unchanged chain in original order for every input, using a local per-height block cache to avoid repeated real-proof validation. Explicit per-block disk reads in the input/script loop and final output loop, and post-file-removal read rejection remain uncached. Added a required successful lookup read; no original assertion removed.",
+    "btck_block": "Same case body and original range/handle/malformed-input assertions, using native regtest block fixtures.",
+    "btck_block_tree_entry_tests": "Native first-three-block fixtures retain every tree-entry comparison and predecessor assertion; require the previously unchecked ProcessBlock call to succeed.",
+    "btck_chainman_in_memory_tests": "Native206-block fixtures retain filesystem/in-memory/context interruption assertions; require the previously unchecked ProcessBlock call to succeed."
+  },
+  "fixtures": "One mainnet and 206 regtest blocks; nonreserved key-1 account, nonzero seed, compression 1, nonce 1. Generated outputs stay in the build directory.",
+  "independent_verification": "Rust scalar nonce/scoop/quality cross-checked with optimized Rust API; Python header hashes, generation signatures, rolling targets and time bending; output SHA256 frozen in provenance.json.",
+  "scope_limit": "This restores the upstream kernel API cases; it does not establish all additional PoCX signer, scheduler or competing-chain acceptance criteria.",
+  "case_review": [
+    {
+      "case": "btck_block",
+      "body_byte_identical": true,
+      "classification": "adapted fixtures/checks",
+      "selection": "PoCX-owned monolithic source"
+    },
+    {
+      "case": "btck_block_hash_tests",
+      "body_byte_identical": true,
+      "classification": "unchanged case logic",
+      "selection": "PoCX-owned monolithic source"
+    },
+    {
+      "case": "btck_block_header_tests",
+      "body_byte_identical": false,
+      "classification": "adapted fixtures/checks",
+      "selection": "PoCX-owned monolithic source"
+    },
+    {
+      "case": "btck_block_tree_entry_tests",
+      "body_byte_identical": false,
+      "classification": "adapted fixtures/checks",
+      "selection": "PoCX-owned monolithic source"
+    },
+    {
+      "case": "btck_chainman_in_memory_tests",
+      "body_byte_identical": false,
+      "classification": "adapted fixtures/checks",
+      "selection": "PoCX-owned monolithic source"
+    },
+    {
+      "case": "btck_chainman_mainnet_tests",
+      "body_byte_identical": true,
+      "classification": "adapted fixtures/checks",
+      "selection": "PoCX-owned monolithic source"
+    },
+    {
+      "case": "btck_chainman_regtest_tests",
+      "body_byte_identical": false,
+      "classification": "adapted fixtures/checks",
+      "selection": "PoCX-owned monolithic source"
+    },
+    {
+      "case": "btck_chainman_tests",
+      "body_byte_identical": true,
+      "classification": "unchanged case logic",
+      "selection": "PoCX-owned monolithic source"
+    },
+    {
+      "case": "btck_context_tests",
+      "body_byte_identical": true,
+      "classification": "unchanged case logic",
+      "selection": "PoCX-owned monolithic source"
+    },
+    {
+      "case": "btck_precomputed_txdata",
+      "body_byte_identical": true,
+      "classification": "unchanged case logic",
+      "selection": "PoCX-owned monolithic source"
+    },
+    {
+      "case": "btck_script_pubkey",
+      "body_byte_identical": true,
+      "classification": "unchanged case logic",
+      "selection": "PoCX-owned monolithic source"
+    },
+    {
+      "case": "btck_script_verify_tests",
+      "body_byte_identical": true,
+      "classification": "unchanged case logic",
+      "selection": "PoCX-owned monolithic source"
+    },
+    {
+      "case": "btck_transaction_input",
+      "body_byte_identical": true,
+      "classification": "unchanged case logic",
+      "selection": "PoCX-owned monolithic source"
+    },
+    {
+      "case": "btck_transaction_output",
+      "body_byte_identical": true,
+      "classification": "unchanged case logic",
+      "selection": "PoCX-owned monolithic source"
+    },
+    {
+      "case": "btck_transaction_tests",
+      "body_byte_identical": true,
+      "classification": "unchanged case logic",
+      "selection": "PoCX-owned monolithic source"
+    },
+    {
+      "case": "logging_tests",
+      "body_byte_identical": true,
+      "classification": "unchanged case logic",
+      "selection": "PoCX-owned monolithic source"
+    }
+  ],
+  "case_logic_counts": {
+    "unchanged": 10,
+    "adapted_fixtures_or_checks": 6
+  },
+  "source_ownership": {
+    "original_source_directly_reused_cases": 0,
+    "cases_in_owned_monolithic_copy": 16,
+    "note": "Case-logic reuse is distinct from source reuse. The single original test translation unit mixes generic and block/chain cases; the owned adaptation currently contains all16 cases."
+  }
+}
