@@ -1,0 +1,47 @@
+{
+  "scope": "Fresh standalone staged functional checkpoint, built independently from an empty build directory. Local Release wallet/IPC configuration; GUI, USDT, ZMQ, benchmarks and chainstate tool disabled. Required optional-feature CI configurations remain a separate unfinished goal.",
+  "source_tree": "5e0c19615f1f594d1b0c49b29174048b7c4e3783",
+  "standalone_checkout": "/home/johnny/Code/bitcoin-pocx/bitcoin-functional-package-20261009",
+  "build_exit_code": 0,
+  "functional": {
+    "v1": {
+      "passed": 278,
+      "skipped": 17
+    },
+    "v2": {
+      "passed": 278,
+      "skipped": 17
+    }
+  },
+  "original_entry_accounting": {
+    "passed": 269,
+    "failed": 0,
+    "skipped": 17,
+    "reviewed_pow_exclusion": 1
+  },
+  "native_cases_per_transport": 24,
+  "unit": {
+    "applicable_original_passed": 727,
+    "native_passed": 33,
+    "failed": 0,
+    "skipped": 0,
+    "reviewed_pow_exclusions": 10
+  },
+  "infrastructure": {
+    "passed": 78,
+    "failed": 0
+  },
+  "original_functional_files_unchanged": 378,
+  "evidence_sha256": {
+    "build.log": "d172a50fdd821613ba242b9e3716f75492a703da6efd3fbe1f3b4e9c6d9723db",
+    "configure.log": "77ca0fe2a8a0069c6d8474d6d8655c1226263d2ebd91800875ff7cd043784487",
+    "functional-results.json": "b9da1bbd50d387c5c049f3f5325d2c7b0475a135e7394c9bc19223c1f9249989",
+    "functional-verification.json": "e66aeaf7cfe23568321dcf9d3ffeb077ff793f49dd8278edc8fae8f5aa2a0d2f",
+    "functional.log": "3468f31b8e84d8a043ff6905870f19315aa591cd32fddf5350e81efce474eade",
+    "infrastructure.log": "72c10076ab8dc778bfd8237ecbe8e84f3e51ced1dfbf58c9128e2bb43818e224",
+    "staged-source-audit.json": "ce41127dfab7247ec27a2f52c628585380993e249025ff5b382e75d29b379647",
+    "unit-junit.xml": "a8fd8f143d2554bd5091d1b2cef47c43bc30f3d239b58218b234a0d59c66b71b",
+    "unit-results.json": "51b930670d5cfd24e5be81ada66fe6ed5622d63b23b2a3c8e0049cd75fb90590",
+    "unit.log": "73ddccb1926eec4c4da45ab0f88483a8b1724b84706ed6b5d616ddec74bedbc2"
+  }
+}

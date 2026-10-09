@@ -1,0 +1,3054 @@
+{
+  "upstream_revision": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
+  "counting_unit": "Original upstream runner entry including explicit argument and transport variants; benchmark entry expands only when BUILD_BENCH is enabled.",
+  "profile": "Linux Release; ENABLE_POCX=OFF; daemon, CLI, wallet, IPC, tx/util/wallet tools ON; GUI, kernel tool, bench, ZMQ, USDT OFF.",
+  "original_runner_entries": 287,
+  "base_entries": 284,
+  "extended_entries": 3,
+  "original_test_files": 264,
+  "upstream_files_identical": 378,
+  "upstream_files_sha256": {
+    "test/functional/.gitignore": "094c25031dcfe5c288666671bc2012866293b3797ea53c796af798bda4c32f01",
+    "test/functional/README.md": "e822221692d6bb13ee1209c3d035827fa383664ec206dfa5b2f65805df9692da",
+    "test/functional/combine_logs.py": "18433f9234a6c5346869e9b6f1061dbf0d299fb66317f17a0e1b1e259554c82a",
+    "test/functional/combined_log_template.html": "c57a7e1ac414ae22620c387bb847216702e4ab3917b65118a1d62ec6dd7f3177",
+    "test/functional/create_cache.py": "408e8d2747826bd9abd46d6327f032d757e93f2553d51970839649aac2a073f1",
+    "test/functional/data/README.md": "fb70ba8ddd4fc2352c862c89a4a4dcdeea6284c2a844d018c0b003249173ff68",
+    "test/functional/data/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "test/functional/data/invalid_txs.py": "b42943ef5b9d6c1ee9f862b6ea7faf7f3b1212f5ba4e26aea737c615cc41ece4",
+    "test/functional/data/mainnet_alt.json": "b85576c28ac5b0e5f26a3d4c089fc6693a921530df734f2cd134a4e557dc0681",
+    "test/functional/data/rpc_bip67.json": "00bf144e50dd8385fcd2d49d4deeda762af6d60920ea183a61ac606717adb065",
+    "test/functional/data/rpc_decodescript.json": "98c4efe691650e0c063726fdf244142ee9af7aa13e90773b30fec5ebfa8b5316",
+    "test/functional/data/rpc_getblockstats.json": "b414521e5f22f4640c2f4fb9f0ebbd7a27e8039a90da78df0d6a659cc009c313",
+    "test/functional/data/rpc_psbt.json": "1779e2a9a07476d72411d38a48986585e600915d8a3148b9becf8a985f781b87",
+    "test/functional/data/util/bitcoin-util-test.json": "ada7324b4c7990cc8bdffb0e9870d67e12a91a03a08b7d09f15e271b2d9faa52",
+    "test/functional/data/util/blanktxv1.hex": "7fe79f9a5700a278caf1f642a2695ce9a22daaf87b34e36ebe2f5d58887b091a",
+    "test/functional/data/util/blanktxv1.json": "10d436c54bcea11c34aedeb46ec0fb4346e61c68884acd13b598cac59ab7411b",
+    "test/functional/data/util/blanktxv2.hex": "7dadae435682f004958670c85bf3f63272899f677874f13ff527852a81ff4881",
+    "test/functional/data/util/blanktxv2.json": "e7bc5e5312be00c7c37993f1697dc7df5bfce4e077fcf9175e6822e715c6898b",
+    "test/functional/data/util/tt-delin1-out.hex": "a335c4001582036576af49f36e86b4a8526e22f1371ab623ed91977303f5bfa7",
+    "test/functional/data/util/tt-delin1-out.json": "5df6fa1b3467a6efee626539ab3220685e3006430457cf9579cbf8f3bc3f2b7f",
+    "test/functional/data/util/tt-delout1-out.hex": "c6cf0f00b3261bd67f695231369d296e4f35cca6a61960e1b9c6227c20a2d55c",
+    "test/functional/data/util/tt-delout1-out.json": "17d9b3ed92fac5253b06b512f4eba70bda801a0053d6a111da20e56c1be71b4f",
+    "test/functional/data/util/tt-locktime317000-out.hex": "a45243355010fcbb91a265b1499ff34decca4d237085c09c868a6f1b760761c5",
+    "test/functional/data/util/tt-locktime317000-out.json": "280ef2e1e79a677eac543e249237ca2d97f2d770562bfef4a55d59746bff4a3e",
+    "test/functional/data/util/tx394b54bb.hex": "717f0d4b5a5b20f21de8f4203c7c7b6df04d8a1bad1acab41fe96352865e5a5e",
+    "test/functional/data/util/txcreate1.hex": "bfcb19c144363102e35ce9599c3c54cb2d1878ec9898deda1d21d4377a8d983a",
+    "test/functional/data/util/txcreate1.json": "5a5377945bb7d258c3c791b3259c17832d5496156f383ffe0900dd94af358a29",
+    "test/functional/data/util/txcreate2.hex": "60df0e8d3383aee901fa7f6ba08e860e66fef1fb923abc4167ce7920ad250b2b",
+    "test/functional/data/util/txcreate2.json": "593786c5ab2efce966fc5c0002a20b32ef8c4100d605f6963ab44949658f1264",
+    "test/functional/data/util/txcreatedata1.hex": "4a967efdc9cd260e7510e9a68b1cda15b0244444b98e7016d337044cf5cb0056",
+    "test/functional/data/util/txcreatedata1.json": "7e89ea11ce81ca6d16730dc52deb191ca6d92648e7c9eff5b1a7e9eff2f95afa",
+    "test/functional/data/util/txcreatedata2.hex": "9a8b3143d9e5748519a4067a5f8f435410a9c2efe8bab66dc173f3f4afc17117",
+    "test/functional/data/util/txcreatedata2.json": "09715853e8cbb76d6c66790af5dc9b026ed973d1b267bc45bfa26ee9403b84a6",
+    "test/functional/data/util/txcreatedata_seq0.hex": "d83fe6c3b15ef3381abb6f2a37c9eda868fb760dd81e9bf3d3c7e20564f46141",
+    "test/functional/data/util/txcreatedata_seq0.json": "db7d53080d642b1870b16fec49bd212e8eb04a4a0eb5cb17b0792257c107078a",
+    "test/functional/data/util/txcreatedata_seq1.hex": "806c169c32a83ee18186cf23a12f3ea00f5a094ec2ea4cca072f6e7baafbbd78",
+    "test/functional/data/util/txcreatedata_seq1.json": "038a3532f150a884f5bd75ee4cd11eecca9bdf6f81f42b61b1922e1a37561679",
+    "test/functional/data/util/txcreatemultisig1.hex": "31ac8c0b0e92756b2a4c087ffd3873adc2b44b4f13562fcd83f25c1cbedfcd39",
+    "test/functional/data/util/txcreatemultisig1.json": "42d2e0247ab81f02de2482560b9b6f5eb56bbabc82e780e875085c73da909039",
+    "test/functional/data/util/txcreatemultisig2.hex": "5e7c4ca24924ba7da22e4ef174e163287786d5e1270ae9af0dc3910aeb8f6bf0",
+    "test/functional/data/util/txcreatemultisig2.json": "356da91fe4fc6f410bf2c72e40b67d9f1155b8cd8e76c6d01f070ea45ece2a33",
+    "test/functional/data/util/txcreatemultisig3.hex": "6e4a1a73e13df1ff4733a28f2a654ba37c80efa85fbd453687673c28bc051637",
+    "test/functional/data/util/txcreatemultisig3.json": "01a740782c6759fa90926b47a40658beff75788feccc42a965902f61346a2abc",
+    "test/functional/data/util/txcreatemultisig4.hex": "cfdc3eb088873381fb6eab1ef5db90749013efed5117d297a1f34a3926b04ac3",
+    "test/functional/data/util/txcreatemultisig4.json": "2d421c2ec45784130e7295d2c469633d38f2285b640bb59de19b695f5c41ac53",
+    "test/functional/data/util/txcreatemultisig5.json": "104d0ea921c86c7c51efbc9f11f70b2eb8fbd022432bf0b7ce3e3f44a244d608",
+    "test/functional/data/util/txcreateoutpubkey1.hex": "6c5b9d3b4156f0481de654cc453f51a78d8190d77f039926df4e0a009f69f59d",
+    "test/functional/data/util/txcreateoutpubkey1.json": "94bc34567c20a1bf88dc7b65b06f64cb78e1387e6793439865017c8230548d67",
+    "test/functional/data/util/txcreateoutpubkey2.hex": "d5042e5c7fa48d2db1fe0085bd1287bbba8082cd49665b2eaccc2e4af40f8467",
+    "test/functional/data/util/txcreateoutpubkey2.json": "22edc57fdcb85514b2c2b3bce1c5c714dd2db40b206ba839c8a7b77155e19c27",
+    "test/functional/data/util/txcreateoutpubkey3.hex": "62310b9b76f0a4503389fb8265bf2e6ce660ba0d27f7860a5da8eae3e5e1b489",
+    "test/functional/data/util/txcreateoutpubkey3.json": "761f0b218d33eb2a2cfe0c09db82047c51e8e5cf8df0cf538d07c0673d15dc14",
+    "test/functional/data/util/txcreatescript1.hex": "0d13f84b55f640d04966feb5ae9a4378706cb33559d0210d3aeff7fe37f8ad60",
+    "test/functional/data/util/txcreatescript1.json": "546e20f33c6a1340d978156fffa0f2a6d1f02298d2305d90c23768366c78e0c3",
+    "test/functional/data/util/txcreatescript2.hex": "40fc7942453d1c186fe35e07303e5a3eb1a840743cba4c32fbd72911a99eb173",
+    "test/functional/data/util/txcreatescript2.json": "094066de277dd5dde3e477d83c2f5fd1090d5ff0a0765b685446b092e6a76a51",
+    "test/functional/data/util/txcreatescript3.hex": "41558bca6d46db31270e753e3ee426c388ec5791c1bc3818d14d0a3eed793ef4",
+    "test/functional/data/util/txcreatescript3.json": "2edb72e6d727070034ce570d7f47bbacfe2739d29ce88c4f7a9a6e293c440a8f",
+    "test/functional/data/util/txcreatescript4.hex": "6511fc0501385eed3b201617eda74a57ee291bf514f46d3feae204df6b267ed4",
+    "test/functional/data/util/txcreatescript4.json": "44b650f6924f02e3619942dce7d8e69d81be6f7235a3104ee25e33efa88fa294",
+    "test/functional/data/util/txcreatescript5.hex": "3689793a2d8b0e0d417cd986bdb6f7c84e7698c57ebfbdabaa8327538d72f00c",
+    "test/functional/data/util/txcreatescript6.hex": "b4cb053f3e213fe180152f7cde91f9aed912770a90e06f0f354c40de93669533",
+    "test/functional/data/util/txcreatesignsegwit1.hex": "85603850728a7ce641e9bfc0993b7f6da4d93ea7858d0787ac013056d3692d30",
+    "test/functional/data/util/txcreatesignv1.hex": "7db872640d5483610dbe7db0c8ffc4d057a90394ec1bd68fcb792b2322c1b7cc",
+    "test/functional/data/util/txcreatesignv1.json": "3b69a4e5cdead675ec1f5fa99e2d37d2e77209596df4e94a15e16c4060e4787a",
+    "test/functional/data/util/txcreatesignv2.hex": "c8de55845d4b17cec7cd14488947eb44855136818651aa7546a2e2175b8463fe",
+    "test/functional/data/util/txreplace1.hex": "cafcf6f13045ecabfc9b1de3fc1625994c2562cf3d607802886e9e30882ecfaf",
+    "test/functional/data/util/txreplacenoinputs.hex": "7dadae435682f004958670c85bf3f63272899f677874f13ff527852a81ff4881",
+    "test/functional/data/util/txreplaceomittedn.hex": "05b27dec46840027fb9e1c141bb5a1a0ac5df0bf1a5d1af8bf707863d70cf86f",
+    "test/functional/data/util/txreplacesingleinput.hex": "d9491c3027f7f30699254dd792d2aada9f045731447bd3cf10aaedd60f65e479",
+    "test/functional/example_test.py": "f61329bac5d31eb55fc62f35546c9f85c0b2fd00b367b557dc47b69bea31d68c",
+    "test/functional/feature_abortnode.py": "b09ba0ace6fa3bed15d4eec14eeb95a4bf0937407612ba2596ecb549357fe6fa",
+    "test/functional/feature_addrman.py": "70f038545da2a25b441411c7a57f7ded3faaaa71c8bb0221657048cc91579512",
+    "test/functional/feature_anchors.py": "2e861b7b6892440d6131594f36e233d8f6ea88b2e0d9865aed1d4d30e3f22919",
+    "test/functional/feature_asmap.py": "6a46258647c9cc1bd834d53c09b2cac5f79bfb49043d441a9b65f51efea9ed51",
+    "test/functional/feature_assumeutxo.py": "e6add4fb5efe1a29d7d1071302da5a6b4cfced5b034269d44c0a4c98014b1855",
+    "test/functional/feature_assumevalid.py": "13b22b69b1b71a6e972f6b25428b486c20f0bf963ae222ee491915ac68e4a12a",
+    "test/functional/feature_bind_extra.py": "2b62cde2dce0eb6bc196bcd74002e31d08daf263afbc0735de3833989f88e879",
+    "test/functional/feature_bind_port_discover.py": "ef152f47651520cfbd1093b473e8add51209b463f045df67230a2ca1da43bc6f",
+    "test/functional/feature_bind_port_externalip.py": "3b611dcd1083e443501d75bf5f295c15597ed2933e966611ca730d299f475d4b",
+    "test/functional/feature_bip68_sequence.py": "e84296532012715ab4ecc949c033fa119ab0f78aaea1276df14da33e80231496",
+    "test/functional/feature_block.py": "a0121d9520dd2b4e05ba1cb9ee207944a34ec949f6625bcf399dda25db346b07",
+    "test/functional/feature_blocksdir.py": "71da6178bc7d76fb9c073ae9de13266f8c23424dbb8a60887860fe0c17309175",
+    "test/functional/feature_blocksxor.py": "c549f1b28dea14e335b3c8dc29eb1774256e562041e3345d681befea4eb37808",
+    "test/functional/feature_chain_tiebreaks.py": "fa7d085850b2be8331118f17504de484aaf959871325950da7eba1b58bcd34fd",
+    "test/functional/feature_cltv.py": "f0b801597f934c7f74128087a1dc3160ce128687c7803af710f284f87bf94512",
+    "test/functional/feature_coinstatsindex.py": "dd3196a75ff49f7731b29f8128e0711ae52205984af608da5498b9738e8b0401",
+    "test/functional/feature_coinstatsindex_compatibility.py": "8076a62c92e270a5a790341c47557d6179436c4244cea69f64e42c0e495af29b",
+    "test/functional/feature_config_args.py": "3093e2ccb41569e314320050050a33a1884488388ba845de2f3a626321b9d89a",
+    "test/functional/feature_csv_activation.py": "8531cdda45ed5675566657cac1e5c64c09200e6d0ee57b3c25dfc220c846d655",
+    "test/functional/feature_dbcrash.py": "123ee0f57fd928e77877961af1379e86a0455699a4dbe5cac240a62d7736f807",
+    "test/functional/feature_dersig.py": "8e21df2d6d0c20b0de6e0eab59a731f5007b4a0ab1a83c56962a990bca0f056e",
+    "test/functional/feature_dirsymlinks.py": "7a6a4b191be4355fc8fbcb9dc081604298a8a2f02075deb4d581c77d77db080e",
+    "test/functional/feature_discover.py": "a629b9992c3327b835877bc672ffc4a916c154b88ca02196f7226e436b15a363",
+    "test/functional/feature_fastprune.py": "94ccb6e11df4f93de400d1fb0444617e1fbdaabeb4d81e16e2ee4f2cfa84aff7",
+    "test/functional/feature_fee_estimation.py": "48b297c68d9959f4ecdf3377b4fb989c1363bc95bf29f694161e663545fcb1e1",
+    "test/functional/feature_filelock.py": "4138d8eba8220e1bc32540b24b6a9e3ae9751c738c071d72c54f6a00ae003c59",
+    "test/functional/feature_framework_miniwallet.py": "697ee9b79869c0078b03d514e7bcc7c7393494cd221944a3b2f754d693590619",
+    "test/functional/feature_framework_startup_failures.py": "2917a04d7817b8b3a4aebdf21e5df88148cd9ce9ce7ea6c0419ee8c429430c7f",
+    "test/functional/feature_framework_testshell.py": "1708476dfdfe89c872bc49ee088aed10f4f14a01fccf5513a1255b9a5539bce2",
+    "test/functional/feature_framework_unit_tests.py": "ccc2253ef302182d536f8418b22ca71c9cb72232b393ffde0af238b96436b4f8",
+    "test/functional/feature_help.py": "87b19b3907ad54bc4adbb7dd23f41142736bb1623514f6a4e455895a8496fdbb",
+    "test/functional/feature_includeconf.py": "6b5f3cf1bada8abeae37e6073401cc79eb2acfeeb613739c3c9aba3b38a68045",
+    "test/functional/feature_index_prune.py": "d1191ec626b4d5ecf9a85affbb9017c58760721653e3fa9746abff4e0b1b9353",
+    "test/functional/feature_init.py": "9169c3649208c07b61b1f6678793c413d41494933155b5d83798a9d9a117facc",
+    "test/functional/feature_loadblock.py": "6048a7a05de31f216bedd536ff24cc37749fe5cfe6c981390ef8d368c053282e",
+    "test/functional/feature_logging.py": "15ef3441fdf84b061ffca22f91711805714e934bf3b2f37fe71ad527ad0dcff9",
+    "test/functional/feature_maxtipage.py": "9468ff39e437d4bd1e189729b97a5cae4bc3befe4fc6488eab3a3a1288c2cf12",
+    "test/functional/feature_maxuploadtarget.py": "298d6cc93f1c6dd074de55295b1b204bcf0745c78fc8202331dcd3dfe164ee7a",
+    "test/functional/feature_minchainwork.py": "0f04f8dc0d8f93c7bbe5d979ed0e445a16f1710a7afa1ca49f19a1934d77d7d1",
+    "test/functional/feature_notifications.py": "3abbc1f3afc8553ec76a1a72cdfe4f1a753d820091c6659dceb074e63d11a9d6",
+    "test/functional/feature_nulldummy.py": "89c365280321b8052d6c38ebdd446c3971b96472bbd0352d2e7ff6a5f90adf29",
+    "test/functional/feature_port.py": "facae1f343018b03ef6ce9ee7d83f4ab2e76ab628e81ca11ff64a1bdcdfbf2d5",
+    "test/functional/feature_posix_fs_permissions.py": "be780f65183640355d532892f912c480626f4184b79c651485fa7711ae727fe4",
+    "test/functional/feature_presegwit_node_upgrade.py": "b6e8c95d20942dc9fcd16b7e22c83c463042a48ce32ec6b25879005aa7d0392e",
+    "test/functional/feature_proxy.py": "5ae9fc4d3deed2487b5df47d584fefedfc5dbf8f8bf8da5b3902deab2f6ca978",
+    "test/functional/feature_pruning.py": "2a5e2e3326a7273949d1d4888a60733902c93df1d4e53a8c247eada8d259c55c",
+    "test/functional/feature_rbf.py": "4ec0329df45a05a0dbad90cf722b8e19317f6f44957ab16b58326226fe9cee24",
+    "test/functional/feature_reindex.py": "645fc688ffb10c928045d48b5654f6fd41f30b29f2404c5ebc0b36074b36dba1",
+    "test/functional/feature_reindex_init.py": "b690ea1924858235b83f37c9a29acf40eb79fdbd826dd1bf4a1802e873fc98da",
+    "test/functional/feature_reindex_readonly.py": "4a7db422b10328bbbfe08b5a521c781e53433def564cfda17be437b9c0485494",
+    "test/functional/feature_remove_pruned_files_on_startup.py": "a174c6e0f3e89b996aa93f53bbb41233f08f5f2fc467f4ac0f4858c56963119f",
+    "test/functional/feature_segwit.py": "323d7a9202c6720b6145a01f7522cb8a5085dd8f45dc1c05b28305dd1606f98d",
+    "test/functional/feature_settings.py": "86569a7b83f40a02b622ec88402b168210ea72b22c648063030913124f644804",
+    "test/functional/feature_shutdown.py": "9b47cdc93e5207fdaf264ce26b8a2e129c9e0996e7cc576df524b4031673c0d3",
+    "test/functional/feature_signet.py": "88ae5172d333a0e06111ed9873ef6236c83956db7d147781757842ea83a8ca87",
+    "test/functional/feature_startupnotify.py": "5e094dfe4be5fb3919390dbf74426ce42435417ab983fc41f72c594f3c55096a",
+    "test/functional/feature_taproot.py": "7f909394c458afa50b6657cf172e7a0300ec1e34a809988eb24646d5c66c4a70",
+    "test/functional/feature_uacomment.py": "5e8526afa614ff835d9e7e5405968c0c2f9e9baad32ddb116b5f60245dc44399",
+    "test/functional/feature_unsupported_utxo_db.py": "df9326fe093c8392620be51f2f46fdbf2c4abaca1aec24378e94b619de6d6aae",
+    "test/functional/feature_utxo_set_hash.py": "43dc9a0c05c15e7a7ac7c6f2ae4886f4a0a85ac7b97a194bd4fd15d6d74c94c2",
+    "test/functional/feature_versionbits_warning.py": "25a4a5dcc2db77f5d2c6bdfa25ff5679f534f1199b42162e20ffe46fe927f13d",
+    "test/functional/interface_bitcoin_cli.py": "a5c8ca71ee55ba6b92ae3272d7006f528382006d3c85e7184d41388824f22025",
+    "test/functional/interface_http.py": "2c4ab70f82ba66c955cbc5f999d925f82a09850912a2326af56467e7af0038a6",
+    "test/functional/interface_ipc.py": "29ce9ee02263d07adccfd2a5061ca8399c27cb2c2ef2603979907f4b62331f0f",
+    "test/functional/interface_ipc_mining.py": "ced2595818744c3f46cc13ae6791b670c5df5005fdd304b45867e1ee7047e4dc",
+    "test/functional/interface_rest.py": "a0bb2cb97886d225acce5c3943cac05b34c6a0d5856ade4a75bb8e7faffb18ff",
+    "test/functional/interface_rpc.py": "35a2ae91314f5c8513a9ddd24a5a2b7aab973d67bae24cc04dbeb9763dae5b6e",
+    "test/functional/interface_usdt_coinselection.py": "83b8ca69d1326d6a09d364d1683f0cdd51c93321c16811f38cf09b2881d88598",
+    "test/functional/interface_usdt_mempool.py": "766cda2876efcf879773b02fd953e4af3c70c85371cbe4a0df343cad4836211c",
+    "test/functional/interface_usdt_net.py": "00a45dbcf78eda4093310fd340c51fa44422d373e4205c69dcd52038c517c913",
+    "test/functional/interface_usdt_utxocache.py": "fbfdbb13c9778aff7550d7e373185cf56c420d07fb5429a22ae54312f42f1bf6",
+    "test/functional/interface_usdt_validation.py": "57410957024e40837095597ebd82fae07c2341917a6804911c062e439d685799",
+    "test/functional/interface_zmq.py": "9bedca528e498ee2bd15aebabaf1f831dc4f19411654d4cb8737eb48e93308b5",
+    "test/functional/mempool_accept.py": "2cde0f11afd6f94d1dbf25336b321181283551672805defb3272617d8b3aa319",
+    "test/functional/mempool_accept_wtxid.py": "a205991c7cc5471a2205a665032aecd445ba0757620c81e985bcdc92af4c1669",
+    "test/functional/mempool_cluster.py": "c77efa8f387047d8d12e0fd3c119c6515edbc2a4f2e80b04d7f326a19eabe000",
+    "test/functional/mempool_compatibility.py": "e7023ecfa2d1629658a0997f9836f08a7258691c2dca6ef657de3928523f37e9",
+    "test/functional/mempool_datacarrier.py": "4abe143ff0db28fa3272231a9d2583204c11e226537bffb1804ae3249f124885",
+    "test/functional/mempool_dust.py": "163aecd5352a863b6c6e1d1d3662d1c80e0ca6337564728c8edaaecf5530954a",
+    "test/functional/mempool_ephemeral_dust.py": "edbad2e7ffd437b0b6c8e217b644d1fbe822d0feb4f60f38af773f9fb327b635",
+    "test/functional/mempool_expiry.py": "88968ec5e289695247ad60bfcd64c329ad7ff7edcae44f961362f9c946850591",
+    "test/functional/mempool_limit.py": "5ef2919357b8d5f978b65cff98c7d453774eb5e9e7d5365b934986ec6e94edfd",
+    "test/functional/mempool_package_limits.py": "ddf5fbda0a1ede22d46f2e41966a0c49a2fcd4c127c0de082568f3e9f5290d45",
+    "test/functional/mempool_package_rbf.py": "7f92c17764125b252b7bc206a5b5f3863ede613ca292d8a2b17b2de3ea94185b",
+    "test/functional/mempool_packages.py": "c43f9331bf9536d4704df72755e5ab41247e5d7f534e71e99ba2c213c183255a",
+    "test/functional/mempool_persist.py": "15bfc657c083b653b74da399381c6824606e402ec93d26e9614fc24b16b18519",
+    "test/functional/mempool_reorg.py": "f97c1133512770f6b7550d1c917045b8230d9b44ee59f513c1a7e9cff9cdc121",
+    "test/functional/mempool_resurrect.py": "8ba143dae08ed6cf52f6b3c0eb81873521bfb2d37c1aaa6b7de19adab88c7e04",
+    "test/functional/mempool_sigoplimit.py": "97893337c2c980898be1bbcc41653bd16c63c2f828c52bd389a2f4637e82a932",
+    "test/functional/mempool_spend_coinbase.py": "43c357f82adf1ea1ae38d5278db318a2ec874b6ec961ba764ce572e79421d0db",
+    "test/functional/mempool_truc.py": "180f71b25a3f5d713d5d7d23a900c578d31cd36ef1e18fd63d33c2afe778841f",
+    "test/functional/mempool_unbroadcast.py": "305ff4369c9673454e154e5651902dd93e4ce5cf11deeb9853c726869c6dc00c",
+    "test/functional/mempool_updatefromblock.py": "4e9ed9859233b1322c052d4ed0c63b15b785d3c168045f133644fad76d5703c8",
+    "test/functional/mining_basic.py": "63ccf8db34cb44c1c7609d50456a072eb0a5c828834038eb6050ca02b8822b77",
+    "test/functional/mining_getblocktemplate_longpoll.py": "fbc11b8f5f75968198174195baece80e1c420a10c87668c59427c54fb848451e",
+    "test/functional/mining_mainnet.py": "94315880ae8bbca067af123b267549511821b2b7db563cd24d806ca3847531e7",
+    "test/functional/mining_prioritisetransaction.py": "41cfff425005932a614c13f59dc352662054e3321b35877d208ca53e9f2e8ec1",
+    "test/functional/mining_template_verification.py": "a4e79d259c66a5949d3c435a55ac7a22aa67aad65d06228a4e85e208fa15387f",
+    "test/functional/mocks/invalid_signer.py": "e507680ba4d5a379bde07eab514a27d749957e3e9d8369f70e078cc414fe0ae3",
+    "test/functional/mocks/multi_signers.py": "a15de926b8945dfeb56287014fc6071db4b99ec9afeef8e3867a05b1d5d0f233",
+    "test/functional/mocks/no_signer.py": "e105759a1b9b1cf62fbe8a3d62809d47e1386bbbe63c59dd43f3a6631443fef4",
+    "test/functional/mocks/signer.py": "b097eda273be21cdc9aaaa202eac9820cd2262eb3d1ef27393b3e408cc7c5567",
+    "test/functional/p2p_1p1c_network.py": "7830d94bc722101e95ed15d5fcafd1f397c616f14761dc6daf624dd3b4688883",
+    "test/functional/p2p_add_connections.py": "9353401dc48aa8193739db6d6cb1903420bfca9c0a6b15ac54d65fe46180e0e3",
+    "test/functional/p2p_addr_relay.py": "e46a037278ff0688de0129ab7ff2d3eb68c81704a91be51d39b0da8324c32785",
+    "test/functional/p2p_addr_selfannouncement.py": "b4de034ff51de506aea7f2fa442f6519003a05b8bcf7c03a617f852654484585",
+    "test/functional/p2p_addrfetch.py": "432b3236edb05a8ff4c3169f7a3658abc5d103dd96617ee351c0f6b2e39ce4c5",
+    "test/functional/p2p_addrv2_relay.py": "8a10dc72784392f445d6bf22bc6a1376ce704ab23ef85b842fb15b30363d2031",
+    "test/functional/p2p_block_sync.py": "dc0e7f6c5f08d655415c6bf5dfd1fe01da7d2320bf28364e9cdef0f3f3411b01",
+    "test/functional/p2p_blockfilters.py": "a8f0f981fc1256805b1aae8226de509281fed395f451d85d62002a42a19b76bf",
+    "test/functional/p2p_blocksonly.py": "65634c05b05327c6949f42ecee468127936d0f5052cc020224e59f3182d72215",
+    "test/functional/p2p_compactblocks.py": "9b247636b7a029ec2f6acc516290fd281fcd5203b3785d2ae462370bf81cd63b",
+    "test/functional/p2p_compactblocks_blocksonly.py": "8a2e6bc3bb1c101b0e20d89e6831859d74188a37adb5e5b70f55670b93754fe7",
+    "test/functional/p2p_compactblocks_hb.py": "452a818d54c2e09005f802c8c3151c4be3fc06c870a8af7ccf1c955af5f468af",
+    "test/functional/p2p_disconnect_ban.py": "50c4c29781d22c26b7a5142455d60e6afed37dbb9440d35e6725b42e34b055c8",
+    "test/functional/p2p_dns_seeds.py": "d9d5bfd04c8a8cdc23ebcb42264c4cd1321c17456ad8ab24e5f01185bc83fd4e",
+    "test/functional/p2p_eviction.py": "13372de69468b2a20ed3e4d2f18b2bdb84c4dc76c50b34c7e39a473513423209",
+    "test/functional/p2p_feefilter.py": "4f30be0574ae2d27d617afdb95b2045e2c0939018c2d851f299a2f3e25fd2536",
+    "test/functional/p2p_filter.py": "9b1ec1d5ba7f20c6fb1eee25008adeda33d5d02006488e1512ca44df456f38de",
+    "test/functional/p2p_fingerprint.py": "0f5b209610a4bdf4f3a747cf8f82887626b6e286f7116f16c8f2fd4b0bdb3dcc",
+    "test/functional/p2p_getaddr_caching.py": "2e3fd50c473e0da52a506d5b15a58e97762d56c755ff7132ce3c3d7ea1bfda57",
+    "test/functional/p2p_getdata.py": "ced4a1340d070cd5965a4194fb7f3b8577524d6391d4ac3338d9ac673357dd77",
+    "test/functional/p2p_handshake.py": "2ba7555769ab3d55bff19d9e4c36af40ac274813c2ff6249fdb4a1c6d6ce93aa",
+    "test/functional/p2p_headers_sync_with_minchainwork.py": "1d99855160bba9b67fdbb498b152d04906c00443258d67a35c446291505b644d",
+    "test/functional/p2p_i2p_ports.py": "f5f63586dfb6a59f8c3649ef99b5f678e3641fd32a216d250876b05337496a94",
+    "test/functional/p2p_i2p_sessions.py": "e924ed8e2923eb640827978ad0c0a77dd004b7de952f261ee4444fed6d68b0df",
+    "test/functional/p2p_ibd_stalling.py": "9b6b70db640e1cb891b573cb7a9a13d9e621dc68c26d0671dce2660f57512d08",
+    "test/functional/p2p_ibd_txrelay.py": "ac3e7b83dc5e3a873abdfcdb4ba285906f0f6d1955baa827d81f4f6776a4be6b",
+    "test/functional/p2p_initial_headers_sync.py": "e3e083d5b1d581369470a2d9ce56a5374993298130dfc625d0b042e79adf49a1",
+    "test/functional/p2p_invalid_block.py": "7efa03d1a940dff0b9c9be1ffce1406a0bcd08ba8d13b2a23532498e9568be19",
+    "test/functional/p2p_invalid_locator.py": "07073ce11f9f8d16127c3651e2bfcb91aa1d4a885087c89b29135a41d106ed81",
+    "test/functional/p2p_invalid_messages.py": "22adda0715e279f4933df8f2d839e2f71926028f89d77c4334b618df16c64980",
+    "test/functional/p2p_invalid_tx.py": "5eee66a6d822918f412dc110a2fa561e9c9aab92db42cbc53688e5c71a263676",
+    "test/functional/p2p_leak.py": "52958a8108b5c08dac9a433671e1baad423a50d6a2f93c1792f01668d17d2ea1",
+    "test/functional/p2p_leak_tx.py": "86cfdbdda81b3a1229b3511bbdd77189a79bb357fd2f71ea54fabdf97edd4fd0",
+    "test/functional/p2p_message_capture.py": "2f47c5f88af850a57a195315357177627a46233bbe2e9031c5357d0ecf1778f5",
+    "test/functional/p2p_mutated_blocks.py": "cb7479d3f2cf8aa0a0a718cd5cda896ad65f0c1e5c15c4975f97f8c2a36a327b",
+    "test/functional/p2p_net_deadlock.py": "85305905e3b7b227483d3b8b2f67e8e53244966f6797e0cd7b8eacd1af58e7bc",
+    "test/functional/p2p_nobloomfilter_messages.py": "ff47f5d16dcbec0bce9b6195302f1c4a57f6e5f3fe032c6eb0226a78ad3383fd",
+    "test/functional/p2p_node_network_limited.py": "7644d5e81a231d4a5369830d06e212dd03bccfde5b2aea06c493a1ffe28df931",
+    "test/functional/p2p_opportunistic_1p1c.py": "6f7d44256ef626020026afec57120de25b972b2c9ac0007d02d777a706559567",
+    "test/functional/p2p_orphan_handling.py": "ed1063b15f0a266c09492a05a5f3dd54af41194dd6eefdf60b2b755658dcc1e1",
+    "test/functional/p2p_outbound_eviction.py": "3b7d2bb4ac628a40728e94a1953f966e13c2c1022e552025314f9ad6e6501f84",
+    "test/functional/p2p_permissions.py": "05ea7244ffd375178bdf41116dee13fb36291305e53b7a2c5fed83c71d0ab27c",
+    "test/functional/p2p_ping.py": "ae1393a242d6544d2bf2726d8e4cd1a80a59723c1c67c0dd3ab774f8dbb2a408",
+    "test/functional/p2p_private_broadcast.py": "1fac2cf0a3834bde753bdc4b6d3391b384cb983efc683d4d8ff3464015a974e9",
+    "test/functional/p2p_private_broadcast_retry_v1.py": "3c024efa8ff15e4961634fc32c78c279d3063bf1bcdd2ae0e183983f70d38e36",
+    "test/functional/p2p_seednode.py": "b891840fe1869f10e2d7edab30779b1259c605f9c3fde15e7844777ba6991051",
+    "test/functional/p2p_segwit.py": "bb5a75d2b771209e5932e0413361dbe3454c205158bb3ede02754ca8edf2a8a4",
+    "test/functional/p2p_sendheaders.py": "5b59c0ae7fcb972cba6e5e2b524f0a80ee59db485b3b31384799d3a1e92d88e4",
+    "test/functional/p2p_sendtxrcncl.py": "37988bb47916c2002a002db589d989d0eccf9f78b71dd3bb06dcc31deb34537d",
+    "test/functional/p2p_timeouts.py": "329935ddfcf647afceda7432ab40e4537d1c60c20a6e120650fcf010ba500bf8",
+    "test/functional/p2p_tx_download.py": "01fef7f0591c339d0615647e772495dd4e98b97c74c1ac0cee7d200db940f9de",
+    "test/functional/p2p_tx_privacy.py": "4d29454dd6eff2f22b06f26ab9466d0b6e8e0e575a67cca11eb4a4737ffc5408",
+    "test/functional/p2p_unrequested_blocks.py": "645520efa3d53513d66a26e9f7c31fe1062c29ed7bb5643b536344dfb0947330",
+    "test/functional/p2p_v2_encrypted.py": "38e71186037105f617050b22efbe0da3a530beb325d6421150b8874f184531d0",
+    "test/functional/p2p_v2_misbehaving.py": "9a2f6d65ce067d9eb6bcf10c0ed7fd44d5815c0cf2448f99d63ded21eff327ce",
+    "test/functional/p2p_v2_transport.py": "48da9db6999297799a6f7437d2f7271f9d2a2413928e09ebfb1cccb1d0f61643",
+    "test/functional/rpc_bind.py": "9bef56f70aeb5ce0e367eb6a101d91c4defd831979054185dcf6809df153a71a",
+    "test/functional/rpc_blockchain.py": "35969192462a87e9568910013304edc8288c3c11f07ec365d060ff3b5e036f7f",
+    "test/functional/rpc_createmultisig.py": "14470532d860fd834bd8f9216c4b2ddd4e3a6d6170f07e9c49db1d67c9c2bfb4",
+    "test/functional/rpc_decodescript.py": "83eb8d75eaaea86f4d463ee9f721d2e59877f2acd4849a842bf7b1e5a1624d47",
+    "test/functional/rpc_deprecated.py": "42f963bafa84421f4ff1662a4771e06c62029d326e8e4fc38c6eeb660835cd71",
+    "test/functional/rpc_deriveaddresses.py": "d57229cc6c0814eea50b33e7929cf00591d9da4a0b46f67381c9ac837e684d83",
+    "test/functional/rpc_dumptxoutset.py": "f3c6fa6bdb306339c1f151e78b7acb5f231ea1c9ebbdb7374d1616e4082282f6",
+    "test/functional/rpc_estimatefee.py": "a1a1b1ac3e6d4dcb2f12435cf591f3a2a3326c001373978c8f3d4f4904b477a5",
+    "test/functional/rpc_generate.py": "07f6ec1022b6d536711d332aeae25ac3d00ca764067ea3ff617e630e7cfef147",
+    "test/functional/rpc_getblockfilter.py": "3450b856547aeb27313206a80617fe6a2aaac4a44d58242f0b34cd6832c49e06",
+    "test/functional/rpc_getblockfrompeer.py": "ea68a9122c413c5668f23b35332e2eb71ff3adc997a9cb254ffc8daebd00c180",
+    "test/functional/rpc_getblockstats.py": "d48a47d3fe3c73004e8ffb272b46171974a81bc41a82992ed2ce4602531dfbd7",
+    "test/functional/rpc_getchaintips.py": "68f1766fb1cc3ddc96911bf0188c003d4ac3e1843ed2861c8b8de007294cabf9",
+    "test/functional/rpc_getdescriptoractivity.py": "36b97f25a6e0df216fcc7377eb8bb2d7e82f88588a7df39ee852f3c701d2e7cb",
+    "test/functional/rpc_getdescriptorinfo.py": "9a210e048276b469a3f8caa40f4ecc6b51647e6bc81768c55ae48ddc7484b981",
+    "test/functional/rpc_gettxspendingprevout.py": "88535cc23d59f56e356e68d714fe75ba23573d721e26ee68aaf93d410b195d59",
+    "test/functional/rpc_help.py": "f6a0e918f0ee73d690cf209785817f009474d6bd381be0d8c651034c261cfd63",
+    "test/functional/rpc_invalid_address_message.py": "1ec483dcec76b6075780d9eca243b12985b1b61f46e05a5082a31fd082827316",
+    "test/functional/rpc_invalidateblock.py": "650d5649ee648e3a1b0bd9b63f9b0eeb306929eeeade5ef58bf76f16573021f2",
+    "test/functional/rpc_misc.py": "225e9a3266287cfec6b29ae38c9e54e39a414a07f22197abdfe66904ae0ca88d",
+    "test/functional/rpc_named_arguments.py": "3596e724f9ee6b10e0231532320143deacabfbb17899c738ee8d7010f44e639e",
+    "test/functional/rpc_net.py": "93e8a0518b5244d381cc4311b24ae3b2593d949a88f3a074df860e2511002435",
+    "test/functional/rpc_orphans.py": "2d7295b00bf0dfa2194fc8ca4af9d4721b3776df899a8252e76f9f0b741293e9",
+    "test/functional/rpc_packages.py": "b6c365735f98480c36be46c61648a89fb0e3e2d27342cb059a2a9b8f05c0d872",
+    "test/functional/rpc_preciousblock.py": "b3597c53b121c505f3865621d1ba0e7938f010f33b325cea9f436ee3ff18de66",
+    "test/functional/rpc_psbt.py": "a4e2eaef0a3b55d01874c4183eb26749b3eee313342be89dd9cadaffcc9ca176",
+    "test/functional/rpc_rawtransaction.py": "111dd1caa0b4c4a83ea575e3eeb58544258c23258baabc519c66098d68c44deb",
+    "test/functional/rpc_scanblocks.py": "89e97b0ca7908c447882bce2fc67a9263ec8d13370db891c65cb1ffafbbba4ed",
+    "test/functional/rpc_scantxoutset.py": "707fad3595eb9aac41946c0ee2bda276fdeeaf61402fba9fdca85437c16eb4f6",
+    "test/functional/rpc_setban.py": "afaba694613348a4ea6b81bbd8d12cd34227d95f839736bbdf2e0a8ccf279fcb",
+    "test/functional/rpc_signer.py": "c3386fba2ec9121ef6f2bbe00730563c955f545de385f0d0c3d1e349ca12bc10",
+    "test/functional/rpc_signmessagewithprivkey.py": "56e6f567ff363e884b27c03baee123deb9600ee2f62825317257a3e133fdd30b",
+    "test/functional/rpc_signrawtransactionwithkey.py": "60f8299f80d419ee35e6cc069fde2b35b5cff03175e1f3dc55072e76ff5d4b89",
+    "test/functional/rpc_txoutproof.py": "dde0369233a03f0fa4d2eaed7f1f6f1d92a1db2a616d0b90316ceaa76b05bba6",
+    "test/functional/rpc_uptime.py": "4bb215d2621d6d1fb4d192aed33eaa0e967969ca942bfe25803f6c726b3f27fc",
+    "test/functional/rpc_users.py": "ba8df74d5adc9738385815da5b54eb0df9e38c476389befe24c0d9ad59deeb77",
+    "test/functional/rpc_validateaddress.py": "1bf25b4e62e7c4b90844c4f3e27f1c155d566ba9eead762ee3dd0c2e61854ff4",
+    "test/functional/rpc_whitelist.py": "92e0626db3d33db2dcbab6d0fe521ddf430caad2182af16179bf9ade51bd12d9",
+    "test/functional/test-shell.md": "7ede2266df4a7b5ff36f7467ed7d8436f47bcb4fa02e37a2004bee03d14cc5ba",
+    "test/functional/test_framework/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "test/functional/test_framework/address.py": "63e83cdd2054afbccff8932729dc65cf8feafc8ce3bd9b0071d492058d12bf4f",
+    "test/functional/test_framework/authproxy.py": "736246f2495578e0b1f38775ae44c59514e5bd45bf83b427d90b2370916d1a1a",
+    "test/functional/test_framework/bip340_test_vectors.csv": "01c8cabba63b4c9b2f44c975902990086a4fe56eee9d265b187d1e2c1d98ccfb",
+    "test/functional/test_framework/blockfilter.py": "d759d7c22eb1fd5e517902d01a30938a991c3a34e6672c9d44a0b4f936a8fcfc",
+    "test/functional/test_framework/blocktools.py": "a04bd5c095826c99f4f47e49db91136159b7dc7804ca751255785928d28f449f",
+    "test/functional/test_framework/compressor.py": "a61c1d37abc5977a7398784b173bcb76e94a3549165a18f60e8d3d22cd9a2ead",
+    "test/functional/test_framework/coverage.py": "e301f58d9be13a18d061bfdad130b4a40cfbf6ea6f741c36259e611c8ecc6eaa",
+    "test/functional/test_framework/crypto/bip324_cipher.py": "11ebd09caf46d8a41156535597b1abb67cac1ffb8e50adbe0fcf61141c6412f1",
+    "test/functional/test_framework/crypto/chacha20.py": "c0b383e8c1ee47cd3d0cb02630ad316cd8e915b857fa19193a7111d79cbe4878",
+    "test/functional/test_framework/crypto/ellswift.py": "a65d5a4afa54b94c7223face55e8860187a2b6547ede1bff49c822e343fcea7b",
+    "test/functional/test_framework/crypto/ellswift_decode_test_vectors.csv": "a238a66b093bed3c571d5b57cb2bb1f69487788f0f872f7ea7501b5b98be20b0",
+    "test/functional/test_framework/crypto/hkdf.py": "bcf95e28f8f3206aa8bdae8f27b9e3474b23740f17e9f40c66f356e656b37b6b",
+    "test/functional/test_framework/crypto/muhash.py": "af45c2451c06abd530ae7d65f8778f7e1ebb76f7b68dcded3459fdcee376405c",
+    "test/functional/test_framework/crypto/poly1305.py": "f4eeb0fecc9f5850581a17fd926240aea9361c86c3268c9ef7b990f38839b8de",
+    "test/functional/test_framework/crypto/ripemd160.py": "99da6dafa9804d3ca5490a736354027b10ec3d517206caad6ea28c0e097f6b9a",
+    "test/functional/test_framework/crypto/secp256k1.py": "cab75b7335f839b88eb8517b417715858e538aaf0071f6c01ec4eb3e1867f246",
+    "test/functional/test_framework/crypto/siphash.py": "7af3111be53124afb78a607cb9bfe3fdd5a64717c95a279d5962cda9a0853ab1",
+    "test/functional/test_framework/crypto/xswiftec_inv_test_vectors.csv": "b5e8e0e9edfdee14c3ec4db3c6763543a9f17290a84a93de0ae2671c16f4432a",
+    "test/functional/test_framework/descriptors.py": "8c2a4490c1b2a09c6c6e209eda090b160214d8156e20d6db671459cb4090a16a",
+    "test/functional/test_framework/ipc_util.py": "254befe9c3902827dc678fda20e2ab9acb82a815a76b35a03567f8460fa68ef7",
+    "test/functional/test_framework/key.py": "1f48819cbecacb5916a32a4930b4576ab362c190fa552342378e5c809a6bae77",
+    "test/functional/test_framework/mempool_util.py": "1cefffda4412f94b14600721af96edfa21f1efff70e2fd4b8f71fbfb6db64064",
+    "test/functional/test_framework/messages.py": "c786651a517a49dd084b1d76072f755d40c5483f5be53b7322ca4f3403548b26",
+    "test/functional/test_framework/netutil.py": "2414c1653c53225b308cd54aaa43d2a884db17f8704ea5f87586f92f39aeeaec",
+    "test/functional/test_framework/p2p.py": "7292865dedff7a0ea78675d6ea85e9135e81fb59ea9b7247b1d6bf42b48aa9f3",
+    "test/functional/test_framework/psbt.py": "ce272048b90776a218beedb9d4c0d0a3190c88db9557117c3b93de3f3e6069a3",
+    "test/functional/test_framework/script.py": "24bdbfc18cfa1084c1c985218c0067c2e4c06cbd83488e5c08f2167a12bf3abf",
+    "test/functional/test_framework/script_util.py": "bbc66982f39e345aa986b52c3d197b0e1c71788cb99cd352ad0c06d0e91673bc",
+    "test/functional/test_framework/segwit_addr.py": "fbeb2a01fdae651877262c4902d237dd28d56f0e35b0fc137d3dd97854b18b08",
+    "test/functional/test_framework/socks5.py": "f883af2eddd126d72abdaf6f8d0c6b864d967bb801da58e0ba4013ef3a452dff",
+    "test/functional/test_framework/test_framework.py": "895a5ac0606aa8d8c02252c1340951a92445168ed79c0a9c5ac2aadd29794d5b",
+    "test/functional/test_framework/test_node.py": "59799d482ecf3aeb7f5ec2fa52ffe839f4e377ac0a903bf22daa5ecfaaa5d2ac",
+    "test/functional/test_framework/test_shell.py": "b3981abf63986b8069528a3a9d95b38317a5262ed729c4d6f1e3e686c0121137",
+    "test/functional/test_framework/util.py": "2e8499f47175e6a4df9508a37c30dc24ff90de8bc1ea117ff054f99c77bc8aa2",
+    "test/functional/test_framework/v2_p2p.py": "d3cd3af20cc538025b0e7dcef5eb0e75a2c6d315c53f20fa98484d8a17465677",
+    "test/functional/test_framework/wallet.py": "17fddda59df48e25cffc6258ff899670c585193ab49e96f1a9118a635c242909",
+    "test/functional/test_framework/wallet_util.py": "941c73c108346824e3eb478fa0c20fb3d059b2123910d69a52547089391cffb0",
+    "test/functional/test_runner.py": "faee6591d749e7fae8340430039f0b6f7450c6eb5a2960d61f0be2118ca529c3",
+    "test/functional/tool_bench_sanity_check.py": "b67b4847a6b690a6dcb803c8224df93002d7cdd7f441826c94a46ef4133e11c4",
+    "test/functional/tool_bitcoin.py": "fd234ca1eb272fafcbdd9c9a4fb4fc25a2f6138c5485e336e3f68a0c143dfc45",
+    "test/functional/tool_bitcoin_chainstate.py": "66631a702455c9e3503d49c7b3ce332530f24728352a5ecf7501cb5f26be3c80",
+    "test/functional/tool_rpcauth.py": "27c4a9d60b05d54f24fbe5fa31a196f38b3a43b20377284f3c1c4f4a4a66cbb1",
+    "test/functional/tool_signet_miner.py": "6b0a6d849c86a8838965336470f68f404e53adfd9db5b5a46ec58cd5542e5805",
+    "test/functional/tool_utils.py": "bd1592bb1bcdbd8dbc7935472ee3e205a1ec6574d10218b8a23125d8ea46d65a",
+    "test/functional/tool_utxo_to_sqlite.py": "31b774cf365037c3742872fdc3a0c790307b0c7c24ef59d124a43b230d31b6b7",
+    "test/functional/tool_wallet.py": "e2b15be5c8aafcea919bfb398aad2c2b41dd9e24e5b942b77ba84613a021dc8f",
+    "test/functional/wallet_abandonconflict.py": "cf45139694d7b3c4d9b13bd7a636b0b358bd5b5f8bddd792364a3714bfac49a1",
+    "test/functional/wallet_address_types.py": "0a68b1851f724204199d79d1fb31348910253a8f2d5515893cbb53f279a5a211",
+    "test/functional/wallet_anchor.py": "063920224cfe4ff832a08bb7b8ad0ea55ea8618ca593fb60079458d9703cdb1f",
+    "test/functional/wallet_assumeutxo.py": "914c38fd81aa42d77e52bfde4158ccada1f5230571446503227bb1659b30e386",
+    "test/functional/wallet_avoid_mixing_output_types.py": "dca6bc44d4dd585010be976eb4c8b8d7565bd1fc18f04bd21d7a4875d27ebe8c",
+    "test/functional/wallet_avoidreuse.py": "d0239ebf54dba0b90d390ff37e6b5c5bed0e4126f53c9ee8a5d64c5ccea5ce0d",
+    "test/functional/wallet_backup.py": "773dad4c6c3e3d1601e1ea617325ba3e3af5c2e51846f1279a07dad96a813a82",
+    "test/functional/wallet_backwards_compatibility.py": "fd4eb01644c028d8eb4f51006c528e2eacef3728e8e5ee56bb12ee3c8d370eba",
+    "test/functional/wallet_balance.py": "a3924fd042f6c482644dfa4d3e508cb2b2bda455ebfb39652a5ab00823f49f31",
+    "test/functional/wallet_basic.py": "859dd60b837245e667bbf24adb23773eff08e1eaa08c408eacc5e9f8081c27d2",
+    "test/functional/wallet_blank.py": "459b5ef5e3ee1a3475838bfdf76cd405292ab49f2c9f2a217d7e3b08ced20cdc",
+    "test/functional/wallet_bumpfee.py": "5fbbabdbf8e30456dd1ada244abaae034a1c2974b1f08ba47b91177087cc3f65",
+    "test/functional/wallet_change_address.py": "c71fcd615e19a712b9709e7bb4ebc62ff3abf860a7f58fe09906bda95335bc5f",
+    "test/functional/wallet_coinbase_category.py": "82be8ca79e98af2bc50abef7908eae45034ec997f0ad81a05970e8bce2b2b3b7",
+    "test/functional/wallet_conflicts.py": "24cf73fe21084e0503c162ce0c56f3e612b74daad4eb879a41a34769e6bb941a",
+    "test/functional/wallet_create_tx.py": "96c4342f252b53861d4cc22762f688d4a0c1afcd595f4e9296df779582a6808f",
+    "test/functional/wallet_createwallet.py": "49af7fda00e295094efeb1ab9b043503af2f4258d97f0771581b8334cf159f61",
+    "test/functional/wallet_createwalletdescriptor.py": "b0554c440d6fc0c4293238278fbac989afd3a6bc030857e1d44db5e630041659",
+    "test/functional/wallet_crosschain.py": "1a91a24d9773789dca274604624d48ca3d889b55011ede553c6f1084fb24c424",
+    "test/functional/wallet_descriptor.py": "8db8ef31417e702b68540d197add756a8ba94efae32bc4c6a1b816287b2aadf0",
+    "test/functional/wallet_disable.py": "7b5d110f45360f5ad38d8abf703cf0b71f3b3ce4e022450b826a506039f8b33a",
+    "test/functional/wallet_encryption.py": "e4688e53e00e097ff6c08cb9c2bcb5c30fea08aaa445b3928de9c87e255ea756",
+    "test/functional/wallet_fallbackfee.py": "9e9ffacd7a7b75c736c8c806166f23d41fda77b0ba0c94875dcabe0159d7afc8",
+    "test/functional/wallet_fast_rescan.py": "8ad6fb94beaf10ebba73ebe9fb24f7aa1df67a3ad166d16d7731f9ec8448c6a3",
+    "test/functional/wallet_fundrawtransaction.py": "3147a6105dd0e1caedfecfc2ac2595d9e37422101ab68364c046ee9a658a6918",
+    "test/functional/wallet_gethdkeys.py": "1e1adc9d1e19fed7bfa7859037f21f005a7bed0ab5a631d06b10d47c4b8d3f28",
+    "test/functional/wallet_groups.py": "6415b01530ca3856893d4a7f9835e9ea602d13fb3ecc34c19ade35228dea3b5e",
+    "test/functional/wallet_hd.py": "8c47f502a079a0f673a5cfe7a770c18fe08fa232329734e1b503ec2ade8d6d64",
+    "test/functional/wallet_importdescriptors.py": "611795d8e3adab76f14cc465f450126805790c34d9ea592b12c85a64de5e8192",
+    "test/functional/wallet_importprunedfunds.py": "fbcf0988d68438b9970388e2f23bbe1486336a672a0a2514bab9931392744110",
+    "test/functional/wallet_keypool.py": "8ccac210418e519559de4de0627c7d96b33259b7043959be8dbd204bc1369607",
+    "test/functional/wallet_keypool_topup.py": "0eee8f81b6d324324334bc7b4311dc3bc856e92e89ac84aac5222dfb735a786d",
+    "test/functional/wallet_labels.py": "ceb0019f182c0fe4eed1ec2daad5a95f681e7e595b21cadec5cf5f9f2373a255",
+    "test/functional/wallet_listdescriptors.py": "aec97fd01a235be91bead31c6234501278d0ed972c4ee9e998acf0c7863e5214",
+    "test/functional/wallet_listreceivedby.py": "fc8f4271eca26834fdb07e443ad066dc91ab7de73d3fb1730e223506a62d3906",
+    "test/functional/wallet_listsinceblock.py": "aebd609306d9fc0e9f7e2068867feeef74151f07295ac200ec94d9d2e1c6ebe2",
+    "test/functional/wallet_listtransactions.py": "5dcce042b6bc4321c3cff3355a1c223fd0739471b08f0efde0b345888c9380c4",
+    "test/functional/wallet_migration.py": "2a26f66b94ea805b357e9e3f8270750465df8bdb2f69e2e5b4dd5a6e3f71e78c",
+    "test/functional/wallet_miniscript.py": "ecddd6f7318c15077888c541eaac30c7e37f2a5b57595485eae88f3c8ce0150b",
+    "test/functional/wallet_miniscript_decaying_multisig_descriptor_psbt.py": "6cb68b6b1e91f42f857f9f8e621b3c373acdbf9e6d32fd572c7e0c7bfd1e3bb1",
+    "test/functional/wallet_multisig_descriptor_psbt.py": "5b600a757b1031bdc69f3d646959a892fef14d47d264c99e579e9892a06a5e0f",
+    "test/functional/wallet_multiwallet.py": "8241af7710a2cf97fe19ce17f59f681a0db9d96f87ae9cf7d0a83ae8b7c30279",
+    "test/functional/wallet_musig.py": "1e9813241beb2ce34bc8bac1f17f21649bbf9217a7c0b613bf8edf111b964754",
+    "test/functional/wallet_orphanedreward.py": "5af290e19fb5a2b4ee0108c167ce3b4ab53885ef65315eb66ad4f8ad1b013721",
+    "test/functional/wallet_reindex.py": "65fb361f854c9567d49f68bc28ca91dc11caa0d5148962cdd31d720d55875e20",
+    "test/functional/wallet_reorgsrestore.py": "823651a7cd777b467aeb250678d424e0c8fbf5b177d4f6a27d8ecdc3adc2e270",
+    "test/functional/wallet_rescan_unconfirmed.py": "8ae1124569824d470fe13d72877fefeff1c85c19bf3b7d5a9ffb9eef0eb198d7",
+    "test/functional/wallet_resendwallettransactions.py": "22f45d03e9c226efcb040577cc80b10d12f3e731f6a000bfcaa1f99ca611b1c8",
+    "test/functional/wallet_send.py": "a9edee97ace7a35952203191859bf04db1757ce0e58fda385768737367ee110a",
+    "test/functional/wallet_sendall.py": "ee7025b5358ea79fb13aa77dd7760abbc335baff3908f1c9714cbfe59697d591",
+    "test/functional/wallet_sendmany.py": "c61e300158a2131eb9aa7dabda997877edc64632bf60622e90e5329882be0cf4",
+    "test/functional/wallet_signer.py": "ac09824f4a58c629cc18d93ea10cb3bb8863faee35853ef29896898a37c1e070",
+    "test/functional/wallet_signmessagewithaddress.py": "da0525da5dd2284e615be58f8d77f09cf05beeea5ab12f5d96cc112d712a5f3a",
+    "test/functional/wallet_signrawtransactionwithwallet.py": "b179540f278320e32318f2c5d9096f08a6cf8edb582380c660bb16fc6f00b073",
+    "test/functional/wallet_simulaterawtx.py": "d55582acf898de9fd6fef5ace23c85807dd3a1e2465012b5b204c95cac04a6f6",
+    "test/functional/wallet_spend_unconfirmed.py": "68c40d39737fb779babc48bee78e47710fa830e814768ee79f770a3127a8b1b9",
+    "test/functional/wallet_startup.py": "5540e86a674a87d91667f8c9cf96f26832aaad94fe32ab685b8961a92622aed4",
+    "test/functional/wallet_taproot.py": "dd6aa7a348103afcdd6841962f2df5836e7bf4344f09a94feb140425f149272a",
+    "test/functional/wallet_timelock.py": "b57459a3159d8f06719f3dae386247228d9f94d1201a5aeae3823756b12353dc",
+    "test/functional/wallet_transactiontime_rescan.py": "4d1f036fb0d64d9a172a7ac81063c78c58f81d788f37ad824e8eddcefd468617",
+    "test/functional/wallet_txn_clone.py": "57e34eab943071b228e011c96e287d971102db6e4d03ca6d85cae7dd355c5b4d",
+    "test/functional/wallet_txn_doublespend.py": "4edb9ab6e04f33538265886f76c9a556b8abeec5693c03efef0886a5a129ecf2",
+    "test/functional/wallet_v3_txs.py": "910dd3b9c2a15e59d5aee008f97a97d1c61956b4468f5bb55da427c7626488ec"
+  },
+  "cases": [
+    {
+      "id": "feature_pruning.py",
+      "test": "feature_pruning.py",
+      "arguments": [],
+      "upstream_case": "feature_pruning.py",
+      "selection": "EXTENDED_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "feature_dbcrash.py",
+      "test": "feature_dbcrash.py",
+      "arguments": [],
+      "upstream_case": "feature_dbcrash.py",
+      "selection": "EXTENDED_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "feature_index_prune.py",
+      "test": "feature_index_prune.py",
+      "arguments": [],
+      "upstream_case": "feature_index_prune.py",
+      "selection": "EXTENDED_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "tool_bench_sanity_check.py",
+      "test": "tool_bench_sanity_check.py",
+      "arguments": [],
+      "upstream_case": "tool_bench_sanity_check.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": true
+    },
+    {
+      "id": "feature_fee_estimation.py",
+      "test": "feature_fee_estimation.py",
+      "arguments": [],
+      "upstream_case": "feature_fee_estimation.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "feature_taproot.py",
+      "test": "feature_taproot.py",
+      "arguments": [],
+      "upstream_case": "feature_taproot.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "feature_block.py",
+      "test": "feature_block.py",
+      "arguments": [],
+      "upstream_case": "feature_block.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "mempool_ephemeral_dust.py",
+      "test": "mempool_ephemeral_dust.py",
+      "arguments": [],
+      "upstream_case": "mempool_ephemeral_dust.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "wallet_conflicts.py",
+      "test": "wallet_conflicts.py",
+      "arguments": [],
+      "upstream_case": "wallet_conflicts.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "p2p_opportunistic_1p1c.py",
+      "test": "p2p_opportunistic_1p1c.py",
+      "arguments": [],
+      "upstream_case": "p2p_opportunistic_1p1c.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "p2p_node_network_limited.py",
+      "test": "p2p_node_network_limited.py",
+      "arguments": [],
+      "upstream_case": "p2p_node_network_limited.py --v1transport",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [
+        "--v1transport"
+      ],
+      "dynamic": false
+    },
+    {
+      "id": "p2p_node_network_limited.py",
+      "test": "p2p_node_network_limited.py",
+      "arguments": [],
+      "upstream_case": "p2p_node_network_limited.py --v2transport",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [
+        "--v2transport"
+      ],
+      "dynamic": false
+    },
+    {
+      "id": "mining_getblocktemplate_longpoll.py",
+      "test": "mining_getblocktemplate_longpoll.py",
+      "arguments": [],
+      "upstream_case": "mining_getblocktemplate_longpoll.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "p2p_segwit.py",
+      "test": "p2p_segwit.py",
+      "arguments": [],
+      "upstream_case": "p2p_segwit.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "feature_maxuploadtarget.py",
+      "test": "feature_maxuploadtarget.py",
+      "arguments": [],
+      "upstream_case": "feature_maxuploadtarget.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "feature_assumeutxo.py",
+      "test": "feature_assumeutxo.py",
+      "arguments": [],
+      "upstream_case": "feature_assumeutxo.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "mempool_updatefromblock.py",
+      "test": "mempool_updatefromblock.py",
+      "arguments": [],
+      "upstream_case": "mempool_updatefromblock.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "mempool_persist.py",
+      "test": "mempool_persist.py",
+      "arguments": [],
+      "upstream_case": "mempool_persist.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "rpc_psbt.py",
+      "test": "rpc_psbt.py",
+      "arguments": [],
+      "upstream_case": "rpc_psbt.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "wallet_fundrawtransaction.py",
+      "test": "wallet_fundrawtransaction.py",
+      "arguments": [],
+      "upstream_case": "wallet_fundrawtransaction.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "wallet_bumpfee.py",
+      "test": "wallet_bumpfee.py",
+      "arguments": [],
+      "upstream_case": "wallet_bumpfee.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "wallet_v3_txs.py",
+      "test": "wallet_v3_txs.py",
+      "arguments": [],
+      "upstream_case": "wallet_v3_txs.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "wallet_backup.py",
+      "test": "wallet_backup.py",
+      "arguments": [],
+      "upstream_case": "wallet_backup.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "feature_segwit.py",
+      "test": "feature_segwit.py",
+      "arguments": [],
+      "upstream_case": "feature_segwit.py --v2transport",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [
+        "--v2transport"
+      ],
+      "dynamic": false
+    },
+    {
+      "id": "feature_segwit.py",
+      "test": "feature_segwit.py",
+      "arguments": [],
+      "upstream_case": "feature_segwit.py --v1transport",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [
+        "--v1transport"
+      ],
+      "dynamic": false
+    },
+    {
+      "id": "p2p_tx_download.py",
+      "test": "p2p_tx_download.py",
+      "arguments": [],
+      "upstream_case": "p2p_tx_download.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "wallet_avoidreuse.py",
+      "test": "wallet_avoidreuse.py",
+      "arguments": [],
+      "upstream_case": "wallet_avoidreuse.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "feature_abortnode.py",
+      "test": "feature_abortnode.py",
+      "arguments": [],
+      "upstream_case": "feature_abortnode.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "wallet_address_types.py",
+      "test": "wallet_address_types.py",
+      "arguments": [],
+      "upstream_case": "wallet_address_types.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "p2p_orphan_handling.py",
+      "test": "p2p_orphan_handling.py",
+      "arguments": [],
+      "upstream_case": "p2p_orphan_handling.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "wallet_basic.py",
+      "test": "wallet_basic.py",
+      "arguments": [],
+      "upstream_case": "wallet_basic.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "feature_maxtipage.py",
+      "test": "feature_maxtipage.py",
+      "arguments": [],
+      "upstream_case": "feature_maxtipage.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "wallet_multiwallet.py",
+      "test": "wallet_multiwallet.py",
+      "arguments": [],
+      "upstream_case": "wallet_multiwallet.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "wallet_multiwallet.py --usecli",
+      "test": "wallet_multiwallet.py",
+      "arguments": [
+        "--usecli"
+      ],
+      "upstream_case": "wallet_multiwallet.py --usecli",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "p2p_dns_seeds.py",
+      "test": "p2p_dns_seeds.py",
+      "arguments": [],
+      "upstream_case": "p2p_dns_seeds.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "wallet_groups.py",
+      "test": "wallet_groups.py",
+      "arguments": [],
+      "upstream_case": "wallet_groups.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "p2p_blockfilters.py",
+      "test": "p2p_blockfilters.py",
+      "arguments": [],
+      "upstream_case": "p2p_blockfilters.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "feature_assumevalid.py",
+      "test": "feature_assumevalid.py",
+      "arguments": [],
+      "upstream_case": "feature_assumevalid.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "wallet_taproot.py",
+      "test": "wallet_taproot.py",
+      "arguments": [],
+      "upstream_case": "wallet_taproot.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "feature_bip68_sequence.py",
+      "test": "feature_bip68_sequence.py",
+      "arguments": [],
+      "upstream_case": "feature_bip68_sequence.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "rpc_packages.py",
+      "test": "rpc_packages.py",
+      "arguments": [],
+      "upstream_case": "rpc_packages.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "rpc_bind.py --ipv4",
+      "test": "rpc_bind.py",
+      "arguments": [
+        "--ipv4"
+      ],
+      "upstream_case": "rpc_bind.py --ipv4",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "rpc_bind.py --ipv6",
+      "test": "rpc_bind.py",
+      "arguments": [
+        "--ipv6"
+      ],
+      "upstream_case": "rpc_bind.py --ipv6",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "rpc_bind.py --nonloopback",
+      "test": "rpc_bind.py",
+      "arguments": [
+        "--nonloopback"
+      ],
+      "upstream_case": "rpc_bind.py --nonloopback",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "p2p_headers_sync_with_minchainwork.py",
+      "test": "p2p_headers_sync_with_minchainwork.py",
+      "arguments": [],
+      "upstream_case": "p2p_headers_sync_with_minchainwork.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "p2p_feefilter.py",
+      "test": "p2p_feefilter.py",
+      "arguments": [],
+      "upstream_case": "p2p_feefilter.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "feature_csv_activation.py",
+      "test": "feature_csv_activation.py",
+      "arguments": [],
+      "upstream_case": "feature_csv_activation.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "p2p_sendheaders.py",
+      "test": "p2p_sendheaders.py",
+      "arguments": [],
+      "upstream_case": "p2p_sendheaders.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "feature_config_args.py",
+      "test": "feature_config_args.py",
+      "arguments": [],
+      "upstream_case": "feature_config_args.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "wallet_listtransactions.py",
+      "test": "wallet_listtransactions.py",
+      "arguments": [],
+      "upstream_case": "wallet_listtransactions.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "wallet_miniscript.py",
+      "test": "wallet_miniscript.py",
+      "arguments": [],
+      "upstream_case": "wallet_miniscript.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "p2p_invalid_messages.py",
+      "test": "p2p_invalid_messages.py",
+      "arguments": [],
+      "upstream_case": "p2p_invalid_messages.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "rpc_createmultisig.py",
+      "test": "rpc_createmultisig.py",
+      "arguments": [],
+      "upstream_case": "rpc_createmultisig.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "p2p_timeouts.py",
+      "test": "p2p_timeouts.py",
+      "arguments": [],
+      "upstream_case": "p2p_timeouts.py --v1transport",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [
+        "--v1transport"
+      ],
+      "dynamic": false
+    },
+    {
+      "id": "p2p_timeouts.py",
+      "test": "p2p_timeouts.py",
+      "arguments": [],
+      "upstream_case": "p2p_timeouts.py --v2transport",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [
+        "--v2transport"
+      ],
+      "dynamic": false
+    },
+    {
+      "id": "rpc_signer.py",
+      "test": "rpc_signer.py",
+      "arguments": [],
+      "upstream_case": "rpc_signer.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "wallet_signer.py",
+      "test": "wallet_signer.py",
+      "arguments": [],
+      "upstream_case": "wallet_signer.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "mempool_limit.py",
+      "test": "mempool_limit.py",
+      "arguments": [],
+      "upstream_case": "mempool_limit.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "rpc_txoutproof.py",
+      "test": "rpc_txoutproof.py",
+      "arguments": [],
+      "upstream_case": "rpc_txoutproof.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "rpc_orphans.py",
+      "test": "rpc_orphans.py",
+      "arguments": [],
+      "upstream_case": "rpc_orphans.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "wallet_listreceivedby.py",
+      "test": "wallet_listreceivedby.py",
+      "arguments": [],
+      "upstream_case": "wallet_listreceivedby.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "wallet_abandonconflict.py",
+      "test": "wallet_abandonconflict.py",
+      "arguments": [],
+      "upstream_case": "wallet_abandonconflict.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "wallet_anchor.py",
+      "test": "wallet_anchor.py",
+      "arguments": [],
+      "upstream_case": "wallet_anchor.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "feature_reindex.py",
+      "test": "feature_reindex.py",
+      "arguments": [],
+      "upstream_case": "feature_reindex.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "feature_reindex_readonly.py",
+      "test": "feature_reindex_readonly.py",
+      "arguments": [],
+      "upstream_case": "feature_reindex_readonly.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "wallet_labels.py",
+      "test": "wallet_labels.py",
+      "arguments": [],
+      "upstream_case": "wallet_labels.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "p2p_compactblocks.py",
+      "test": "p2p_compactblocks.py",
+      "arguments": [],
+      "upstream_case": "p2p_compactblocks.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "p2p_compactblocks_blocksonly.py",
+      "test": "p2p_compactblocks_blocksonly.py",
+      "arguments": [],
+      "upstream_case": "p2p_compactblocks_blocksonly.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "wallet_hd.py",
+      "test": "wallet_hd.py",
+      "arguments": [],
+      "upstream_case": "wallet_hd.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "wallet_blank.py",
+      "test": "wallet_blank.py",
+      "arguments": [],
+      "upstream_case": "wallet_blank.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "wallet_keypool_topup.py",
+      "test": "wallet_keypool_topup.py",
+      "arguments": [],
+      "upstream_case": "wallet_keypool_topup.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "wallet_fast_rescan.py",
+      "test": "wallet_fast_rescan.py",
+      "arguments": [],
+      "upstream_case": "wallet_fast_rescan.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "wallet_gethdkeys.py",
+      "test": "wallet_gethdkeys.py",
+      "arguments": [],
+      "upstream_case": "wallet_gethdkeys.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "wallet_createwalletdescriptor.py",
+      "test": "wallet_createwalletdescriptor.py",
+      "arguments": [],
+      "upstream_case": "wallet_createwalletdescriptor.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "interface_zmq.py",
+      "test": "interface_zmq.py",
+      "arguments": [],
+      "upstream_case": "interface_zmq.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "rpc_invalid_address_message.py",
+      "test": "rpc_invalid_address_message.py",
+      "arguments": [],
+      "upstream_case": "rpc_invalid_address_message.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "rpc_validateaddress.py",
+      "test": "rpc_validateaddress.py",
+      "arguments": [],
+      "upstream_case": "rpc_validateaddress.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "interface_bitcoin_cli.py",
+      "test": "interface_bitcoin_cli.py",
+      "arguments": [],
+      "upstream_case": "interface_bitcoin_cli.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "feature_bind_extra.py",
+      "test": "feature_bind_extra.py",
+      "arguments": [],
+      "upstream_case": "feature_bind_extra.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "mempool_resurrect.py",
+      "test": "mempool_resurrect.py",
+      "arguments": [],
+      "upstream_case": "mempool_resurrect.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "wallet_txn_doublespend.py --mineblock",
+      "test": "wallet_txn_doublespend.py",
+      "arguments": [
+        "--mineblock"
+      ],
+      "upstream_case": "wallet_txn_doublespend.py --mineblock",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "tool_bitcoin_chainstate.py",
+      "test": "tool_bitcoin_chainstate.py",
+      "arguments": [],
+      "upstream_case": "tool_bitcoin_chainstate.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "tool_wallet.py",
+      "test": "tool_wallet.py",
+      "arguments": [],
+      "upstream_case": "tool_wallet.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "tool_utils.py",
+      "test": "tool_utils.py",
+      "arguments": [],
+      "upstream_case": "tool_utils.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "tool_signet_miner.py",
+      "test": "tool_signet_miner.py",
+      "arguments": [],
+      "upstream_case": "tool_signet_miner.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "wallet_txn_clone.py",
+      "test": "wallet_txn_clone.py",
+      "arguments": [],
+      "upstream_case": "wallet_txn_clone.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "wallet_txn_clone.py --segwit",
+      "test": "wallet_txn_clone.py",
+      "arguments": [
+        "--segwit"
+      ],
+      "upstream_case": "wallet_txn_clone.py --segwit",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "rpc_getchaintips.py",
+      "test": "rpc_getchaintips.py",
+      "arguments": [],
+      "upstream_case": "rpc_getchaintips.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "rpc_misc.py",
+      "test": "rpc_misc.py",
+      "arguments": [],
+      "upstream_case": "rpc_misc.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "p2p_1p1c_network.py",
+      "test": "p2p_1p1c_network.py",
+      "arguments": [],
+      "upstream_case": "p2p_1p1c_network.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "interface_rest.py",
+      "test": "interface_rest.py",
+      "arguments": [],
+      "upstream_case": "interface_rest.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "mempool_spend_coinbase.py",
+      "test": "mempool_spend_coinbase.py",
+      "arguments": [],
+      "upstream_case": "mempool_spend_coinbase.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "wallet_avoid_mixing_output_types.py",
+      "test": "wallet_avoid_mixing_output_types.py",
+      "arguments": [],
+      "upstream_case": "wallet_avoid_mixing_output_types.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "mempool_reorg.py",
+      "test": "mempool_reorg.py",
+      "arguments": [],
+      "upstream_case": "mempool_reorg.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "p2p_block_sync.py",
+      "test": "p2p_block_sync.py",
+      "arguments": [],
+      "upstream_case": "p2p_block_sync.py --v1transport",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [
+        "--v1transport"
+      ],
+      "dynamic": false
+    },
+    {
+      "id": "p2p_block_sync.py",
+      "test": "p2p_block_sync.py",
+      "arguments": [],
+      "upstream_case": "p2p_block_sync.py --v2transport",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [
+        "--v2transport"
+      ],
+      "dynamic": false
+    },
+    {
+      "id": "wallet_createwallet.py --usecli",
+      "test": "wallet_createwallet.py",
+      "arguments": [
+        "--usecli"
+      ],
+      "upstream_case": "wallet_createwallet.py --usecli",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "wallet_createwallet.py",
+      "test": "wallet_createwallet.py",
+      "arguments": [],
+      "upstream_case": "wallet_createwallet.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "wallet_reindex.py",
+      "test": "wallet_reindex.py",
+      "arguments": [],
+      "upstream_case": "wallet_reindex.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "wallet_reorgsrestore.py",
+      "test": "wallet_reorgsrestore.py",
+      "arguments": [],
+      "upstream_case": "wallet_reorgsrestore.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "interface_http.py",
+      "test": "interface_http.py",
+      "arguments": [],
+      "upstream_case": "interface_http.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "interface_rpc.py",
+      "test": "interface_rpc.py",
+      "arguments": [],
+      "upstream_case": "interface_rpc.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "interface_usdt_coinselection.py",
+      "test": "interface_usdt_coinselection.py",
+      "arguments": [],
+      "upstream_case": "interface_usdt_coinselection.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "interface_usdt_mempool.py",
+      "test": "interface_usdt_mempool.py",
+      "arguments": [],
+      "upstream_case": "interface_usdt_mempool.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "interface_usdt_net.py",
+      "test": "interface_usdt_net.py",
+      "arguments": [],
+      "upstream_case": "interface_usdt_net.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "interface_usdt_utxocache.py",
+      "test": "interface_usdt_utxocache.py",
+      "arguments": [],
+      "upstream_case": "interface_usdt_utxocache.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "interface_usdt_validation.py",
+      "test": "interface_usdt_validation.py",
+      "arguments": [],
+      "upstream_case": "interface_usdt_validation.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "rpc_users.py",
+      "test": "rpc_users.py",
+      "arguments": [],
+      "upstream_case": "rpc_users.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "rpc_whitelist.py",
+      "test": "rpc_whitelist.py",
+      "arguments": [],
+      "upstream_case": "rpc_whitelist.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "feature_proxy.py",
+      "test": "feature_proxy.py",
+      "arguments": [],
+      "upstream_case": "feature_proxy.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "wallet_signrawtransactionwithwallet.py",
+      "test": "wallet_signrawtransactionwithwallet.py",
+      "arguments": [],
+      "upstream_case": "wallet_signrawtransactionwithwallet.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "rpc_signrawtransactionwithkey.py",
+      "test": "rpc_signrawtransactionwithkey.py",
+      "arguments": [],
+      "upstream_case": "rpc_signrawtransactionwithkey.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "rpc_rawtransaction.py",
+      "test": "rpc_rawtransaction.py",
+      "arguments": [],
+      "upstream_case": "rpc_rawtransaction.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "wallet_transactiontime_rescan.py",
+      "test": "wallet_transactiontime_rescan.py",
+      "arguments": [],
+      "upstream_case": "wallet_transactiontime_rescan.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "p2p_addrv2_relay.py",
+      "test": "p2p_addrv2_relay.py",
+      "arguments": [],
+      "upstream_case": "p2p_addrv2_relay.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "p2p_compactblocks_hb.py",
+      "test": "p2p_compactblocks_hb.py",
+      "arguments": [],
+      "upstream_case": "p2p_compactblocks_hb.py --v1transport",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [
+        "--v1transport"
+      ],
+      "dynamic": false
+    },
+    {
+      "id": "p2p_compactblocks_hb.py",
+      "test": "p2p_compactblocks_hb.py",
+      "arguments": [],
+      "upstream_case": "p2p_compactblocks_hb.py --v2transport",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [
+        "--v2transport"
+      ],
+      "dynamic": false
+    },
+    {
+      "id": "p2p_disconnect_ban.py",
+      "test": "p2p_disconnect_ban.py",
+      "arguments": [],
+      "upstream_case": "p2p_disconnect_ban.py --v1transport",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [
+        "--v1transport"
+      ],
+      "dynamic": false
+    },
+    {
+      "id": "p2p_disconnect_ban.py",
+      "test": "p2p_disconnect_ban.py",
+      "arguments": [],
+      "upstream_case": "p2p_disconnect_ban.py --v2transport",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [
+        "--v2transport"
+      ],
+      "dynamic": false
+    },
+    {
+      "id": "feature_posix_fs_permissions.py",
+      "test": "feature_posix_fs_permissions.py",
+      "arguments": [],
+      "upstream_case": "feature_posix_fs_permissions.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "rpc_decodescript.py",
+      "test": "rpc_decodescript.py",
+      "arguments": [],
+      "upstream_case": "rpc_decodescript.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "rpc_blockchain.py",
+      "test": "rpc_blockchain.py",
+      "arguments": [],
+      "upstream_case": "rpc_blockchain.py --v1transport",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [
+        "--v1transport"
+      ],
+      "dynamic": false
+    },
+    {
+      "id": "rpc_blockchain.py",
+      "test": "rpc_blockchain.py",
+      "arguments": [],
+      "upstream_case": "rpc_blockchain.py --v2transport",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [
+        "--v2transport"
+      ],
+      "dynamic": false
+    },
+    {
+      "id": "mining_template_verification.py",
+      "test": "mining_template_verification.py",
+      "arguments": [],
+      "upstream_case": "mining_template_verification.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "rpc_deprecated.py",
+      "test": "rpc_deprecated.py",
+      "arguments": [],
+      "upstream_case": "rpc_deprecated.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "wallet_disable.py",
+      "test": "wallet_disable.py",
+      "arguments": [],
+      "upstream_case": "wallet_disable.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "wallet_change_address.py",
+      "test": "wallet_change_address.py",
+      "arguments": [],
+      "upstream_case": "wallet_change_address.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "p2p_addr_relay.py",
+      "test": "p2p_addr_relay.py",
+      "arguments": [],
+      "upstream_case": "p2p_addr_relay.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "p2p_getaddr_caching.py",
+      "test": "p2p_getaddr_caching.py",
+      "arguments": [],
+      "upstream_case": "p2p_getaddr_caching.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "p2p_getdata.py",
+      "test": "p2p_getdata.py",
+      "arguments": [],
+      "upstream_case": "p2p_getdata.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "p2p_addrfetch.py",
+      "test": "p2p_addrfetch.py",
+      "arguments": [],
+      "upstream_case": "p2p_addrfetch.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "rpc_net.py",
+      "test": "rpc_net.py",
+      "arguments": [],
+      "upstream_case": "rpc_net.py --v1transport",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [
+        "--v1transport"
+      ],
+      "dynamic": false
+    },
+    {
+      "id": "rpc_net.py",
+      "test": "rpc_net.py",
+      "arguments": [],
+      "upstream_case": "rpc_net.py --v2transport",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [
+        "--v2transport"
+      ],
+      "dynamic": false
+    },
+    {
+      "id": "wallet_keypool.py",
+      "test": "wallet_keypool.py",
+      "arguments": [],
+      "upstream_case": "wallet_keypool.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "wallet_descriptor.py",
+      "test": "wallet_descriptor.py",
+      "arguments": [],
+      "upstream_case": "wallet_descriptor.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "p2p_nobloomfilter_messages.py",
+      "test": "p2p_nobloomfilter_messages.py",
+      "arguments": [],
+      "upstream_case": "p2p_nobloomfilter_messages.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "feature_framework_unit_tests.py",
+      "test": "feature_framework_unit_tests.py",
+      "arguments": [],
+      "upstream_case": "feature_framework_unit_tests.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "p2p_filter.py",
+      "test": "p2p_filter.py",
+      "arguments": [],
+      "upstream_case": "p2p_filter.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "rpc_setban.py",
+      "test": "rpc_setban.py",
+      "arguments": [],
+      "upstream_case": "rpc_setban.py --v1transport",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [
+        "--v1transport"
+      ],
+      "dynamic": false
+    },
+    {
+      "id": "rpc_setban.py",
+      "test": "rpc_setban.py",
+      "arguments": [],
+      "upstream_case": "rpc_setban.py --v2transport",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [
+        "--v2transport"
+      ],
+      "dynamic": false
+    },
+    {
+      "id": "p2p_blocksonly.py",
+      "test": "p2p_blocksonly.py",
+      "arguments": [],
+      "upstream_case": "p2p_blocksonly.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "mining_prioritisetransaction.py",
+      "test": "mining_prioritisetransaction.py",
+      "arguments": [],
+      "upstream_case": "mining_prioritisetransaction.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "p2p_invalid_locator.py",
+      "test": "p2p_invalid_locator.py",
+      "arguments": [],
+      "upstream_case": "p2p_invalid_locator.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "p2p_invalid_block.py",
+      "test": "p2p_invalid_block.py",
+      "arguments": [],
+      "upstream_case": "p2p_invalid_block.py --v1transport",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [
+        "--v1transport"
+      ],
+      "dynamic": false
+    },
+    {
+      "id": "p2p_invalid_block.py",
+      "test": "p2p_invalid_block.py",
+      "arguments": [],
+      "upstream_case": "p2p_invalid_block.py --v2transport",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [
+        "--v2transport"
+      ],
+      "dynamic": false
+    },
+    {
+      "id": "p2p_invalid_tx.py",
+      "test": "p2p_invalid_tx.py",
+      "arguments": [],
+      "upstream_case": "p2p_invalid_tx.py --v1transport",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [
+        "--v1transport"
+      ],
+      "dynamic": false
+    },
+    {
+      "id": "p2p_invalid_tx.py",
+      "test": "p2p_invalid_tx.py",
+      "arguments": [],
+      "upstream_case": "p2p_invalid_tx.py --v2transport",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [
+        "--v2transport"
+      ],
+      "dynamic": false
+    },
+    {
+      "id": "p2p_v2_transport.py",
+      "test": "p2p_v2_transport.py",
+      "arguments": [],
+      "upstream_case": "p2p_v2_transport.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "p2p_v2_encrypted.py",
+      "test": "p2p_v2_encrypted.py",
+      "arguments": [],
+      "upstream_case": "p2p_v2_encrypted.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "p2p_v2_misbehaving.py",
+      "test": "p2p_v2_misbehaving.py",
+      "arguments": [],
+      "upstream_case": "p2p_v2_misbehaving.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "example_test.py",
+      "test": "example_test.py",
+      "arguments": [],
+      "upstream_case": "example_test.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "mempool_truc.py",
+      "test": "mempool_truc.py",
+      "arguments": [],
+      "upstream_case": "mempool_truc.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "wallet_multisig_descriptor_psbt.py",
+      "test": "wallet_multisig_descriptor_psbt.py",
+      "arguments": [],
+      "upstream_case": "wallet_multisig_descriptor_psbt.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "wallet_miniscript_decaying_multisig_descriptor_psbt.py",
+      "test": "wallet_miniscript_decaying_multisig_descriptor_psbt.py",
+      "arguments": [],
+      "upstream_case": "wallet_miniscript_decaying_multisig_descriptor_psbt.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "wallet_txn_doublespend.py",
+      "test": "wallet_txn_doublespend.py",
+      "arguments": [],
+      "upstream_case": "wallet_txn_doublespend.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "wallet_backwards_compatibility.py",
+      "test": "wallet_backwards_compatibility.py",
+      "arguments": [],
+      "upstream_case": "wallet_backwards_compatibility.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "wallet_txn_clone.py --mineblock",
+      "test": "wallet_txn_clone.py",
+      "arguments": [
+        "--mineblock"
+      ],
+      "upstream_case": "wallet_txn_clone.py --mineblock",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "feature_notifications.py",
+      "test": "feature_notifications.py",
+      "arguments": [],
+      "upstream_case": "feature_notifications.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "rpc_getblockfilter.py",
+      "test": "rpc_getblockfilter.py",
+      "arguments": [],
+      "upstream_case": "rpc_getblockfilter.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "rpc_getblockfrompeer.py",
+      "test": "rpc_getblockfrompeer.py",
+      "arguments": [],
+      "upstream_case": "rpc_getblockfrompeer.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "rpc_invalidateblock.py",
+      "test": "rpc_invalidateblock.py",
+      "arguments": [],
+      "upstream_case": "rpc_invalidateblock.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "feature_utxo_set_hash.py",
+      "test": "feature_utxo_set_hash.py",
+      "arguments": [],
+      "upstream_case": "feature_utxo_set_hash.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "feature_rbf.py",
+      "test": "feature_rbf.py",
+      "arguments": [],
+      "upstream_case": "feature_rbf.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "mempool_packages.py",
+      "test": "mempool_packages.py",
+      "arguments": [],
+      "upstream_case": "mempool_packages.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "mempool_package_limits.py",
+      "test": "mempool_package_limits.py",
+      "arguments": [],
+      "upstream_case": "mempool_package_limits.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "mempool_package_rbf.py",
+      "test": "mempool_package_rbf.py",
+      "arguments": [],
+      "upstream_case": "mempool_package_rbf.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "tool_utxo_to_sqlite.py",
+      "test": "tool_utxo_to_sqlite.py",
+      "arguments": [],
+      "upstream_case": "tool_utxo_to_sqlite.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "feature_versionbits_warning.py",
+      "test": "feature_versionbits_warning.py",
+      "arguments": [],
+      "upstream_case": "feature_versionbits_warning.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "feature_blocksxor.py",
+      "test": "feature_blocksxor.py",
+      "arguments": [],
+      "upstream_case": "feature_blocksxor.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "rpc_preciousblock.py",
+      "test": "rpc_preciousblock.py",
+      "arguments": [],
+      "upstream_case": "rpc_preciousblock.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "wallet_importprunedfunds.py",
+      "test": "wallet_importprunedfunds.py",
+      "arguments": [],
+      "upstream_case": "wallet_importprunedfunds.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "p2p_leak_tx.py",
+      "test": "p2p_leak_tx.py",
+      "arguments": [],
+      "upstream_case": "p2p_leak_tx.py --v1transport",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [
+        "--v1transport"
+      ],
+      "dynamic": false
+    },
+    {
+      "id": "p2p_leak_tx.py",
+      "test": "p2p_leak_tx.py",
+      "arguments": [],
+      "upstream_case": "p2p_leak_tx.py --v2transport",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [
+        "--v2transport"
+      ],
+      "dynamic": false
+    },
+    {
+      "id": "p2p_eviction.py",
+      "test": "p2p_eviction.py",
+      "arguments": [],
+      "upstream_case": "p2p_eviction.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "p2p_outbound_eviction.py",
+      "test": "p2p_outbound_eviction.py",
+      "arguments": [],
+      "upstream_case": "p2p_outbound_eviction.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "p2p_ibd_stalling.py",
+      "test": "p2p_ibd_stalling.py",
+      "arguments": [],
+      "upstream_case": "p2p_ibd_stalling.py --v1transport",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [
+        "--v1transport"
+      ],
+      "dynamic": false
+    },
+    {
+      "id": "p2p_ibd_stalling.py",
+      "test": "p2p_ibd_stalling.py",
+      "arguments": [],
+      "upstream_case": "p2p_ibd_stalling.py --v2transport",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [
+        "--v2transport"
+      ],
+      "dynamic": false
+    },
+    {
+      "id": "p2p_net_deadlock.py",
+      "test": "p2p_net_deadlock.py",
+      "arguments": [],
+      "upstream_case": "p2p_net_deadlock.py --v1transport",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [
+        "--v1transport"
+      ],
+      "dynamic": false
+    },
+    {
+      "id": "p2p_net_deadlock.py",
+      "test": "p2p_net_deadlock.py",
+      "arguments": [],
+      "upstream_case": "p2p_net_deadlock.py --v2transport",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [
+        "--v2transport"
+      ],
+      "dynamic": false
+    },
+    {
+      "id": "wallet_signmessagewithaddress.py",
+      "test": "wallet_signmessagewithaddress.py",
+      "arguments": [],
+      "upstream_case": "wallet_signmessagewithaddress.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "rpc_signmessagewithprivkey.py",
+      "test": "rpc_signmessagewithprivkey.py",
+      "arguments": [],
+      "upstream_case": "rpc_signmessagewithprivkey.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "rpc_generate.py",
+      "test": "rpc_generate.py",
+      "arguments": [],
+      "upstream_case": "rpc_generate.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "wallet_balance.py",
+      "test": "wallet_balance.py",
+      "arguments": [],
+      "upstream_case": "wallet_balance.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "p2p_initial_headers_sync.py",
+      "test": "p2p_initial_headers_sync.py",
+      "arguments": [],
+      "upstream_case": "p2p_initial_headers_sync.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "feature_nulldummy.py",
+      "test": "feature_nulldummy.py",
+      "arguments": [],
+      "upstream_case": "feature_nulldummy.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "mempool_accept.py",
+      "test": "mempool_accept.py",
+      "arguments": [],
+      "upstream_case": "mempool_accept.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "p2p_addr_selfannouncement.py",
+      "test": "p2p_addr_selfannouncement.py",
+      "arguments": [],
+      "upstream_case": "p2p_addr_selfannouncement.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "mempool_expiry.py",
+      "test": "mempool_expiry.py",
+      "arguments": [],
+      "upstream_case": "mempool_expiry.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "wallet_importdescriptors.py",
+      "test": "wallet_importdescriptors.py",
+      "arguments": [],
+      "upstream_case": "wallet_importdescriptors.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "wallet_crosschain.py",
+      "test": "wallet_crosschain.py",
+      "arguments": [],
+      "upstream_case": "wallet_crosschain.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "mining_basic.py",
+      "test": "mining_basic.py",
+      "arguments": [],
+      "upstream_case": "mining_basic.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "mining_mainnet.py",
+      "test": "mining_mainnet.py",
+      "arguments": [],
+      "upstream_case": "mining_mainnet.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "feature_signet.py",
+      "test": "feature_signet.py",
+      "arguments": [],
+      "upstream_case": "feature_signet.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "p2p_mutated_blocks.py",
+      "test": "p2p_mutated_blocks.py",
+      "arguments": [],
+      "upstream_case": "p2p_mutated_blocks.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "rpc_named_arguments.py",
+      "test": "rpc_named_arguments.py",
+      "arguments": [],
+      "upstream_case": "rpc_named_arguments.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "feature_startupnotify.py",
+      "test": "feature_startupnotify.py",
+      "arguments": [],
+      "upstream_case": "feature_startupnotify.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "wallet_simulaterawtx.py",
+      "test": "wallet_simulaterawtx.py",
+      "arguments": [],
+      "upstream_case": "wallet_simulaterawtx.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "wallet_listsinceblock.py",
+      "test": "wallet_listsinceblock.py",
+      "arguments": [],
+      "upstream_case": "wallet_listsinceblock.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "wallet_listdescriptors.py",
+      "test": "wallet_listdescriptors.py",
+      "arguments": [],
+      "upstream_case": "wallet_listdescriptors.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "p2p_leak.py",
+      "test": "p2p_leak.py",
+      "arguments": [],
+      "upstream_case": "p2p_leak.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "wallet_encryption.py",
+      "test": "wallet_encryption.py",
+      "arguments": [],
+      "upstream_case": "wallet_encryption.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "feature_dersig.py",
+      "test": "feature_dersig.py",
+      "arguments": [],
+      "upstream_case": "feature_dersig.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "feature_reindex_init.py",
+      "test": "feature_reindex_init.py",
+      "arguments": [],
+      "upstream_case": "feature_reindex_init.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "feature_cltv.py",
+      "test": "feature_cltv.py",
+      "arguments": [],
+      "upstream_case": "feature_cltv.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "rpc_uptime.py",
+      "test": "rpc_uptime.py",
+      "arguments": [],
+      "upstream_case": "rpc_uptime.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "feature_discover.py",
+      "test": "feature_discover.py",
+      "arguments": [],
+      "upstream_case": "feature_discover.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "wallet_resendwallettransactions.py",
+      "test": "wallet_resendwallettransactions.py",
+      "arguments": [],
+      "upstream_case": "wallet_resendwallettransactions.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "wallet_fallbackfee.py",
+      "test": "wallet_fallbackfee.py",
+      "arguments": [],
+      "upstream_case": "wallet_fallbackfee.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "rpc_dumptxoutset.py",
+      "test": "rpc_dumptxoutset.py",
+      "arguments": [],
+      "upstream_case": "rpc_dumptxoutset.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "feature_minchainwork.py",
+      "test": "feature_minchainwork.py",
+      "arguments": [],
+      "upstream_case": "feature_minchainwork.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "rpc_estimatefee.py",
+      "test": "rpc_estimatefee.py",
+      "arguments": [],
+      "upstream_case": "rpc_estimatefee.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "p2p_private_broadcast.py",
+      "test": "p2p_private_broadcast.py",
+      "arguments": [],
+      "upstream_case": "p2p_private_broadcast.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "rpc_getblockstats.py",
+      "test": "rpc_getblockstats.py",
+      "arguments": [],
+      "upstream_case": "rpc_getblockstats.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "feature_port.py",
+      "test": "feature_port.py",
+      "arguments": [],
+      "upstream_case": "feature_port.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "feature_bind_port_externalip.py",
+      "test": "feature_bind_port_externalip.py",
+      "arguments": [],
+      "upstream_case": "feature_bind_port_externalip.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "wallet_create_tx.py",
+      "test": "wallet_create_tx.py",
+      "arguments": [],
+      "upstream_case": "wallet_create_tx.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "wallet_send.py",
+      "test": "wallet_send.py",
+      "arguments": [],
+      "upstream_case": "wallet_send.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "wallet_sendall.py",
+      "test": "wallet_sendall.py",
+      "arguments": [],
+      "upstream_case": "wallet_sendall.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "wallet_sendmany.py",
+      "test": "wallet_sendmany.py",
+      "arguments": [],
+      "upstream_case": "wallet_sendmany.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "wallet_spend_unconfirmed.py",
+      "test": "wallet_spend_unconfirmed.py",
+      "arguments": [],
+      "upstream_case": "wallet_spend_unconfirmed.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "wallet_rescan_unconfirmed.py",
+      "test": "wallet_rescan_unconfirmed.py",
+      "arguments": [],
+      "upstream_case": "wallet_rescan_unconfirmed.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "p2p_fingerprint.py",
+      "test": "p2p_fingerprint.py",
+      "arguments": [],
+      "upstream_case": "p2p_fingerprint.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "feature_uacomment.py",
+      "test": "feature_uacomment.py",
+      "arguments": [],
+      "upstream_case": "feature_uacomment.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "feature_init.py",
+      "test": "feature_init.py",
+      "arguments": [],
+      "upstream_case": "feature_init.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "wallet_coinbase_category.py",
+      "test": "wallet_coinbase_category.py",
+      "arguments": [],
+      "upstream_case": "wallet_coinbase_category.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "feature_filelock.py",
+      "test": "feature_filelock.py",
+      "arguments": [],
+      "upstream_case": "feature_filelock.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "feature_loadblock.py",
+      "test": "feature_loadblock.py",
+      "arguments": [],
+      "upstream_case": "feature_loadblock.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "wallet_assumeutxo.py",
+      "test": "wallet_assumeutxo.py",
+      "arguments": [],
+      "upstream_case": "wallet_assumeutxo.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "p2p_add_connections.py",
+      "test": "p2p_add_connections.py",
+      "arguments": [],
+      "upstream_case": "p2p_add_connections.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "feature_bind_port_discover.py",
+      "test": "feature_bind_port_discover.py",
+      "arguments": [],
+      "upstream_case": "feature_bind_port_discover.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "p2p_unrequested_blocks.py",
+      "test": "p2p_unrequested_blocks.py",
+      "arguments": [],
+      "upstream_case": "p2p_unrequested_blocks.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "p2p_message_capture.py",
+      "test": "p2p_message_capture.py",
+      "arguments": [],
+      "upstream_case": "p2p_message_capture.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "feature_includeconf.py",
+      "test": "feature_includeconf.py",
+      "arguments": [],
+      "upstream_case": "feature_includeconf.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "feature_addrman.py",
+      "test": "feature_addrman.py",
+      "arguments": [],
+      "upstream_case": "feature_addrman.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "feature_asmap.py",
+      "test": "feature_asmap.py",
+      "arguments": [],
+      "upstream_case": "feature_asmap.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "feature_chain_tiebreaks.py",
+      "test": "feature_chain_tiebreaks.py",
+      "arguments": [],
+      "upstream_case": "feature_chain_tiebreaks.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "feature_fastprune.py",
+      "test": "feature_fastprune.py",
+      "arguments": [],
+      "upstream_case": "feature_fastprune.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "feature_framework_miniwallet.py",
+      "test": "feature_framework_miniwallet.py",
+      "arguments": [],
+      "upstream_case": "feature_framework_miniwallet.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "mempool_unbroadcast.py",
+      "test": "mempool_unbroadcast.py",
+      "arguments": [],
+      "upstream_case": "mempool_unbroadcast.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "mempool_compatibility.py",
+      "test": "mempool_compatibility.py",
+      "arguments": [],
+      "upstream_case": "mempool_compatibility.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "mempool_accept_wtxid.py",
+      "test": "mempool_accept_wtxid.py",
+      "arguments": [],
+      "upstream_case": "mempool_accept_wtxid.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "mempool_dust.py",
+      "test": "mempool_dust.py",
+      "arguments": [],
+      "upstream_case": "mempool_dust.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "mempool_sigoplimit.py",
+      "test": "mempool_sigoplimit.py",
+      "arguments": [],
+      "upstream_case": "mempool_sigoplimit.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "rpc_deriveaddresses.py",
+      "test": "rpc_deriveaddresses.py",
+      "arguments": [],
+      "upstream_case": "rpc_deriveaddresses.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "rpc_deriveaddresses.py --usecli",
+      "test": "rpc_deriveaddresses.py",
+      "arguments": [
+        "--usecli"
+      ],
+      "upstream_case": "rpc_deriveaddresses.py --usecli",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "p2p_ping.py",
+      "test": "p2p_ping.py",
+      "arguments": [],
+      "upstream_case": "p2p_ping.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "p2p_tx_privacy.py",
+      "test": "p2p_tx_privacy.py",
+      "arguments": [],
+      "upstream_case": "p2p_tx_privacy.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "rpc_getdescriptoractivity.py",
+      "test": "rpc_getdescriptoractivity.py",
+      "arguments": [],
+      "upstream_case": "rpc_getdescriptoractivity.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "rpc_scanblocks.py",
+      "test": "rpc_scanblocks.py",
+      "arguments": [],
+      "upstream_case": "rpc_scanblocks.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "tool_bitcoin.py",
+      "test": "tool_bitcoin.py",
+      "arguments": [],
+      "upstream_case": "tool_bitcoin.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "p2p_sendtxrcncl.py",
+      "test": "p2p_sendtxrcncl.py",
+      "arguments": [],
+      "upstream_case": "p2p_sendtxrcncl.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "rpc_scantxoutset.py",
+      "test": "rpc_scantxoutset.py",
+      "arguments": [],
+      "upstream_case": "rpc_scantxoutset.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "feature_unsupported_utxo_db.py",
+      "test": "feature_unsupported_utxo_db.py",
+      "arguments": [],
+      "upstream_case": "feature_unsupported_utxo_db.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "mempool_cluster.py",
+      "test": "mempool_cluster.py",
+      "arguments": [],
+      "upstream_case": "mempool_cluster.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "feature_logging.py",
+      "test": "feature_logging.py",
+      "arguments": [],
+      "upstream_case": "feature_logging.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "interface_ipc.py",
+      "test": "interface_ipc.py",
+      "arguments": [],
+      "upstream_case": "interface_ipc.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "interface_ipc_mining.py",
+      "test": "interface_ipc_mining.py",
+      "arguments": [],
+      "upstream_case": "interface_ipc_mining.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "feature_anchors.py",
+      "test": "feature_anchors.py",
+      "arguments": [],
+      "upstream_case": "feature_anchors.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "mempool_datacarrier.py",
+      "test": "mempool_datacarrier.py",
+      "arguments": [],
+      "upstream_case": "mempool_datacarrier.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "feature_coinstatsindex.py",
+      "test": "feature_coinstatsindex.py",
+      "arguments": [],
+      "upstream_case": "feature_coinstatsindex.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "feature_coinstatsindex_compatibility.py",
+      "test": "feature_coinstatsindex_compatibility.py",
+      "arguments": [],
+      "upstream_case": "feature_coinstatsindex_compatibility.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "wallet_orphanedreward.py",
+      "test": "wallet_orphanedreward.py",
+      "arguments": [],
+      "upstream_case": "wallet_orphanedreward.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "wallet_musig.py",
+      "test": "wallet_musig.py",
+      "arguments": [],
+      "upstream_case": "wallet_musig.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "wallet_timelock.py",
+      "test": "wallet_timelock.py",
+      "arguments": [],
+      "upstream_case": "wallet_timelock.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "p2p_permissions.py",
+      "test": "p2p_permissions.py",
+      "arguments": [],
+      "upstream_case": "p2p_permissions.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "feature_blocksdir.py",
+      "test": "feature_blocksdir.py",
+      "arguments": [],
+      "upstream_case": "feature_blocksdir.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "wallet_startup.py",
+      "test": "wallet_startup.py",
+      "arguments": [],
+      "upstream_case": "wallet_startup.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "p2p_private_broadcast_retry_v1.py",
+      "test": "p2p_private_broadcast_retry_v1.py",
+      "arguments": [],
+      "upstream_case": "p2p_private_broadcast_retry_v1.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "feature_remove_pruned_files_on_startup.py",
+      "test": "feature_remove_pruned_files_on_startup.py",
+      "arguments": [],
+      "upstream_case": "feature_remove_pruned_files_on_startup.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "p2p_i2p_ports.py",
+      "test": "p2p_i2p_ports.py",
+      "arguments": [],
+      "upstream_case": "p2p_i2p_ports.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "p2p_i2p_sessions.py",
+      "test": "p2p_i2p_sessions.py",
+      "arguments": [],
+      "upstream_case": "p2p_i2p_sessions.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "feature_presegwit_node_upgrade.py",
+      "test": "feature_presegwit_node_upgrade.py",
+      "arguments": [],
+      "upstream_case": "feature_presegwit_node_upgrade.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "feature_settings.py",
+      "test": "feature_settings.py",
+      "arguments": [],
+      "upstream_case": "feature_settings.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "rpc_getdescriptorinfo.py",
+      "test": "rpc_getdescriptorinfo.py",
+      "arguments": [],
+      "upstream_case": "rpc_getdescriptorinfo.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "rpc_gettxspendingprevout.py",
+      "test": "rpc_gettxspendingprevout.py",
+      "arguments": [],
+      "upstream_case": "rpc_gettxspendingprevout.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "rpc_help.py",
+      "test": "rpc_help.py",
+      "arguments": [],
+      "upstream_case": "rpc_help.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "feature_framework_testshell.py",
+      "test": "feature_framework_testshell.py",
+      "arguments": [],
+      "upstream_case": "feature_framework_testshell.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "tool_rpcauth.py",
+      "test": "tool_rpcauth.py",
+      "arguments": [],
+      "upstream_case": "tool_rpcauth.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "p2p_handshake.py",
+      "test": "p2p_handshake.py",
+      "arguments": [],
+      "upstream_case": "p2p_handshake.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "p2p_handshake.py",
+      "test": "p2p_handshake.py",
+      "arguments": [],
+      "upstream_case": "p2p_handshake.py --v2transport",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [
+        "--v2transport"
+      ],
+      "dynamic": false
+    },
+    {
+      "id": "feature_dirsymlinks.py",
+      "test": "feature_dirsymlinks.py",
+      "arguments": [],
+      "upstream_case": "feature_dirsymlinks.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "feature_help.py",
+      "test": "feature_help.py",
+      "arguments": [],
+      "upstream_case": "feature_help.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "feature_framework_startup_failures.py",
+      "test": "feature_framework_startup_failures.py",
+      "arguments": [],
+      "upstream_case": "feature_framework_startup_failures.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "feature_shutdown.py",
+      "test": "feature_shutdown.py",
+      "arguments": [],
+      "upstream_case": "feature_shutdown.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "wallet_migration.py",
+      "test": "wallet_migration.py",
+      "arguments": [],
+      "upstream_case": "wallet_migration.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "p2p_ibd_txrelay.py",
+      "test": "p2p_ibd_txrelay.py",
+      "arguments": [],
+      "upstream_case": "p2p_ibd_txrelay.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    },
+    {
+      "id": "p2p_seednode.py",
+      "test": "p2p_seednode.py",
+      "arguments": [],
+      "upstream_case": "p2p_seednode.py",
+      "selection": "BASE_SCRIPTS",
+      "upstream_transport": [],
+      "dynamic": false
+    }
+  ],
+  "source_audit": "artifacts/functional-baseline-20261009/compiler-source-audit.json",
+  "execution_evidence": "artifacts/functional-baseline-20261009/verification.json",
+  "scope": "Fixed original functional baseline inventory. Pass/fail/skip outcomes are recorded separately; this inventory does not imply a green run."
+}

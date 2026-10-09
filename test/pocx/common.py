@@ -22,6 +22,10 @@ def short_tmpdir(build):
         # limit. Separate builds retain distinct scratch directories.
         name = hashlib.sha256(str(build).encode()).hexdigest()[:8]
         temp = ROOT / 'build-tmp' / name
+        if len(os.fsencode(temp)) > 80:
+            # A slightly longer checkout can still fit a root-level scratch
+            # directory. Keep the same build identity and ignored build prefix.
+            temp = ROOT / ('build' + name)
     if len(os.fsencode(temp)) > 80:
         raise ValueError('Source path is too long for IPC tests; use a shorter isolated worktree path')
     temp.mkdir(parents=True, exist_ok=True)

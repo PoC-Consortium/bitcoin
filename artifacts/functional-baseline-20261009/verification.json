@@ -1,0 +1,1492 @@
+{
+  "verified_at_utc": "2026-10-09T12:32:45.315459+00:00",
+  "scope": "Unchanged original v31.1 functional runner and test tree against rebuilt ENABLE_POCX=OFF binaries; all base and extended entries.",
+  "upstream_revision": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
+  "source_revision": "946555b7704f19f8a927c6f06830c95897b434d7",
+  "status": "failed",
+  "exit_code": 1,
+  "seconds": 1139.9639259629766,
+  "original_entries": 287,
+  "results": {
+    "Passed": 269,
+    "Skipped": 17,
+    "Failed": 1
+  },
+  "failed_cases": [
+    "rpc_help.py"
+  ],
+  "skipped_cases": {
+    "tool_bench_sanity_check.py": "bench_bitcoin has not been compiled",
+    "interface_zmq.py": "python3-zmq module not available.",
+    "tool_bitcoin_chainstate.py": "bitcoin-chainstate has not been compiled",
+    "interface_usdt_coinselection.py": "bitcoind has not been built with USDT tracepoints enabled.",
+    "interface_usdt_mempool.py": "bitcoind has not been built with USDT tracepoints enabled.",
+    "interface_usdt_net.py": "bitcoind has not been built with USDT tracepoints enabled.",
+    "interface_usdt_utxocache.py": "bitcoind has not been built with USDT tracepoints enabled.",
+    "interface_usdt_validation.py": "bitcoind has not been built with USDT tracepoints enabled.",
+    "wallet_backwards_compatibility.py": "previous releases not available or disabled",
+    "feature_bind_port_externalip.py": "To run this test make sure that 1.1.1.1 (a routable address) is assigned to one of the interfaces on this machine and rerun with --ihave1111",
+    "feature_bind_port_discover.py": "To run this test make sure that 1.1.1.1 and 2.2.2.2 (routable addresses) are assigned to the interfaces on this machine and rerun with --ihave1111and2222",
+    "mempool_compatibility.py": "previous releases not available or disabled",
+    "feature_unsupported_utxo_db.py": "previous releases not available or disabled",
+    "interface_ipc.py": "capnp module not available.",
+    "interface_ipc_mining.py": "capnp module not available.",
+    "feature_coinstatsindex_compatibility.py": "previous releases not available or disabled",
+    "wallet_migration.py": "previous releases not available or disabled"
+  },
+  "missing": 0,
+  "unexpected": 0,
+  "original_tree_files_upstream_identical": 378,
+  "case_results": [
+    {
+      "test": "example_test.py",
+      "status": "Passed",
+      "duration(seconds)": "2"
+    },
+    {
+      "test": "feature_abortnode.py",
+      "status": "Passed",
+      "duration(seconds)": "0"
+    },
+    {
+      "test": "feature_addrman.py",
+      "status": "Passed",
+      "duration(seconds)": "2"
+    },
+    {
+      "test": "feature_anchors.py",
+      "status": "Passed",
+      "duration(seconds)": "2"
+    },
+    {
+      "test": "feature_asmap.py",
+      "status": "Passed",
+      "duration(seconds)": "4"
+    },
+    {
+      "test": "feature_assumeutxo.py",
+      "status": "Passed",
+      "duration(seconds)": "15"
+    },
+    {
+      "test": "feature_assumevalid.py",
+      "status": "Passed",
+      "duration(seconds)": "5"
+    },
+    {
+      "test": "feature_bind_extra.py",
+      "status": "Passed",
+      "duration(seconds)": "1"
+    },
+    {
+      "test": "feature_bip68_sequence.py",
+      "status": "Passed",
+      "duration(seconds)": "5"
+    },
+    {
+      "test": "feature_block.py",
+      "status": "Passed",
+      "duration(seconds)": "48"
+    },
+    {
+      "test": "feature_blocksdir.py",
+      "status": "Passed",
+      "duration(seconds)": "0"
+    },
+    {
+      "test": "feature_blocksxor.py",
+      "status": "Passed",
+      "duration(seconds)": "1"
+    },
+    {
+      "test": "feature_chain_tiebreaks.py",
+      "status": "Passed",
+      "duration(seconds)": "2"
+    },
+    {
+      "test": "feature_cltv.py",
+      "status": "Passed",
+      "duration(seconds)": "1"
+    },
+    {
+      "test": "feature_coinstatsindex.py",
+      "status": "Passed",
+      "duration(seconds)": "5"
+    },
+    {
+      "test": "feature_config_args.py",
+      "status": "Passed",
+      "duration(seconds)": "14"
+    },
+    {
+      "test": "feature_csv_activation.py",
+      "status": "Passed",
+      "duration(seconds)": "15"
+    },
+    {
+      "test": "feature_dbcrash.py",
+      "status": "Passed",
+      "duration(seconds)": "1139"
+    },
+    {
+      "test": "feature_dersig.py",
+      "status": "Passed",
+      "duration(seconds)": "1"
+    },
+    {
+      "test": "feature_dirsymlinks.py",
+      "status": "Passed",
+      "duration(seconds)": "0"
+    },
+    {
+      "test": "feature_discover.py",
+      "status": "Passed",
+      "duration(seconds)": "2"
+    },
+    {
+      "test": "feature_fastprune.py",
+      "status": "Passed",
+      "duration(seconds)": "0"
+    },
+    {
+      "test": "feature_fee_estimation.py",
+      "status": "Passed",
+      "duration(seconds)": "43"
+    },
+    {
+      "test": "feature_filelock.py",
+      "status": "Passed",
+      "duration(seconds)": "0"
+    },
+    {
+      "test": "feature_framework_miniwallet.py",
+      "status": "Passed",
+      "duration(seconds)": "3"
+    },
+    {
+      "test": "feature_framework_startup_failures.py",
+      "status": "Passed",
+      "duration(seconds)": "8"
+    },
+    {
+      "test": "feature_framework_testshell.py",
+      "status": "Passed",
+      "duration(seconds)": "1"
+    },
+    {
+      "test": "feature_framework_unit_tests.py",
+      "status": "Passed",
+      "duration(seconds)": "4"
+    },
+    {
+      "test": "feature_help.py",
+      "status": "Passed",
+      "duration(seconds)": "0"
+    },
+    {
+      "test": "feature_includeconf.py",
+      "status": "Passed",
+      "duration(seconds)": "1"
+    },
+    {
+      "test": "feature_index_prune.py",
+      "status": "Passed",
+      "duration(seconds)": "26"
+    },
+    {
+      "test": "feature_init.py",
+      "status": "Passed",
+      "duration(seconds)": "11"
+    },
+    {
+      "test": "feature_loadblock.py",
+      "status": "Passed",
+      "duration(seconds)": "1"
+    },
+    {
+      "test": "feature_logging.py",
+      "status": "Passed",
+      "duration(seconds)": "4"
+    },
+    {
+      "test": "feature_maxtipage.py",
+      "status": "Passed",
+      "duration(seconds)": "6"
+    },
+    {
+      "test": "feature_maxuploadtarget.py",
+      "status": "Passed",
+      "duration(seconds)": "57"
+    },
+    {
+      "test": "feature_minchainwork.py",
+      "status": "Passed",
+      "duration(seconds)": "10"
+    },
+    {
+      "test": "feature_notifications.py",
+      "status": "Passed",
+      "duration(seconds)": "14"
+    },
+    {
+      "test": "feature_nulldummy.py",
+      "status": "Passed",
+      "duration(seconds)": "0"
+    },
+    {
+      "test": "feature_port.py",
+      "status": "Passed",
+      "duration(seconds)": "2"
+    },
+    {
+      "test": "feature_posix_fs_permissions.py",
+      "status": "Passed",
+      "duration(seconds)": "0"
+    },
+    {
+      "test": "feature_presegwit_node_upgrade.py",
+      "status": "Passed",
+      "duration(seconds)": "1"
+    },
+    {
+      "test": "feature_proxy.py",
+      "status": "Passed",
+      "duration(seconds)": "4"
+    },
+    {
+      "test": "feature_pruning.py",
+      "status": "Passed",
+      "duration(seconds)": "121"
+    },
+    {
+      "test": "feature_rbf.py",
+      "status": "Passed",
+      "duration(seconds)": "5"
+    },
+    {
+      "test": "feature_reindex.py",
+      "status": "Passed",
+      "duration(seconds)": "4"
+    },
+    {
+      "test": "feature_reindex_init.py",
+      "status": "Passed",
+      "duration(seconds)": "1"
+    },
+    {
+      "test": "feature_reindex_readonly.py",
+      "status": "Passed",
+      "duration(seconds)": "0"
+    },
+    {
+      "test": "feature_remove_pruned_files_on_startup.py",
+      "status": "Passed",
+      "duration(seconds)": "1"
+    },
+    {
+      "test": "feature_segwit.py --v1transport",
+      "status": "Passed",
+      "duration(seconds)": "5"
+    },
+    {
+      "test": "feature_segwit.py --v2transport",
+      "status": "Passed",
+      "duration(seconds)": "6"
+    },
+    {
+      "test": "feature_settings.py",
+      "status": "Passed",
+      "duration(seconds)": "3"
+    },
+    {
+      "test": "feature_shutdown.py",
+      "status": "Passed",
+      "duration(seconds)": "1"
+    },
+    {
+      "test": "feature_signet.py",
+      "status": "Passed",
+      "duration(seconds)": "1"
+    },
+    {
+      "test": "feature_startupnotify.py",
+      "status": "Passed",
+      "duration(seconds)": "0"
+    },
+    {
+      "test": "feature_taproot.py",
+      "status": "Passed",
+      "duration(seconds)": "64"
+    },
+    {
+      "test": "feature_uacomment.py",
+      "status": "Passed",
+      "duration(seconds)": "1"
+    },
+    {
+      "test": "feature_utxo_set_hash.py",
+      "status": "Passed",
+      "duration(seconds)": "0"
+    },
+    {
+      "test": "feature_versionbits_warning.py",
+      "status": "Passed",
+      "duration(seconds)": "1"
+    },
+    {
+      "test": "interface_bitcoin_cli.py",
+      "status": "Passed",
+      "duration(seconds)": "8"
+    },
+    {
+      "test": "interface_http.py",
+      "status": "Passed",
+      "duration(seconds)": "8"
+    },
+    {
+      "test": "interface_rest.py",
+      "status": "Passed",
+      "duration(seconds)": "4"
+    },
+    {
+      "test": "interface_rpc.py",
+      "status": "Passed",
+      "duration(seconds)": "1"
+    },
+    {
+      "test": "mempool_accept.py",
+      "status": "Passed",
+      "duration(seconds)": "3"
+    },
+    {
+      "test": "mempool_accept_wtxid.py",
+      "status": "Passed",
+      "duration(seconds)": "4"
+    },
+    {
+      "test": "mempool_cluster.py",
+      "status": "Passed",
+      "duration(seconds)": "8"
+    },
+    {
+      "test": "mempool_datacarrier.py",
+      "status": "Passed",
+      "duration(seconds)": "1"
+    },
+    {
+      "test": "mempool_dust.py",
+      "status": "Passed",
+      "duration(seconds)": "4"
+    },
+    {
+      "test": "mempool_ephemeral_dust.py",
+      "status": "Passed",
+      "duration(seconds)": "58"
+    },
+    {
+      "test": "mempool_expiry.py",
+      "status": "Passed",
+      "duration(seconds)": "0"
+    },
+    {
+      "test": "mempool_limit.py",
+      "status": "Passed",
+      "duration(seconds)": "6"
+    },
+    {
+      "test": "mempool_package_limits.py",
+      "status": "Passed",
+      "duration(seconds)": "0"
+    },
+    {
+      "test": "mempool_package_rbf.py",
+      "status": "Passed",
+      "duration(seconds)": "14"
+    },
+    {
+      "test": "mempool_packages.py",
+      "status": "Passed",
+      "duration(seconds)": "2"
+    },
+    {
+      "test": "mempool_persist.py",
+      "status": "Passed",
+      "duration(seconds)": "19"
+    },
+    {
+      "test": "mempool_reorg.py",
+      "status": "Passed",
+      "duration(seconds)": "5"
+    },
+    {
+      "test": "mempool_resurrect.py",
+      "status": "Passed",
+      "duration(seconds)": "0"
+    },
+    {
+      "test": "mempool_sigoplimit.py",
+      "status": "Passed",
+      "duration(seconds)": "4"
+    },
+    {
+      "test": "mempool_spend_coinbase.py",
+      "status": "Passed",
+      "duration(seconds)": "0"
+    },
+    {
+      "test": "mempool_truc.py",
+      "status": "Passed",
+      "duration(seconds)": "5"
+    },
+    {
+      "test": "mempool_unbroadcast.py",
+      "status": "Passed",
+      "duration(seconds)": "6"
+    },
+    {
+      "test": "mempool_updatefromblock.py",
+      "status": "Passed",
+      "duration(seconds)": "11"
+    },
+    {
+      "test": "mining_basic.py",
+      "status": "Passed",
+      "duration(seconds)": "16"
+    },
+    {
+      "test": "mining_getblocktemplate_longpoll.py",
+      "status": "Passed",
+      "duration(seconds)": "66"
+    },
+    {
+      "test": "mining_mainnet.py",
+      "status": "Passed",
+      "duration(seconds)": "1"
+    },
+    {
+      "test": "mining_prioritisetransaction.py",
+      "status": "Passed",
+      "duration(seconds)": "2"
+    },
+    {
+      "test": "mining_template_verification.py",
+      "status": "Passed",
+      "duration(seconds)": "0"
+    },
+    {
+      "test": "p2p_1p1c_network.py",
+      "status": "Passed",
+      "duration(seconds)": "10"
+    },
+    {
+      "test": "p2p_add_connections.py",
+      "status": "Passed",
+      "duration(seconds)": "7"
+    },
+    {
+      "test": "p2p_addr_relay.py",
+      "status": "Passed",
+      "duration(seconds)": "15"
+    },
+    {
+      "test": "p2p_addr_selfannouncement.py",
+      "status": "Passed",
+      "duration(seconds)": "2"
+    },
+    {
+      "test": "p2p_addrfetch.py",
+      "status": "Passed",
+      "duration(seconds)": "1"
+    },
+    {
+      "test": "p2p_addrv2_relay.py",
+      "status": "Passed",
+      "duration(seconds)": "1"
+    },
+    {
+      "test": "p2p_block_sync.py --v1transport",
+      "status": "Passed",
+      "duration(seconds)": "1"
+    },
+    {
+      "test": "p2p_block_sync.py --v2transport",
+      "status": "Passed",
+      "duration(seconds)": "1"
+    },
+    {
+      "test": "p2p_blockfilters.py",
+      "status": "Passed",
+      "duration(seconds)": "7"
+    },
+    {
+      "test": "p2p_blocksonly.py",
+      "status": "Passed",
+      "duration(seconds)": "6"
+    },
+    {
+      "test": "p2p_compactblocks.py",
+      "status": "Passed",
+      "duration(seconds)": "8"
+    },
+    {
+      "test": "p2p_compactblocks_blocksonly.py",
+      "status": "Passed",
+      "duration(seconds)": "1"
+    },
+    {
+      "test": "p2p_compactblocks_hb.py --v1transport",
+      "status": "Passed",
+      "duration(seconds)": "12"
+    },
+    {
+      "test": "p2p_compactblocks_hb.py --v2transport",
+      "status": "Passed",
+      "duration(seconds)": "12"
+    },
+    {
+      "test": "p2p_disconnect_ban.py --v1transport",
+      "status": "Passed",
+      "duration(seconds)": "1"
+    },
+    {
+      "test": "p2p_disconnect_ban.py --v2transport",
+      "status": "Passed",
+      "duration(seconds)": "1"
+    },
+    {
+      "test": "p2p_dns_seeds.py",
+      "status": "Passed",
+      "duration(seconds)": "25"
+    },
+    {
+      "test": "p2p_eviction.py",
+      "status": "Passed",
+      "duration(seconds)": "4"
+    },
+    {
+      "test": "p2p_feefilter.py",
+      "status": "Passed",
+      "duration(seconds)": "4"
+    },
+    {
+      "test": "p2p_filter.py",
+      "status": "Passed",
+      "duration(seconds)": "3"
+    },
+    {
+      "test": "p2p_fingerprint.py",
+      "status": "Passed",
+      "duration(seconds)": "1"
+    },
+    {
+      "test": "p2p_getaddr_caching.py",
+      "status": "Passed",
+      "duration(seconds)": "4"
+    },
+    {
+      "test": "p2p_getdata.py",
+      "status": "Passed",
+      "duration(seconds)": "0"
+    },
+    {
+      "test": "p2p_handshake.py",
+      "status": "Passed",
+      "duration(seconds)": "3"
+    },
+    {
+      "test": "p2p_handshake.py --v2transport",
+      "status": "Passed",
+      "duration(seconds)": "4"
+    },
+    {
+      "test": "p2p_headers_sync_with_minchainwork.py",
+      "status": "Passed",
+      "duration(seconds)": "8"
+    },
+    {
+      "test": "p2p_i2p_ports.py",
+      "status": "Passed",
+      "duration(seconds)": "0"
+    },
+    {
+      "test": "p2p_i2p_sessions.py",
+      "status": "Passed",
+      "duration(seconds)": "0"
+    },
+    {
+      "test": "p2p_ibd_stalling.py --v1transport",
+      "status": "Passed",
+      "duration(seconds)": "4"
+    },
+    {
+      "test": "p2p_ibd_stalling.py --v2transport",
+      "status": "Passed",
+      "duration(seconds)": "5"
+    },
+    {
+      "test": "p2p_ibd_txrelay.py",
+      "status": "Passed",
+      "duration(seconds)": "2"
+    },
+    {
+      "test": "p2p_initial_headers_sync.py",
+      "status": "Passed",
+      "duration(seconds)": "2"
+    },
+    {
+      "test": "p2p_invalid_block.py --v1transport",
+      "status": "Passed",
+      "duration(seconds)": "1"
+    },
+    {
+      "test": "p2p_invalid_block.py --v2transport",
+      "status": "Passed",
+      "duration(seconds)": "1"
+    },
+    {
+      "test": "p2p_invalid_locator.py",
+      "status": "Passed",
+      "duration(seconds)": "1"
+    },
+    {
+      "test": "p2p_invalid_messages.py",
+      "status": "Passed",
+      "duration(seconds)": "7"
+    },
+    {
+      "test": "p2p_invalid_tx.py --v1transport",
+      "status": "Passed",
+      "duration(seconds)": "3"
+    },
+    {
+      "test": "p2p_invalid_tx.py --v2transport",
+      "status": "Passed",
+      "duration(seconds)": "3"
+    },
+    {
+      "test": "p2p_leak.py",
+      "status": "Passed",
+      "duration(seconds)": "6"
+    },
+    {
+      "test": "p2p_leak_tx.py --v1transport",
+      "status": "Passed",
+      "duration(seconds)": "1"
+    },
+    {
+      "test": "p2p_leak_tx.py --v2transport",
+      "status": "Passed",
+      "duration(seconds)": "1"
+    },
+    {
+      "test": "p2p_message_capture.py",
+      "status": "Passed",
+      "duration(seconds)": "0"
+    },
+    {
+      "test": "p2p_mutated_blocks.py",
+      "status": "Passed",
+      "duration(seconds)": "1"
+    },
+    {
+      "test": "p2p_net_deadlock.py --v1transport",
+      "status": "Passed",
+      "duration(seconds)": "1"
+    },
+    {
+      "test": "p2p_net_deadlock.py --v2transport",
+      "status": "Passed",
+      "duration(seconds)": "1"
+    },
+    {
+      "test": "p2p_nobloomfilter_messages.py",
+      "status": "Passed",
+      "duration(seconds)": "1"
+    },
+    {
+      "test": "p2p_node_network_limited.py --v1transport",
+      "status": "Passed",
+      "duration(seconds)": "11"
+    },
+    {
+      "test": "p2p_node_network_limited.py --v2transport",
+      "status": "Passed",
+      "duration(seconds)": "11"
+    },
+    {
+      "test": "p2p_opportunistic_1p1c.py",
+      "status": "Passed",
+      "duration(seconds)": "42"
+    },
+    {
+      "test": "p2p_orphan_handling.py",
+      "status": "Passed",
+      "duration(seconds)": "24"
+    },
+    {
+      "test": "p2p_outbound_eviction.py",
+      "status": "Passed",
+      "duration(seconds)": "6"
+    },
+    {
+      "test": "p2p_permissions.py",
+      "status": "Passed",
+      "duration(seconds)": "10"
+    },
+    {
+      "test": "p2p_ping.py",
+      "status": "Passed",
+      "duration(seconds)": "1"
+    },
+    {
+      "test": "p2p_private_broadcast.py",
+      "status": "Passed",
+      "duration(seconds)": "17"
+    },
+    {
+      "test": "p2p_private_broadcast_retry_v1.py",
+      "status": "Passed",
+      "duration(seconds)": "2"
+    },
+    {
+      "test": "p2p_seednode.py",
+      "status": "Passed",
+      "duration(seconds)": "2"
+    },
+    {
+      "test": "p2p_segwit.py",
+      "status": "Passed",
+      "duration(seconds)": "56"
+    },
+    {
+      "test": "p2p_sendheaders.py",
+      "status": "Passed",
+      "duration(seconds)": "30"
+    },
+    {
+      "test": "p2p_sendtxrcncl.py",
+      "status": "Passed",
+      "duration(seconds)": "5"
+    },
+    {
+      "test": "p2p_timeouts.py --v1transport",
+      "status": "Passed",
+      "duration(seconds)": "1"
+    },
+    {
+      "test": "p2p_timeouts.py --v2transport",
+      "status": "Passed",
+      "duration(seconds)": "1"
+    },
+    {
+      "test": "p2p_tx_download.py",
+      "status": "Passed",
+      "duration(seconds)": "35"
+    },
+    {
+      "test": "p2p_tx_privacy.py",
+      "status": "Passed",
+      "duration(seconds)": "1"
+    },
+    {
+      "test": "p2p_unrequested_blocks.py",
+      "status": "Passed",
+      "duration(seconds)": "3"
+    },
+    {
+      "test": "p2p_v2_encrypted.py",
+      "status": "Passed",
+      "duration(seconds)": "5"
+    },
+    {
+      "test": "p2p_v2_misbehaving.py",
+      "status": "Passed",
+      "duration(seconds)": "1"
+    },
+    {
+      "test": "p2p_v2_transport.py",
+      "status": "Passed",
+      "duration(seconds)": "6"
+    },
+    {
+      "test": "rpc_bind.py --ipv4",
+      "status": "Passed",
+      "duration(seconds)": "1"
+    },
+    {
+      "test": "rpc_bind.py --ipv6",
+      "status": "Passed",
+      "duration(seconds)": "2"
+    },
+    {
+      "test": "rpc_bind.py --nonloopback",
+      "status": "Passed",
+      "duration(seconds)": "1"
+    },
+    {
+      "test": "rpc_blockchain.py --v1transport",
+      "status": "Passed",
+      "duration(seconds)": "7"
+    },
+    {
+      "test": "rpc_blockchain.py --v2transport",
+      "status": "Passed",
+      "duration(seconds)": "8"
+    },
+    {
+      "test": "rpc_createmultisig.py",
+      "status": "Passed",
+      "duration(seconds)": "2"
+    },
+    {
+      "test": "rpc_decodescript.py",
+      "status": "Passed",
+      "duration(seconds)": "0"
+    },
+    {
+      "test": "rpc_deprecated.py",
+      "status": "Passed",
+      "duration(seconds)": "0"
+    },
+    {
+      "test": "rpc_deriveaddresses.py",
+      "status": "Passed",
+      "duration(seconds)": "0"
+    },
+    {
+      "test": "rpc_deriveaddresses.py --usecli",
+      "status": "Passed",
+      "duration(seconds)": "0"
+    },
+    {
+      "test": "rpc_dumptxoutset.py",
+      "status": "Passed",
+      "duration(seconds)": "0"
+    },
+    {
+      "test": "rpc_estimatefee.py",
+      "status": "Passed",
+      "duration(seconds)": "0"
+    },
+    {
+      "test": "rpc_generate.py",
+      "status": "Passed",
+      "duration(seconds)": "0"
+    },
+    {
+      "test": "rpc_getblockfilter.py",
+      "status": "Passed",
+      "duration(seconds)": "1"
+    },
+    {
+      "test": "rpc_getblockfrompeer.py",
+      "status": "Passed",
+      "duration(seconds)": "3"
+    },
+    {
+      "test": "rpc_getblockstats.py",
+      "status": "Passed",
+      "duration(seconds)": "0"
+    },
+    {
+      "test": "rpc_getchaintips.py",
+      "status": "Passed",
+      "duration(seconds)": "3"
+    },
+    {
+      "test": "rpc_getdescriptoractivity.py",
+      "status": "Passed",
+      "duration(seconds)": "0"
+    },
+    {
+      "test": "rpc_getdescriptorinfo.py",
+      "status": "Passed",
+      "duration(seconds)": "0"
+    },
+    {
+      "test": "rpc_gettxspendingprevout.py",
+      "status": "Passed",
+      "duration(seconds)": "1"
+    },
+    {
+      "test": "rpc_invalid_address_message.py",
+      "status": "Passed",
+      "duration(seconds)": "0"
+    },
+    {
+      "test": "rpc_invalidateblock.py",
+      "status": "Passed",
+      "duration(seconds)": "0"
+    },
+    {
+      "test": "rpc_misc.py",
+      "status": "Passed",
+      "duration(seconds)": "1"
+    },
+    {
+      "test": "rpc_named_arguments.py",
+      "status": "Passed",
+      "duration(seconds)": "0"
+    },
+    {
+      "test": "rpc_net.py --v1transport",
+      "status": "Passed",
+      "duration(seconds)": "9"
+    },
+    {
+      "test": "rpc_net.py --v2transport",
+      "status": "Passed",
+      "duration(seconds)": "6"
+    },
+    {
+      "test": "rpc_orphans.py",
+      "status": "Passed",
+      "duration(seconds)": "1"
+    },
+    {
+      "test": "rpc_packages.py",
+      "status": "Passed",
+      "duration(seconds)": "4"
+    },
+    {
+      "test": "rpc_preciousblock.py",
+      "status": "Passed",
+      "duration(seconds)": "0"
+    },
+    {
+      "test": "rpc_psbt.py",
+      "status": "Passed",
+      "duration(seconds)": "20"
+    },
+    {
+      "test": "rpc_rawtransaction.py",
+      "status": "Passed",
+      "duration(seconds)": "5"
+    },
+    {
+      "test": "rpc_scanblocks.py",
+      "status": "Passed",
+      "duration(seconds)": "1"
+    },
+    {
+      "test": "rpc_scantxoutset.py",
+      "status": "Passed",
+      "duration(seconds)": "2"
+    },
+    {
+      "test": "rpc_setban.py --v1transport",
+      "status": "Passed",
+      "duration(seconds)": "2"
+    },
+    {
+      "test": "rpc_setban.py --v2transport",
+      "status": "Passed",
+      "duration(seconds)": "3"
+    },
+    {
+      "test": "rpc_signer.py",
+      "status": "Passed",
+      "duration(seconds)": "1"
+    },
+    {
+      "test": "rpc_signmessagewithprivkey.py",
+      "status": "Passed",
+      "duration(seconds)": "0"
+    },
+    {
+      "test": "rpc_signrawtransactionwithkey.py",
+      "status": "Passed",
+      "duration(seconds)": "0"
+    },
+    {
+      "test": "rpc_txoutproof.py",
+      "status": "Passed",
+      "duration(seconds)": "1"
+    },
+    {
+      "test": "rpc_uptime.py",
+      "status": "Passed",
+      "duration(seconds)": "1"
+    },
+    {
+      "test": "rpc_users.py",
+      "status": "Passed",
+      "duration(seconds)": "9"
+    },
+    {
+      "test": "rpc_validateaddress.py",
+      "status": "Passed",
+      "duration(seconds)": "0"
+    },
+    {
+      "test": "rpc_whitelist.py",
+      "status": "Passed",
+      "duration(seconds)": "1"
+    },
+    {
+      "test": "tool_bitcoin.py",
+      "status": "Passed",
+      "duration(seconds)": "0"
+    },
+    {
+      "test": "tool_rpcauth.py",
+      "status": "Passed",
+      "duration(seconds)": "0"
+    },
+    {
+      "test": "tool_signet_miner.py",
+      "status": "Passed",
+      "duration(seconds)": "3"
+    },
+    {
+      "test": "tool_utils.py",
+      "status": "Passed",
+      "duration(seconds)": "3"
+    },
+    {
+      "test": "tool_utxo_to_sqlite.py",
+      "status": "Passed",
+      "duration(seconds)": "1"
+    },
+    {
+      "test": "tool_wallet.py",
+      "status": "Passed",
+      "duration(seconds)": "7"
+    },
+    {
+      "test": "wallet_abandonconflict.py",
+      "status": "Passed",
+      "duration(seconds)": "5"
+    },
+    {
+      "test": "wallet_address_types.py",
+      "status": "Passed",
+      "duration(seconds)": "12"
+    },
+    {
+      "test": "wallet_anchor.py",
+      "status": "Passed",
+      "duration(seconds)": "0"
+    },
+    {
+      "test": "wallet_assumeutxo.py",
+      "status": "Passed",
+      "duration(seconds)": "2"
+    },
+    {
+      "test": "wallet_avoid_mixing_output_types.py",
+      "status": "Passed",
+      "duration(seconds)": "1"
+    },
+    {
+      "test": "wallet_avoidreuse.py",
+      "status": "Passed",
+      "duration(seconds)": "5"
+    },
+    {
+      "test": "wallet_backup.py",
+      "status": "Passed",
+      "duration(seconds)": "15"
+    },
+    {
+      "test": "wallet_balance.py",
+      "status": "Passed",
+      "duration(seconds)": "11"
+    },
+    {
+      "test": "wallet_basic.py",
+      "status": "Passed",
+      "duration(seconds)": "14"
+    },
+    {
+      "test": "wallet_blank.py",
+      "status": "Passed",
+      "duration(seconds)": "0"
+    },
+    {
+      "test": "wallet_bumpfee.py",
+      "status": "Passed",
+      "duration(seconds)": "18"
+    },
+    {
+      "test": "wallet_change_address.py",
+      "status": "Passed",
+      "duration(seconds)": "20"
+    },
+    {
+      "test": "wallet_coinbase_category.py",
+      "status": "Passed",
+      "duration(seconds)": "0"
+    },
+    {
+      "test": "wallet_conflicts.py",
+      "status": "Passed",
+      "duration(seconds)": "45"
+    },
+    {
+      "test": "wallet_create_tx.py",
+      "status": "Passed",
+      "duration(seconds)": "1"
+    },
+    {
+      "test": "wallet_createwallet.py",
+      "status": "Passed",
+      "duration(seconds)": "2"
+    },
+    {
+      "test": "wallet_createwallet.py --usecli",
+      "status": "Passed",
+      "duration(seconds)": "2"
+    },
+    {
+      "test": "wallet_createwalletdescriptor.py",
+      "status": "Passed",
+      "duration(seconds)": "1"
+    },
+    {
+      "test": "wallet_crosschain.py",
+      "status": "Passed",
+      "duration(seconds)": "0"
+    },
+    {
+      "test": "wallet_descriptor.py",
+      "status": "Passed",
+      "duration(seconds)": "2"
+    },
+    {
+      "test": "wallet_disable.py",
+      "status": "Passed",
+      "duration(seconds)": "0"
+    },
+    {
+      "test": "wallet_encryption.py",
+      "status": "Passed",
+      "duration(seconds)": "6"
+    },
+    {
+      "test": "wallet_fallbackfee.py",
+      "status": "Passed",
+      "duration(seconds)": "1"
+    },
+    {
+      "test": "wallet_fast_rescan.py",
+      "status": "Passed",
+      "duration(seconds)": "3"
+    },
+    {
+      "test": "wallet_fundrawtransaction.py",
+      "status": "Passed",
+      "duration(seconds)": "12"
+    },
+    {
+      "test": "wallet_gethdkeys.py",
+      "status": "Passed",
+      "duration(seconds)": "1"
+    },
+    {
+      "test": "wallet_groups.py",
+      "status": "Passed",
+      "duration(seconds)": "10"
+    },
+    {
+      "test": "wallet_hd.py",
+      "status": "Passed",
+      "duration(seconds)": "3"
+    },
+    {
+      "test": "wallet_importdescriptors.py",
+      "status": "Passed",
+      "duration(seconds)": "8"
+    },
+    {
+      "test": "wallet_importprunedfunds.py",
+      "status": "Passed",
+      "duration(seconds)": "0"
+    },
+    {
+      "test": "wallet_keypool.py",
+      "status": "Passed",
+      "duration(seconds)": "2"
+    },
+    {
+      "test": "wallet_keypool_topup.py",
+      "status": "Passed",
+      "duration(seconds)": "7"
+    },
+    {
+      "test": "wallet_labels.py",
+      "status": "Passed",
+      "duration(seconds)": "1"
+    },
+    {
+      "test": "wallet_listdescriptors.py",
+      "status": "Passed",
+      "duration(seconds)": "1"
+    },
+    {
+      "test": "wallet_listreceivedby.py",
+      "status": "Passed",
+      "duration(seconds)": "5"
+    },
+    {
+      "test": "wallet_listsinceblock.py",
+      "status": "Passed",
+      "duration(seconds)": "5"
+    },
+    {
+      "test": "wallet_listtransactions.py",
+      "status": "Passed",
+      "duration(seconds)": "12"
+    },
+    {
+      "test": "wallet_miniscript.py",
+      "status": "Passed",
+      "duration(seconds)": "8"
+    },
+    {
+      "test": "wallet_miniscript_decaying_multisig_descriptor_psbt.py",
+      "status": "Passed",
+      "duration(seconds)": "0"
+    },
+    {
+      "test": "wallet_multisig_descriptor_psbt.py",
+      "status": "Passed",
+      "duration(seconds)": "2"
+    },
+    {
+      "test": "wallet_multiwallet.py",
+      "status": "Passed",
+      "duration(seconds)": "7"
+    },
+    {
+      "test": "wallet_multiwallet.py --usecli",
+      "status": "Passed",
+      "duration(seconds)": "8"
+    },
+    {
+      "test": "wallet_musig.py",
+      "status": "Passed",
+      "duration(seconds)": "2"
+    },
+    {
+      "test": "wallet_orphanedreward.py",
+      "status": "Passed",
+      "duration(seconds)": "11"
+    },
+    {
+      "test": "wallet_reindex.py",
+      "status": "Passed",
+      "duration(seconds)": "1"
+    },
+    {
+      "test": "wallet_reorgsrestore.py",
+      "status": "Passed",
+      "duration(seconds)": "5"
+    },
+    {
+      "test": "wallet_rescan_unconfirmed.py",
+      "status": "Passed",
+      "duration(seconds)": "0"
+    },
+    {
+      "test": "wallet_resendwallettransactions.py",
+      "status": "Passed",
+      "duration(seconds)": "8"
+    },
+    {
+      "test": "wallet_send.py",
+      "status": "Passed",
+      "duration(seconds)": "14"
+    },
+    {
+      "test": "wallet_sendall.py",
+      "status": "Passed",
+      "duration(seconds)": "2"
+    },
+    {
+      "test": "wallet_sendmany.py",
+      "status": "Passed",
+      "duration(seconds)": "0"
+    },
+    {
+      "test": "wallet_signer.py",
+      "status": "Passed",
+      "duration(seconds)": "6"
+    },
+    {
+      "test": "wallet_signmessagewithaddress.py",
+      "status": "Passed",
+      "duration(seconds)": "0"
+    },
+    {
+      "test": "wallet_signrawtransactionwithwallet.py",
+      "status": "Passed",
+      "duration(seconds)": "2"
+    },
+    {
+      "test": "wallet_simulaterawtx.py",
+      "status": "Passed",
+      "duration(seconds)": "0"
+    },
+    {
+      "test": "wallet_spend_unconfirmed.py",
+      "status": "Passed",
+      "duration(seconds)": "0"
+    },
+    {
+      "test": "wallet_startup.py",
+      "status": "Passed",
+      "duration(seconds)": "1"
+    },
+    {
+      "test": "wallet_taproot.py",
+      "status": "Passed",
+      "duration(seconds)": "11"
+    },
+    {
+      "test": "wallet_timelock.py",
+      "status": "Passed",
+      "duration(seconds)": "0"
+    },
+    {
+      "test": "wallet_transactiontime_rescan.py",
+      "status": "Passed",
+      "duration(seconds)": "4"
+    },
+    {
+      "test": "wallet_txn_clone.py",
+      "status": "Passed",
+      "duration(seconds)": "1"
+    },
+    {
+      "test": "wallet_txn_clone.py --mineblock",
+      "status": "Passed",
+      "duration(seconds)": "3"
+    },
+    {
+      "test": "wallet_txn_clone.py --segwit",
+      "status": "Passed",
+      "duration(seconds)": "1"
+    },
+    {
+      "test": "wallet_txn_doublespend.py",
+      "status": "Passed",
+      "duration(seconds)": "1"
+    },
+    {
+      "test": "wallet_txn_doublespend.py --mineblock",
+      "status": "Passed",
+      "duration(seconds)": "3"
+    },
+    {
+      "test": "wallet_v3_txs.py",
+      "status": "Passed",
+      "duration(seconds)": "1"
+    },
+    {
+      "test": "feature_bind_port_discover.py",
+      "status": "Skipped",
+      "duration(seconds)": "0"
+    },
+    {
+      "test": "feature_bind_port_externalip.py",
+      "status": "Skipped",
+      "duration(seconds)": "0"
+    },
+    {
+      "test": "feature_coinstatsindex_compatibility.py",
+      "status": "Skipped",
+      "duration(seconds)": "0"
+    },
+    {
+      "test": "feature_unsupported_utxo_db.py",
+      "status": "Skipped",
+      "duration(seconds)": "0"
+    },
+    {
+      "test": "interface_ipc.py",
+      "status": "Skipped",
+      "duration(seconds)": "0"
+    },
+    {
+      "test": "interface_ipc_mining.py",
+      "status": "Skipped",
+      "duration(seconds)": "0"
+    },
+    {
+      "test": "interface_usdt_coinselection.py",
+      "status": "Skipped",
+      "duration(seconds)": "0"
+    },
+    {
+      "test": "interface_usdt_mempool.py",
+      "status": "Skipped",
+      "duration(seconds)": "0"
+    },
+    {
+      "test": "interface_usdt_net.py",
+      "status": "Skipped",
+      "duration(seconds)": "0"
+    },
+    {
+      "test": "interface_usdt_utxocache.py",
+      "status": "Skipped",
+      "duration(seconds)": "0"
+    },
+    {
+      "test": "interface_usdt_validation.py",
+      "status": "Skipped",
+      "duration(seconds)": "0"
+    },
+    {
+      "test": "interface_zmq.py",
+      "status": "Skipped",
+      "duration(seconds)": "0"
+    },
+    {
+      "test": "mempool_compatibility.py",
+      "status": "Skipped",
+      "duration(seconds)": "0"
+    },
+    {
+      "test": "tool_bench_sanity_check.py",
+      "status": "Skipped",
+      "duration(seconds)": "0"
+    },
+    {
+      "test": "tool_bitcoin_chainstate.py",
+      "status": "Skipped",
+      "duration(seconds)": "0"
+    },
+    {
+      "test": "wallet_backwards_compatibility.py",
+      "status": "Skipped",
+      "duration(seconds)": "0"
+    },
+    {
+      "test": "wallet_migration.py",
+      "status": "Skipped",
+      "duration(seconds)": "0"
+    },
+    {
+      "test": "rpc_help.py",
+      "status": "Failed",
+      "duration(seconds)": "0"
+    }
+  ],
+  "binary_sha256": {
+    "bin/bitcoin": "369307bad5598f5606b9549702023678be0a40c865f2114c59ec5f54cbfac3e9",
+    "bin/bitcoin-cli": "915de8ab230761fc349636feaf81752834ce3fb944104a6c753c15544c2943d9",
+    "bin/bitcoin-node": "b71ac611001753af4840dea500b4569b73ee3b83ef57c0d9328fcda6c5fb783b",
+    "bin/bitcoin-tx": "14a8dd566cf33513130f71e064b8bf39bdbd7d8844e541e3314837b83fd1d4b6",
+    "bin/bitcoin-util": "79b8b472c8fcb61e0372b3ed744160bbb67a6a8c113df2a771a381963f0f7e74",
+    "bin/bitcoin-wallet": "85e18f622e0d721fa33bf0a2e99596073b10cbe0ece3868e54c6ac6a2588bda3",
+    "bin/bitcoind": "f449801c155b8318059237d702ce3899d66dd3aa03cb84d996f34be012ebfacf",
+    "bin/test_bitcoin": "373e7137c948408ee09314b0c70e9805ee534e29746efb42a549a2539cfd3a9f"
+  },
+  "cache_sha256": "44ebb7f9862bc02d4be81b6f05a5e9ee9951e01de1ce42dbcb51ab44cda05081",
+  "source_audit": "artifacts/functional-baseline-20261009/compiler-source-audit.json",
+  "raw_execution": "artifacts/functional-baseline-20261009/execution.json",
+  "separate_rpc_parser_diagnostic": "artifacts/functional-baseline-20261009/rpc-profile-parser-diagnostic.json",
+  "incomplete_tmpfs_attempt": "artifacts/functional-baseline-20261009-attempt-tmpfs/"
+}

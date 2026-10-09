@@ -1,0 +1,2115 @@
+{
+  "command": [
+    "python3",
+    "test/pocx/test_runner.py",
+    "--build-dir",
+    "build-pocx-clean",
+    "--jobs",
+    "8",
+    "--timeout",
+    "2400",
+    "--transport",
+    "matrix",
+    "example_test.py",
+    "feature_abortnode.py",
+    "feature_addrman.py",
+    "feature_anchors.py",
+    "feature_asmap.py",
+    "feature_assumeutxo.py",
+    "feature_assumevalid.py",
+    "feature_bind_extra.py",
+    "feature_bind_port_discover.py",
+    "feature_bind_port_externalip.py",
+    "feature_bip68_sequence.py",
+    "feature_block.py",
+    "feature_blocksdir.py",
+    "feature_blocksxor.py",
+    "feature_chain_tiebreaks.py",
+    "feature_cltv.py",
+    "feature_coinstatsindex.py",
+    "feature_coinstatsindex_compatibility.py",
+    "feature_config_args.py",
+    "feature_csv_activation.py",
+    "feature_dbcrash.py",
+    "feature_dersig.py",
+    "feature_dirsymlinks.py",
+    "feature_discover.py",
+    "feature_fastprune.py",
+    "feature_fee_estimation.py",
+    "feature_filelock.py",
+    "feature_framework_miniwallet.py",
+    "feature_framework_startup_failures.py",
+    "feature_framework_testshell.py",
+    "feature_framework_unit_tests.py",
+    "feature_help.py",
+    "feature_includeconf.py",
+    "feature_index_prune.py",
+    "feature_init.py",
+    "feature_loadblock.py",
+    "feature_logging.py",
+    "feature_maxtipage.py",
+    "feature_maxuploadtarget.py",
+    "feature_minchainwork.py",
+    "feature_notifications.py",
+    "feature_nulldummy.py",
+    "feature_pocx_assignment_block_conflicts.py",
+    "feature_pocx_assignment_consecutive.py",
+    "feature_pocx_assignment_crash_revive.py",
+    "feature_pocx_assignment_double_cycle.py",
+    "feature_pocx_assignment_invalid_format.py",
+    "feature_pocx_assignment_lifecycle.py",
+    "feature_pocx_assignment_multinode.py",
+    "feature_pocx_assignment_multinode_attacks.py",
+    "feature_pocx_assignment_reorg_height_shift.py",
+    "feature_pocx_assignment_signers.py",
+    "feature_pocx_assignment_state_violations.py",
+    "feature_pocx_assignment_verifychain.py",
+    "feature_pocx_compactblocks.py",
+    "feature_pocx_fork_fixture.py",
+    "feature_pocx_imported_key_mining.py",
+    "feature_pocx_mining.py",
+    "feature_pocx_premined.py",
+    "feature_pocx_scheduler_early_height.py",
+    "feature_pocx_scheduler_payout.py",
+    "feature_pocx_submitblock_sign.py",
+    "feature_pocx_submitnonce_key_gate.py",
+    "feature_pocx_submitnonce_payout.py",
+    "feature_pocx_wire.py",
+    "feature_port.py",
+    "feature_posix_fs_permissions.py",
+    "feature_presegwit_node_upgrade.py",
+    "feature_proxy.py",
+    "feature_pruning.py",
+    "feature_rbf.py",
+    "feature_reindex.py",
+    "feature_reindex_init.py",
+    "feature_reindex_readonly.py",
+    "feature_remove_pruned_files_on_startup.py",
+    "feature_segwit.py",
+    "feature_settings.py",
+    "feature_shutdown.py",
+    "feature_signet.py",
+    "feature_startupnotify.py",
+    "feature_taproot.py",
+    "feature_uacomment.py",
+    "feature_unsupported_utxo_db.py",
+    "feature_utxo_set_hash.py",
+    "feature_versionbits_warning.py",
+    "interface_bitcoin_cli.py",
+    "interface_http.py",
+    "interface_ipc.py",
+    "interface_ipc_mining.py",
+    "interface_rest.py",
+    "interface_rpc.py",
+    "interface_usdt_coinselection.py",
+    "interface_usdt_mempool.py",
+    "interface_usdt_net.py",
+    "interface_usdt_utxocache.py",
+    "interface_usdt_validation.py",
+    "interface_zmq.py",
+    "mempool_accept.py",
+    "mempool_accept_wtxid.py",
+    "mempool_cluster.py",
+    "mempool_compatibility.py",
+    "mempool_datacarrier.py",
+    "mempool_dust.py",
+    "mempool_ephemeral_dust.py",
+    "mempool_expiry.py",
+    "mempool_limit.py",
+    "mempool_package_limits.py",
+    "mempool_package_rbf.py",
+    "mempool_packages.py",
+    "mempool_persist.py",
+    "mempool_reorg.py",
+    "mempool_resurrect.py",
+    "mempool_sigoplimit.py",
+    "mempool_spend_coinbase.py",
+    "mempool_truc.py",
+    "mempool_unbroadcast.py",
+    "mempool_updatefromblock.py",
+    "mining_basic.py",
+    "mining_getblocktemplate_longpoll.py",
+    "mining_prioritisetransaction.py",
+    "mining_template_verification.py",
+    "p2p_1p1c_network.py",
+    "p2p_add_connections.py",
+    "p2p_addr_relay.py",
+    "p2p_addr_selfannouncement.py",
+    "p2p_addrfetch.py",
+    "p2p_addrv2_relay.py",
+    "p2p_block_sync.py",
+    "p2p_blockfilters.py",
+    "p2p_blocksonly.py",
+    "p2p_compactblocks.py",
+    "p2p_compactblocks_blocksonly.py",
+    "p2p_compactblocks_hb.py",
+    "p2p_disconnect_ban.py",
+    "p2p_dns_seeds.py",
+    "p2p_eviction.py",
+    "p2p_feefilter.py",
+    "p2p_filter.py",
+    "p2p_fingerprint.py",
+    "p2p_getaddr_caching.py",
+    "p2p_getdata.py",
+    "p2p_handshake.py",
+    "p2p_headers_sync_with_minchainwork.py",
+    "p2p_i2p_ports.py",
+    "p2p_i2p_sessions.py",
+    "p2p_ibd_stalling.py",
+    "p2p_ibd_txrelay.py",
+    "p2p_initial_headers_sync.py",
+    "p2p_invalid_block.py",
+    "p2p_invalid_locator.py",
+    "p2p_invalid_messages.py",
+    "p2p_invalid_tx.py",
+    "p2p_leak.py",
+    "p2p_leak_tx.py",
+    "p2p_message_capture.py",
+    "p2p_mutated_blocks.py",
+    "p2p_net_deadlock.py",
+    "p2p_nobloomfilter_messages.py",
+    "p2p_node_network_limited.py",
+    "p2p_opportunistic_1p1c.py",
+    "p2p_orphan_handling.py",
+    "p2p_outbound_eviction.py",
+    "p2p_permissions.py",
+    "p2p_ping.py",
+    "p2p_private_broadcast.py",
+    "p2p_private_broadcast_retry_v1.py",
+    "p2p_seednode.py",
+    "p2p_segwit.py",
+    "p2p_sendheaders.py",
+    "p2p_sendtxrcncl.py",
+    "p2p_timeouts.py",
+    "p2p_tx_download.py",
+    "p2p_tx_privacy.py",
+    "p2p_unrequested_blocks.py",
+    "p2p_v2_encrypted.py",
+    "p2p_v2_misbehaving.py",
+    "p2p_v2_transport.py",
+    "rpc_bind.py",
+    "rpc_blockchain.py",
+    "rpc_createmultisig.py",
+    "rpc_decodescript.py",
+    "rpc_deprecated.py",
+    "rpc_deriveaddresses.py",
+    "rpc_dumptxoutset.py",
+    "rpc_estimatefee.py",
+    "rpc_generate.py",
+    "rpc_getblockfilter.py",
+    "rpc_getblockfrompeer.py",
+    "rpc_getblockstats.py",
+    "rpc_getchaintips.py",
+    "rpc_getdescriptoractivity.py",
+    "rpc_getdescriptorinfo.py",
+    "rpc_gettxspendingprevout.py",
+    "rpc_help.py",
+    "rpc_invalid_address_message.py",
+    "rpc_invalidateblock.py",
+    "rpc_misc.py",
+    "rpc_named_arguments.py",
+    "rpc_net.py",
+    "rpc_orphans.py",
+    "rpc_packages.py",
+    "rpc_preciousblock.py",
+    "rpc_psbt.py",
+    "rpc_rawtransaction.py",
+    "rpc_scanblocks.py",
+    "rpc_scantxoutset.py",
+    "rpc_setban.py",
+    "rpc_signer.py",
+    "rpc_signmessagewithprivkey.py",
+    "rpc_signrawtransactionwithkey.py",
+    "rpc_txoutproof.py",
+    "rpc_uptime.py",
+    "rpc_users.py",
+    "rpc_validateaddress.py",
+    "rpc_whitelist.py",
+    "tool_bench_sanity_check.py",
+    "tool_bitcoin.py",
+    "tool_bitcoin_chainstate.py",
+    "tool_rpcauth.py",
+    "tool_signet_miner.py",
+    "tool_utils.py",
+    "tool_utxo_to_sqlite.py",
+    "tool_wallet.py",
+    "wallet_abandonconflict.py",
+    "wallet_address_types.py",
+    "wallet_anchor.py",
+    "wallet_assumeutxo.py",
+    "wallet_avoid_mixing_output_types.py",
+    "wallet_avoidreuse.py",
+    "wallet_backup.py",
+    "wallet_backwards_compatibility.py",
+    "wallet_balance.py",
+    "wallet_basic.py",
+    "wallet_blank.py",
+    "wallet_bumpfee.py",
+    "wallet_change_address.py",
+    "wallet_coinbase_category.py",
+    "wallet_conflicts.py",
+    "wallet_create_tx.py",
+    "wallet_createwallet.py",
+    "wallet_createwalletdescriptor.py",
+    "wallet_crosschain.py",
+    "wallet_descriptor.py",
+    "wallet_disable.py",
+    "wallet_encryption.py",
+    "wallet_fallbackfee.py",
+    "wallet_fast_rescan.py",
+    "wallet_fundrawtransaction.py",
+    "wallet_gethdkeys.py",
+    "wallet_groups.py",
+    "wallet_hd.py",
+    "wallet_importdescriptors.py",
+    "wallet_importprunedfunds.py",
+    "wallet_keypool.py",
+    "wallet_keypool_topup.py",
+    "wallet_labels.py",
+    "wallet_listdescriptors.py",
+    "wallet_listreceivedby.py",
+    "wallet_listsinceblock.py",
+    "wallet_listtransactions.py",
+    "wallet_migration.py",
+    "wallet_miniscript.py",
+    "wallet_miniscript_decaying_multisig_descriptor_psbt.py",
+    "wallet_multisig_descriptor_psbt.py",
+    "wallet_multiwallet.py",
+    "wallet_musig.py",
+    "wallet_orphanedreward.py",
+    "wallet_pocx_type.py",
+    "wallet_reindex.py",
+    "wallet_reorgsrestore.py",
+    "wallet_rescan_unconfirmed.py",
+    "wallet_resendwallettransactions.py",
+    "wallet_send.py",
+    "wallet_sendall.py",
+    "wallet_sendmany.py",
+    "wallet_signer.py",
+    "wallet_signmessagewithaddress.py",
+    "wallet_signrawtransactionwithwallet.py",
+    "wallet_simulaterawtx.py",
+    "wallet_spend_unconfirmed.py",
+    "wallet_startup.py",
+    "wallet_taproot.py",
+    "wallet_timelock.py",
+    "wallet_transactiontime_rescan.py",
+    "wallet_txn_clone.py",
+    "wallet_txn_doublespend.py",
+    "wallet_v3_txs.py"
+  ],
+  "scope": "Fresh complete selection matrix after all native functional adaptations and production fixes: all295 normalized cases in both global transports. Original assertions and explicit profile skips remain required. Candidate completion evidence only if every applicable case passes, current inputs match, and final verification succeeds.",
+  "selected_files": [
+    "example_test.py",
+    "feature_abortnode.py",
+    "feature_addrman.py",
+    "feature_anchors.py",
+    "feature_asmap.py",
+    "feature_assumeutxo.py",
+    "feature_assumevalid.py",
+    "feature_bind_extra.py",
+    "feature_bind_port_discover.py",
+    "feature_bind_port_externalip.py",
+    "feature_bip68_sequence.py",
+    "feature_block.py",
+    "feature_blocksdir.py",
+    "feature_blocksxor.py",
+    "feature_chain_tiebreaks.py",
+    "feature_cltv.py",
+    "feature_coinstatsindex.py",
+    "feature_coinstatsindex_compatibility.py",
+    "feature_config_args.py",
+    "feature_csv_activation.py",
+    "feature_dbcrash.py",
+    "feature_dersig.py",
+    "feature_dirsymlinks.py",
+    "feature_discover.py",
+    "feature_fastprune.py",
+    "feature_fee_estimation.py",
+    "feature_filelock.py",
+    "feature_framework_miniwallet.py",
+    "feature_framework_startup_failures.py",
+    "feature_framework_testshell.py",
+    "feature_framework_unit_tests.py",
+    "feature_help.py",
+    "feature_includeconf.py",
+    "feature_index_prune.py",
+    "feature_init.py",
+    "feature_loadblock.py",
+    "feature_logging.py",
+    "feature_maxtipage.py",
+    "feature_maxuploadtarget.py",
+    "feature_minchainwork.py",
+    "feature_notifications.py",
+    "feature_nulldummy.py",
+    "feature_pocx_assignment_block_conflicts.py",
+    "feature_pocx_assignment_consecutive.py",
+    "feature_pocx_assignment_crash_revive.py",
+    "feature_pocx_assignment_double_cycle.py",
+    "feature_pocx_assignment_invalid_format.py",
+    "feature_pocx_assignment_lifecycle.py",
+    "feature_pocx_assignment_multinode.py",
+    "feature_pocx_assignment_multinode_attacks.py",
+    "feature_pocx_assignment_reorg_height_shift.py",
+    "feature_pocx_assignment_signers.py",
+    "feature_pocx_assignment_state_violations.py",
+    "feature_pocx_assignment_verifychain.py",
+    "feature_pocx_compactblocks.py",
+    "feature_pocx_fork_fixture.py",
+    "feature_pocx_imported_key_mining.py",
+    "feature_pocx_mining.py",
+    "feature_pocx_premined.py",
+    "feature_pocx_scheduler_early_height.py",
+    "feature_pocx_scheduler_payout.py",
+    "feature_pocx_submitblock_sign.py",
+    "feature_pocx_submitnonce_key_gate.py",
+    "feature_pocx_submitnonce_payout.py",
+    "feature_pocx_wire.py",
+    "feature_port.py",
+    "feature_posix_fs_permissions.py",
+    "feature_presegwit_node_upgrade.py",
+    "feature_proxy.py",
+    "feature_pruning.py",
+    "feature_rbf.py",
+    "feature_reindex.py",
+    "feature_reindex_init.py",
+    "feature_reindex_readonly.py",
+    "feature_remove_pruned_files_on_startup.py",
+    "feature_segwit.py",
+    "feature_settings.py",
+    "feature_shutdown.py",
+    "feature_signet.py",
+    "feature_startupnotify.py",
+    "feature_taproot.py",
+    "feature_uacomment.py",
+    "feature_unsupported_utxo_db.py",
+    "feature_utxo_set_hash.py",
+    "feature_versionbits_warning.py",
+    "interface_bitcoin_cli.py",
+    "interface_http.py",
+    "interface_ipc.py",
+    "interface_ipc_mining.py",
+    "interface_rest.py",
+    "interface_rpc.py",
+    "interface_usdt_coinselection.py",
+    "interface_usdt_mempool.py",
+    "interface_usdt_net.py",
+    "interface_usdt_utxocache.py",
+    "interface_usdt_validation.py",
+    "interface_zmq.py",
+    "mempool_accept.py",
+    "mempool_accept_wtxid.py",
+    "mempool_cluster.py",
+    "mempool_compatibility.py",
+    "mempool_datacarrier.py",
+    "mempool_dust.py",
+    "mempool_ephemeral_dust.py",
+    "mempool_expiry.py",
+    "mempool_limit.py",
+    "mempool_package_limits.py",
+    "mempool_package_rbf.py",
+    "mempool_packages.py",
+    "mempool_persist.py",
+    "mempool_reorg.py",
+    "mempool_resurrect.py",
+    "mempool_sigoplimit.py",
+    "mempool_spend_coinbase.py",
+    "mempool_truc.py",
+    "mempool_unbroadcast.py",
+    "mempool_updatefromblock.py",
+    "mining_basic.py",
+    "mining_getblocktemplate_longpoll.py",
+    "mining_prioritisetransaction.py",
+    "mining_template_verification.py",
+    "p2p_1p1c_network.py",
+    "p2p_add_connections.py",
+    "p2p_addr_relay.py",
+    "p2p_addr_selfannouncement.py",
+    "p2p_addrfetch.py",
+    "p2p_addrv2_relay.py",
+    "p2p_block_sync.py",
+    "p2p_blockfilters.py",
+    "p2p_blocksonly.py",
+    "p2p_compactblocks.py",
+    "p2p_compactblocks_blocksonly.py",
+    "p2p_compactblocks_hb.py",
+    "p2p_disconnect_ban.py",
+    "p2p_dns_seeds.py",
+    "p2p_eviction.py",
+    "p2p_feefilter.py",
+    "p2p_filter.py",
+    "p2p_fingerprint.py",
+    "p2p_getaddr_caching.py",
+    "p2p_getdata.py",
+    "p2p_handshake.py",
+    "p2p_headers_sync_with_minchainwork.py",
+    "p2p_i2p_ports.py",
+    "p2p_i2p_sessions.py",
+    "p2p_ibd_stalling.py",
+    "p2p_ibd_txrelay.py",
+    "p2p_initial_headers_sync.py",
+    "p2p_invalid_block.py",
+    "p2p_invalid_locator.py",
+    "p2p_invalid_messages.py",
+    "p2p_invalid_tx.py",
+    "p2p_leak.py",
+    "p2p_leak_tx.py",
+    "p2p_message_capture.py",
+    "p2p_mutated_blocks.py",
+    "p2p_net_deadlock.py",
+    "p2p_nobloomfilter_messages.py",
+    "p2p_node_network_limited.py",
+    "p2p_opportunistic_1p1c.py",
+    "p2p_orphan_handling.py",
+    "p2p_outbound_eviction.py",
+    "p2p_permissions.py",
+    "p2p_ping.py",
+    "p2p_private_broadcast.py",
+    "p2p_private_broadcast_retry_v1.py",
+    "p2p_seednode.py",
+    "p2p_segwit.py",
+    "p2p_sendheaders.py",
+    "p2p_sendtxrcncl.py",
+    "p2p_timeouts.py",
+    "p2p_tx_download.py",
+    "p2p_tx_privacy.py",
+    "p2p_unrequested_blocks.py",
+    "p2p_v2_encrypted.py",
+    "p2p_v2_misbehaving.py",
+    "p2p_v2_transport.py",
+    "rpc_bind.py",
+    "rpc_blockchain.py",
+    "rpc_createmultisig.py",
+    "rpc_decodescript.py",
+    "rpc_deprecated.py",
+    "rpc_deriveaddresses.py",
+    "rpc_dumptxoutset.py",
+    "rpc_estimatefee.py",
+    "rpc_generate.py",
+    "rpc_getblockfilter.py",
+    "rpc_getblockfrompeer.py",
+    "rpc_getblockstats.py",
+    "rpc_getchaintips.py",
+    "rpc_getdescriptoractivity.py",
+    "rpc_getdescriptorinfo.py",
+    "rpc_gettxspendingprevout.py",
+    "rpc_help.py",
+    "rpc_invalid_address_message.py",
+    "rpc_invalidateblock.py",
+    "rpc_misc.py",
+    "rpc_named_arguments.py",
+    "rpc_net.py",
+    "rpc_orphans.py",
+    "rpc_packages.py",
+    "rpc_preciousblock.py",
+    "rpc_psbt.py",
+    "rpc_rawtransaction.py",
+    "rpc_scanblocks.py",
+    "rpc_scantxoutset.py",
+    "rpc_setban.py",
+    "rpc_signer.py",
+    "rpc_signmessagewithprivkey.py",
+    "rpc_signrawtransactionwithkey.py",
+    "rpc_txoutproof.py",
+    "rpc_uptime.py",
+    "rpc_users.py",
+    "rpc_validateaddress.py",
+    "rpc_whitelist.py",
+    "tool_bench_sanity_check.py",
+    "tool_bitcoin.py",
+    "tool_bitcoin_chainstate.py",
+    "tool_rpcauth.py",
+    "tool_signet_miner.py",
+    "tool_utils.py",
+    "tool_utxo_to_sqlite.py",
+    "tool_wallet.py",
+    "wallet_abandonconflict.py",
+    "wallet_address_types.py",
+    "wallet_anchor.py",
+    "wallet_assumeutxo.py",
+    "wallet_avoid_mixing_output_types.py",
+    "wallet_avoidreuse.py",
+    "wallet_backup.py",
+    "wallet_backwards_compatibility.py",
+    "wallet_balance.py",
+    "wallet_basic.py",
+    "wallet_blank.py",
+    "wallet_bumpfee.py",
+    "wallet_change_address.py",
+    "wallet_coinbase_category.py",
+    "wallet_conflicts.py",
+    "wallet_create_tx.py",
+    "wallet_createwallet.py",
+    "wallet_createwalletdescriptor.py",
+    "wallet_crosschain.py",
+    "wallet_descriptor.py",
+    "wallet_disable.py",
+    "wallet_encryption.py",
+    "wallet_fallbackfee.py",
+    "wallet_fast_rescan.py",
+    "wallet_fundrawtransaction.py",
+    "wallet_gethdkeys.py",
+    "wallet_groups.py",
+    "wallet_hd.py",
+    "wallet_importdescriptors.py",
+    "wallet_importprunedfunds.py",
+    "wallet_keypool.py",
+    "wallet_keypool_topup.py",
+    "wallet_labels.py",
+    "wallet_listdescriptors.py",
+    "wallet_listreceivedby.py",
+    "wallet_listsinceblock.py",
+    "wallet_listtransactions.py",
+    "wallet_migration.py",
+    "wallet_miniscript.py",
+    "wallet_miniscript_decaying_multisig_descriptor_psbt.py",
+    "wallet_multisig_descriptor_psbt.py",
+    "wallet_multiwallet.py",
+    "wallet_musig.py",
+    "wallet_orphanedreward.py",
+    "wallet_pocx_type.py",
+    "wallet_reindex.py",
+    "wallet_reorgsrestore.py",
+    "wallet_rescan_unconfirmed.py",
+    "wallet_resendwallettransactions.py",
+    "wallet_send.py",
+    "wallet_sendall.py",
+    "wallet_sendmany.py",
+    "wallet_signer.py",
+    "wallet_signmessagewithaddress.py",
+    "wallet_signrawtransactionwithwallet.py",
+    "wallet_simulaterawtx.py",
+    "wallet_spend_unconfirmed.py",
+    "wallet_startup.py",
+    "wallet_taproot.py",
+    "wallet_timelock.py",
+    "wallet_transactiontime_rescan.py",
+    "wallet_txn_clone.py",
+    "wallet_txn_doublespend.py",
+    "wallet_v3_txs.py"
+  ],
+  "selected_cases": [
+    {
+      "id": "feature_pocx_assignment_lifecycle.py",
+      "test": "feature_pocx_assignment_lifecycle.py",
+      "arguments": []
+    },
+    {
+      "id": "feature_pocx_mining.py",
+      "test": "feature_pocx_mining.py",
+      "arguments": []
+    },
+    {
+      "id": "wallet_pocx_type.py",
+      "test": "wallet_pocx_type.py",
+      "arguments": []
+    },
+    {
+      "id": "feature_pocx_assignment_double_cycle.py",
+      "test": "feature_pocx_assignment_double_cycle.py",
+      "arguments": []
+    },
+    {
+      "id": "feature_pocx_imported_key_mining.py",
+      "test": "feature_pocx_imported_key_mining.py",
+      "arguments": []
+    },
+    {
+      "id": "feature_pocx_assignment_state_violations.py",
+      "test": "feature_pocx_assignment_state_violations.py",
+      "arguments": []
+    },
+    {
+      "id": "feature_pocx_assignment_verifychain.py",
+      "test": "feature_pocx_assignment_verifychain.py",
+      "arguments": []
+    },
+    {
+      "id": "feature_pocx_assignment_crash_revive.py",
+      "test": "feature_pocx_assignment_crash_revive.py",
+      "arguments": []
+    },
+    {
+      "id": "feature_pocx_assignment_invalid_format.py",
+      "test": "feature_pocx_assignment_invalid_format.py",
+      "arguments": []
+    },
+    {
+      "id": "feature_pocx_assignment_reorg_height_shift.py",
+      "test": "feature_pocx_assignment_reorg_height_shift.py",
+      "arguments": []
+    },
+    {
+      "id": "feature_pocx_assignment_consecutive.py",
+      "test": "feature_pocx_assignment_consecutive.py",
+      "arguments": []
+    },
+    {
+      "id": "feature_pocx_assignment_block_conflicts.py",
+      "test": "feature_pocx_assignment_block_conflicts.py",
+      "arguments": []
+    },
+    {
+      "id": "feature_pocx_assignment_multinode.py",
+      "test": "feature_pocx_assignment_multinode.py",
+      "arguments": []
+    },
+    {
+      "id": "feature_pocx_wire.py",
+      "test": "feature_pocx_wire.py",
+      "arguments": []
+    },
+    {
+      "id": "feature_pocx_compactblocks.py",
+      "test": "feature_pocx_compactblocks.py",
+      "arguments": []
+    },
+    {
+      "id": "feature_pocx_submitblock_sign.py",
+      "test": "feature_pocx_submitblock_sign.py",
+      "arguments": []
+    },
+    {
+      "id": "feature_pocx_submitnonce_key_gate.py",
+      "test": "feature_pocx_submitnonce_key_gate.py",
+      "arguments": []
+    },
+    {
+      "id": "feature_pocx_submitnonce_payout.py",
+      "test": "feature_pocx_submitnonce_payout.py",
+      "arguments": []
+    },
+    {
+      "id": "feature_pocx_scheduler_payout.py",
+      "test": "feature_pocx_scheduler_payout.py",
+      "arguments": []
+    },
+    {
+      "id": "feature_pocx_scheduler_early_height.py",
+      "test": "feature_pocx_scheduler_early_height.py",
+      "arguments": []
+    },
+    {
+      "id": "feature_pocx_assignment_multinode_attacks.py",
+      "test": "feature_pocx_assignment_multinode_attacks.py",
+      "arguments": []
+    },
+    {
+      "id": "feature_abortnode.py",
+      "test": "feature_abortnode.py",
+      "arguments": []
+    },
+    {
+      "id": "feature_reindex.py",
+      "test": "feature_reindex.py",
+      "arguments": []
+    },
+    {
+      "id": "rpc_help.py",
+      "test": "rpc_help.py",
+      "arguments": []
+    },
+    {
+      "id": "feature_blocksdir.py",
+      "test": "feature_blocksdir.py",
+      "arguments": []
+    },
+    {
+      "id": "feature_pocx_premined.py",
+      "test": "feature_pocx_premined.py",
+      "arguments": []
+    },
+    {
+      "id": "mempool_accept.py",
+      "test": "mempool_accept.py",
+      "arguments": []
+    },
+    {
+      "id": "rpc_signrawtransactionwithkey.py",
+      "test": "rpc_signrawtransactionwithkey.py",
+      "arguments": []
+    },
+    {
+      "id": "wallet_signrawtransactionwithwallet.py",
+      "test": "wallet_signrawtransactionwithwallet.py",
+      "arguments": []
+    },
+    {
+      "id": "rpc_invalidateblock.py",
+      "test": "rpc_invalidateblock.py",
+      "arguments": []
+    },
+    {
+      "id": "rpc_preciousblock.py",
+      "test": "rpc_preciousblock.py",
+      "arguments": []
+    },
+    {
+      "id": "feature_pocx_fork_fixture.py",
+      "test": "feature_pocx_fork_fixture.py",
+      "arguments": []
+    },
+    {
+      "id": "mempool_resurrect.py",
+      "test": "mempool_resurrect.py",
+      "arguments": []
+    },
+    {
+      "id": "mempool_reorg.py",
+      "test": "mempool_reorg.py",
+      "arguments": []
+    },
+    {
+      "id": "wallet_balance.py",
+      "test": "wallet_balance.py",
+      "arguments": []
+    },
+    {
+      "id": "wallet_simulaterawtx.py",
+      "test": "wallet_simulaterawtx.py",
+      "arguments": []
+    },
+    {
+      "id": "wallet_send.py",
+      "test": "wallet_send.py",
+      "arguments": []
+    },
+    {
+      "id": "wallet_basic.py",
+      "test": "wallet_basic.py",
+      "arguments": []
+    },
+    {
+      "id": "wallet_fundrawtransaction.py",
+      "test": "wallet_fundrawtransaction.py",
+      "arguments": []
+    },
+    {
+      "id": "wallet_multiwallet.py",
+      "test": "wallet_multiwallet.py",
+      "arguments": []
+    },
+    {
+      "id": "wallet_multiwallet.py --usecli",
+      "test": "wallet_multiwallet.py",
+      "arguments": [
+        "--usecli"
+      ]
+    },
+    {
+      "id": "feature_pocx_assignment_signers.py",
+      "test": "feature_pocx_assignment_signers.py",
+      "arguments": []
+    },
+    {
+      "id": "mempool_packages.py",
+      "test": "mempool_packages.py",
+      "arguments": []
+    },
+    {
+      "id": "mempool_package_rbf.py",
+      "test": "mempool_package_rbf.py",
+      "arguments": []
+    },
+    {
+      "id": "rpc_packages.py",
+      "test": "rpc_packages.py",
+      "arguments": []
+    },
+    {
+      "id": "mempool_truc.py",
+      "test": "mempool_truc.py",
+      "arguments": []
+    },
+    {
+      "id": "mempool_ephemeral_dust.py",
+      "test": "mempool_ephemeral_dust.py",
+      "arguments": []
+    },
+    {
+      "id": "mempool_accept_wtxid.py",
+      "test": "mempool_accept_wtxid.py",
+      "arguments": []
+    },
+    {
+      "id": "p2p_tx_download.py",
+      "test": "p2p_tx_download.py",
+      "arguments": []
+    },
+    {
+      "id": "p2p_tx_privacy.py",
+      "test": "p2p_tx_privacy.py",
+      "arguments": []
+    },
+    {
+      "id": "mempool_limit.py",
+      "test": "mempool_limit.py",
+      "arguments": []
+    },
+    {
+      "id": "mempool_persist.py",
+      "test": "mempool_persist.py",
+      "arguments": []
+    },
+    {
+      "id": "mempool_unbroadcast.py",
+      "test": "mempool_unbroadcast.py",
+      "arguments": []
+    },
+    {
+      "id": "p2p_invalid_block.py",
+      "test": "p2p_invalid_block.py",
+      "arguments": []
+    },
+    {
+      "id": "p2p_invalid_tx.py",
+      "test": "p2p_invalid_tx.py",
+      "arguments": []
+    },
+    {
+      "id": "p2p_mutated_blocks.py",
+      "test": "p2p_mutated_blocks.py",
+      "arguments": []
+    },
+    {
+      "id": "p2p_compactblocks.py",
+      "test": "p2p_compactblocks.py",
+      "arguments": []
+    },
+    {
+      "id": "p2p_compactblocks_hb.py",
+      "test": "p2p_compactblocks_hb.py",
+      "arguments": []
+    },
+    {
+      "id": "p2p_block_sync.py",
+      "test": "p2p_block_sync.py",
+      "arguments": []
+    },
+    {
+      "id": "p2p_v2_encrypted.py",
+      "test": "p2p_v2_encrypted.py",
+      "arguments": []
+    },
+    {
+      "id": "p2p_fingerprint.py",
+      "test": "p2p_fingerprint.py",
+      "arguments": []
+    },
+    {
+      "id": "p2p_v2_transport.py",
+      "test": "p2p_v2_transport.py",
+      "arguments": []
+    },
+    {
+      "id": "p2p_invalid_messages.py",
+      "test": "p2p_invalid_messages.py",
+      "arguments": []
+    },
+    {
+      "id": "rpc_net.py",
+      "test": "rpc_net.py",
+      "arguments": []
+    },
+    {
+      "id": "p2p_disconnect_ban.py",
+      "test": "p2p_disconnect_ban.py",
+      "arguments": []
+    },
+    {
+      "id": "p2p_addr_relay.py",
+      "test": "p2p_addr_relay.py",
+      "arguments": []
+    },
+    {
+      "id": "p2p_addr_selfannouncement.py",
+      "test": "p2p_addr_selfannouncement.py",
+      "arguments": []
+    },
+    {
+      "id": "p2p_addrfetch.py",
+      "test": "p2p_addrfetch.py",
+      "arguments": []
+    },
+    {
+      "id": "feature_init.py",
+      "test": "feature_init.py",
+      "arguments": []
+    },
+    {
+      "id": "feature_framework_testshell.py",
+      "test": "feature_framework_testshell.py",
+      "arguments": []
+    },
+    {
+      "id": "feature_config_args.py",
+      "test": "feature_config_args.py",
+      "arguments": []
+    },
+    {
+      "id": "rpc_deriveaddresses.py",
+      "test": "rpc_deriveaddresses.py",
+      "arguments": []
+    },
+    {
+      "id": "rpc_deriveaddresses.py --usecli",
+      "test": "rpc_deriveaddresses.py",
+      "arguments": [
+        "--usecli"
+      ]
+    },
+    {
+      "id": "rpc_decodescript.py",
+      "test": "rpc_decodescript.py",
+      "arguments": []
+    },
+    {
+      "id": "rpc_generate.py",
+      "test": "rpc_generate.py",
+      "arguments": []
+    },
+    {
+      "id": "wallet_taproot.py",
+      "test": "wallet_taproot.py",
+      "arguments": []
+    },
+    {
+      "id": "wallet_signer.py",
+      "test": "wallet_signer.py",
+      "arguments": []
+    },
+    {
+      "id": "tool_utils.py",
+      "test": "tool_utils.py",
+      "arguments": []
+    },
+    {
+      "id": "p2p_getaddr_caching.py",
+      "test": "p2p_getaddr_caching.py",
+      "arguments": []
+    },
+    {
+      "id": "p2p_seednode.py",
+      "test": "p2p_seednode.py",
+      "arguments": []
+    },
+    {
+      "id": "p2p_leak.py",
+      "test": "p2p_leak.py",
+      "arguments": []
+    },
+    {
+      "id": "p2p_addrv2_relay.py",
+      "test": "p2p_addrv2_relay.py",
+      "arguments": []
+    },
+    {
+      "id": "wallet_change_address.py",
+      "test": "wallet_change_address.py",
+      "arguments": []
+    },
+    {
+      "id": "interface_rpc.py",
+      "test": "interface_rpc.py",
+      "arguments": []
+    },
+    {
+      "id": "wallet_groups.py",
+      "test": "wallet_groups.py",
+      "arguments": []
+    },
+    {
+      "id": "wallet_hd.py",
+      "test": "wallet_hd.py",
+      "arguments": []
+    },
+    {
+      "id": "wallet_importprunedfunds.py",
+      "test": "wallet_importprunedfunds.py",
+      "arguments": []
+    },
+    {
+      "id": "wallet_bumpfee.py",
+      "test": "wallet_bumpfee.py",
+      "arguments": []
+    },
+    {
+      "id": "wallet_listsinceblock.py",
+      "test": "wallet_listsinceblock.py",
+      "arguments": []
+    },
+    {
+      "id": "p2p_blocksonly.py",
+      "test": "p2p_blocksonly.py",
+      "arguments": []
+    },
+    {
+      "id": "p2p_leak_tx.py",
+      "test": "p2p_leak_tx.py",
+      "arguments": []
+    },
+    {
+      "id": "p2p_permissions.py",
+      "test": "p2p_permissions.py",
+      "arguments": []
+    },
+    {
+      "id": "p2p_orphan_handling.py",
+      "test": "p2p_orphan_handling.py",
+      "arguments": []
+    },
+    {
+      "id": "p2p_1p1c_network.py",
+      "test": "p2p_1p1c_network.py",
+      "arguments": []
+    },
+    {
+      "id": "p2p_handshake.py",
+      "test": "p2p_handshake.py",
+      "arguments": []
+    },
+    {
+      "id": "feature_cltv.py",
+      "test": "feature_cltv.py",
+      "arguments": []
+    },
+    {
+      "id": "feature_dersig.py",
+      "test": "feature_dersig.py",
+      "arguments": []
+    },
+    {
+      "id": "example_test.py",
+      "test": "example_test.py",
+      "arguments": []
+    },
+    {
+      "id": "wallet_txn_clone.py",
+      "test": "wallet_txn_clone.py",
+      "arguments": []
+    },
+    {
+      "id": "wallet_txn_clone.py --segwit",
+      "test": "wallet_txn_clone.py",
+      "arguments": [
+        "--segwit"
+      ]
+    },
+    {
+      "id": "wallet_txn_clone.py --mineblock",
+      "test": "wallet_txn_clone.py",
+      "arguments": [
+        "--mineblock"
+      ]
+    },
+    {
+      "id": "wallet_txn_doublespend.py --mineblock",
+      "test": "wallet_txn_doublespend.py",
+      "arguments": [
+        "--mineblock"
+      ]
+    },
+    {
+      "id": "wallet_txn_doublespend.py",
+      "test": "wallet_txn_doublespend.py",
+      "arguments": []
+    },
+    {
+      "id": "feature_nulldummy.py",
+      "test": "feature_nulldummy.py",
+      "arguments": []
+    },
+    {
+      "id": "feature_loadblock.py",
+      "test": "feature_loadblock.py",
+      "arguments": []
+    },
+    {
+      "id": "wallet_keypool_topup.py",
+      "test": "wallet_keypool_topup.py",
+      "arguments": []
+    },
+    {
+      "id": "wallet_labels.py",
+      "test": "wallet_labels.py",
+      "arguments": []
+    },
+    {
+      "id": "wallet_listreceivedby.py",
+      "test": "wallet_listreceivedby.py",
+      "arguments": []
+    },
+    {
+      "id": "wallet_listtransactions.py",
+      "test": "wallet_listtransactions.py",
+      "arguments": []
+    },
+    {
+      "id": "wallet_reindex.py",
+      "test": "wallet_reindex.py",
+      "arguments": []
+    },
+    {
+      "id": "wallet_reorgsrestore.py",
+      "test": "wallet_reorgsrestore.py",
+      "arguments": []
+    },
+    {
+      "id": "rpc_createmultisig.py",
+      "test": "rpc_createmultisig.py",
+      "arguments": []
+    },
+    {
+      "id": "p2p_blockfilters.py",
+      "test": "p2p_blockfilters.py",
+      "arguments": []
+    },
+    {
+      "id": "rpc_getblockfilter.py",
+      "test": "rpc_getblockfilter.py",
+      "arguments": []
+    },
+    {
+      "id": "wallet_multisig_descriptor_psbt.py",
+      "test": "wallet_multisig_descriptor_psbt.py",
+      "arguments": []
+    },
+    {
+      "id": "wallet_avoid_mixing_output_types.py",
+      "test": "wallet_avoid_mixing_output_types.py",
+      "arguments": []
+    },
+    {
+      "id": "wallet_backup.py",
+      "test": "wallet_backup.py",
+      "arguments": []
+    },
+    {
+      "id": "wallet_orphanedreward.py",
+      "test": "wallet_orphanedreward.py",
+      "arguments": []
+    },
+    {
+      "id": "wallet_anchor.py",
+      "test": "wallet_anchor.py",
+      "arguments": []
+    },
+    {
+      "id": "rpc_validateaddress.py",
+      "test": "rpc_validateaddress.py",
+      "arguments": []
+    },
+    {
+      "id": "rpc_invalid_address_message.py",
+      "test": "rpc_invalid_address_message.py",
+      "arguments": []
+    },
+    {
+      "id": "rpc_psbt.py",
+      "test": "rpc_psbt.py",
+      "arguments": []
+    },
+    {
+      "id": "mining_getblocktemplate_longpoll.py",
+      "test": "mining_getblocktemplate_longpoll.py",
+      "arguments": []
+    },
+    {
+      "id": "p2p_node_network_limited.py",
+      "test": "p2p_node_network_limited.py",
+      "arguments": []
+    },
+    {
+      "id": "tool_wallet.py",
+      "test": "tool_wallet.py",
+      "arguments": []
+    },
+    {
+      "id": "wallet_sendall.py",
+      "test": "wallet_sendall.py",
+      "arguments": []
+    },
+    {
+      "id": "wallet_descriptor.py",
+      "test": "wallet_descriptor.py",
+      "arguments": []
+    },
+    {
+      "id": "feature_notifications.py",
+      "test": "feature_notifications.py",
+      "arguments": []
+    },
+    {
+      "id": "wallet_fallbackfee.py",
+      "test": "wallet_fallbackfee.py",
+      "arguments": []
+    },
+    {
+      "id": "feature_reindex_readonly.py",
+      "test": "feature_reindex_readonly.py",
+      "arguments": []
+    },
+    {
+      "id": "rpc_scanblocks.py",
+      "test": "rpc_scanblocks.py",
+      "arguments": []
+    },
+    {
+      "id": "rpc_scantxoutset.py",
+      "test": "rpc_scantxoutset.py",
+      "arguments": []
+    },
+    {
+      "id": "feature_maxtipage.py",
+      "test": "feature_maxtipage.py",
+      "arguments": []
+    },
+    {
+      "id": "wallet_resendwallettransactions.py",
+      "test": "wallet_resendwallettransactions.py",
+      "arguments": []
+    },
+    {
+      "id": "p2p_private_broadcast.py",
+      "test": "p2p_private_broadcast.py",
+      "arguments": []
+    },
+    {
+      "id": "p2p_outbound_eviction.py",
+      "test": "p2p_outbound_eviction.py",
+      "arguments": []
+    },
+    {
+      "id": "wallet_transactiontime_rescan.py",
+      "test": "wallet_transactiontime_rescan.py",
+      "arguments": []
+    },
+    {
+      "id": "interface_rest.py",
+      "test": "interface_rest.py",
+      "arguments": []
+    },
+    {
+      "id": "interface_http.py",
+      "test": "interface_http.py",
+      "arguments": []
+    },
+    {
+      "id": "rpc_getchaintips.py",
+      "test": "rpc_getchaintips.py",
+      "arguments": []
+    },
+    {
+      "id": "p2p_eviction.py",
+      "test": "p2p_eviction.py",
+      "arguments": []
+    },
+    {
+      "id": "p2p_ibd_txrelay.py",
+      "test": "p2p_ibd_txrelay.py",
+      "arguments": []
+    },
+    {
+      "id": "feature_versionbits_warning.py",
+      "test": "feature_versionbits_warning.py",
+      "arguments": []
+    },
+    {
+      "id": "feature_presegwit_node_upgrade.py",
+      "test": "feature_presegwit_node_upgrade.py",
+      "arguments": []
+    },
+    {
+      "id": "wallet_importdescriptors.py",
+      "test": "wallet_importdescriptors.py",
+      "arguments": []
+    },
+    {
+      "id": "interface_bitcoin_cli.py",
+      "test": "interface_bitcoin_cli.py",
+      "arguments": []
+    },
+    {
+      "id": "feature_bip68_sequence.py",
+      "test": "feature_bip68_sequence.py",
+      "arguments": []
+    },
+    {
+      "id": "feature_chain_tiebreaks.py",
+      "test": "feature_chain_tiebreaks.py",
+      "arguments": []
+    },
+    {
+      "id": "feature_minchainwork.py",
+      "test": "feature_minchainwork.py",
+      "arguments": []
+    },
+    {
+      "id": "mining_prioritisetransaction.py",
+      "test": "mining_prioritisetransaction.py",
+      "arguments": []
+    },
+    {
+      "id": "mining_template_verification.py",
+      "test": "mining_template_verification.py",
+      "arguments": []
+    },
+    {
+      "id": "p2p_initial_headers_sync.py",
+      "test": "p2p_initial_headers_sync.py",
+      "arguments": []
+    },
+    {
+      "id": "feature_remove_pruned_files_on_startup.py",
+      "test": "feature_remove_pruned_files_on_startup.py",
+      "arguments": []
+    },
+    {
+      "id": "wallet_v3_txs.py",
+      "test": "wallet_v3_txs.py",
+      "arguments": []
+    },
+    {
+      "id": "feature_rbf.py",
+      "test": "feature_rbf.py",
+      "arguments": []
+    },
+    {
+      "id": "feature_utxo_set_hash.py",
+      "test": "feature_utxo_set_hash.py",
+      "arguments": []
+    },
+    {
+      "id": "rpc_getblockfrompeer.py",
+      "test": "rpc_getblockfrompeer.py",
+      "arguments": []
+    },
+    {
+      "id": "feature_csv_activation.py",
+      "test": "feature_csv_activation.py",
+      "arguments": []
+    },
+    {
+      "id": "mempool_updatefromblock.py",
+      "test": "mempool_updatefromblock.py",
+      "arguments": []
+    },
+    {
+      "id": "feature_coinstatsindex.py",
+      "test": "feature_coinstatsindex.py",
+      "arguments": []
+    },
+    {
+      "id": "feature_assumevalid.py",
+      "test": "feature_assumevalid.py",
+      "arguments": []
+    },
+    {
+      "id": "p2p_ibd_stalling.py",
+      "test": "p2p_ibd_stalling.py",
+      "arguments": []
+    },
+    {
+      "id": "feature_index_prune.py",
+      "test": "feature_index_prune.py",
+      "arguments": []
+    },
+    {
+      "id": "p2p_unrequested_blocks.py",
+      "test": "p2p_unrequested_blocks.py",
+      "arguments": []
+    },
+    {
+      "id": "p2p_headers_sync_with_minchainwork.py",
+      "test": "p2p_headers_sync_with_minchainwork.py",
+      "arguments": []
+    },
+    {
+      "id": "feature_taproot.py",
+      "test": "feature_taproot.py",
+      "arguments": []
+    },
+    {
+      "id": "rpc_getblockstats.py",
+      "test": "rpc_getblockstats.py",
+      "arguments": []
+    },
+    {
+      "id": "rpc_blockchain.py",
+      "test": "rpc_blockchain.py",
+      "arguments": []
+    },
+    {
+      "id": "rpc_dumptxoutset.py",
+      "test": "rpc_dumptxoutset.py",
+      "arguments": []
+    },
+    {
+      "id": "feature_assumeutxo.py",
+      "test": "feature_assumeutxo.py",
+      "arguments": []
+    },
+    {
+      "id": "wallet_assumeutxo.py",
+      "test": "wallet_assumeutxo.py",
+      "arguments": []
+    },
+    {
+      "id": "mining_basic.py",
+      "test": "mining_basic.py",
+      "arguments": []
+    },
+    {
+      "id": "feature_pruning.py",
+      "test": "feature_pruning.py",
+      "arguments": []
+    },
+    {
+      "id": "feature_segwit.py",
+      "test": "feature_segwit.py",
+      "arguments": []
+    },
+    {
+      "id": "feature_block.py",
+      "test": "feature_block.py",
+      "arguments": []
+    },
+    {
+      "id": "p2p_segwit.py",
+      "test": "p2p_segwit.py",
+      "arguments": []
+    },
+    {
+      "id": "p2p_sendheaders.py",
+      "test": "p2p_sendheaders.py",
+      "arguments": []
+    },
+    {
+      "id": "feature_signet.py",
+      "test": "feature_signet.py",
+      "arguments": []
+    },
+    {
+      "id": "tool_signet_miner.py",
+      "test": "tool_signet_miner.py",
+      "arguments": []
+    },
+    {
+      "id": "feature_filelock.py",
+      "test": "feature_filelock.py",
+      "arguments": []
+    },
+    {
+      "id": "feature_logging.py",
+      "test": "feature_logging.py",
+      "arguments": []
+    },
+    {
+      "id": "feature_settings.py",
+      "test": "feature_settings.py",
+      "arguments": []
+    },
+    {
+      "id": "feature_shutdown.py",
+      "test": "feature_shutdown.py",
+      "arguments": []
+    },
+    {
+      "id": "feature_posix_fs_permissions.py",
+      "test": "feature_posix_fs_permissions.py",
+      "arguments": []
+    },
+    {
+      "id": "feature_help.py",
+      "test": "feature_help.py",
+      "arguments": []
+    },
+    {
+      "id": "feature_uacomment.py",
+      "test": "feature_uacomment.py",
+      "arguments": []
+    },
+    {
+      "id": "rpc_uptime.py",
+      "test": "rpc_uptime.py",
+      "arguments": []
+    },
+    {
+      "id": "rpc_setban.py",
+      "test": "rpc_setban.py",
+      "arguments": []
+    },
+    {
+      "id": "p2p_ping.py",
+      "test": "p2p_ping.py",
+      "arguments": []
+    },
+    {
+      "id": "wallet_disable.py",
+      "test": "wallet_disable.py",
+      "arguments": []
+    },
+    {
+      "id": "wallet_startup.py",
+      "test": "wallet_startup.py",
+      "arguments": []
+    },
+    {
+      "id": "rpc_getdescriptorinfo.py",
+      "test": "rpc_getdescriptorinfo.py",
+      "arguments": []
+    },
+    {
+      "id": "rpc_rawtransaction.py",
+      "test": "rpc_rawtransaction.py",
+      "arguments": []
+    },
+    {
+      "id": "mempool_spend_coinbase.py",
+      "test": "mempool_spend_coinbase.py",
+      "arguments": []
+    },
+    {
+      "id": "wallet_coinbase_category.py",
+      "test": "wallet_coinbase_category.py",
+      "arguments": []
+    },
+    {
+      "id": "mempool_package_limits.py",
+      "test": "mempool_package_limits.py",
+      "arguments": []
+    },
+    {
+      "id": "mempool_cluster.py",
+      "test": "mempool_cluster.py",
+      "arguments": []
+    },
+    {
+      "id": "mempool_datacarrier.py",
+      "test": "mempool_datacarrier.py",
+      "arguments": []
+    },
+    {
+      "id": "mempool_dust.py",
+      "test": "mempool_dust.py",
+      "arguments": []
+    },
+    {
+      "id": "mempool_expiry.py",
+      "test": "mempool_expiry.py",
+      "arguments": []
+    },
+    {
+      "id": "mempool_sigoplimit.py",
+      "test": "mempool_sigoplimit.py",
+      "arguments": []
+    },
+    {
+      "id": "p2p_compactblocks_blocksonly.py",
+      "test": "p2p_compactblocks_blocksonly.py",
+      "arguments": []
+    },
+    {
+      "id": "p2p_getdata.py",
+      "test": "p2p_getdata.py",
+      "arguments": []
+    },
+    {
+      "id": "p2p_v2_misbehaving.py",
+      "test": "p2p_v2_misbehaving.py",
+      "arguments": []
+    },
+    {
+      "id": "p2p_message_capture.py",
+      "test": "p2p_message_capture.py",
+      "arguments": []
+    },
+    {
+      "id": "feature_addrman.py",
+      "test": "feature_addrman.py",
+      "arguments": []
+    },
+    {
+      "id": "feature_anchors.py",
+      "test": "feature_anchors.py",
+      "arguments": []
+    },
+    {
+      "id": "feature_asmap.py",
+      "test": "feature_asmap.py",
+      "arguments": []
+    },
+    {
+      "id": "feature_bind_extra.py",
+      "test": "feature_bind_extra.py",
+      "arguments": []
+    },
+    {
+      "id": "feature_bind_port_discover.py",
+      "test": "feature_bind_port_discover.py",
+      "arguments": []
+    },
+    {
+      "id": "feature_bind_port_externalip.py",
+      "test": "feature_bind_port_externalip.py",
+      "arguments": []
+    },
+    {
+      "id": "feature_blocksxor.py",
+      "test": "feature_blocksxor.py",
+      "arguments": []
+    },
+    {
+      "id": "feature_coinstatsindex_compatibility.py",
+      "test": "feature_coinstatsindex_compatibility.py",
+      "arguments": []
+    },
+    {
+      "id": "feature_dbcrash.py",
+      "test": "feature_dbcrash.py",
+      "arguments": []
+    },
+    {
+      "id": "feature_dirsymlinks.py",
+      "test": "feature_dirsymlinks.py",
+      "arguments": []
+    },
+    {
+      "id": "feature_discover.py",
+      "test": "feature_discover.py",
+      "arguments": []
+    },
+    {
+      "id": "feature_fastprune.py",
+      "test": "feature_fastprune.py",
+      "arguments": []
+    },
+    {
+      "id": "feature_fee_estimation.py",
+      "test": "feature_fee_estimation.py",
+      "arguments": []
+    },
+    {
+      "id": "feature_framework_miniwallet.py",
+      "test": "feature_framework_miniwallet.py",
+      "arguments": []
+    },
+    {
+      "id": "feature_framework_startup_failures.py",
+      "test": "feature_framework_startup_failures.py",
+      "arguments": []
+    },
+    {
+      "id": "feature_framework_unit_tests.py",
+      "test": "feature_framework_unit_tests.py",
+      "arguments": []
+    },
+    {
+      "id": "feature_includeconf.py",
+      "test": "feature_includeconf.py",
+      "arguments": []
+    },
+    {
+      "id": "feature_maxuploadtarget.py",
+      "test": "feature_maxuploadtarget.py",
+      "arguments": []
+    },
+    {
+      "id": "feature_port.py",
+      "test": "feature_port.py",
+      "arguments": []
+    },
+    {
+      "id": "feature_proxy.py",
+      "test": "feature_proxy.py",
+      "arguments": []
+    },
+    {
+      "id": "feature_reindex_init.py",
+      "test": "feature_reindex_init.py",
+      "arguments": []
+    },
+    {
+      "id": "feature_startupnotify.py",
+      "test": "feature_startupnotify.py",
+      "arguments": []
+    },
+    {
+      "id": "feature_unsupported_utxo_db.py",
+      "test": "feature_unsupported_utxo_db.py",
+      "arguments": []
+    },
+    {
+      "id": "interface_ipc.py",
+      "test": "interface_ipc.py",
+      "arguments": []
+    },
+    {
+      "id": "interface_ipc_mining.py",
+      "test": "interface_ipc_mining.py",
+      "arguments": []
+    },
+    {
+      "id": "interface_usdt_coinselection.py",
+      "test": "interface_usdt_coinselection.py",
+      "arguments": []
+    },
+    {
+      "id": "interface_usdt_mempool.py",
+      "test": "interface_usdt_mempool.py",
+      "arguments": []
+    },
+    {
+      "id": "interface_usdt_net.py",
+      "test": "interface_usdt_net.py",
+      "arguments": []
+    },
+    {
+      "id": "interface_usdt_utxocache.py",
+      "test": "interface_usdt_utxocache.py",
+      "arguments": []
+    },
+    {
+      "id": "interface_usdt_validation.py",
+      "test": "interface_usdt_validation.py",
+      "arguments": []
+    },
+    {
+      "id": "interface_zmq.py",
+      "test": "interface_zmq.py",
+      "arguments": []
+    },
+    {
+      "id": "mempool_compatibility.py",
+      "test": "mempool_compatibility.py",
+      "arguments": []
+    },
+    {
+      "id": "p2p_add_connections.py",
+      "test": "p2p_add_connections.py",
+      "arguments": []
+    },
+    {
+      "id": "p2p_dns_seeds.py",
+      "test": "p2p_dns_seeds.py",
+      "arguments": []
+    },
+    {
+      "id": "p2p_feefilter.py",
+      "test": "p2p_feefilter.py",
+      "arguments": []
+    },
+    {
+      "id": "p2p_filter.py",
+      "test": "p2p_filter.py",
+      "arguments": []
+    },
+    {
+      "id": "p2p_i2p_ports.py",
+      "test": "p2p_i2p_ports.py",
+      "arguments": []
+    },
+    {
+      "id": "p2p_i2p_sessions.py",
+      "test": "p2p_i2p_sessions.py",
+      "arguments": []
+    },
+    {
+      "id": "p2p_invalid_locator.py",
+      "test": "p2p_invalid_locator.py",
+      "arguments": []
+    },
+    {
+      "id": "p2p_net_deadlock.py",
+      "test": "p2p_net_deadlock.py",
+      "arguments": []
+    },
+    {
+      "id": "p2p_nobloomfilter_messages.py",
+      "test": "p2p_nobloomfilter_messages.py",
+      "arguments": []
+    },
+    {
+      "id": "p2p_opportunistic_1p1c.py",
+      "test": "p2p_opportunistic_1p1c.py",
+      "arguments": []
+    },
+    {
+      "id": "p2p_private_broadcast_retry_v1.py",
+      "test": "p2p_private_broadcast_retry_v1.py",
+      "arguments": []
+    },
+    {
+      "id": "p2p_sendtxrcncl.py",
+      "test": "p2p_sendtxrcncl.py",
+      "arguments": []
+    },
+    {
+      "id": "p2p_timeouts.py",
+      "test": "p2p_timeouts.py",
+      "arguments": []
+    },
+    {
+      "id": "rpc_bind.py --ipv4",
+      "test": "rpc_bind.py",
+      "arguments": [
+        "--ipv4"
+      ]
+    },
+    {
+      "id": "rpc_bind.py --ipv6",
+      "test": "rpc_bind.py",
+      "arguments": [
+        "--ipv6"
+      ]
+    },
+    {
+      "id": "rpc_bind.py --nonloopback",
+      "test": "rpc_bind.py",
+      "arguments": [
+        "--nonloopback"
+      ]
+    },
+    {
+      "id": "rpc_deprecated.py",
+      "test": "rpc_deprecated.py",
+      "arguments": []
+    },
+    {
+      "id": "rpc_estimatefee.py",
+      "test": "rpc_estimatefee.py",
+      "arguments": []
+    },
+    {
+      "id": "rpc_getdescriptoractivity.py",
+      "test": "rpc_getdescriptoractivity.py",
+      "arguments": []
+    },
+    {
+      "id": "rpc_gettxspendingprevout.py",
+      "test": "rpc_gettxspendingprevout.py",
+      "arguments": []
+    },
+    {
+      "id": "rpc_misc.py",
+      "test": "rpc_misc.py",
+      "arguments": []
+    },
+    {
+      "id": "rpc_named_arguments.py",
+      "test": "rpc_named_arguments.py",
+      "arguments": []
+    },
+    {
+      "id": "rpc_orphans.py",
+      "test": "rpc_orphans.py",
+      "arguments": []
+    },
+    {
+      "id": "rpc_signer.py",
+      "test": "rpc_signer.py",
+      "arguments": []
+    },
+    {
+      "id": "rpc_signmessagewithprivkey.py",
+      "test": "rpc_signmessagewithprivkey.py",
+      "arguments": []
+    },
+    {
+      "id": "rpc_txoutproof.py",
+      "test": "rpc_txoutproof.py",
+      "arguments": []
+    },
+    {
+      "id": "rpc_users.py",
+      "test": "rpc_users.py",
+      "arguments": []
+    },
+    {
+      "id": "rpc_whitelist.py",
+      "test": "rpc_whitelist.py",
+      "arguments": []
+    },
+    {
+      "id": "tool_bitcoin.py",
+      "test": "tool_bitcoin.py",
+      "arguments": []
+    },
+    {
+      "id": "tool_bitcoin_chainstate.py",
+      "test": "tool_bitcoin_chainstate.py",
+      "arguments": []
+    },
+    {
+      "id": "tool_rpcauth.py",
+      "test": "tool_rpcauth.py",
+      "arguments": []
+    },
+    {
+      "id": "tool_utxo_to_sqlite.py",
+      "test": "tool_utxo_to_sqlite.py",
+      "arguments": []
+    },
+    {
+      "id": "wallet_abandonconflict.py",
+      "test": "wallet_abandonconflict.py",
+      "arguments": []
+    },
+    {
+      "id": "wallet_address_types.py",
+      "test": "wallet_address_types.py",
+      "arguments": []
+    },
+    {
+      "id": "wallet_avoidreuse.py",
+      "test": "wallet_avoidreuse.py",
+      "arguments": []
+    },
+    {
+      "id": "wallet_backwards_compatibility.py",
+      "test": "wallet_backwards_compatibility.py",
+      "arguments": []
+    },
+    {
+      "id": "wallet_blank.py",
+      "test": "wallet_blank.py",
+      "arguments": []
+    },
+    {
+      "id": "wallet_conflicts.py",
+      "test": "wallet_conflicts.py",
+      "arguments": []
+    },
+    {
+      "id": "wallet_create_tx.py",
+      "test": "wallet_create_tx.py",
+      "arguments": []
+    },
+    {
+      "id": "wallet_createwallet.py --usecli",
+      "test": "wallet_createwallet.py",
+      "arguments": [
+        "--usecli"
+      ]
+    },
+    {
+      "id": "wallet_createwallet.py",
+      "test": "wallet_createwallet.py",
+      "arguments": []
+    },
+    {
+      "id": "wallet_createwalletdescriptor.py",
+      "test": "wallet_createwalletdescriptor.py",
+      "arguments": []
+    },
+    {
+      "id": "wallet_crosschain.py",
+      "test": "wallet_crosschain.py",
+      "arguments": []
+    },
+    {
+      "id": "wallet_encryption.py",
+      "test": "wallet_encryption.py",
+      "arguments": []
+    },
+    {
+      "id": "wallet_fast_rescan.py",
+      "test": "wallet_fast_rescan.py",
+      "arguments": []
+    },
+    {
+      "id": "wallet_gethdkeys.py",
+      "test": "wallet_gethdkeys.py",
+      "arguments": []
+    },
+    {
+      "id": "wallet_keypool.py",
+      "test": "wallet_keypool.py",
+      "arguments": []
+    },
+    {
+      "id": "wallet_listdescriptors.py",
+      "test": "wallet_listdescriptors.py",
+      "arguments": []
+    },
+    {
+      "id": "wallet_migration.py",
+      "test": "wallet_migration.py",
+      "arguments": []
+    },
+    {
+      "id": "wallet_miniscript.py",
+      "test": "wallet_miniscript.py",
+      "arguments": []
+    },
+    {
+      "id": "wallet_miniscript_decaying_multisig_descriptor_psbt.py",
+      "test": "wallet_miniscript_decaying_multisig_descriptor_psbt.py",
+      "arguments": []
+    },
+    {
+      "id": "wallet_musig.py",
+      "test": "wallet_musig.py",
+      "arguments": []
+    },
+    {
+      "id": "wallet_rescan_unconfirmed.py",
+      "test": "wallet_rescan_unconfirmed.py",
+      "arguments": []
+    },
+    {
+      "id": "wallet_sendmany.py",
+      "test": "wallet_sendmany.py",
+      "arguments": []
+    },
+    {
+      "id": "wallet_signmessagewithaddress.py",
+      "test": "wallet_signmessagewithaddress.py",
+      "arguments": []
+    },
+    {
+      "id": "wallet_spend_unconfirmed.py",
+      "test": "wallet_spend_unconfirmed.py",
+      "arguments": []
+    },
+    {
+      "id": "wallet_timelock.py",
+      "test": "wallet_timelock.py",
+      "arguments": []
+    },
+    {
+      "id": "tool_bench_sanity_check.py",
+      "test": "tool_bench_sanity_check.py",
+      "arguments": []
+    }
+  ],
+  "dependencies_before": {
+    "contrib/linearize/linearize-data.py": "20caa157a2af3e82874e32b9974e67d6356c393e1d19f018f4e0cf8bf704dd87",
+    "contrib/linearize/linearize-hashes.py": "02d187590dbd91d8321f3d58adbd344540df745a76a69ae57a2e2a80b6f232be",
+    "contrib/signet/miner": "2df980a48e688a9e1b54f1764772edd941c0e7008bcc99faa65546d263e8dffe",
+    "src/kernel/chainparams.cpp": "9765ddda60b8b95126350e54a90ff23e055b25bd87e92bd7bb027ef8afddda13",
+    "src/pocx/consensus/regtest_functional_assumeutxo.inc": "9e1abbae3942cc638f94b7c9ad4733dc156e24430873ae099e7d9df08ff34262",
+    "src/pocx/rpc/client_conversion_params.inc": "37b1452f3507f2d452ee05a0bb44bb63d44fa98d7226f36d0ee37612f83dc032",
+    "src/pocx/rpc/mining.cpp": "5b79761cb582dbbf1e581366ee1e99cc24b7768685845d2e79f92901c619d959",
+    "src/rpc/client.cpp": "eb5c6a6a2b1cfa41a99f40388c0d404649e62e4fb59c5e36774d9f160135b7ce",
+    "test/pocx/functional/feature_signet.py": "7e154a2359c83165289f3bcb74641af92965f58db655c7e6ed958cf639cbca8a",
+    "test/pocx/kernel/provenance.json": "af19fbac2cff2fefc1db18d7f65c6e15a9b9e09484ff21f50ce113142ce97904"
+  },
+  "status": "terminal",
+  "exit_code": 1,
+  "seconds": 1443.685714954976,
+  "dependencies_after": {
+    "contrib/linearize/linearize-data.py": "20caa157a2af3e82874e32b9974e67d6356c393e1d19f018f4e0cf8bf704dd87",
+    "contrib/linearize/linearize-hashes.py": "02d187590dbd91d8321f3d58adbd344540df745a76a69ae57a2e2a80b6f232be",
+    "contrib/signet/miner": "2df980a48e688a9e1b54f1764772edd941c0e7008bcc99faa65546d263e8dffe",
+    "src/kernel/chainparams.cpp": "9765ddda60b8b95126350e54a90ff23e055b25bd87e92bd7bb027ef8afddda13",
+    "src/pocx/consensus/regtest_functional_assumeutxo.inc": "9e1abbae3942cc638f94b7c9ad4733dc156e24430873ae099e7d9df08ff34262",
+    "src/pocx/rpc/client_conversion_params.inc": "37b1452f3507f2d452ee05a0bb44bb63d44fa98d7226f36d0ee37612f83dc032",
+    "src/pocx/rpc/mining.cpp": "5b79761cb582dbbf1e581366ee1e99cc24b7768685845d2e79f92901c619d959",
+    "src/rpc/client.cpp": "eb5c6a6a2b1cfa41a99f40388c0d404649e62e4fb59c5e36774d9f160135b7ce",
+    "test/pocx/functional/feature_signet.py": "7e154a2359c83165289f3bcb74641af92965f58db655c7e6ed958cf639cbca8a",
+    "test/pocx/kernel/provenance.json": "af19fbac2cff2fefc1db18d7f65c6e15a9b9e09484ff21f50ce113142ce97904"
+  },
+  "report": "build-pocx-clean/pocx-results-fgwf4s35",
+  "dependencies_unchanged": true
+}

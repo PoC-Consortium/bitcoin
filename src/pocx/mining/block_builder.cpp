@@ -85,6 +85,9 @@ std::unique_ptr<interfaces::BlockTemplate> PoCXBlockBuilder::CreateTemplate(
     ::node::BlockCreateOptions options;
     options.coinbase_output_script = coinbase_script;
     options.use_mempool = true;
+    // This builder submits a finished coinbase without adding an extranonce.
+    // At heights 1..16 the BIP34 prefix alone is shorter than consensus permits.
+    options.include_dummy_extranonce = true;
 
     return m_mining->createNewBlock(options);
 }

@@ -1089,8 +1089,8 @@
       "sha256": "369b83887fb081f69f77b779193d463412b353993a965989ec6b98d9b756b7d7"
     },
     "test/pocx/common.py": {
-      "review": "Unit-package dependency extraction: existing native checks/vectors/generators unchanged; shared runner helpers moved byte-for-byte out of functional staging. Unit-only infrastructure checks extracted from previously passing full infrastructure suite.",
-      "sha256": "a5a96d860136c3f83dbe72e8e41f8da61b50a8ee898b4b4369451e75b9769aa2"
+      "review": "Unit-package dependency extraction: existing native checks/vectors/generators unchanged; shared runner helpers moved byte-for-byte out of functional staging. Unit-only infrastructure checks extracted from previously passing full infrastructure suite. Functional-package checkout verification adds one final root-level ignored build<identity> scratch fallback when the existing nested fallback exceeds80bytes. Worktree confinement, distinct build identities and explicit rejection of impossible paths remain unchanged; dedicated failure-path regression covers each condition.",
+      "sha256": "7e4e93543e42ab54bf2bacb656fd56d03da38855a0ee823dcc4986bb9aabaf3b"
     },
     "test/pocx/register_unit.py": {
       "review": "Unit-package dependency extraction: existing native checks/vectors/generators unchanged; shared runner helpers moved byte-for-byte out of functional staging. Unit-only infrastructure checks extracted from previously passing full infrastructure suite.",

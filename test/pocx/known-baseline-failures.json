@@ -1,0 +1,254 @@
+[
+  {
+    "suite": "amount_tests",
+    "present_in_baseline": true,
+    "first_failure": "[NON-XML-CHAR-0x1B][0;39;49m./test/amount_tests.cpp(140): [NON-XML-CHAR-0x1B][1;31;49merror: in \"amount_tests/ToStringTest\": check feeRate.ToString() == \"0.00000001 BTC/kvB\" has failed [0.00000001 BTCX/kvB != 0.00000001 BTC/kvB][NON-XML-CHAR-0x1B][0;39;49m",
+    "baseline_log": "artifacts/ctest-pocx-baseline.log",
+    "m1_results": "build-pocx/pocx-unit-llwximxf/junit.xml",
+    "reproducer": "TMPDIR=\"$PWD/build-pocx/test-tmp\" timeout 180 build-pocx/bin/test_pocx --run_test=amount_tests --log_level=test_suite",
+    "status": "pre-existing test/production incompatibility; diagnosis required; retained in full selection"
+  },
+  {
+    "suite": "bip324_tests",
+    "present_in_baseline": true,
+    "first_failure": "./test/bip324_tests.cpp(67): [NON-XML-CHAR-0x1B][1;31;49merror: in \"bip324_tests/packet_test_vectors\": check std::ranges::equal(out_session_id, cipher.GetSessionID()) has failed[NON-XML-CHAR-0x1B][0;39;49m",
+    "baseline_log": "artifacts/ctest-pocx-baseline.log",
+    "m1_results": "build-pocx/pocx-unit-llwximxf/junit.xml",
+    "reproducer": "TMPDIR=\"$PWD/build-pocx/test-tmp\" timeout 180 build-pocx/bin/test_pocx --run_test=bip324_tests --log_level=test_suite",
+    "status": "pre-existing test/production incompatibility; diagnosis required; retained in full selection"
+  },
+  {
+    "suite": "blockencodings_tests",
+    "present_in_baseline": true,
+    "first_failure": "./test/blockencodings_tests.cpp(89): [NON-XML-CHAR-0x1B][1;31;49merror: in \"blockencodings_tests/SimpleRoundTripTest\": check partialBlock.InitData(shortIDs2, empty_extra_txn) == READ_STATUS_OK has failed[NON-XML-CHAR-0x1B][0;39;49m",
+    "baseline_log": "artifacts/ctest-pocx-baseline.log",
+    "m1_results": "build-pocx/pocx-unit-llwximxf/junit.xml",
+    "reproducer": "TMPDIR=\"$PWD/build-pocx/test-tmp\" timeout 180 build-pocx/bin/test_pocx --run_test=blockencodings_tests --log_level=test_suite",
+    "status": "pre-existing test/production incompatibility; diagnosis required; retained in full selection"
+  },
+  {
+    "suite": "blockfilter_index_tests",
+    "present_in_baseline": true,
+    "first_failure": "interface.cpp:182] [UpdatedBlockTip] [validation] Enqueuing UpdatedBlockTip: new block hash=034f4cd2b7cedd8864ca22011a8f19b5c283bf9826373d38f1b406e67ed1dada fork block hash=162d91b8284a6d5d3203dfc94720da26fc754f709d384a4334ddf7a1cacc06e0 (in IBD=false)\n2026-10-07T17:33:40.985691Z (mocktime: 2020-08-31T17:05:54Z) [test] [validationinterface.cpp:190] [ActiveTipChange] [validation] ActiveTipChange: new block hash=034f4cd2b7cedd8864ca22011a8f19b5c283bf9826373d38f1b406e67ed1dada block height=49\n2026-10-07T17:33:40.985699Z (mocktime: 2020-08-31T17:05:54Z) [scheduler] [validationinterface.cpp:229] [operator()] [validation] MempoolTransactionsRemovedForBlock: block height=49 txs removed=0\n2026-10-07T17:33:40.985711Z (mocktime: 2020-08-31T17:05:54Z) [test] [node/miner.cpp:223] [CreateNewBlock] CreateNewBlock(): block weight: 1764 txs: 0 fees: 0 sigops 400\n2026-10-07T17:33:40.985720Z (mocktime: 2020-08-31T17:05:54Z) [test] [validation.cpp:2636] [ConnectBlock] [bench]     - Sanity checks: 0.00ms [0.00s (0.02ms/blk)]\n2026-10-07T17:33:40.985726Z (mocktime: 2020-08-31T17:05:54Z) [test] [validation.cpp:...\n[This part of the test output was removed since it exceeds the threshold of 307200 bytes.]\n",
+    "baseline_log": "artifacts/ctest-pocx-baseline.log",
+    "m1_results": "build-pocx/pocx-unit-llwximxf/junit.xml",
+    "reproducer": "TMPDIR=\"$PWD/build-pocx/test-tmp\" timeout 180 build-pocx/bin/test_pocx --run_test=blockfilter_index_tests --log_level=test_suite",
+    "status": "pre-existing test/production incompatibility; diagnosis required; retained in full selection"
+  },
+  {
+    "suite": "blockfilter_tests",
+    "present_in_baseline": true,
+    "first_failure": "[NON-XML-CHAR-0x1B][0;39;49m./test/blockfilter_tests.cpp(155): [NON-XML-CHAR-0x1B][4;31;49mfatal error: in \"blockfilter_tests/blockfilters_json_test\": critical check DecodeHexBlk(block, test[pos++].get_str()) has failed[NON-XML-CHAR-0x1B][0;39;49m",
+    "baseline_log": "artifacts/ctest-pocx-baseline.log",
+    "m1_results": "build-pocx/pocx-unit-llwximxf/junit.xml",
+    "reproducer": "TMPDIR=\"$PWD/build-pocx/test-tmp\" timeout 180 build-pocx/bin/test_pocx --run_test=blockfilter_tests --log_level=test_suite",
+    "status": "pre-existing test/production incompatibility; diagnosis required; retained in full selection"
+  },
+  {
+    "suite": "blockmanager_tests",
+    "present_in_baseline": true,
+    "first_failure": "time: 2020-08-31T17:05:54Z) [test] [validation.cpp:3038] [ConnectBlock] [bench]     - Index writing: 0.00ms [0.00s (0.00ms/blk)]\n2026-10-07T17:33:41.170573Z (mocktime: 2020-08-31T17:05:54Z) [test] [validationinterface.cpp:255] [BlockChecked] [validation] BlockChecked: block hash=034f4cd2b7cedd8864ca22011a8f19b5c283bf9826373d38f1b406e67ed1dada state=Valid\n2026-10-07T17:33:41.170576Z (mocktime: 2020-08-31T17:05:54Z) [test] [validation.cpp:3474] [ConnectTip] [bench]   - Connect total: 0.10ms [0.01s (0.05ms/blk)]\n2026-10-07T17:33:41.170581Z (mocktime: 2020-08-31T17:05:54Z) [test] [validation.cpp:3482] [ConnectTip] [bench]   - Flush: 0.00ms [0.00s (0.00ms/blk)]\n2026-10-07T17:33:41.170585Z (mocktime: 2020-08-31T17:05:54Z) [test] [validation.cpp:3492] [ConnectTip] [bench]   - Writing chainstate: 0.00ms [0.00s (0.00ms/blk)]\n2026-10-07T17:33:41.170588Z (mocktime: 2020-08-31T17:05:54Z) [test] [validationinterface.cpp:229] [MempoolTransactionsRemovedForBlock] [validation] Enqueuing MempoolTransactionsRemovedForBlock: block height=49 txs removed=0\n2026-10-07T17:33:41.170598Z (mocktime: 2020-08-31T17:...\n[This part of the test output was removed since it exceeds the threshold of 307200 bytes.]\n",
+    "baseline_log": "artifacts/ctest-pocx-baseline.log",
+    "m1_results": "build-pocx/pocx-unit-llwximxf/junit.xml",
+    "reproducer": "TMPDIR=\"$PWD/build-pocx/test-tmp\" timeout 180 build-pocx/bin/test_pocx --run_test=blockmanager_tests --log_level=test_suite",
+    "status": "pre-existing test/production incompatibility; diagnosis required; retained in full selection"
+  },
+  {
+    "suite": "bloom_tests",
+    "present_in_baseline": true,
+    "first_failure": "unknown location(0): [NON-XML-CHAR-0x1B][4;31;49mfatal error: in \"bloom_tests/merkle_block_1\": std::ios_base::failure[abi:cxx11]: DataStream::read(): end of data: iostream error[NON-XML-CHAR-0x1B][0;39;49m",
+    "baseline_log": "artifacts/ctest-pocx-baseline.log",
+    "m1_results": "build-pocx/pocx-unit-llwximxf/junit.xml",
+    "reproducer": "TMPDIR=\"$PWD/build-pocx/test-tmp\" timeout 180 build-pocx/bin/test_pocx --run_test=bloom_tests --log_level=test_suite",
+    "status": "pre-existing test/production incompatibility; diagnosis required; retained in full selection"
+  },
+  {
+    "suite": "denialofservice_tests",
+    "present_in_baseline": true,
+    "first_failure": "./test/denialofservice_tests.cpp(177): [NON-XML-CHAR-0x1B][1;31;49merror: in \"denialofservice_tests/stale_tip_peer_management\": check connman->GetTryNewOutboundPeer() has failed[NON-XML-CHAR-0x1B][0;39;49m",
+    "baseline_log": "artifacts/ctest-pocx-baseline.log",
+    "m1_results": "build-pocx/pocx-unit-llwximxf/junit.xml",
+    "reproducer": "TMPDIR=\"$PWD/build-pocx/test-tmp\" timeout 180 build-pocx/bin/test_pocx --run_test=denialofservice_tests --log_level=test_suite",
+    "status": "pre-existing test/production incompatibility; diagnosis required; retained in full selection"
+  },
+  {
+    "suite": "descriptor_tests",
+    "present_in_baseline": true,
+    "first_failure": "./test/descriptor_tests.cpp(585): [NON-XML-CHAR-0x1B][1;31;49merror: in \"descriptor_tests/descriptor_test\": check desc->ToString() == expected_desc + \"#\" + checksum has failed [addr(bK7PNsQabMo698pKVqt7be8e9c9s7hNayZ)#4377cvda != addr(17P7ge56F2QcdHxxRBa2NyzmejFggPwBJ9)#fz3jua23][NON-XML-CHAR-0x1B][0;39;49m",
+    "baseline_log": "artifacts/ctest-pocx-baseline.log",
+    "m1_results": "build-pocx/pocx-unit-llwximxf/junit.xml",
+    "reproducer": "TMPDIR=\"$PWD/build-pocx/test-tmp\" timeout 180 build-pocx/bin/test_pocx --run_test=descriptor_tests --log_level=test_suite",
+    "status": "pre-existing test/production incompatibility; diagnosis required; retained in full selection"
+  },
+  {
+    "suite": "headers_sync_chainwork_tests",
+    "present_in_baseline": true,
+    "first_failure": "./test/headers_sync_chainwork_tests.cpp(171): [NON-XML-CHAR-0x1B][4;31;49mfatal error: in \"headers_sync_chainwork_tests/sneaky_redownload\": critical check hss.GetState() == State::PRESYNC has failed [2 != 0][NON-XML-CHAR-0x1B][0;39;49m",
+    "baseline_log": "artifacts/ctest-pocx-baseline.log",
+    "m1_results": "build-pocx/pocx-unit-llwximxf/junit.xml",
+    "reproducer": "TMPDIR=\"$PWD/build-pocx/test-tmp\" timeout 180 build-pocx/bin/test_pocx --run_test=headers_sync_chainwork_tests --log_level=test_suite",
+    "status": "pre-existing test/production incompatibility; diagnosis required; retained in full selection"
+  },
+  {
+    "suite": "key_io_tests",
+    "present_in_baseline": true,
+    "first_failure": "./test/key_io_tests.cpp(59): [NON-XML-CHAR-0x1B][1;31;49merror: in \"key_io_tests/key_io_valid_parse\": !IsValid:[\"1FsSia9rv4NeEwvJ2GvXrX7LyxYspbN2mo\",\"76a914a31c06bd463e3923bc1aadbde48b16976c08071788ac\",{\"chain\":\"main\",\"isPrivkey\":false}][NON-XML-CHAR-0x1B][0;39;49m",
+    "baseline_log": "artifacts/ctest-pocx-baseline.log",
+    "m1_results": "build-pocx/pocx-unit-llwximxf/junit.xml",
+    "reproducer": "TMPDIR=\"$PWD/build-pocx/test-tmp\" timeout 180 build-pocx/bin/test_pocx --run_test=key_io_tests --log_level=test_suite",
+    "status": "pre-existing test/production incompatibility; diagnosis required; retained in full selection"
+  },
+  {
+    "suite": "key_tests",
+    "present_in_baseline": true,
+    "first_failure": "./test/key_tests.cpp(79): [NON-XML-CHAR-0x1B][1;31;49merror: in \"key_tests/key_test1\": check DecodeDestination(addr1) == CTxDestination(PKHash(pubkey1)) has failed[NON-XML-CHAR-0x1B][0;39;49m",
+    "baseline_log": "artifacts/ctest-pocx-baseline.log",
+    "m1_results": "build-pocx/pocx-unit-llwximxf/junit.xml",
+    "reproducer": "TMPDIR=\"$PWD/build-pocx/test-tmp\" timeout 180 build-pocx/bin/test_pocx --run_test=key_tests --log_level=test_suite",
+    "status": "pre-existing test/production incompatibility; diagnosis required; retained in full selection"
+  },
+  {
+    "suite": "merkleblock_tests",
+    "present_in_baseline": true,
+    "first_failure": "[NON-XML-CHAR-0x1B][0;39;49munknown location(0): [NON-XML-CHAR-0x1B][4;31;49mfatal error: in \"merkleblock_tests/merkleblock_construct_from_txids_found\": std::ios_base::failure[abi:cxx11]: DataStream::read(): end of data: iostream error[NON-XML-CHAR-0x1B][0;39;49m",
+    "baseline_log": "artifacts/ctest-pocx-baseline.log",
+    "m1_results": "build-pocx/pocx-unit-llwximxf/junit.xml",
+    "reproducer": "TMPDIR=\"$PWD/build-pocx/test-tmp\" timeout 180 build-pocx/bin/test_pocx --run_test=merkleblock_tests --log_level=test_suite",
+    "status": "pre-existing test/production incompatibility; diagnosis required; retained in full selection"
+  },
+  {
+    "suite": "miner_tests",
+    "present_in_baseline": true,
+    "first_failure": "./test/miner_tests.cpp(793): [NON-XML-CHAR-0x1B][4;31;49mfatal error: in \"miner_tests/CreateNewBlock_validity\": critical check reason == \"high-hash\" has failed [bad-pocx-sig != high-hash][NON-XML-CHAR-0x1B][0;39;49m",
+    "baseline_log": "artifacts/ctest-pocx-baseline.log",
+    "m1_results": "build-pocx/pocx-unit-llwximxf/junit.xml",
+    "reproducer": "TMPDIR=\"$PWD/build-pocx/test-tmp\" timeout 180 build-pocx/bin/test_pocx --run_test=miner_tests --log_level=test_suite",
+    "status": "pre-existing test/production incompatibility; diagnosis required; retained in full selection"
+  },
+  {
+    "suite": "miniminer_tests",
+    "present_in_baseline": true,
+    "first_failure": ": 0.00ms, validity: 0.03ms (total 0.04ms)\n2026-10-07T17:33:42.025191Z (mocktime: 2020-08-31T17:03:38Z) [scheduler] [validationinterface.cpp:219] [operator()] [validation] BlockConnected: block hash=162d91b8284a6d5d3203dfc94720da26fc754f709d384a4334ddf7a1cacc06e0 block height=48\n2026-10-07T17:33:42.025206Z (mocktime: 2020-08-31T17:03:38Z) [scheduler] [validationinterface.cpp:182] [operator()] [validation] UpdatedBlockTip: new block hash=162d91b8284a6d5d3203dfc94720da26fc754f709d384a4334ddf7a1cacc06e0 fork block hash=e9fff89c042605c3ad5c42bc290cfc3a0ca949c9c349e99dc80fb796089abf7b (in IBD=false)\n2026-10-07T17:33:42.026352Z (mocktime: 2020-08-31T17:05:54Z) [test] [pocx/regtest/forging.cpp:194] [ForgeRegtestBlockImpl] [pocx] ForgeRegtestBlock: height=49 nonce=49 quality=268819071111493844 poc_time=136 nTime=1598893554\n2026-10-07T17:33:42.026843Z (mocktime: 2020-08-31T17:05:54Z) [test] [validationinterface.cpp:261] [NewPoWValidBlock] [validation] NewPoWValidBlock: block hash=034f4cd2b7cedd8864ca22011a8f19b5c283bf9826373d38f1b406e67ed1dada\n2026-10-07T17:33:42.026876Z (mocktime: 2020-08-31T17:05...\n[This part of the test output was removed since it exceeds the threshold of 307200 bytes.]\n",
+    "baseline_log": "artifacts/ctest-pocx-baseline.log",
+    "m1_results": "build-pocx/pocx-unit-llwximxf/junit.xml",
+    "reproducer": "TMPDIR=\"$PWD/build-pocx/test-tmp\" timeout 180 build-pocx/bin/test_pocx --run_test=miniminer_tests --log_level=test_suite",
+    "status": "pre-existing test/production incompatibility; diagnosis required; retained in full selection"
+  },
+  {
+    "suite": "net_peer_connection_tests",
+    "present_in_baseline": true,
+    "first_failure": "validation] BlockConnected: block hash=6ab422073e327d42a0e5dfaaa26564324ddb225e53c64da89283cd4e3dfb7ac6 block height=0\n2026-10-07T17:33:41.987377Z [scheduler] [validationinterface.cpp:182] [operator()] [validation] UpdatedBlockTip: new block hash=6ab422073e327d42a0e5dfaaa26564324ddb225e53c64da89283cd4e3dfb7ac6 fork block hash=null (in IBD=true)\n2026-10-07T17:33:41.987757Z [test] [banman.cpp:42] [LoadBanlist] Recreating the banlist database\n2026-10-07T17:33:41.987810Z [test] [banman.cpp:68] [DumpBanlist] [net] Flushed 0 banned node addresses/subnets to disk  0ms\n2026-10-07T17:33:41.987816Z [test] [net.cpp:2451] [SetTryNewOutboundPeer] [net] setting try another outbound peer=false\n2026-10-07T17:33:41.987823Z [test] [net.cpp:3389] [SetNetworkActive] SetNetworkActive: true\n2026-10-07T17:33:41.987841Z [test] [net.cpp:2451] [SetTryNewOutboundPeer] [net] setting try another outbound peer=false\n2026-10-07T17:33:41.987844Z [test] [net.cpp:3389] [SetNetworkActive] SetNetworkActive: true\n2026-10-07T17:33:41.987884Z [test] [net.cpp:4039] [CNode] [net] Added connection to 127.0.0.1:8338 peer=1\nFatal error: expected message not found in the debug log: 'Added connection to 127.0.0.1:8333 peer=1'\n",
+    "baseline_log": "artifacts/ctest-pocx-baseline.log",
+    "m1_results": "build-pocx/pocx-unit-llwximxf/junit.xml",
+    "reproducer": "TMPDIR=\"$PWD/build-pocx/test-tmp\" timeout 180 build-pocx/bin/test_pocx --run_test=net_peer_connection_tests --log_level=test_suite",
+    "status": "pre-existing test/production incompatibility; diagnosis required; retained in full selection"
+  },
+  {
+    "suite": "peerman_tests",
+    "present_in_baseline": true,
+    "first_failure": "2026-10-07T17:33:42.003812Z (mocktime: 2011-02-02T23:16:43Z) [test] [validation.cpp:3007] [ConnectBlock] [be./test/peerman_tests.cpp:31 void peerman_tests::mineBlock(const node::NodeContext&, std::chrono::seconds): Assertion `node.chainman->ProcessNewBlock(std::make_shared<const CBlock>(block), true, true, nullptr)' failed.",
+    "baseline_log": "artifacts/ctest-pocx-baseline.log",
+    "m1_results": "build-pocx/pocx-unit-llwximxf/junit.xml",
+    "reproducer": "TMPDIR=\"$PWD/build-pocx/test-tmp\" timeout 180 build-pocx/bin/test_pocx --run_test=peerman_tests --log_level=test_suite",
+    "status": "pre-existing test/production incompatibility; diagnosis required; retained in full selection"
+  },
+  {
+    "suite": "rpc_tests",
+    "present_in_baseline": true,
+    "first_failure": "unknown location(0): [NON-XML-CHAR-0x1B][4;31;49mfatal error: in \"rpc_tests/rpc_rawsign\": std::runtime_error: Invalid Bitcoin address: 3HqAe9LtNBjnsfM4CyYaWTnvCaUYT7v4oZ[NON-XML-CHAR-0x1B][0;39;49m",
+    "baseline_log": "artifacts/ctest-pocx-baseline.log",
+    "m1_results": "build-pocx/pocx-unit-llwximxf/junit.xml",
+    "reproducer": "TMPDIR=\"$PWD/build-pocx/test-tmp\" timeout 180 build-pocx/bin/test_pocx --run_test=rpc_tests --log_level=test_suite",
+    "status": "pre-existing test/production incompatibility; diagnosis required; retained in full selection"
+  },
+  {
+    "suite": "script_standard_tests",
+    "present_in_baseline": true,
+    "first_failure": "./test/script_standard_tests.cpp(451): [NON-XML-CHAR-0x1B][1;31;49merror: in \"script_standard_tests/script_standard_taproot_builder\": check EncodeDestination(builder.GetOutput()) == \"bc1pj6gaw944fy0xpmzzu45ugqde4rz7mqj5kj0tg8kmr5f0pjq8vnaqgynnge\" has failed [pocx1pj6gaw944fy0xpmzzu45ugqde4rz7mqj5kj0tg8kmr5f0pjq8vnaq3qydm5 != bc1pj6gaw944fy0xpmzzu45ugqde4rz7mqj5kj0tg8kmr5f0pjq8vnaqgynnge][NON-XML-CHAR-0x1B][0;39;49m",
+    "baseline_log": "artifacts/ctest-pocx-baseline.log",
+    "m1_results": "build-pocx/pocx-unit-llwximxf/junit.xml",
+    "reproducer": "TMPDIR=\"$PWD/build-pocx/test-tmp\" timeout 180 build-pocx/bin/test_pocx --run_test=script_standard_tests --log_level=test_suite",
+    "status": "pre-existing test/production incompatibility; diagnosis required; retained in full selection"
+  },
+  {
+    "suite": "timeoffsets_tests",
+    "present_in_baseline": true,
+    "first_failure": "./test/timeoffsets_tests.cpp(68): [NON-XML-CHAR-0x1B][1;31;49merror: in \"timeoffsets_tests/timeoffsets_warning\": check !IsWarningRaised({100, 3min}) has failed[NON-XML-CHAR-0x1B][0;39;49m",
+    "baseline_log": "artifacts/ctest-pocx-baseline.log",
+    "m1_results": "build-pocx/pocx-unit-llwximxf/junit.xml",
+    "reproducer": "TMPDIR=\"$PWD/build-pocx/test-tmp\" timeout 180 build-pocx/bin/test_pocx --run_test=timeoffsets_tests --log_level=test_suite",
+    "status": "pre-existing test/production incompatibility; diagnosis required; retained in full selection"
+  },
+  {
+    "suite": "txdownload_tests",
+    "present_in_baseline": true,
+    "first_failure": "[operator()] [validation] BlockConnected: block hash=e9fff89c042605c3ad5c42bc290cfc3a0ca949c9c349e99dc80fb796089abf7b block height=47\n2026-10-07T17:33:42.408879Z (mocktime: 2020-08-31T17:00:27Z) [scheduler] [validationinterface.cpp:182] [operator()] [validation] UpdatedBlockTip: new block hash=e9fff89c042605c3ad5c42bc290cfc3a0ca949c9c349e99dc80fb796089abf7b fork block hash=fe54b118ce06bcb80e0110002a8ad277e854389d374a837e19381a2b4e3748de (in IBD=false)\n2026-10-07T17:33:42.410016Z (mocktime: 2020-08-31T17:03:38Z) [test] [pocx/regtest/forging.cpp:194] [ForgeRegtestBlockImpl] [pocx] ForgeRegtestBlock: height=48 nonce=2 quality=675741137706290594 poc_time=191 nTime=1598893418\n2026-10-07T17:33:42.410500Z (mocktime: 2020-08-31T17:03:38Z) [test] [validationinterface.cpp:261] [NewPoWValidBlock] [validation] NewPoWValidBlock: block hash=162d91b8284a6d5d3203dfc94720da26fc754f709d384a4334ddf7a1cacc06e0\n2026-10-07T17:33:42.410528Z (mocktime: 2020-08-31T17:03:38Z) [test] [validation.cpp:3449] [ConnectTip] [bench]   - Using cached block\n2026-10-07T17:33:42.410538Z (mocktime: 2020-08-31T17:03:38Z) [test]...\n[This part of the test output was removed since it exceeds the threshold of 307200 bytes.]\n",
+    "baseline_log": "artifacts/ctest-pocx-baseline.log",
+    "m1_results": "build-pocx/pocx-unit-llwximxf/junit.xml",
+    "reproducer": "TMPDIR=\"$PWD/build-pocx/test-tmp\" timeout 180 build-pocx/bin/test_pocx --run_test=txdownload_tests --log_level=test_suite",
+    "status": "pre-existing test/production incompatibility; diagnosis required; retained in full selection"
+  },
+  {
+    "suite": "txpackage_tests",
+    "present_in_baseline": true,
+    "first_failure": "onnectBlock] [bench]     - Verify 0 txins: 0.01ms (0.000ms/txin) [0.00s (0.01ms/blk)]\n2026-10-07T17:33:42.439329Z (mocktime: 2020-08-31T17:00:27Z) [test] [node/miner.cpp:248] [CreateNewBlock] [bench] CreateNewBlock() chunks: 0.00ms, validity: 0.04ms (total 0.04ms)\n2026-10-07T17:33:42.439338Z (mocktime: 2020-08-31T17:00:27Z) [scheduler] [validationinterface.cpp:219] [operator()] [validation] BlockConnected: block hash=e9fff89c042605c3ad5c42bc290cfc3a0ca949c9c349e99dc80fb796089abf7b block height=47\n2026-10-07T17:33:42.439351Z (mocktime: 2020-08-31T17:00:27Z) [scheduler] [validationinterface.cpp:182] [operator()] [validation] UpdatedBlockTip: new block hash=e9fff89c042605c3ad5c42bc290cfc3a0ca949c9c349e99dc80fb796089abf7b fork block hash=fe54b118ce06bcb80e0110002a8ad277e854389d374a837e19381a2b4e3748de (in IBD=false)\n2026-10-07T17:33:42.440488Z (mocktime: 2020-08-31T17:03:38Z) [test] [pocx/regtest/forging.cpp:194] [ForgeRegtestBlockImpl] [pocx] ForgeRegtestBlock: height=48 nonce=2 quality=675741137706290594 poc_time=191 nTime=1598893418\n2026-10-07T17:33:42.440967Z (mocktime: 2020-08-31T17:03:3...\n[This part of the test output was removed since it exceeds the threshold of 307200 bytes.]\n",
+    "baseline_log": "artifacts/ctest-pocx-baseline.log",
+    "m1_results": "build-pocx/pocx-unit-llwximxf/junit.xml",
+    "reproducer": "TMPDIR=\"$PWD/build-pocx/test-tmp\" timeout 180 build-pocx/bin/test_pocx --run_test=txpackage_tests --log_level=test_suite",
+    "status": "pre-existing test/production incompatibility; diagnosis required; retained in full selection"
+  },
+  {
+    "suite": "util_tests",
+    "present_in_baseline": true,
+    "first_failure": "./test/util_tests.cpp(1550): [NON-XML-CHAR-0x1B][1;31;49merror: in \"util_tests/message_verify\": check MessageVerify( \"3B5fQsEXEaV8v6U3ejYc8XaKXAkyQj2MjV\", \"signature should be irrelevant\", \"message too\") == MessageVerificationResult::ERR_ADDRESS_NO_KEY has failed [0 != 1][NON-XML-CHAR-0x1B][0;39;49m",
+    "baseline_log": "artifacts/ctest-pocx-baseline.log",
+    "m1_results": "build-pocx/pocx-unit-llwximxf/junit.xml",
+    "reproducer": "TMPDIR=\"$PWD/build-pocx/test-tmp\" timeout 180 build-pocx/bin/test_pocx --run_test=util_tests --log_level=test_suite",
+    "status": "pre-existing test/production incompatibility; diagnosis required; retained in full selection"
+  },
+  {
+    "suite": "validation_block_tests",
+    "present_in_baseline": true,
+    "first_failure": "./test/validation_block_tests.cpp(112): [NON-XML-CHAR-0x1B][1;31;49merror: in \"validation_block_tests/processnewblock_signals_ordering\": check inline_assertion_check<true>(m_node.chainman, std::source_location::current(), \"m_node.chainman\")->ProcessNewBlockHeaders({{*pblock}}, true, ignored) has failed[NON-XML-CHAR-0x1B][0;39;49m",
+    "baseline_log": "artifacts/ctest-pocx-baseline.log",
+    "m1_results": "build-pocx/pocx-unit-llwximxf/junit.xml",
+    "reproducer": "TMPDIR=\"$PWD/build-pocx/test-tmp\" timeout 180 build-pocx/bin/test_pocx --run_test=validation_block_tests --log_level=test_suite",
+    "status": "pre-existing test/production incompatibility; diagnosis required; retained in full selection"
+  },
+  {
+    "suite": "validation_chainstatemanager_tests",
+    "present_in_baseline": true,
+    "first_failure": ":00:27Z) [test] [validationinterface.cpp:219] [BlockConnected] [validation] Enqueuing BlockConnected: block hash=e9fff89c042605c3ad5c42bc290cfc3a0ca949c9c349e99dc80fb796089abf7b block height=47\n2026-10-07T17:33:43.163650Z (mocktime: 2020-08-31T17:00:27Z) [test] [validationinterface.cpp:182] [UpdatedBlockTip] [validation] Enqueuing UpdatedBlockTip: new block hash=e9fff89c042605c3ad5c42bc290cfc3a0ca949c9c349e99dc80fb796089abf7b fork block hash=fe54b118ce06bcb80e0110002a8ad277e854389d374a837e19381a2b4e3748de (in IBD=false)\n2026-10-07T17:33:43.163655Z (mocktime: 2020-08-31T17:00:27Z) [test] [validationinterface.cpp:190] [ActiveTipChange] [validation] ActiveTipChange: new block hash=e9fff89c042605c3ad5c42bc290cfc3a0ca949c9c349e99dc80fb796089abf7b block height=47\n2026-10-07T17:33:43.163661Z (mocktime: 2020-08-31T17:00:27Z) [scheduler] [validationinterface.cpp:229] [operator()] [validation] MempoolTransactionsRemovedForBlock: block height=47 txs removed=0\n2026-10-07T17:33:43.163668Z (mocktime: 2020-08-31T17:00:27Z) [test] [node/miner.cpp:223] [CreateNewBlock] CreateNewBlock(): block weight: 1764...\n[This part of the test output was removed since it exceeds the threshold of 307200 bytes.]\n",
+    "baseline_log": "artifacts/ctest-pocx-baseline.log",
+    "m1_results": "build-pocx/pocx-unit-llwximxf/junit.xml",
+    "reproducer": "TMPDIR=\"$PWD/build-pocx/test-tmp\" timeout 180 build-pocx/bin/test_pocx --run_test=validation_chainstatemanager_tests --log_level=test_suite",
+    "status": "pre-existing test/production incompatibility; diagnosis required; retained in full selection"
+  },
+  {
+    "suite": "validation_tests",
+    "present_in_baseline": true,
+    "first_failure": "./test/validation_tests.cpp(35): [NON-XML-CHAR-0x1B][1;31;49merror: in \"validation_tests/block_subsidy_test\": check nSubsidy == nPreviousSubsidy / 2 has failed [1000000000 != 5000000000][NON-XML-CHAR-0x1B][0;39;49m",
+    "baseline_log": "artifacts/ctest-pocx-baseline.log",
+    "m1_results": "build-pocx/pocx-unit-llwximxf/junit.xml",
+    "reproducer": "TMPDIR=\"$PWD/build-pocx/test-tmp\" timeout 180 build-pocx/bin/test_pocx --run_test=validation_tests --log_level=test_suite",
+    "status": "pre-existing test/production incompatibility; diagnosis required; retained in full selection"
+  },
+  {
+    "suite": "spend_tests",
+    "present_in_baseline": true,
+    "first_failure": " (mocktime: 2020-08-31T16:59:11Z) [test] [validation.cpp:2636] [ConnectBlock] [bench]     - Sanity checks: 0.04ms [0.00s (0.02ms/blk)]\n2026-10-07T17:33:43.396460Z (mocktime: 2020-08-31T16:59:11Z) [test] [validation.cpp:2738] [ConnectBlock] [bench]     - Fork checks: 0.01ms [0.00s (0.01ms/blk)]\n2026-10-07T17:33:43.396466Z (mocktime: 2020-08-31T16:59:11Z) [test] [validation.cpp:2984] [ConnectBlock] [bench]       - Connect 1 transactions: 0.00ms (0.005ms/tx, 0.000ms/txin) [0.00s (0.00ms/blk)]\n2026-10-07T17:33:43.396470Z (mocktime: 2020-08-31T16:59:11Z) [test] [validation.cpp:3007] [ConnectBlock] [bench]     - Verify 0 txins: 0.01ms (0.000ms/txin) [0.00s (0.01ms/blk)]\n2026-10-07T17:33:43.396492Z (mocktime: 2020-08-31T16:59:11Z) [test] [validation.cpp:3023] [ConnectBlock] [bench]     - Write undo data: 0.02ms [0.00s (0.01ms/blk)]\n2026-10-07T17:33:43.396496Z (mocktime: 2020-08-31T16:59:11Z) [test] [validation.cpp:3038] [ConnectBlock] [bench]     - Index writing: 0.00ms [0.00s (0.00ms/blk)]\n2026-10-07T17:33:43.396500Z (mocktime: 2020-08-31T16:59:11Z) [test] [validationinterface.cpp:255] [BlockCh...\n[This part of the test output was removed since it exceeds the threshold of 307200 bytes.]\n",
+    "baseline_log": "artifacts/ctest-pocx-baseline.log",
+    "m1_results": "build-pocx/pocx-unit-llwximxf/junit.xml",
+    "reproducer": "TMPDIR=\"$PWD/build-pocx/test-tmp\" timeout 180 build-pocx/bin/test_pocx --run_test=spend_tests --log_level=test_suite",
+    "status": "pre-existing test/production incompatibility; diagnosis required; retained in full selection"
+  },
+  {
+    "suite": "wallet_tests",
+    "present_in_baseline": true,
+    "first_failure": "=98 nTime=1598893151\n2026-10-07T17:33:43.963209Z (mocktime: 2020-08-31T16:59:11Z) [test] [validationinterface.cpp:261] [NewPoWValidBlock] [validation] NewPoWValidBlock: block hash=fe54b118ce06bcb80e0110002a8ad277e854389d374a837e19381a2b4e3748de\n2026-10-07T17:33:43.963242Z (mocktime: 2020-08-31T16:59:11Z) [test] [validation.cpp:3449] [ConnectTip] [bench]   - Using cached block\n2026-10-07T17:33:43.963247Z (mocktime: 2020-08-31T16:59:11Z) [test] [validation.cpp:3456] [ConnectTip] [bench]   - Load block from disk: 0.00ms\n2026-10-07T17:33:43.963291Z (mocktime: 2020-08-31T16:59:11Z) [test] [validation.cpp:2636] [ConnectBlock] [bench]     - Sanity checks: 0.04ms [0.00s (0.02ms/blk)]\n2026-10-07T17:33:43.963306Z (mocktime: 2020-08-31T16:59:11Z) [test] [validation.cpp:2738] [ConnectBlock] [bench]     - Fork checks: 0.01ms [0.00s (0.01ms/blk)]\n2026-10-07T17:33:43.963315Z (mocktime: 2020-08-31T16:59:11Z) [test] [validation.cpp:2984] [ConnectBlock] [bench]       - Connect 1 transactions: 0.01ms (0.008ms/tx, 0.000ms/txin) [0.00s (0.01ms/blk)]\n2026-10-07T17:33:43.963322Z (mocktime: 2020-08-31T16:59:11Z)...\n[This part of the test output was removed since it exceeds the threshold of 307200 bytes.]\n",
+    "baseline_log": "artifacts/ctest-pocx-baseline.log",
+    "m1_results": "build-pocx/pocx-unit-llwximxf/junit.xml",
+    "reproducer": "TMPDIR=\"$PWD/build-pocx/test-tmp\" timeout 180 build-pocx/bin/test_pocx --run_test=wallet_tests --log_level=test_suite",
+    "status": "pre-existing test/production incompatibility; diagnosis required; retained in full selection"
+  }
+]

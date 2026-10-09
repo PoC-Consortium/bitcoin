@@ -1,0 +1,12 @@
+{
+  "bitcoin": {
+    "preprocessed_identical": true,
+    "before_sha256": "3a56cab98c0d05cfd4370f9067dde92f69c787fc62e7945a8e93d23f283da2ef",
+    "after_sha256": "3a56cab98c0d05cfd4370f9067dde92f69c787fc62e7945a8e93d23f283da2ef"
+  },
+  "pocx": {
+    "preprocessed_identical": false,
+    "before_sha256": "1fb9056d0affc4320684e6c53f702b11c67b0d6136442de9cb6f9f65eaa0ca3e",
+    "after_sha256": "eeb797c0b858720fde7a74810102f861c758a271e4ca5ff89aa6585d36dc685b"
+  }
+}

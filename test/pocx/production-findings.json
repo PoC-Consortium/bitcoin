@@ -1,0 +1,132 @@
+{
+  "findings": [
+    {
+      "id": "POCX-STORAGE-HEADER-001",
+      "status": "resolved: disk reads now apply existing PoCX header validation",
+      "test": "blockmanager_tests/blockmanager_flush_block_file",
+      "reproducer": "TMPDIR=\"$PWD/build-pocx-clean/t\" build-pocx-clean/bin/test_pocx --run_test=blockmanager_tests/blockmanager_flush_block_file",
+      "evidence": "artifacts/m2-fixtures-tests.log",
+      "source": "src/node/blockstorage.cpp:1075",
+      "observation": "ReadBlock accepts deserializable empty blocks with invalid PoCX headers when expected_hash is absent. The inherited test requires rejection and a header-error log. The PoW header check is compiled out without a PoCX replacement.",
+      "scope": "Disk-read validation behavior; network consensus exploit not established.",
+      "blocked_criterion": "M2 preservation of invalid-header rejection in block storage tests.",
+      "resolution": "ReadBlock reuses existing context-free PoCX header checks and rejects non-genesis nonpositive heights. Bitcoin path and PoCX consensus rule body unchanged. Original rejection/log assertions retained; positive native/genesis and signed malformed-header regressions added.",
+      "historical_observation": "ReadBlock accepts deserializable empty blocks with invalid PoCX headers when expected_hash is absent. The inherited test requires rejection and a header-error log. The PoW header check is compiled out without a PoCX replacement.",
+      "resolution_evidence": {
+        "unit_results": "build-pocx-clean/pocx-unit-8gi8zweq/results.json",
+        "baseline_parity": "artifacts/unit-completion-parity2.json",
+        "production_diff_review": "artifacts/unit-completion-storage-review1.json",
+        "bitcoin_unit": "artifacts/unit-completion-bitcoin-ctest1.xml"
+      }
+    },
+    {
+      "id": "POCX-SCHEDULER-001",
+      "status": "resolved: verified in fresh complete functional matrix in both global transports",
+      "test": "feature_pocx_scheduler_early_height.py",
+      "reproducer": "python3 test/pocx/test_runner.py --build-dir build-pocx-clean feature_pocx_scheduler_early_height.py",
+      "evidence": "artifacts/m3-scheduler-payout1.log; build-pocx-clean/pocx-results-7y4cji9s/feature_pocx_scheduler_payout/node0/regtest/debug.log",
+      "source": "src/pocx/mining/block_builder.cpp:CreateTemplate; src/node/miner.cpp:194",
+      "observation": "At height 2 submit_nonce acknowledges a real non-synthetic-account proof, then the scheduler catches TestBlockValidity failed: bad-cb-length while creating its template. PoCXBlockBuilder does not request include_dummy_extranonce; the BIP34 height prefix at heights 1..16 is only one byte. The same public scheduler path succeeds at height 111.",
+      "scope": "Regtest early-height scheduler forging; broader network applicability not established.",
+      "blocked_criterion": "M3 accepted-block scheduler coverage at early-height boundary.",
+      "resolution": "PoCX finished-block builder requests existing dummy extranonce option, satisfying coinbase minimum length at heights 1..16.",
+      "historical_observation": "At height 2 submit_nonce acknowledges a real non-synthetic-account proof, then the scheduler catches TestBlockValidity failed: bad-cb-length while creating its template. PoCXBlockBuilder does not request include_dummy_extranonce; the BIP34 height prefix at heights 1..16 is only one byte. The same public scheduler path succeeds at height 111.",
+      "resolution_evidence": "build-pocx-clean/pocx-results-ktc4t8sr/results.json",
+      "final_functional_evidence": "build-pocx-clean/pocx-results-fgwf4s35/results.json"
+    },
+    {
+      "id": "POCX-RPC-CONVERSION-001",
+      "status": "resolved: verified in fresh complete functional matrix in both global transports",
+      "test": "rpc_help.py/test_client_conversion_table",
+      "reproducer": "python3 test/pocx/test_runner.py --build-dir build-pocx-clean rpc_help.py",
+      "evidence": "artifacts/m2-functional-reused-adapted2-2.log; build-pocx-clean/pocx-results-1do_hsq3/rpc_help.py.log",
+      "source": "src/rpc/client.cpp:vRPCConvertParams; src/pocx/rpc/assignments_wallet.cpp",
+      "observation": "With PoCX and wallet enabled, the compiled client table retains getnetworkhashps nblocks/height although that RPC is absent, and lacks create_assignment fee_rate (index 2) and revoke_assignment fee_rate (index 1) conversions required by server metadata. Exact symmetric difference contains these four rows. The owned test accounts for actual ENABLE_POCX conditional compilation and retains full equality assertions.",
+      "scope": "RPC/CLI argument conversion metadata; no consensus exploit established. Bitcoin-disabled original test failure was a source-parser fixture issue, not a production finding.",
+      "blocked_criterion": "Preservation of strict applicable upstream functional RPC client/server conversion checks in the PoCX profile.",
+      "resolution": "Gate absent PoW RPC conversions in PoCX and add native assignment fee conversions.",
+      "historical_observation": "With PoCX and wallet enabled, the compiled client table retains getnetworkhashps nblocks/height although that RPC is absent, and lacks create_assignment fee_rate (index 2) and revoke_assignment fee_rate (index 1) conversions required by server metadata. Exact symmetric difference contains these four rows. The owned test accounts for actual ENABLE_POCX conditional compilation and retains full equality assertions.",
+      "resolution_evidence": "build-pocx-clean/pocx-results-ktc4t8sr/results.json",
+      "final_functional_evidence": "build-pocx-clean/pocx-results-fgwf4s35/results.json"
+    },
+    {
+      "id": "POCX-HEADERS-SYNC-001",
+      "status": "observed missing mainnet headers-sync configuration; required regression remains selected",
+      "test": "headers_sync_state; pocx_headers_sync_configuration",
+      "reproducer": "ASAN_OPTIONS=detect_leaks=0 FUZZ=pocx_headers_sync_configuration build-pocx-fuzz/bin/fuzz test/pocx/fuzz/corpus/pocx_headers_sync_configuration/zero-period",
+      "evidence": "build-pocx-fuzz/pocx-fuzz-halyzkq4/results.json; artifacts/m4-fuzz-index-focused2/pocx_headers_sync_configuration.log; artifacts/m4-fuzz-index-gcov1/verification.json",
+      "source": "src/kernel/chainparams.cpp:CMainParams; src/headerssync.cpp:HeadersSyncState; src/net_processing.cpp:TryLowWorkHeadersSync",
+      "observation": "PoCX mainnet omits m_headers_sync_params initialization because the upstream initialization is inside the Bitcoin-only branch. HeadersSyncParams defaults commitment_period to zero. Inherited headers_sync_state consumes an invalid 1..0 range; the native HeadersSyncState constructor requires commitment_period > 0. Peer processing can construct this state using actual network parameters for low-work sync.",
+      "scope": "Verified mainnet configuration and fuzz constructor precondition failure; network reachability/exploit not established. Default minimum chain work zero may avoid early-chain entry, but this does not provide a valid nonzero period for future/overridden thresholds.",
+      "blocked_criterion": "M4 applicable headers-sync fuzz parity and M3 native P2P headers-sync configuration coverage.",
+      "resolution": "Preserve both required configuration-dependent failures; supplemental pocx_headers_sync_state uses explicit pinned upstream test bounds for independent state-machine coverage. Do not silently substitute those bounds into the required network-configured target. Production settings unchanged."
+    },
+    {
+      "id": "POCX-LINEARIZE-001",
+      "status": "resolved: verified in fresh complete functional matrix in both global transports",
+      "test": "feature_loadblock.py",
+      "source": "contrib/linearize/linearize-data.py",
+      "observation": "Original copier always reads80-byte headers and hashes them directly. Native286-byte headers need zeroed signature for block IDs, so all native blocks appear unknown and bootstrap import cannot complete.",
+      "resolution": "Explicit block_format=pocx uses286-byte headers and zero-signature block hashes, copying original signed bytes unchanged. Default bitcoin behavior retained. Separate native functional adapter keeps original100-block import and equality assertions.",
+      "historical_evidence": "build-pocx-clean/pocx-results-_f652eze/feature_loadblock.py.log",
+      "direct_evidence": "artifacts/functional-green-20261009/linearize-copier-review.json",
+      "runtime_diagnostic_evidence": "build-pocx-clean/native-fixture-review-zqi15wex/results.json",
+      "runtime_owned_evidence": "build-pocx-clean/pocx-results-9_5uymwd/results.json",
+      "final_functional_evidence": "build-pocx-clean/pocx-results-fgwf4s35/results.json"
+    },
+    {
+      "id": "POCX-MINING-WARNINGS-001",
+      "status": "resolved: verified in fresh complete functional matrix in both global transports",
+      "test": "feature_versionbits_warning.py",
+      "source": "src/pocx/rpc/mining.cpp:get_mining_info",
+      "observation": "Native replacement for Bitcoin getmininginfo reports proof context but omits network/blockchain warnings. Original warning parity assertion, adapted only to native method name, reproduces KeyError warnings in both transports after native unknown-version signalling. getnetworkinfo/getblockchaininfo already expose shared warning state.",
+      "historical_evidence": "build-pocx-clean/native-fixture-review-vg8_fwdc/results.json",
+      "resolution": "Expose shared node::GetWarningsForRpc in native mining-info output and RPC result help, including original deprecatedrpc=warnings string behavior. Bitcoin implementation and original tests unchanged.",
+      "runtime_diagnostic_evidence": "build-pocx-clean/native-fixture-review-pzhil8jr/results.json",
+      "runtime_owned_evidence": "build-pocx-clean/pocx-results-9wexy5m1/results.json",
+      "final_functional_evidence": "build-pocx-clean/pocx-results-fgwf4s35/results.json"
+    },
+    {
+      "id": "POCX-ASSUMEUTXO-FUNCTIONAL-001",
+      "status": "resolved: verified in fresh complete functional matrix in both global transports",
+      "test": "feature_assumeutxo.py; wallet_assumeutxo.py",
+      "source": "src/kernel/chainparams.cpp; src/pocx/consensus/regtest_functional_assumeutxo.inc",
+      "observation": "Native regtest height299 assumeUTXO metadata retained Bitcoin block/UTXO hashes. Independently generated valid native299block histories from both original scenarios yield the same native block hash and UTXO hash; loading the snapshot fails metadata recognition before the original work-gate assertion.",
+      "scope": "Native regtest functional fixture; mainnet/testnet/signet snapshot consensus parameters unchanged. Height200 fuzz fixture remains a separate existing TODO.",
+      "historical_evidence": "build-pocx-clean/native-fixture-review-_0oljzaa/results.json",
+      "independent_vector_evidence": "artifacts/functional-green-20261009/native-assumeutxo-vectors.json",
+      "resolution": "Provide native-only height299commitment via separately owned include. Preserve original Bitcoin fields under the existing build gate; preserve actual snapshot hash validation and all negative cases.",
+      "runtime_owned_evidence": [
+        "build-pocx-clean/pocx-results-_voe5syc/results.json",
+        "build-pocx-clean/pocx-results-jkvbrx8r/results.json"
+      ],
+      "bitcoin_preprocessing_evidence": "artifacts/functional-green-20261009/native-assumeutxo-preprocessing-review.json",
+      "unit_regression_evidence": "build-pocx-clean/pocx-unit-4rj2p6zt/results.json",
+      "kernel_regression_evidence": "artifacts/functional-green-20261009/kernel-after-native-assumeutxo/verification.json",
+      "final_functional_evidence": "build-pocx-clean/pocx-results-fgwf4s35/results.json"
+    },
+    {
+      "id": "POCX-MINING-METRICS-001",
+      "status": "resolved: verified in fresh complete functional matrix in both global transports",
+      "test": "mining_basic.py; feature_signet.py",
+      "source": "src/pocx/rpc/mining.cpp:get_mining_info",
+      "observation": "Native replacement mining-info RPC omits generic current height, chain, assembled block weight/transaction count, mempool count and configured minimum package fee, plus signet challenge. Original generic assertions reproduce KeyError blocks after200native blocks in both transport modes. These fields are unrelated to replaced PoW consensus.",
+      "historical_evidence": "build-pocx-clean/native-fixture-review-v9vctos0/results.json",
+      "resolution": "Expose existing BlockAssembler metrics, mempool count and ApplyArgsManOptions fee with current chain and signet challenge under cs_main; preserve all prior native context fields and warnings. Source compiled only in native profile. No fabricated PoW hash-rate/nBits output.",
+      "runtime_owned_evidence": "build-pocx-clean/pocx-results-2m7ah993/results.json",
+      "final_functional_evidence": "build-pocx-clean/pocx-results-fgwf4s35/results.json"
+    },
+    {
+      "id": "POCX-SIGNET-CALIBRATION-001",
+      "status": "resolved: verified in fresh complete functional matrix in both global transports",
+      "test": "feature_signet.py; tool_signet_miner.py",
+      "source": "src/kernel/chainparams.cpp:SigNetParams",
+      "observation": "Signet omits initialization of fPoCXLowCapacityCalibration. On this build genesis next-base-target is2401919801264264(regtest), while native Signet genesis and independent expected base target are36650387592. Both real-proof Signet cases reproduce bad-diff at height1.",
+      "historical_evidence": "build-pocx-clean/native-fixture-review-s3xmzt6s/results.json",
+      "resolution": "Initialize native Signet calibration to false, matching existing normal-capacity genesis construction. Assert exact native base target in mining-info for every default/custom challenge.",
+      "bitcoin_preprocessing_evidence": "artifacts/functional-green-20261009/signet-calibration-preprocessing-review.json",
+      "runtime_diagnostic_evidence": "build-pocx-clean/native-fixture-review-pr6w97lv/results.json",
+      "final_functional_evidence": "build-pocx-clean/pocx-results-fgwf4s35/results.json"
+    }
+  ]
+}

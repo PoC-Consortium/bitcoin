@@ -1,0 +1,13 @@
+{
+  "status": "verified",
+  "counterfactual": "build-pocx-clean/native-fixture-review-oo1lfm0n/results.json",
+  "counterfactual_outcomes": {
+    "failed": 2
+  },
+  "failure": "Restoring only the strict connected-generation call deterministically fails the newly added real-transaction-arrival regression at the extra mempool equality assertion in both modes.",
+  "fixed_owned_report": "build-pocx-clean/pocx-results-30uyjgho/results.json",
+  "fixed_outcomes": {
+    "passed": 4
+  },
+  "scope": "Native mining arrival regression and full original wallet_fundrawtransaction scenarios in both transports. All original100block wrapper assertions retained. Shared helper retains default strict preservation for quiet fixtures and all independent proof/parent/height/deadline/clock checks. Fresh full selection still required."
+}

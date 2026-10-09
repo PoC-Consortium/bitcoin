@@ -1,0 +1,2887 @@
+{
+  "status": "passed",
+  "scope": "Complete current-input functional selection for the declared build/environment profile; reviewed skips are unverified feature combinations and are never counted as passes.",
+  "counts_by_transport": {
+    "v1": {
+      "passed": 278,
+      "skipped": 17
+    },
+    "v2": {
+      "passed": 278,
+      "skipped": 17
+    }
+  },
+  "skips": [
+    {
+      "case": "feature_bind_port_discover.py",
+      "transport": "v1",
+      "reason": "To run this test make sure that 1.1.1.1 and 2.2.2.2 (routable addresses) are assigned to the interfaces on this machine and rerun with --ihave1111and2222",
+      "limitation": "To run this test make sure that 1.1.1.1 and 2.2.2.2 (routable addresses) are assigned to the interfaces on this machine and rerun with --ihave1111and2222"
+    },
+    {
+      "case": "feature_bind_port_discover.py",
+      "transport": "v2",
+      "reason": "To run this test make sure that 1.1.1.1 and 2.2.2.2 (routable addresses) are assigned to the interfaces on this machine and rerun with --ihave1111and2222",
+      "limitation": "To run this test make sure that 1.1.1.1 and 2.2.2.2 (routable addresses) are assigned to the interfaces on this machine and rerun with --ihave1111and2222"
+    },
+    {
+      "case": "feature_bind_port_externalip.py",
+      "transport": "v1",
+      "reason": "To run this test make sure that 1.1.1.1 (a routable address) is assigned to one of the interfaces on this machine and rerun with --ihave1111",
+      "limitation": "To run this test make sure that 1.1.1.1 (a routable address) is assigned to one of the interfaces on this machine and rerun with --ihave1111"
+    },
+    {
+      "case": "feature_bind_port_externalip.py",
+      "transport": "v2",
+      "reason": "To run this test make sure that 1.1.1.1 (a routable address) is assigned to one of the interfaces on this machine and rerun with --ihave1111",
+      "limitation": "To run this test make sure that 1.1.1.1 (a routable address) is assigned to one of the interfaces on this machine and rerun with --ihave1111"
+    },
+    {
+      "case": "feature_coinstatsindex_compatibility.py",
+      "transport": "v1",
+      "reason": "previous releases not available or disabled",
+      "limitation": "previous releases not available or disabled"
+    },
+    {
+      "case": "feature_coinstatsindex_compatibility.py",
+      "transport": "v2",
+      "reason": "previous releases not available or disabled",
+      "limitation": "previous releases not available or disabled"
+    },
+    {
+      "case": "feature_unsupported_utxo_db.py",
+      "transport": "v1",
+      "reason": "previous releases not available or disabled",
+      "limitation": "previous releases not available or disabled"
+    },
+    {
+      "case": "feature_unsupported_utxo_db.py",
+      "transport": "v2",
+      "reason": "previous releases not available or disabled",
+      "limitation": "previous releases not available or disabled"
+    },
+    {
+      "case": "interface_ipc.py",
+      "transport": "v1",
+      "reason": "capnp module not available.",
+      "limitation": "capnp module not available."
+    },
+    {
+      "case": "interface_ipc.py",
+      "transport": "v2",
+      "reason": "capnp module not available.",
+      "limitation": "capnp module not available."
+    },
+    {
+      "case": "interface_ipc_mining.py",
+      "transport": "v1",
+      "reason": "capnp module not available.",
+      "limitation": "capnp module not available."
+    },
+    {
+      "case": "interface_ipc_mining.py",
+      "transport": "v2",
+      "reason": "capnp module not available.",
+      "limitation": "capnp module not available."
+    },
+    {
+      "case": "interface_usdt_coinselection.py",
+      "transport": "v1",
+      "reason": "bitcoind has not been built with USDT tracepoints enabled.",
+      "limitation": "bitcoind has not been built with USDT tracepoints enabled."
+    },
+    {
+      "case": "interface_usdt_coinselection.py",
+      "transport": "v2",
+      "reason": "bitcoind has not been built with USDT tracepoints enabled.",
+      "limitation": "bitcoind has not been built with USDT tracepoints enabled."
+    },
+    {
+      "case": "interface_usdt_mempool.py",
+      "transport": "v1",
+      "reason": "bitcoind has not been built with USDT tracepoints enabled.",
+      "limitation": "bitcoind has not been built with USDT tracepoints enabled."
+    },
+    {
+      "case": "interface_usdt_mempool.py",
+      "transport": "v2",
+      "reason": "bitcoind has not been built with USDT tracepoints enabled.",
+      "limitation": "bitcoind has not been built with USDT tracepoints enabled."
+    },
+    {
+      "case": "interface_usdt_net.py",
+      "transport": "v1",
+      "reason": "bitcoind has not been built with USDT tracepoints enabled.",
+      "limitation": "bitcoind has not been built with USDT tracepoints enabled."
+    },
+    {
+      "case": "interface_usdt_net.py",
+      "transport": "v2",
+      "reason": "bitcoind has not been built with USDT tracepoints enabled.",
+      "limitation": "bitcoind has not been built with USDT tracepoints enabled."
+    },
+    {
+      "case": "interface_usdt_utxocache.py",
+      "transport": "v1",
+      "reason": "bitcoind has not been built with USDT tracepoints enabled.",
+      "limitation": "bitcoind has not been built with USDT tracepoints enabled."
+    },
+    {
+      "case": "interface_usdt_utxocache.py",
+      "transport": "v2",
+      "reason": "bitcoind has not been built with USDT tracepoints enabled.",
+      "limitation": "bitcoind has not been built with USDT tracepoints enabled."
+    },
+    {
+      "case": "interface_usdt_validation.py",
+      "transport": "v1",
+      "reason": "bitcoind has not been built with USDT tracepoints enabled.",
+      "limitation": "bitcoind has not been built with USDT tracepoints enabled."
+    },
+    {
+      "case": "interface_usdt_validation.py",
+      "transport": "v2",
+      "reason": "bitcoind has not been built with USDT tracepoints enabled.",
+      "limitation": "bitcoind has not been built with USDT tracepoints enabled."
+    },
+    {
+      "case": "interface_zmq.py",
+      "transport": "v1",
+      "reason": "python3-zmq module not available.",
+      "limitation": "python3-zmq module not available."
+    },
+    {
+      "case": "interface_zmq.py",
+      "transport": "v2",
+      "reason": "python3-zmq module not available.",
+      "limitation": "python3-zmq module not available."
+    },
+    {
+      "case": "mempool_compatibility.py",
+      "transport": "v1",
+      "reason": "previous releases not available or disabled",
+      "limitation": "previous releases not available or disabled"
+    },
+    {
+      "case": "mempool_compatibility.py",
+      "transport": "v2",
+      "reason": "previous releases not available or disabled",
+      "limitation": "previous releases not available or disabled"
+    },
+    {
+      "case": "tool_bitcoin_chainstate.py",
+      "transport": "v1",
+      "reason": "bitcoin-chainstate has not been compiled",
+      "limitation": "bitcoin-chainstate has not been compiled"
+    },
+    {
+      "case": "tool_bitcoin_chainstate.py",
+      "transport": "v2",
+      "reason": "bitcoin-chainstate has not been compiled",
+      "limitation": "bitcoin-chainstate has not been compiled"
+    },
+    {
+      "case": "wallet_backwards_compatibility.py",
+      "transport": "v1",
+      "reason": "previous releases not available or disabled",
+      "limitation": "previous releases not available or disabled"
+    },
+    {
+      "case": "wallet_backwards_compatibility.py",
+      "transport": "v2",
+      "reason": "previous releases not available or disabled",
+      "limitation": "previous releases not available or disabled"
+    },
+    {
+      "case": "wallet_migration.py",
+      "transport": "v1",
+      "reason": "previous releases not available or disabled",
+      "limitation": "previous releases not available or disabled"
+    },
+    {
+      "case": "wallet_migration.py",
+      "transport": "v2",
+      "reason": "previous releases not available or disabled",
+      "limitation": "previous releases not available or disabled"
+    },
+    {
+      "case": "tool_bench_sanity_check.py",
+      "transport": "v1",
+      "reason": "bench_bitcoin has not been compiled",
+      "limitation": "bench_bitcoin has not been compiled"
+    },
+    {
+      "case": "tool_bench_sanity_check.py",
+      "transport": "v2",
+      "reason": "bench_bitcoin has not been compiled",
+      "limitation": "bench_bitcoin has not been compiled"
+    }
+  ],
+  "verified_at_utc": "2026-10-09T18:44:07.106780+00:00",
+  "execution_report": "build-pocx-clean/pocx-results-fgwf4s35/results.json",
+  "execution_report_sha256": "9583310dd81f17a02e784ebebee45f4de5ce712a24a70d762eed8f72f1670785",
+  "execution_wrapper": "artifacts/functional-green-20261009/complete-selection-matrix-final-fourth.json",
+  "runtime_seconds": 1443.685714954976,
+  "counting_unit": "Actual executions use295normalized cases per mode. Original accounting preserves287runner entries including explicit transport variants.",
+  "original_runner_entries": 287,
+  "original_outcomes": {
+    "passed": 269,
+    "skipped": 17,
+    "excluded as inapplicable": 1
+  },
+  "original_categories": [
+    {
+      "category": "adapted",
+      "status": "passed",
+      "count": 167
+    },
+    {
+      "category": "excluded as PoW-only",
+      "status": "excluded as inapplicable",
+      "count": 1
+    },
+    {
+      "category": "reused",
+      "status": "passed",
+      "count": 102
+    },
+    {
+      "category": "reused",
+      "status": "skipped",
+      "count": 17
+    }
+  ],
+  "selected_scripts": {
+    "adapted_original": 150,
+    "reused_original": 113,
+    "native_only": 24
+  },
+  "native_only_cases_green": 24,
+  "mapped_wrapper_scenarios": 18,
+  "mapped_wrapper_files_green": 17,
+  "bitcoin_baseline": {
+    "passed": 270,
+    "failed": 0,
+    "skipped": 17,
+    "evidence": "artifacts/functional-bitcoin-fresh-20261009/verification.json",
+    "source_files_unchanged": 378,
+    "binaries_unchanged": 8
+  },
+  "unit_regression": {
+    "applicable_original_green": 727,
+    "native_green": 33,
+    "failed": 0,
+    "skipped": 0,
+    "evidence": "build-pocx-clean/pocx-unit-o_mr4frj/results.json"
+  },
+  "kernel_regression": {
+    "cases": 16,
+    "assertions": 20703,
+    "failed": 0,
+    "skipped": 0,
+    "evidence": "artifacts/functional-green-20261009/kernel-after-signet/verification.json"
+  },
+  "infrastructure": {
+    "passed": 86,
+    "evidence": "artifacts/functional-green-20261009/infrastructure-final.log"
+  },
+  "policy_sha256": "668fa3587439eb4c93e296926730507a72664af478e8ed9f913e9f2a9902d5c0",
+  "external_dependencies": {
+    "contrib/linearize/linearize-data.py": "20caa157a2af3e82874e32b9974e67d6356c393e1d19f018f4e0cf8bf704dd87",
+    "contrib/linearize/linearize-hashes.py": "02d187590dbd91d8321f3d58adbd344540df745a76a69ae57a2e2a80b6f232be",
+    "contrib/signet/miner": "2df980a48e688a9e1b54f1764772edd941c0e7008bcc99faa65546d263e8dffe",
+    "src/kernel/chainparams.cpp": "9765ddda60b8b95126350e54a90ff23e055b25bd87e92bd7bb027ef8afddda13",
+    "src/pocx/consensus/regtest_functional_assumeutxo.inc": "9e1abbae3942cc638f94b7c9ad4733dc156e24430873ae099e7d9df08ff34262",
+    "src/pocx/rpc/client_conversion_params.inc": "37b1452f3507f2d452ee05a0bb44bb63d44fa98d7226f36d0ee37612f83dc032",
+    "src/pocx/rpc/mining.cpp": "5b79761cb582dbbf1e581366ee1e99cc24b7768685845d2e79f92901c619d959",
+    "src/rpc/client.cpp": "eb5c6a6a2b1cfa41a99f40388c0d404649e62e4fb59c5e36774d9f160135b7ce",
+    "test/pocx/functional/feature_signet.py": "7e154a2359c83165289f3bcb74641af92965f58db655c7e6ed958cf639cbca8a",
+    "test/pocx/kernel/provenance.json": "af19fbac2cff2fefc1db18d7f65c6e15a9b9e09484ff21f50ce113142ce97904"
+  },
+  "original_case_results": [
+    {
+      "upstream_case": "feature_pruning.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "feature_dbcrash.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "feature_index_prune.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "tool_bench_sanity_check.py",
+      "category": "reused",
+      "status": "skipped",
+      "transports": {
+        "v1": "skipped",
+        "v2": "skipped"
+      }
+    },
+    {
+      "upstream_case": "feature_fee_estimation.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "feature_taproot.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "feature_block.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "mempool_ephemeral_dust.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "wallet_conflicts.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "p2p_opportunistic_1p1c.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "p2p_node_network_limited.py --v1transport",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "p2p_node_network_limited.py --v2transport",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "mining_getblocktemplate_longpoll.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "p2p_segwit.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "feature_maxuploadtarget.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "feature_assumeutxo.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "mempool_updatefromblock.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "mempool_persist.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "rpc_psbt.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "wallet_fundrawtransaction.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "wallet_bumpfee.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "wallet_v3_txs.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "wallet_backup.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "feature_segwit.py --v2transport",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "feature_segwit.py --v1transport",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "p2p_tx_download.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "wallet_avoidreuse.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "feature_abortnode.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "wallet_address_types.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "p2p_orphan_handling.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "wallet_basic.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "feature_maxtipage.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "wallet_multiwallet.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "wallet_multiwallet.py --usecli",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "p2p_dns_seeds.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "wallet_groups.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "p2p_blockfilters.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "feature_assumevalid.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "wallet_taproot.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "feature_bip68_sequence.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "rpc_packages.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "rpc_bind.py --ipv4",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "rpc_bind.py --ipv6",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "rpc_bind.py --nonloopback",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "p2p_headers_sync_with_minchainwork.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "p2p_feefilter.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "feature_csv_activation.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "p2p_sendheaders.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "feature_config_args.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "wallet_listtransactions.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "wallet_miniscript.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "p2p_invalid_messages.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "rpc_createmultisig.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "p2p_timeouts.py --v1transport",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "p2p_timeouts.py --v2transport",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "rpc_signer.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "wallet_signer.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "mempool_limit.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "rpc_txoutproof.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "rpc_orphans.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "wallet_listreceivedby.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "wallet_abandonconflict.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "wallet_anchor.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "feature_reindex.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "feature_reindex_readonly.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "wallet_labels.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "p2p_compactblocks.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "p2p_compactblocks_blocksonly.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "wallet_hd.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "wallet_blank.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "wallet_keypool_topup.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "wallet_fast_rescan.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "wallet_gethdkeys.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "wallet_createwalletdescriptor.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "interface_zmq.py",
+      "category": "reused",
+      "status": "skipped",
+      "transports": {
+        "v1": "skipped",
+        "v2": "skipped"
+      }
+    },
+    {
+      "upstream_case": "rpc_invalid_address_message.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "rpc_validateaddress.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "interface_bitcoin_cli.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "feature_bind_extra.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "mempool_resurrect.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "wallet_txn_doublespend.py --mineblock",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "tool_bitcoin_chainstate.py",
+      "category": "reused",
+      "status": "skipped",
+      "transports": {
+        "v1": "skipped",
+        "v2": "skipped"
+      }
+    },
+    {
+      "upstream_case": "tool_wallet.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "tool_utils.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "tool_signet_miner.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "wallet_txn_clone.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "wallet_txn_clone.py --segwit",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "rpc_getchaintips.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "rpc_misc.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "p2p_1p1c_network.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "interface_rest.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "mempool_spend_coinbase.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "wallet_avoid_mixing_output_types.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "mempool_reorg.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "p2p_block_sync.py --v1transport",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "p2p_block_sync.py --v2transport",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "wallet_createwallet.py --usecli",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "wallet_createwallet.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "wallet_reindex.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "wallet_reorgsrestore.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "interface_http.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "interface_rpc.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "interface_usdt_coinselection.py",
+      "category": "reused",
+      "status": "skipped",
+      "transports": {
+        "v1": "skipped",
+        "v2": "skipped"
+      }
+    },
+    {
+      "upstream_case": "interface_usdt_mempool.py",
+      "category": "reused",
+      "status": "skipped",
+      "transports": {
+        "v1": "skipped",
+        "v2": "skipped"
+      }
+    },
+    {
+      "upstream_case": "interface_usdt_net.py",
+      "category": "reused",
+      "status": "skipped",
+      "transports": {
+        "v1": "skipped",
+        "v2": "skipped"
+      }
+    },
+    {
+      "upstream_case": "interface_usdt_utxocache.py",
+      "category": "reused",
+      "status": "skipped",
+      "transports": {
+        "v1": "skipped",
+        "v2": "skipped"
+      }
+    },
+    {
+      "upstream_case": "interface_usdt_validation.py",
+      "category": "reused",
+      "status": "skipped",
+      "transports": {
+        "v1": "skipped",
+        "v2": "skipped"
+      }
+    },
+    {
+      "upstream_case": "rpc_users.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "rpc_whitelist.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "feature_proxy.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "wallet_signrawtransactionwithwallet.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "rpc_signrawtransactionwithkey.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "rpc_rawtransaction.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "wallet_transactiontime_rescan.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "p2p_addrv2_relay.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "p2p_compactblocks_hb.py --v1transport",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "p2p_compactblocks_hb.py --v2transport",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "p2p_disconnect_ban.py --v1transport",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "p2p_disconnect_ban.py --v2transport",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "feature_posix_fs_permissions.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "rpc_decodescript.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "rpc_blockchain.py --v1transport",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "rpc_blockchain.py --v2transport",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "mining_template_verification.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "rpc_deprecated.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "wallet_disable.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "wallet_change_address.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "p2p_addr_relay.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "p2p_getaddr_caching.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "p2p_getdata.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "p2p_addrfetch.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "rpc_net.py --v1transport",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "rpc_net.py --v2transport",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "wallet_keypool.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "wallet_descriptor.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "p2p_nobloomfilter_messages.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "feature_framework_unit_tests.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "p2p_filter.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "rpc_setban.py --v1transport",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "rpc_setban.py --v2transport",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "p2p_blocksonly.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "mining_prioritisetransaction.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "p2p_invalid_locator.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "p2p_invalid_block.py --v1transport",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "p2p_invalid_block.py --v2transport",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "p2p_invalid_tx.py --v1transport",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "p2p_invalid_tx.py --v2transport",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "p2p_v2_transport.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "p2p_v2_encrypted.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "p2p_v2_misbehaving.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "example_test.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "mempool_truc.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "wallet_multisig_descriptor_psbt.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "wallet_miniscript_decaying_multisig_descriptor_psbt.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "wallet_txn_doublespend.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "wallet_backwards_compatibility.py",
+      "category": "reused",
+      "status": "skipped",
+      "transports": {
+        "v1": "skipped",
+        "v2": "skipped"
+      }
+    },
+    {
+      "upstream_case": "wallet_txn_clone.py --mineblock",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "feature_notifications.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "rpc_getblockfilter.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "rpc_getblockfrompeer.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "rpc_invalidateblock.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "feature_utxo_set_hash.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "feature_rbf.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "mempool_packages.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "mempool_package_limits.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "mempool_package_rbf.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "tool_utxo_to_sqlite.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "feature_versionbits_warning.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "feature_blocksxor.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "rpc_preciousblock.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "wallet_importprunedfunds.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "p2p_leak_tx.py --v1transport",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "p2p_leak_tx.py --v2transport",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "p2p_eviction.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "p2p_outbound_eviction.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "p2p_ibd_stalling.py --v1transport",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "p2p_ibd_stalling.py --v2transport",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "p2p_net_deadlock.py --v1transport",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "p2p_net_deadlock.py --v2transport",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "wallet_signmessagewithaddress.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "rpc_signmessagewithprivkey.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "rpc_generate.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "wallet_balance.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "p2p_initial_headers_sync.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "feature_nulldummy.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "mempool_accept.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "p2p_addr_selfannouncement.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "mempool_expiry.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "wallet_importdescriptors.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "wallet_crosschain.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "mining_basic.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "mining_mainnet.py",
+      "category": "excluded as PoW-only",
+      "status": "excluded as inapplicable",
+      "transports": {
+        "v1": "excluded as inapplicable",
+        "v2": "excluded as inapplicable"
+      }
+    },
+    {
+      "upstream_case": "feature_signet.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "p2p_mutated_blocks.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "rpc_named_arguments.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "feature_startupnotify.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "wallet_simulaterawtx.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "wallet_listsinceblock.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "wallet_listdescriptors.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "p2p_leak.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "wallet_encryption.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "feature_dersig.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "feature_reindex_init.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "feature_cltv.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "rpc_uptime.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "feature_discover.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "wallet_resendwallettransactions.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "wallet_fallbackfee.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "rpc_dumptxoutset.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "feature_minchainwork.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "rpc_estimatefee.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "p2p_private_broadcast.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "rpc_getblockstats.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "feature_port.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "feature_bind_port_externalip.py",
+      "category": "reused",
+      "status": "skipped",
+      "transports": {
+        "v1": "skipped",
+        "v2": "skipped"
+      }
+    },
+    {
+      "upstream_case": "wallet_create_tx.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "wallet_send.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "wallet_sendall.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "wallet_sendmany.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "wallet_spend_unconfirmed.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "wallet_rescan_unconfirmed.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "p2p_fingerprint.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "feature_uacomment.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "feature_init.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "wallet_coinbase_category.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "feature_filelock.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "feature_loadblock.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "wallet_assumeutxo.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "p2p_add_connections.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "feature_bind_port_discover.py",
+      "category": "reused",
+      "status": "skipped",
+      "transports": {
+        "v1": "skipped",
+        "v2": "skipped"
+      }
+    },
+    {
+      "upstream_case": "p2p_unrequested_blocks.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "p2p_message_capture.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "feature_includeconf.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "feature_addrman.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "feature_asmap.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "feature_chain_tiebreaks.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "feature_fastprune.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "feature_framework_miniwallet.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "mempool_unbroadcast.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "mempool_compatibility.py",
+      "category": "reused",
+      "status": "skipped",
+      "transports": {
+        "v1": "skipped",
+        "v2": "skipped"
+      }
+    },
+    {
+      "upstream_case": "mempool_accept_wtxid.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "mempool_dust.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "mempool_sigoplimit.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "rpc_deriveaddresses.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "rpc_deriveaddresses.py --usecli",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "p2p_ping.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "p2p_tx_privacy.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "rpc_getdescriptoractivity.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "rpc_scanblocks.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "tool_bitcoin.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "p2p_sendtxrcncl.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "rpc_scantxoutset.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "feature_unsupported_utxo_db.py",
+      "category": "reused",
+      "status": "skipped",
+      "transports": {
+        "v1": "skipped",
+        "v2": "skipped"
+      }
+    },
+    {
+      "upstream_case": "mempool_cluster.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "feature_logging.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "interface_ipc.py",
+      "category": "reused",
+      "status": "skipped",
+      "transports": {
+        "v1": "skipped",
+        "v2": "skipped"
+      }
+    },
+    {
+      "upstream_case": "interface_ipc_mining.py",
+      "category": "reused",
+      "status": "skipped",
+      "transports": {
+        "v1": "skipped",
+        "v2": "skipped"
+      }
+    },
+    {
+      "upstream_case": "feature_anchors.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "mempool_datacarrier.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "feature_coinstatsindex.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "feature_coinstatsindex_compatibility.py",
+      "category": "reused",
+      "status": "skipped",
+      "transports": {
+        "v1": "skipped",
+        "v2": "skipped"
+      }
+    },
+    {
+      "upstream_case": "wallet_orphanedreward.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "wallet_musig.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "wallet_timelock.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "p2p_permissions.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "feature_blocksdir.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "wallet_startup.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "p2p_private_broadcast_retry_v1.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "feature_remove_pruned_files_on_startup.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "p2p_i2p_ports.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "p2p_i2p_sessions.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "feature_presegwit_node_upgrade.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "feature_settings.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "rpc_getdescriptorinfo.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "rpc_gettxspendingprevout.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "rpc_help.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "feature_framework_testshell.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "tool_rpcauth.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "p2p_handshake.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "p2p_handshake.py --v2transport",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "feature_dirsymlinks.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "feature_help.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "feature_framework_startup_failures.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "feature_shutdown.py",
+      "category": "reused",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "wallet_migration.py",
+      "category": "reused",
+      "status": "skipped",
+      "transports": {
+        "v1": "skipped",
+        "v2": "skipped"
+      }
+    },
+    {
+      "upstream_case": "p2p_ibd_txrelay.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    },
+    {
+      "upstream_case": "p2p_seednode.py",
+      "category": "adapted",
+      "status": "passed",
+      "transports": {
+        "v1": "passed",
+        "v2": "passed"
+      }
+    }
+  ],
+  "limitations": "17 explicit optional-feature/build/environment skips match the Bitcoin baseline; these feature combinations remain unverified. One specifically reviewed Bitcoin PoW-only test excluded. Fuzz mainnet headers-sync finding belongs to the separate unfinished fuzz package. No functional package commit created."
+}

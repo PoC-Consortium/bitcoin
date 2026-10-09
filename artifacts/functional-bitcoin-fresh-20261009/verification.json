@@ -1,0 +1,138 @@
+{
+  "scope": "Fresh unchanged original extended Bitcoin functional run; all287 original entries accounted for. Optional profile/environment skips remain explicit. ALL is the runner aggregate row, not a test case.",
+  "upstream_revision": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
+  "counts": {
+    "Passed": 270,
+    "Skipped": 17
+  },
+  "execution_evidence": "artifacts/functional-bitcoin-fresh-20261009/execution.json",
+  "csv_evidence": "artifacts/functional-bitcoin-fresh-20261009/functional.csv",
+  "log_evidence": "artifacts/functional-bitcoin-fresh-20261009/runner.log",
+  "runtime_seconds": 1203.9021888060379,
+  "original_functional_files_identical_to_upstream": 378,
+  "recorded_binaries_unchanged": 8,
+  "source_changes": [],
+  "upstream_mismatch": [],
+  "binary_changes": [],
+  "skips": [
+    {
+      "test": "feature_bind_port_discover.py",
+      "status": "Skipped",
+      "duration(seconds)": "0",
+      "reason": "To run this test make sure that 1.1.1.1 and 2.2.2.2 (routable addresses) are assigned to the interfaces on this machine and rerun with --ihave1111and2222"
+    },
+    {
+      "test": "feature_bind_port_externalip.py",
+      "status": "Skipped",
+      "duration(seconds)": "0",
+      "reason": "To run this test make sure that 1.1.1.1 (a routable address) is assigned to one of the interfaces on this machine and rerun with --ihave1111"
+    },
+    {
+      "test": "feature_coinstatsindex_compatibility.py",
+      "status": "Skipped",
+      "duration(seconds)": "0",
+      "reason": "previous releases not available or disabled"
+    },
+    {
+      "test": "feature_unsupported_utxo_db.py",
+      "status": "Skipped",
+      "duration(seconds)": "0",
+      "reason": "previous releases not available or disabled"
+    },
+    {
+      "test": "interface_ipc.py",
+      "status": "Skipped",
+      "duration(seconds)": "0",
+      "reason": "capnp module not available."
+    },
+    {
+      "test": "interface_ipc_mining.py",
+      "status": "Skipped",
+      "duration(seconds)": "0",
+      "reason": "capnp module not available."
+    },
+    {
+      "test": "interface_usdt_coinselection.py",
+      "status": "Skipped",
+      "duration(seconds)": "0",
+      "reason": "bitcoind has not been built with USDT tracepoints enabled."
+    },
+    {
+      "test": "interface_usdt_mempool.py",
+      "status": "Skipped",
+      "duration(seconds)": "0",
+      "reason": "bitcoind has not been built with USDT tracepoints enabled."
+    },
+    {
+      "test": "interface_usdt_net.py",
+      "status": "Skipped",
+      "duration(seconds)": "0",
+      "reason": "bitcoind has not been built with USDT tracepoints enabled."
+    },
+    {
+      "test": "interface_usdt_utxocache.py",
+      "status": "Skipped",
+      "duration(seconds)": "0",
+      "reason": "bitcoind has not been built with USDT tracepoints enabled."
+    },
+    {
+      "test": "interface_usdt_validation.py",
+      "status": "Skipped",
+      "duration(seconds)": "0",
+      "reason": "bitcoind has not been built with USDT tracepoints enabled."
+    },
+    {
+      "test": "interface_zmq.py",
+      "status": "Skipped",
+      "duration(seconds)": "0",
+      "reason": "python3-zmq module not available."
+    },
+    {
+      "test": "mempool_compatibility.py",
+      "status": "Skipped",
+      "duration(seconds)": "0",
+      "reason": "previous releases not available or disabled"
+    },
+    {
+      "test": "tool_bench_sanity_check.py",
+      "status": "Skipped",
+      "duration(seconds)": "0",
+      "reason": "bench_bitcoin has not been compiled"
+    },
+    {
+      "test": "tool_bitcoin_chainstate.py",
+      "status": "Skipped",
+      "duration(seconds)": "0",
+      "reason": "bitcoin-chainstate has not been compiled"
+    },
+    {
+      "test": "wallet_backwards_compatibility.py",
+      "status": "Skipped",
+      "duration(seconds)": "0",
+      "reason": "previous releases not available or disabled"
+    },
+    {
+      "test": "wallet_migration.py",
+      "status": "Skipped",
+      "duration(seconds)": "0",
+      "reason": "previous releases not available or disabled"
+    }
+  ],
+  "extended_cases": [
+    {
+      "test": "feature_dbcrash.py",
+      "status": "Passed",
+      "duration(seconds)": "1203"
+    },
+    {
+      "test": "feature_index_prune.py",
+      "status": "Passed",
+      "duration(seconds)": "23"
+    },
+    {
+      "test": "feature_pruning.py",
+      "status": "Passed",
+      "duration(seconds)": "116"
+    }
+  ]
+}

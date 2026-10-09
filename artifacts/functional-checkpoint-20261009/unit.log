@@ -1,0 +1,2 @@
+Unit baseline parity: {'applicable_original_green': 727, 'additional_native_green': 33, 'excluded': 10, 'suites_green': 154, 'red': 0, 'skipped': 0}
+Registered 154 suites; selected 154; return code 0; results: /home/johnny/Code/bitcoin-pocx/bitcoin-functional-package-20261009/build-functional-checkpoint/pocx-unit-9zq80r2d

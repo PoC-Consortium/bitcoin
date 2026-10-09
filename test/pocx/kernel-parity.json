@@ -139,7 +139,7 @@
     "src/test/kernel/test_kernel.cpp": "b239ffd7977a3390d024745b00b5ab485817c26648f0d5328d94c60730c1dbc4",
     "src/test/kernel/block_data.h": "37237946a7f8174b99f08390daea444e03d3557342f0a65dfc6c68a4a5ae16f5",
     "src/kernel/bitcoinkernel.cpp": "174890768e31e67bb8decb166b40b61c51e097a41ef5cb80708bc423eb8a788f",
-    "src/kernel/chainparams.cpp": "6518be84d9ad5661a252b41c655730086049bca280e7eff452577c4d153ce9b9",
+    "src/kernel/chainparams.cpp": "9765ddda60b8b95126350e54a90ff23e055b25bd87e92bd7bb027ef8afddda13",
     "src/pocx/consensus/difficulty.cpp": "9769f411840097321c9dce8b715922152003ff6a18273905bc5060146f563e56",
     "src/pocx/consensus/proof.cpp": "7c0b3c643d674c373590ea9b37a116722f2c674c2abe4a51d815217cc0487247",
     "src/pocx/consensus/proof.h": "f80eb5096e477e6147e4f3b04b705ac5886da245cb55fc4203f006d5c9ff95cd",
@@ -160,10 +160,11 @@
     "src/kernel/bitcoinkernel.h": "0e7ea4f635392299da9aff3cd505736b956349407340559aadbdade9a9c60e0c",
     "src/kernel/bitcoinkernel_wrapper.h": "726819acb849b7542dc559c570ccfed8b32887b27931379cacd6e6b86df20419",
     "test/pocx/kernel/parity.json": "6c05a2fdf6713ab0e1f2ae041e2183b6d611e678056882561a3bfcdd12b15410",
-    "test/pocx/kernel/provenance.json": "40884bb072cd0560d1d299510f73e3668e57c38fc7607793ece8a12410dbd173",
+    "test/pocx/kernel/provenance.json": "af19fbac2cff2fefc1db18d7f65c6e15a9b9e09484ff21f50ce113142ce97904",
     "test/pocx/kernel_parity.py": "cd71be38083b6fa9dd150e5ce6354b8ea89fe53d4027ddc5b490d63957f840b3",
     "test/pocx/run_kernel.py": "c14e2aa5e8c881d99058c5e8c5ac955a3428364f1cf02f868a22022409f31001",
-    "test/pocx/test_kernel_infrastructure.py": "7b59d5d16d11f2ca366956eef8a721aa6af5e74e6fff50bfd9619d4cd4cc162f"
+    "test/pocx/test_kernel_infrastructure.py": "7b59d5d16d11f2ca366956eef8a721aa6af5e74e6fff50bfd9619d4cd4cc162f",
+    "src/pocx/consensus/regtest_functional_assumeutxo.inc": "9e1abbae3942cc638f94b7c9ad4733dc156e24430873ae099e7d9df08ff34262"
   },
   "execution_inputs": {
     "test/pocx/kernel/reference.rs": "af1cb2d2abd1b353f508a4891acbeab8b2e85e1b777ffe973cd091a0df89b5b7",
@@ -176,7 +177,7 @@
     "src/test/kernel/test_kernel.cpp": "b239ffd7977a3390d024745b00b5ab485817c26648f0d5328d94c60730c1dbc4",
     "src/test/kernel/block_data.h": "37237946a7f8174b99f08390daea444e03d3557342f0a65dfc6c68a4a5ae16f5",
     "src/kernel/bitcoinkernel.cpp": "174890768e31e67bb8decb166b40b61c51e097a41ef5cb80708bc423eb8a788f",
-    "src/kernel/chainparams.cpp": "6518be84d9ad5661a252b41c655730086049bca280e7eff452577c4d153ce9b9",
+    "src/kernel/chainparams.cpp": "9765ddda60b8b95126350e54a90ff23e055b25bd87e92bd7bb027ef8afddda13",
     "src/pocx/consensus/difficulty.cpp": "9769f411840097321c9dce8b715922152003ff6a18273905bc5060146f563e56",
     "src/pocx/consensus/proof.cpp": "7c0b3c643d674c373590ea9b37a116722f2c674c2abe4a51d815217cc0487247",
     "src/pocx/consensus/proof.h": "f80eb5096e477e6147e4f3b04b705ac5886da245cb55fc4203f006d5c9ff95cd",
@@ -195,11 +196,14 @@
     "src/CMakeLists.txt": "604ffe7d1d44a98db1327ca3caf63c2d5e0ee9a3c2ff6828d52d33960c0dac0e",
     "src/kernel/CMakeLists.txt": "fc48423fde9fc7144ae4918550b6cf456713e50afb8d9f20aca2094d2c5e8498",
     "src/kernel/bitcoinkernel.h": "0e7ea4f635392299da9aff3cd505736b956349407340559aadbdade9a9c60e0c",
-    "src/kernel/bitcoinkernel_wrapper.h": "726819acb849b7542dc559c570ccfed8b32887b27931379cacd6e6b86df20419"
+    "src/kernel/bitcoinkernel_wrapper.h": "726819acb849b7542dc559c570ccfed8b32887b27931379cacd6e6b86df20419",
+    "src/pocx/consensus/regtest_functional_assumeutxo.inc": "9e1abbae3942cc638f94b7c9ad4733dc156e24430873ae099e7d9df08ff34262"
   },
   "review_notes": {
     "checks": "All original check sites retained, with native expected fixture values and explicit zero legacy PoW accessor contract. Four additional check sites strengthen truncation, ProcessBlock acceptance and lookup-read validity.",
     "lookup_cache": "Only fixed-chain transaction lookup reads are memoized. All explicit full-chain reads, validation/reindex/undo/script/UTXO assertions and post-file-deletion error checks remain uncached.",
-    "fixtures": "Frozen independently verified one-mainnet/206-regtest real-proof snapshot; current Python structure checks and header rendering match. Earlier scalar/public Rust proof evidence retained without unnecessary rerun."
-  }
+    "fixtures": "Frozen independently verified one-mainnet/206-regtest real-proof snapshot; current Python structure checks and header rendering match. Earlier scalar/public Rust proof evidence retained without unnecessary rerun.",
+    "functional_299_amendment": "Functional-only native regtest height299 commitment amendment, independently reconstructed from both scenario chains and all snapshot bytes. Bitcoin preprocessed translation unit byte-identical; native preprocessed delta consists only of the two299hash literals. Evidence: artifacts/functional-green-20261009/native-assumeutxo-preprocessing-review.json and native-assumeutxo-vectors.json. All mainnet/testnet/signet/height110/height200 parameters and proof fixture bytes unchanged."
+  },
+  "signet_calibration_initialization_review": "Native Signet initializes fPoCXLowCapacityCalibration=false, matching its existing normal-capacity genesis. Independently reproduced wrong regtest target before fix; Bitcoin preprocessed translation unit identical; every existing mainnet/regtest field and fixture byte unchanged. artifacts/functional-green-20261009/signet-calibration-preprocessing-review.json"
 }

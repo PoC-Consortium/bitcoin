@@ -1,0 +1,235 @@
+{
+  "status": "passed",
+  "scope": "Complete current-input functional selection for the declared build/environment profile; reviewed skips are unverified feature combinations and are never counted as passes.",
+  "counts_by_transport": {
+    "v1": {
+      "passed": 278,
+      "skipped": 17
+    },
+    "v2": {
+      "passed": 278,
+      "skipped": 17
+    }
+  },
+  "skips": [
+    {
+      "case": "feature_bind_port_discover.py",
+      "transport": "v1",
+      "reason": "To run this test make sure that 1.1.1.1 and 2.2.2.2 (routable addresses) are assigned to the interfaces on this machine and rerun with --ihave1111and2222",
+      "limitation": "To run this test make sure that 1.1.1.1 and 2.2.2.2 (routable addresses) are assigned to the interfaces on this machine and rerun with --ihave1111and2222"
+    },
+    {
+      "case": "feature_bind_port_discover.py",
+      "transport": "v2",
+      "reason": "To run this test make sure that 1.1.1.1 and 2.2.2.2 (routable addresses) are assigned to the interfaces on this machine and rerun with --ihave1111and2222",
+      "limitation": "To run this test make sure that 1.1.1.1 and 2.2.2.2 (routable addresses) are assigned to the interfaces on this machine and rerun with --ihave1111and2222"
+    },
+    {
+      "case": "feature_bind_port_externalip.py",
+      "transport": "v1",
+      "reason": "To run this test make sure that 1.1.1.1 (a routable address) is assigned to one of the interfaces on this machine and rerun with --ihave1111",
+      "limitation": "To run this test make sure that 1.1.1.1 (a routable address) is assigned to one of the interfaces on this machine and rerun with --ihave1111"
+    },
+    {
+      "case": "feature_bind_port_externalip.py",
+      "transport": "v2",
+      "reason": "To run this test make sure that 1.1.1.1 (a routable address) is assigned to one of the interfaces on this machine and rerun with --ihave1111",
+      "limitation": "To run this test make sure that 1.1.1.1 (a routable address) is assigned to one of the interfaces on this machine and rerun with --ihave1111"
+    },
+    {
+      "case": "feature_coinstatsindex_compatibility.py",
+      "transport": "v1",
+      "reason": "previous releases not available or disabled",
+      "limitation": "previous releases not available or disabled"
+    },
+    {
+      "case": "feature_coinstatsindex_compatibility.py",
+      "transport": "v2",
+      "reason": "previous releases not available or disabled",
+      "limitation": "previous releases not available or disabled"
+    },
+    {
+      "case": "feature_unsupported_utxo_db.py",
+      "transport": "v1",
+      "reason": "previous releases not available or disabled",
+      "limitation": "previous releases not available or disabled"
+    },
+    {
+      "case": "feature_unsupported_utxo_db.py",
+      "transport": "v2",
+      "reason": "previous releases not available or disabled",
+      "limitation": "previous releases not available or disabled"
+    },
+    {
+      "case": "interface_ipc.py",
+      "transport": "v1",
+      "reason": "capnp module not available.",
+      "limitation": "capnp module not available."
+    },
+    {
+      "case": "interface_ipc.py",
+      "transport": "v2",
+      "reason": "capnp module not available.",
+      "limitation": "capnp module not available."
+    },
+    {
+      "case": "interface_ipc_mining.py",
+      "transport": "v1",
+      "reason": "capnp module not available.",
+      "limitation": "capnp module not available."
+    },
+    {
+      "case": "interface_ipc_mining.py",
+      "transport": "v2",
+      "reason": "capnp module not available.",
+      "limitation": "capnp module not available."
+    },
+    {
+      "case": "interface_usdt_coinselection.py",
+      "transport": "v1",
+      "reason": "bitcoind has not been built with USDT tracepoints enabled.",
+      "limitation": "bitcoind has not been built with USDT tracepoints enabled."
+    },
+    {
+      "case": "interface_usdt_coinselection.py",
+      "transport": "v2",
+      "reason": "bitcoind has not been built with USDT tracepoints enabled.",
+      "limitation": "bitcoind has not been built with USDT tracepoints enabled."
+    },
+    {
+      "case": "interface_usdt_mempool.py",
+      "transport": "v1",
+      "reason": "bitcoind has not been built with USDT tracepoints enabled.",
+      "limitation": "bitcoind has not been built with USDT tracepoints enabled."
+    },
+    {
+      "case": "interface_usdt_mempool.py",
+      "transport": "v2",
+      "reason": "bitcoind has not been built with USDT tracepoints enabled.",
+      "limitation": "bitcoind has not been built with USDT tracepoints enabled."
+    },
+    {
+      "case": "interface_usdt_net.py",
+      "transport": "v1",
+      "reason": "bitcoind has not been built with USDT tracepoints enabled.",
+      "limitation": "bitcoind has not been built with USDT tracepoints enabled."
+    },
+    {
+      "case": "interface_usdt_net.py",
+      "transport": "v2",
+      "reason": "bitcoind has not been built with USDT tracepoints enabled.",
+      "limitation": "bitcoind has not been built with USDT tracepoints enabled."
+    },
+    {
+      "case": "interface_usdt_utxocache.py",
+      "transport": "v1",
+      "reason": "bitcoind has not been built with USDT tracepoints enabled.",
+      "limitation": "bitcoind has not been built with USDT tracepoints enabled."
+    },
+    {
+      "case": "interface_usdt_utxocache.py",
+      "transport": "v2",
+      "reason": "bitcoind has not been built with USDT tracepoints enabled.",
+      "limitation": "bitcoind has not been built with USDT tracepoints enabled."
+    },
+    {
+      "case": "interface_usdt_validation.py",
+      "transport": "v1",
+      "reason": "bitcoind has not been built with USDT tracepoints enabled.",
+      "limitation": "bitcoind has not been built with USDT tracepoints enabled."
+    },
+    {
+      "case": "interface_usdt_validation.py",
+      "transport": "v2",
+      "reason": "bitcoind has not been built with USDT tracepoints enabled.",
+      "limitation": "bitcoind has not been built with USDT tracepoints enabled."
+    },
+    {
+      "case": "interface_zmq.py",
+      "transport": "v1",
+      "reason": "python3-zmq module not available.",
+      "limitation": "python3-zmq module not available."
+    },
+    {
+      "case": "interface_zmq.py",
+      "transport": "v2",
+      "reason": "python3-zmq module not available.",
+      "limitation": "python3-zmq module not available."
+    },
+    {
+      "case": "mempool_compatibility.py",
+      "transport": "v1",
+      "reason": "previous releases not available or disabled",
+      "limitation": "previous releases not available or disabled"
+    },
+    {
+      "case": "mempool_compatibility.py",
+      "transport": "v2",
+      "reason": "previous releases not available or disabled",
+      "limitation": "previous releases not available or disabled"
+    },
+    {
+      "case": "tool_bitcoin_chainstate.py",
+      "transport": "v1",
+      "reason": "bitcoin-chainstate has not been compiled",
+      "limitation": "bitcoin-chainstate has not been compiled"
+    },
+    {
+      "case": "tool_bitcoin_chainstate.py",
+      "transport": "v2",
+      "reason": "bitcoin-chainstate has not been compiled",
+      "limitation": "bitcoin-chainstate has not been compiled"
+    },
+    {
+      "case": "wallet_backwards_compatibility.py",
+      "transport": "v1",
+      "reason": "previous releases not available or disabled",
+      "limitation": "previous releases not available or disabled"
+    },
+    {
+      "case": "wallet_backwards_compatibility.py",
+      "transport": "v2",
+      "reason": "previous releases not available or disabled",
+      "limitation": "previous releases not available or disabled"
+    },
+    {
+      "case": "wallet_migration.py",
+      "transport": "v1",
+      "reason": "previous releases not available or disabled",
+      "limitation": "previous releases not available or disabled"
+    },
+    {
+      "case": "wallet_migration.py",
+      "transport": "v2",
+      "reason": "previous releases not available or disabled",
+      "limitation": "previous releases not available or disabled"
+    },
+    {
+      "case": "tool_bench_sanity_check.py",
+      "transport": "v1",
+      "reason": "bench_bitcoin has not been compiled",
+      "limitation": "bench_bitcoin has not been compiled"
+    },
+    {
+      "case": "tool_bench_sanity_check.py",
+      "transport": "v2",
+      "reason": "bench_bitcoin has not been compiled",
+      "limitation": "bench_bitcoin has not been compiled"
+    }
+  ],
+  "execution_report": "build-functional-checkpoint/pocx-results-oh7igcgf/results.json",
+  "execution_report_sha256": "b9da1bbd50d387c5c049f3f5325d2c7b0475a135e7394c9bc19223c1f9249989",
+  "policy_sha256": "668fa3587439eb4c93e296926730507a72664af478e8ed9f913e9f2a9902d5c0",
+  "external_dependencies": {
+    "contrib/linearize/linearize-data.py": "20caa157a2af3e82874e32b9974e67d6356c393e1d19f018f4e0cf8bf704dd87",
+    "contrib/linearize/linearize-hashes.py": "02d187590dbd91d8321f3d58adbd344540df745a76a69ae57a2e2a80b6f232be",
+    "contrib/signet/miner": "2df980a48e688a9e1b54f1764772edd941c0e7008bcc99faa65546d263e8dffe",
+    "src/kernel/chainparams.cpp": "9765ddda60b8b95126350e54a90ff23e055b25bd87e92bd7bb027ef8afddda13",
+    "src/pocx/consensus/regtest_functional_assumeutxo.inc": "9e1abbae3942cc638f94b7c9ad4733dc156e24430873ae099e7d9df08ff34262",
+    "src/pocx/rpc/client_conversion_params.inc": "37b1452f3507f2d452ee05a0bb44bb63d44fa98d7226f36d0ee37612f83dc032",
+    "src/pocx/rpc/mining.cpp": "5b79761cb582dbbf1e581366ee1e99cc24b7768685845d2e79f92901c619d959",
+    "src/rpc/client.cpp": "eb5c6a6a2b1cfa41a99f40388c0d404649e62e4fb59c5e36774d9f160135b7ce",
+    "test/pocx/functional/feature_signet.py": "7e154a2359c83165289f3bcb74641af92965f58db655c7e6ed958cf639cbca8a",
+    "test/pocx/kernel/provenance.json": "af19fbac2cff2fefc1db18d7f65c6e15a9b9e09484ff21f50ce113142ce97904"
+  }
+}

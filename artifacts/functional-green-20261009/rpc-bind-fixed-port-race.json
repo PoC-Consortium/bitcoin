@@ -1,0 +1,14 @@
+{
+  "status": "confirmed runner fixed-port collision; not an approved skip or production failure",
+  "source": "test/functional/rpc_bind.py",
+  "source_sha256": "9bef56f70aeb5ce0e367eb6a101d91c4defd831979054185dcf6809df153a71a",
+  "fixed_ports": [
+    32171,
+    32172
+  ],
+  "v1_log": "build-pocx-clean/pocx-results-h7pqxrn2/rpc_bind.py-afe501cc3c5abfc0.log",
+  "v2_log": "build-pocx-clean/pocx-results-h7pqxrn2/v2/rpc_bind.py-afe501cc3c5abfc0.log",
+  "node_bind_failure_log": "build-pocx-clean/pocx-results-h7pqxrn2/v2/rpc_bind-afe501cc3c5abfc0/node0/regtest/debug.log",
+  "evidence": "The unchanged --ipv4 cases overlapped: v1 bound both fixed ports at18:02:33.82, v2 failed32172at18:02:34.18. v2 rejected missing expected binding; v1 could no longer reach its RPC endpoint and failed after60seconds. No processes were killed by the attempted ownership-scoped cleanup, because v1 had already exited.",
+  "required_fix": "Serialize the fixed-port resource in the native runner while retaining both original transport cases and all assertions. Fresh complete matrix required."
+}

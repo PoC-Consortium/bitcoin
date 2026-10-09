@@ -1,0 +1,1009 @@
+{
+  "staged_tree": "5e0c19615f1f594d1b0c49b29174048b7c4e3783",
+  "independent_checkout": "/home/johnny/Code/bitcoin-pocx/bitcoin-functional-package-20261009",
+  "staged_files": [
+    {
+      "path": "artifacts/baseline-inventory.json",
+      "sha256": "4956c0f2e5193b7868e3e482d01bd3d487c45f964dcb09a99454f39b24154e33"
+    },
+    {
+      "path": "artifacts/functional-baseline-20261009/verification.json",
+      "sha256": "70f482eb949c53876326cc00d1386e20e0e13dcd0fb1adb83ac5e5941ce174e2"
+    },
+    {
+      "path": "artifacts/functional-bitcoin-fresh-20261009/execution.json",
+      "sha256": "3570b14bb6d8094be439caf9c5388289b105038cd0be366059a351abf5787fbb"
+    },
+    {
+      "path": "artifacts/functional-bitcoin-fresh-20261009/verification.json",
+      "sha256": "8c9bcc1ca6263e9e2c1ad924edf5ec773d2c44fdb98f60b30834adddd7acdfab"
+    },
+    {
+      "path": "artifacts/functional-green-20261009/complete-selection-matrix-final-fourth.json",
+      "sha256": "b6f2f380f9374b4d84655c91a37cc877ac075844d16289ca346874556285054d"
+    },
+    {
+      "path": "artifacts/functional-green-20261009/infrastructure-final.log",
+      "sha256": "24ec86dcf79939c2a81a5e1a7bfe6ad22d796cae761bab46f839867fa6d63b7c"
+    },
+    {
+      "path": "artifacts/functional-green-20261009/kernel-after-signet/verification.json",
+      "sha256": "d5f0910ee37760a7a7736a9c7f4d5c62e05c61c8e416e181fd4f22d569652eb6"
+    },
+    {
+      "path": "artifacts/functional-green-20261009/preview-arrival-regression-review.json",
+      "sha256": "d25b0bb5e341cd1a9872cb3261110f55faf4d9daaa85c201780b7e71d571d04c"
+    },
+    {
+      "path": "artifacts/functional-green-20261009/rpc-bind-fixed-port-race.json",
+      "sha256": "25286696c4150d7ec390d6aab18dfcbff48ca8b3b7c4529605841090c734b9de"
+    },
+    {
+      "path": "artifacts/functional-green-20261009/signet-calibration-preprocessing-review.json",
+      "sha256": "1bcc41d1a01e245cdaead216787084148a4ea90982eb86fc668af042282d8036"
+    },
+    {
+      "path": "artifacts/functional-green-20261009/static-assertion-delta-review.json",
+      "sha256": "8e4f78b16fc0e5d5a7102a256f00a897ac45c417fd402e4558db37d185507b8c"
+    },
+    {
+      "path": "artifacts/functional-green-20261009/verification-final.json",
+      "sha256": "90bd05f889926c74ae1025d3e1100bb370daaba246369dca28623d84e01553d6"
+    },
+    {
+      "path": "build-pocx-clean/pocx-results-fgwf4s35/results.json",
+      "sha256": "9583310dd81f17a02e784ebebee45f4de5ce712a24a70d762eed8f72f1670785"
+    },
+    {
+      "path": "contrib/linearize/README.md",
+      "sha256": "9beb8bfa7294d5de464efbcdc2b3e5d35ae5db2c6bb52f3e1fa4e2722ecd5408"
+    },
+    {
+      "path": "contrib/linearize/linearize-data.py",
+      "sha256": "20caa157a2af3e82874e32b9974e67d6356c393e1d19f018f4e0cf8bf704dd87"
+    },
+    {
+      "path": "src/kernel/chainparams.cpp",
+      "sha256": "9765ddda60b8b95126350e54a90ff23e055b25bd87e92bd7bb027ef8afddda13"
+    },
+    {
+      "path": "src/pocx/consensus/regtest_functional_assumeutxo.inc",
+      "sha256": "9e1abbae3942cc638f94b7c9ad4733dc156e24430873ae099e7d9df08ff34262"
+    },
+    {
+      "path": "src/pocx/mining/block_builder.cpp",
+      "sha256": "5b72dbbf5c637fde657cf79e6efe5b059dc081e04ef0308b30f5226d5d501ddb"
+    },
+    {
+      "path": "src/pocx/rpc/client_conversion_params.inc",
+      "sha256": "37b1452f3507f2d452ee05a0bb44bb63d44fa98d7226f36d0ee37612f83dc032"
+    },
+    {
+      "path": "src/pocx/rpc/mining.cpp",
+      "sha256": "5b79761cb582dbbf1e581366ee1e99cc24b7768685845d2e79f92901c619d959"
+    },
+    {
+      "path": "src/rpc/client.cpp",
+      "sha256": "eb5c6a6a2b1cfa41a99f40388c0d404649e62e4fb59c5e36774d9f160135b7ce"
+    },
+    {
+      "path": "test/pocx/README-functional.md",
+      "sha256": "e94aa5f7ba03e80f2f9da01a018a294c2a73249937c338910c0877866d4f2e38"
+    },
+    {
+      "path": "test/pocx/bitcoin_test_runner.py",
+      "sha256": "37bcc7c6eb545cccd595385903e3bc51788e13c398acc964c50e0d37517f1ff8"
+    },
+    {
+      "path": "test/pocx/check_drift.py",
+      "sha256": "6761132f9f47b2fa36c727dc033acca27e9b4cfd3fa55a776f6163d616506d72"
+    },
+    {
+      "path": "test/pocx/common.py",
+      "sha256": "7e4e93543e42ab54bf2bacb656fd56d03da38855a0ee823dcc4986bb9aabaf3b"
+    },
+    {
+      "path": "test/pocx/coverage-contract.json",
+      "sha256": "855a7db5504356becc82500e28f0d136af09812ea5c7307c0e58df26196ad7ee"
+    },
+    {
+      "path": "test/pocx/coverage.json",
+      "sha256": "7a1bbd1d39ba9b5bcf00538393e56bd65411a14811ac1a337215686d062fa899"
+    },
+    {
+      "path": "test/pocx/data/rpc_decodescript.json",
+      "sha256": "fae7817ef1d720c26e8244e0e6f13d49ae0de5baae82d3fdd2291d09e140b2cf"
+    },
+    {
+      "path": "test/pocx/data/rpc_getblockstats.json",
+      "sha256": "4527bfe1ddcf12ddfe32e62ed035701651b0f25f57659258a893ca72c315f85e"
+    },
+    {
+      "path": "test/pocx/data/util/bitcoin-util-test.json",
+      "sha256": "60d5f06a038084d177f39d7078187a47919f6a795d36a56202257b4d487ec004"
+    },
+    {
+      "path": "test/pocx/data/util/tt-delin1-out.json",
+      "sha256": "9858fefb47f3ab8c73c7174f663e61f46a001223457b6602735d27e90f310fcf"
+    },
+    {
+      "path": "test/pocx/data/util/tt-delout1-out.json",
+      "sha256": "41e1b8eb6e20ec3aded1778abadc027634df8947df8b700d41addf5575266771"
+    },
+    {
+      "path": "test/pocx/data/util/tt-locktime317000-out.json",
+      "sha256": "d4515f4f23b8c3c04fa021b6e2e49c5e4a108c3429d5bb3ba9e9346fb18c0de6"
+    },
+    {
+      "path": "test/pocx/data/util/txcreate1.json",
+      "sha256": "ce3089bd20e5d42c2b7f72576b409b68f42614db4a363d4445d103198e8bce87"
+    },
+    {
+      "path": "test/pocx/data/util/txcreatedata1.json",
+      "sha256": "2d6cee2e2828210223690181217adf0a6a7613fb0b8d3802456b8780d8678a68"
+    },
+    {
+      "path": "test/pocx/data/util/txcreatedata2.json",
+      "sha256": "74494d54d4b26a395949627eb26d873705fed7c3a251c21c0b576288921fe8ed"
+    },
+    {
+      "path": "test/pocx/data/util/txcreatedata_seq0.json",
+      "sha256": "62a7d9d8afe62635e182de80816b46e68e4e85a7ed11ba964aea1553ca5fd7f6"
+    },
+    {
+      "path": "test/pocx/data/util/txcreatedata_seq1.json",
+      "sha256": "86cd07a7c9ae31ed58638803c460663c6cca4edf87857b014f1273629ca7cd95"
+    },
+    {
+      "path": "test/pocx/data/util/txcreatemultisig2.json",
+      "sha256": "badcc23e2981d678474d37c55e69ae5ce830a37574a3875bbf630f3fc20f9127"
+    },
+    {
+      "path": "test/pocx/data/util/txcreatemultisig3.json",
+      "sha256": "bdde283285e96eb769025ab217695ddfb188ccbed2c299cccfd0e531685227d3"
+    },
+    {
+      "path": "test/pocx/data/util/txcreatemultisig4.json",
+      "sha256": "efafedc9fca8bc0f956833227060541578f073505398dd8ac2d8cbfab8ab99aa"
+    },
+    {
+      "path": "test/pocx/data/util/txcreatemultisig5.json",
+      "sha256": "99afa41bfb6b3a5a4bc436ff5a35c20c08457ae9b2c1166096c4b15b4f6a7e9c"
+    },
+    {
+      "path": "test/pocx/data/util/txcreateoutpubkey2.json",
+      "sha256": "538e0f8cd9cced7a9df259748a09348159daf0ce2e9dd9f6ba304f0913c15846"
+    },
+    {
+      "path": "test/pocx/data/util/txcreateoutpubkey3.json",
+      "sha256": "dff6fd7511c655696c07df1f239cd341f2b5ca8a99f266547e7f42d53b4b6991"
+    },
+    {
+      "path": "test/pocx/data/util/txcreatescript2.json",
+      "sha256": "4c0d6ca98b0bda006336e3ebb949cafc64ca4440c433eaf62c80a9a256873593"
+    },
+    {
+      "path": "test/pocx/data/util/txcreatescript3.json",
+      "sha256": "a4fd890e3a1aae83545ec9805f5dc2fb0bcedefce755f928c5ea30bd715913f6"
+    },
+    {
+      "path": "test/pocx/data/util/txcreatescript4.json",
+      "sha256": "006bdab9e7563929eeda782dc13e8cb5f3d5027578a4d7d3126b139e8ad83134"
+    },
+    {
+      "path": "test/pocx/data/util/txcreatesignv1.json",
+      "sha256": "e9ef043a84e3b54ab66027951ff7858886ff322af882bbf58b8e0f08f86541db"
+    },
+    {
+      "path": "test/pocx/framework-provenance.json",
+      "sha256": "bbaf34205ec0becdc4b086cd9ffb93ac12bb6bfe7ef6721b9dd6ec25343b89e4"
+    },
+    {
+      "path": "test/pocx/framework/address.py",
+      "sha256": "75f5b4fcc0f9d826de28e35eac00425e8a10f678af54f6c5676737e0529a6550"
+    },
+    {
+      "path": "test/pocx/framework/blocktools.py",
+      "sha256": "b9c62fa683352b665e2e0c026f7cccafbbcd15db471b4ebe73799ae65fbdfecb"
+    },
+    {
+      "path": "test/pocx/framework/messages.py",
+      "sha256": "f93a7e32521a57c7e5b49214c8bb949b4bc1d1d33eb12ce724462edd37d45898"
+    },
+    {
+      "path": "test/pocx/framework/test_framework.py",
+      "sha256": "b3074b26ed75978783fbce6aebd4c07f99bcfd64d38cd52db25591cb2b70041f"
+    },
+    {
+      "path": "test/pocx/framework/test_node.py",
+      "sha256": "449dec8a3bbd0a19c081bc1eb3e0d0220e93ebcc1873fd921c2ed9ab8427c0b9"
+    },
+    {
+      "path": "test/pocx/framework/util.py",
+      "sha256": "466f768bc95a6889e253b4953714fa31583057d655614e6b111ef9036e11b771"
+    },
+    {
+      "path": "test/pocx/functional-baseline.json",
+      "sha256": "211738ab9e9d757d9112e81e8ae03570731e5411874513bb609dc118784c26aa"
+    },
+    {
+      "path": "test/pocx/functional-cases.csv",
+      "sha256": "be7b9134d68d11fd73b4ee22a79d8ad391794f0cc2b9b6da4fcd749248e5ef8f"
+    },
+    {
+      "path": "test/pocx/functional-profile-skips.json",
+      "sha256": "668fa3587439eb4c93e296926730507a72664af478e8ed9f913e9f2a9902d5c0"
+    },
+    {
+      "path": "test/pocx/functional-status.json",
+      "sha256": "e260a4041eddfadf5d904da25d51dcee12cf4494a902e4528bceb4af7fc440b6"
+    },
+    {
+      "path": "test/pocx/functional/example_test.py",
+      "sha256": "013dbb29ee0258f77b70af5d50b985219209741bc60edf7a7692a04ac4017a31"
+    },
+    {
+      "path": "test/pocx/functional/feature_abortnode.py",
+      "sha256": "6c184e89ccd3c9956973777d8051c172c9ebc54d8b09029d48b2f24c39879aa2"
+    },
+    {
+      "path": "test/pocx/functional/feature_assumeutxo.py",
+      "sha256": "0e8c3593169ebb1efff722a2031ff91a6648130b885791bf2156af862c0be3cf"
+    },
+    {
+      "path": "test/pocx/functional/feature_assumevalid.py",
+      "sha256": "4ccf09cf37c304c204ea5eee2a574bb81492dbdef3c6d5b920d18c92c252e5aa"
+    },
+    {
+      "path": "test/pocx/functional/feature_bip68_sequence.py",
+      "sha256": "b63649b56cf4572a5eeb786740b44ec52c233f77fa9b89dea4480c2f023a6844"
+    },
+    {
+      "path": "test/pocx/functional/feature_block.py",
+      "sha256": "fc7a884662d3c1895ed9ea59ae12ebf80bb76340fe938821f00afce66f0be300"
+    },
+    {
+      "path": "test/pocx/functional/feature_blocksdir.py",
+      "sha256": "9c7c1c6f38aa548440470c45b025643b21c2d0667d3575d8e0ad01221731d2a3"
+    },
+    {
+      "path": "test/pocx/functional/feature_chain_tiebreaks.py",
+      "sha256": "4afedad19607d39a180cf3a0216173aed862f4bbc4fa72d10b888bc2a09d47df"
+    },
+    {
+      "path": "test/pocx/functional/feature_cltv.py",
+      "sha256": "691fe522712167db4528ac8f6bbce42b8404d03c1c6608c1fc7dfbd4f44a1e12"
+    },
+    {
+      "path": "test/pocx/functional/feature_coinstatsindex.py",
+      "sha256": "37f8f48941d8ea409c807b28cb3ddc859d83645f37a13ef8a6b84dbc43a481cb"
+    },
+    {
+      "path": "test/pocx/functional/feature_config_args.py",
+      "sha256": "555936b5729a03d5092591eee4ca18f11510919797f3c1e0598b44b5260c5bd7"
+    },
+    {
+      "path": "test/pocx/functional/feature_csv_activation.py",
+      "sha256": "d01f9648481ea73d08f627468e8565059c2017c87ef9e962200b666e899eae7f"
+    },
+    {
+      "path": "test/pocx/functional/feature_dersig.py",
+      "sha256": "cbfe6acf9392f799342796925ffb3e250a0af01edffaa4585b2bc51526e2724d"
+    },
+    {
+      "path": "test/pocx/functional/feature_framework_testshell.py",
+      "sha256": "ebbeffae76d230bc62e27ce4b7dfb0e74c4b4568e866942d013c8b6388658320"
+    },
+    {
+      "path": "test/pocx/functional/feature_index_prune.py",
+      "sha256": "c135752fdd04542c604f025d203a6a34a4dc1e4687055b9bb3ba5243a5119948"
+    },
+    {
+      "path": "test/pocx/functional/feature_init.py",
+      "sha256": "532312989cb134e10c050afb14fb9e28080346e55953c67f60a57a8915710beb"
+    },
+    {
+      "path": "test/pocx/functional/feature_loadblock.py",
+      "sha256": "5c7565e6abf376d22fa4c3675acca31b65d43a45099218c9096c922c3aacb31b"
+    },
+    {
+      "path": "test/pocx/functional/feature_maxtipage.py",
+      "sha256": "bc6c53ffe999b76b80cb626a69664a7cb87c622049852016d7d5682b24065dae"
+    },
+    {
+      "path": "test/pocx/functional/feature_minchainwork.py",
+      "sha256": "e134a1a02a2f0ef9cd562d5bef6c28f7b307831674d7eac331ed5d6ca0927b4d"
+    },
+    {
+      "path": "test/pocx/functional/feature_notifications.py",
+      "sha256": "f9c60a237b2909a603013941c6858f5f51bd3ec5c820fa7154cb1f2f605eccbe"
+    },
+    {
+      "path": "test/pocx/functional/feature_nulldummy.py",
+      "sha256": "33cb7138ed4716adc8d6685bd39f327ba480641936d0f254f44b0b9005c72989"
+    },
+    {
+      "path": "test/pocx/functional/feature_pocx_assignment_block_conflicts.py",
+      "sha256": "0e2de7d5e691f8f437fc59d9314e76795734a162d1edd7dfd8a81031272bb447"
+    },
+    {
+      "path": "test/pocx/functional/feature_pocx_assignment_consecutive.py",
+      "sha256": "8b56f35e09c72af0502dcf047dd3adc38250b1db9143a11ae411c7b8e0f30c30"
+    },
+    {
+      "path": "test/pocx/functional/feature_pocx_assignment_crash_revive.py",
+      "sha256": "2add89d4faa198c54443b34394970f5031153b74d03ec26349ea23427b091d33"
+    },
+    {
+      "path": "test/pocx/functional/feature_pocx_assignment_double_cycle.py",
+      "sha256": "bc4b7b1e14414ec72d586dd01c0ee12cb470ee325cc95ad1d0bda7109e15c637"
+    },
+    {
+      "path": "test/pocx/functional/feature_pocx_assignment_invalid_format.py",
+      "sha256": "2648b53a15d865009885d9edcbe5b39b7c3d142ed4ce41076b4323908df8f913"
+    },
+    {
+      "path": "test/pocx/functional/feature_pocx_assignment_lifecycle.py",
+      "sha256": "4059a7a68a29f9c05b5311cb23aacf1babb29bd588659ebe7aef54be5ff96f42"
+    },
+    {
+      "path": "test/pocx/functional/feature_pocx_assignment_multinode.py",
+      "sha256": "4f37b8042d0119e963cf4589415f43f15ec66791cb32457e18f03f9e10f9e146"
+    },
+    {
+      "path": "test/pocx/functional/feature_pocx_assignment_multinode_attacks.py",
+      "sha256": "4e1e7f5144ea18c9092461f81dfed4a060ec9df5616772d472df0e79915cf462"
+    },
+    {
+      "path": "test/pocx/functional/feature_pocx_assignment_reorg_height_shift.py",
+      "sha256": "389a8bfa5f4d88048bfbacd84aadd3ab0eebd770a69d8fc534adcf4ab4ba20e6"
+    },
+    {
+      "path": "test/pocx/functional/feature_pocx_assignment_signers.py",
+      "sha256": "459c7981e08f1929cf8636dbc01084e1b56680b2316749a91e19e140df4a1bd2"
+    },
+    {
+      "path": "test/pocx/functional/feature_pocx_assignment_state_violations.py",
+      "sha256": "7e6344d18313f31f8edfd4a635d2bc2240ca64d482151c4ae11cc26749839fbb"
+    },
+    {
+      "path": "test/pocx/functional/feature_pocx_assignment_verifychain.py",
+      "sha256": "14a508b1bc863f394b7b07e3a98c115c074b557a65697d5d68cae3a6549d7073"
+    },
+    {
+      "path": "test/pocx/functional/feature_pocx_compactblocks.py",
+      "sha256": "966b5ec7d0a6fa7c1639ea4d394f7b02fa8f16ca186f16faf679d7cebab82746"
+    },
+    {
+      "path": "test/pocx/functional/feature_pocx_fork_fixture.py",
+      "sha256": "0212a746f59ad3e6dcccff03857f4651e58048cf45c6bcf687a7338f94840879"
+    },
+    {
+      "path": "test/pocx/functional/feature_pocx_imported_key_mining.py",
+      "sha256": "35347ad414d693f548d1f79952bc3ee317a703f46d15fb2cd065a59abb56b570"
+    },
+    {
+      "path": "test/pocx/functional/feature_pocx_mining.py",
+      "sha256": "5d9f412eb072b9f0d0e27d96829f6812e5376cf588ddf76ea0838c1ef59b8178"
+    },
+    {
+      "path": "test/pocx/functional/feature_pocx_premined.py",
+      "sha256": "29a97d7e27b29ad2d8924854888a390d59fc4847c00c52ae2c35d0ef536d7c5d"
+    },
+    {
+      "path": "test/pocx/functional/feature_pocx_scheduler_early_height.py",
+      "sha256": "53bc285c5f7f766899769371353edc6ce2b8c1a3da86f814b4c3791f90b8023c"
+    },
+    {
+      "path": "test/pocx/functional/feature_pocx_scheduler_payout.py",
+      "sha256": "d7a9db75e1100c502f3d96a44a4a4fa52ead51219ddf4e26aecfe6903a662e24"
+    },
+    {
+      "path": "test/pocx/functional/feature_pocx_submitblock_sign.py",
+      "sha256": "f1d92d940d809fe3472b02a42a69bea79d50a1cc2f267ea82b8db9b1abfe8d80"
+    },
+    {
+      "path": "test/pocx/functional/feature_pocx_submitnonce_key_gate.py",
+      "sha256": "a467301838b10eef3b75f43e2e6a8d98d9af622d2372b7fe371060db3e8171f8"
+    },
+    {
+      "path": "test/pocx/functional/feature_pocx_submitnonce_payout.py",
+      "sha256": "ebde639df0269c3f0177263f6fd155f31a62142c31f0d1492d45d5794a872754"
+    },
+    {
+      "path": "test/pocx/functional/feature_pocx_wire.py",
+      "sha256": "da7f853452758874c6bbad913e05e859216ff43c63069c31ce38174b5534f141"
+    },
+    {
+      "path": "test/pocx/functional/feature_presegwit_node_upgrade.py",
+      "sha256": "0b4d229311cc33e509b272dfa50c2c6a196e9fa201d0ac4168a2eb13f45bcdbf"
+    },
+    {
+      "path": "test/pocx/functional/feature_pruning.py",
+      "sha256": "7fa4de176e711e35ac940cb573aa54bef962c81bf426c24f815d43cd00d77953"
+    },
+    {
+      "path": "test/pocx/functional/feature_rbf.py",
+      "sha256": "3ecd3d7ea235e0bf214f81b40f46578e37861cb4cc5b2cd2e49708bbedb900be"
+    },
+    {
+      "path": "test/pocx/functional/feature_reindex.py",
+      "sha256": "a3a26a783888ff025434089b6dd2567be0fea1b9789408c8e9bf31c47686593d"
+    },
+    {
+      "path": "test/pocx/functional/feature_reindex_readonly.py",
+      "sha256": "4b6c853f106c6ad0e01a01ec0b5371fdecd06c0eee3277e4cb72f8b680306594"
+    },
+    {
+      "path": "test/pocx/functional/feature_remove_pruned_files_on_startup.py",
+      "sha256": "0cd6ec7e3365b35ce372a7cda16b2053fd329b2256afc0143967a389e871360c"
+    },
+    {
+      "path": "test/pocx/functional/feature_segwit.py",
+      "sha256": "b93e1c978b3e73f814409d515ef4782434a1d9ba3d54b209d8a29743f97ba9cc"
+    },
+    {
+      "path": "test/pocx/functional/feature_signet.py",
+      "sha256": "7e154a2359c83165289f3bcb74641af92965f58db655c7e6ed958cf639cbca8a"
+    },
+    {
+      "path": "test/pocx/functional/feature_taproot.py",
+      "sha256": "afb5a666d84109e40ce6fa8b49d5b58696ef434cf5e08e9e5e44fa53a80f2be4"
+    },
+    {
+      "path": "test/pocx/functional/feature_utxo_set_hash.py",
+      "sha256": "1580a9c0a1dc771d1033dc27e2ad1a2718a2a590c555335a83e2a59b5d41ee72"
+    },
+    {
+      "path": "test/pocx/functional/feature_versionbits_warning.py",
+      "sha256": "db77833d052366171da2d403e710e40b6412c0199b2589a0cbb35cc79f81e142"
+    },
+    {
+      "path": "test/pocx/functional/interface_bitcoin_cli.py",
+      "sha256": "8e7b56ee5b027c25288eda1082102a52a67550681882a855c3ee03fe89defc54"
+    },
+    {
+      "path": "test/pocx/functional/interface_http.py",
+      "sha256": "7a033e26adbdca295200272268e96a2fed184ad65303a8fa4e04a56a3f91e864"
+    },
+    {
+      "path": "test/pocx/functional/interface_rest.py",
+      "sha256": "f5b6542c8896c013ca7927e97afd03b1a88bc663f733bf308c4176c8e3245a63"
+    },
+    {
+      "path": "test/pocx/functional/interface_rpc.py",
+      "sha256": "63137ec20d2a3af85e186b776216500354ddddc8a3ff4a38255b6378558d7555"
+    },
+    {
+      "path": "test/pocx/functional/mempool_accept.py",
+      "sha256": "ef3a56e5cadfa8ca49db884b3df8ea32de24385975d28bbffe35bc725ad25156"
+    },
+    {
+      "path": "test/pocx/functional/mempool_accept_wtxid.py",
+      "sha256": "6bdca7da53830cc7239fb960975b41504e37891ad10fbbfdb44f9fcda54e76fe"
+    },
+    {
+      "path": "test/pocx/functional/mempool_ephemeral_dust.py",
+      "sha256": "e6d79999adced7ce0362624299b1a6b03c118f6c1d2f1fb00bb2fb0010ea0106"
+    },
+    {
+      "path": "test/pocx/functional/mempool_limit.py",
+      "sha256": "fe2b51e029cec67b91a8954296fd06ff2b8cf147d4e4aea679d4b5149e604614"
+    },
+    {
+      "path": "test/pocx/functional/mempool_package_rbf.py",
+      "sha256": "22c2a450335a45643071c1bfc68d3970758b937b66f5c1c3b52c987bc6b7424f"
+    },
+    {
+      "path": "test/pocx/functional/mempool_packages.py",
+      "sha256": "dd5d11b785ab969d75bea167f708da658d06f0ac3767c6c61e42a1c2148dfe22"
+    },
+    {
+      "path": "test/pocx/functional/mempool_persist.py",
+      "sha256": "1bfcb6830ae32109c36d1765562246c2a0e5468ae2271336107d3babde8f6b11"
+    },
+    {
+      "path": "test/pocx/functional/mempool_reorg.py",
+      "sha256": "0010fb791cc0f0070d206442349fee1ea429efc72437284b08993818a4307b25"
+    },
+    {
+      "path": "test/pocx/functional/mempool_resurrect.py",
+      "sha256": "42a8f38b246d5aab6bc17a22dab20a9e4b60da6a760b57eba04838819e1e830f"
+    },
+    {
+      "path": "test/pocx/functional/mempool_truc.py",
+      "sha256": "679e525c3213c35636bb6587f3a1e5758d6e324ffdf90d744910623062f96a61"
+    },
+    {
+      "path": "test/pocx/functional/mempool_unbroadcast.py",
+      "sha256": "de599c3879cbe27714be6b4862c9501389741388c2d44f746327ae6110d4fc64"
+    },
+    {
+      "path": "test/pocx/functional/mempool_updatefromblock.py",
+      "sha256": "32502e45602eae03ce563e4381e7fea5a08faab229d8e495dbb7c0e3cd3329a0"
+    },
+    {
+      "path": "test/pocx/functional/mining_basic.py",
+      "sha256": "eacff9e79bde4a54840d1839dd6c41bae3457c165b81a06ef136be3cd001d043"
+    },
+    {
+      "path": "test/pocx/functional/mining_getblocktemplate_longpoll.py",
+      "sha256": "a71fad01a0ae52ac8e73bccbbf412f7a5dd7e8e0be5732c000ff28a11a1d0f59"
+    },
+    {
+      "path": "test/pocx/functional/mining_prioritisetransaction.py",
+      "sha256": "9a7f4f591546524049d554d4c8405021f99abb1b97eeb43a0b2a8fa87a5eb138"
+    },
+    {
+      "path": "test/pocx/functional/mining_template_verification.py",
+      "sha256": "dd21d04c7687960554bc3a5955cbf239855e73440f853321598eb4ebc6e396db"
+    },
+    {
+      "path": "test/pocx/functional/p2p_1p1c_network.py",
+      "sha256": "af10c5a54c15907c768efc86763e05cc0f89bfae188c9c4dccdc3dbf69f07f1a"
+    },
+    {
+      "path": "test/pocx/functional/p2p_addr_relay.py",
+      "sha256": "85ecd6cbc3df1aa9b4b6627ebed20a659034931e5cb8ead55199ee81dc3597e9"
+    },
+    {
+      "path": "test/pocx/functional/p2p_addr_selfannouncement.py",
+      "sha256": "b7ca944046b56fca50191c276d6d8773d277f0e142eab9627846af38cef0952f"
+    },
+    {
+      "path": "test/pocx/functional/p2p_addrfetch.py",
+      "sha256": "e7e8322da68dbb42f777dcdbc93274a36df59b541e4a8d070e09c95534c2435c"
+    },
+    {
+      "path": "test/pocx/functional/p2p_addrv2_relay.py",
+      "sha256": "3135136529ed6582fe9d7604e6d7ec722e4414f2a90f024835155d409afb127b"
+    },
+    {
+      "path": "test/pocx/functional/p2p_block_sync.py",
+      "sha256": "a861db8ed7aa1a01a59a0f27202ce41bed34791054abc98e5648351920328bee"
+    },
+    {
+      "path": "test/pocx/functional/p2p_blockfilters.py",
+      "sha256": "9a46792df58f074f6e14ab9137d388c6d0483d0c782797b8506c38b990d7a446"
+    },
+    {
+      "path": "test/pocx/functional/p2p_blocksonly.py",
+      "sha256": "ddec08141ccd0446c72d87e1464dab03d85cd83db85425023774dcc0d1a2f515"
+    },
+    {
+      "path": "test/pocx/functional/p2p_compactblocks.py",
+      "sha256": "8a37664588d4762ae888096affb14705a7ff765c24dc88a05751648be7695a82"
+    },
+    {
+      "path": "test/pocx/functional/p2p_compactblocks_hb.py",
+      "sha256": "c7e35f47417bd1e449c18ca57a15e81bd74d615c174c6005f5381e84d1461723"
+    },
+    {
+      "path": "test/pocx/functional/p2p_disconnect_ban.py",
+      "sha256": "f08bd047949332a9efebbe1560e35dd419a14202c29d507e45be57bf226edba0"
+    },
+    {
+      "path": "test/pocx/functional/p2p_eviction.py",
+      "sha256": "d4370a3d60a8bc527836898453cdb04a45f33d2df9c16c0e9795d6dafdd8b36e"
+    },
+    {
+      "path": "test/pocx/functional/p2p_fingerprint.py",
+      "sha256": "af33aa21bfaaab2403285a0c93408c0ddff6c92ce71eabd3d809d9ebb8ad25d7"
+    },
+    {
+      "path": "test/pocx/functional/p2p_getaddr_caching.py",
+      "sha256": "b80d61a602681c227589c5b4f39211e78ac72588c402b3b09244963803882b62"
+    },
+    {
+      "path": "test/pocx/functional/p2p_handshake.py",
+      "sha256": "69651de1429d057eb0f0f8de91eeea5aef670930f6e69b9f50f666654508c9df"
+    },
+    {
+      "path": "test/pocx/functional/p2p_headers_sync_with_minchainwork.py",
+      "sha256": "9eb68d6b02ade22a896d4d9096be98479bb910c2a0d92346a7e07c799189698c"
+    },
+    {
+      "path": "test/pocx/functional/p2p_ibd_stalling.py",
+      "sha256": "42ad79ab41b7b593fa94d1bce3e89e940e2edaad11e303cc47a95d7fb357fe04"
+    },
+    {
+      "path": "test/pocx/functional/p2p_ibd_txrelay.py",
+      "sha256": "31437980088fb8a4c743116205c4227ea6b3b13952839ebb4c9a959227ca1733"
+    },
+    {
+      "path": "test/pocx/functional/p2p_initial_headers_sync.py",
+      "sha256": "0d3e7498a5b5cf5dde532ed7ac5c131b35c926f8d9be6baaaed0b51043a05892"
+    },
+    {
+      "path": "test/pocx/functional/p2p_invalid_block.py",
+      "sha256": "b7db611b842bc7c12eb065378b2af4c6f7cca0a13187724f5791c097a88429e7"
+    },
+    {
+      "path": "test/pocx/functional/p2p_invalid_messages.py",
+      "sha256": "424eb3adef1bb7a4ab07c070f17cfbed847b847195d082b9d820df93081fa7c3"
+    },
+    {
+      "path": "test/pocx/functional/p2p_invalid_tx.py",
+      "sha256": "3cef46b2a5de8e4c34b16f493f9d5fa1bf9d42d104157d474f7549a6bbe1606a"
+    },
+    {
+      "path": "test/pocx/functional/p2p_leak.py",
+      "sha256": "23abb0c82f6ca4185ac24d1eb6ebfa5c6ad16ac0cb49719556931d202c65816b"
+    },
+    {
+      "path": "test/pocx/functional/p2p_leak_tx.py",
+      "sha256": "f34a454cb5b0adca334f6cab2cb627d64d31cb83807bc1869c13e8f875a84274"
+    },
+    {
+      "path": "test/pocx/functional/p2p_mutated_blocks.py",
+      "sha256": "ee26d2fb2c9bf99e812b5e7d75ed0f45c080e327335aeaea2f2a35b36285f78f"
+    },
+    {
+      "path": "test/pocx/functional/p2p_node_network_limited.py",
+      "sha256": "fd616ade5d82a541d5ca4bfa499948d1fe6861f67f90e9d6bf8c25ec26baf9fa"
+    },
+    {
+      "path": "test/pocx/functional/p2p_orphan_handling.py",
+      "sha256": "02453c31d68eb6a38814c8fb53518ed9416a142a48aa6e3713d46c79671c702f"
+    },
+    {
+      "path": "test/pocx/functional/p2p_outbound_eviction.py",
+      "sha256": "f51c62862d3841b316aa3f3ef504e3a31d9cc45d22becb0dd6b6bf8b34d5558d"
+    },
+    {
+      "path": "test/pocx/functional/p2p_permissions.py",
+      "sha256": "bf5d357f480cf2035757182bffe94b21a435c37561b13b4066a94a9bab77abae"
+    },
+    {
+      "path": "test/pocx/functional/p2p_private_broadcast.py",
+      "sha256": "d7d8eb54b03975a99e322e3df480543e39e5427726d42894997901293804f4ca"
+    },
+    {
+      "path": "test/pocx/functional/p2p_seednode.py",
+      "sha256": "ea8d65830ae2d3c36e3b19efb7ae1b84b77b0df3fd078b7518dd3cdfdb4107b4"
+    },
+    {
+      "path": "test/pocx/functional/p2p_segwit.py",
+      "sha256": "1533cab24a9e2549f6584a58671c4c266dec45410736df9b40cede8a77973875"
+    },
+    {
+      "path": "test/pocx/functional/p2p_sendheaders.py",
+      "sha256": "c9c3e01b86a25d5df2433f92c435380d48cff7d369ba5145eaf8a9d944f91731"
+    },
+    {
+      "path": "test/pocx/functional/p2p_tx_download.py",
+      "sha256": "a498750aa9075e09909aa6a3b2641ba57d37b1545403d9b0264a155d91d08f4a"
+    },
+    {
+      "path": "test/pocx/functional/p2p_tx_privacy.py",
+      "sha256": "c5409e57623ad769d7182a78a3479643ba8afccb396015edac3db4597e759c86"
+    },
+    {
+      "path": "test/pocx/functional/p2p_unrequested_blocks.py",
+      "sha256": "ad1bc83015d788828eb4fb4bcdf0644be62ac6158759b8f85c16dcca1b972fd8"
+    },
+    {
+      "path": "test/pocx/functional/p2p_v2_encrypted.py",
+      "sha256": "38d1faf6fba7c7861c8f7fb09fecb49aa4d86f5c7371fe9460287ce74d4493c2"
+    },
+    {
+      "path": "test/pocx/functional/p2p_v2_transport.py",
+      "sha256": "7406c5663176fa49ae55986acc9de05920a7e5f4b84630c50896e5c618397c2c"
+    },
+    {
+      "path": "test/pocx/functional/rpc_blockchain.py",
+      "sha256": "e8aed35ad6f47987205048b757716e80d382c8ed89f71a972454e081d3f30125"
+    },
+    {
+      "path": "test/pocx/functional/rpc_createmultisig.py",
+      "sha256": "ae423f6fb36083297b9c87d773c7f415f5b682ea75ddd729b348ab1a85000c5a"
+    },
+    {
+      "path": "test/pocx/functional/rpc_decodescript.py",
+      "sha256": "1812c3286987eb1b0b1ab3ac7fdfd6b86653d09a03abdfefdf0206fc8ea0d1ab"
+    },
+    {
+      "path": "test/pocx/functional/rpc_deriveaddresses.py",
+      "sha256": "580d645db1e0e207d9e736e8052a5e8bf736ea44ae0c83dc4ff75b95913e620d"
+    },
+    {
+      "path": "test/pocx/functional/rpc_dumptxoutset.py",
+      "sha256": "be59946b70f1aefcff7bcb7db8ee4808bd64e925df41e5394c78e40e1f86e69e"
+    },
+    {
+      "path": "test/pocx/functional/rpc_generate.py",
+      "sha256": "a6d246ea65d9e5c3d4841e2a841208a4923403c9d86ecbe140ac319e48a903c5"
+    },
+    {
+      "path": "test/pocx/functional/rpc_getblockfilter.py",
+      "sha256": "d7d35c53dbecdedf2d02e96cfbe028ecbbaeff7e3686e9d6b90c48815a14686d"
+    },
+    {
+      "path": "test/pocx/functional/rpc_getblockfrompeer.py",
+      "sha256": "9f3561ef2ac39fcc1d4a4212770949b63bda9e54824b3b20368655834f5176e6"
+    },
+    {
+      "path": "test/pocx/functional/rpc_getblockstats.py",
+      "sha256": "f47c4a1e32e77300191b43b57914731a577d87565fa0e8c59dd810636bffe54e"
+    },
+    {
+      "path": "test/pocx/functional/rpc_getchaintips.py",
+      "sha256": "6c16e492c00d1b1a487dba8fba802385877e2adb90029e2154c08ec7e4cfda22"
+    },
+    {
+      "path": "test/pocx/functional/rpc_help.py",
+      "sha256": "c5490f1867e4a4320d0fb4ecc8667f322aef06d06811ad86efe90a4fb8d0550f"
+    },
+    {
+      "path": "test/pocx/functional/rpc_invalid_address_message.py",
+      "sha256": "c38cd5bf1f08a5436268a77c864a1be3af4ab71481ce0e660ec71be6fd050bfb"
+    },
+    {
+      "path": "test/pocx/functional/rpc_invalidateblock.py",
+      "sha256": "4bb5f83d63400d970c5a5ef8875510ffb2f849052a6c4f1d5538982102fb6db4"
+    },
+    {
+      "path": "test/pocx/functional/rpc_net.py",
+      "sha256": "150b69c1e1dcf92c0957aa9ae486bc2dab66c7aba6951c1a9bf64f8c9572dbbd"
+    },
+    {
+      "path": "test/pocx/functional/rpc_packages.py",
+      "sha256": "4a0d25c564d8fc19efd656e30f8d3bff0db9d756fac67cdb9f13457523eaa861"
+    },
+    {
+      "path": "test/pocx/functional/rpc_preciousblock.py",
+      "sha256": "be883dd73403866c1b1399c2a17df1e2e9d27dbb7bd72c87811f1d37cb3ce73e"
+    },
+    {
+      "path": "test/pocx/functional/rpc_psbt.py",
+      "sha256": "77c88545e415f252effb7e420e8024f1653daea5c0c267f67bad63da2e8eb941"
+    },
+    {
+      "path": "test/pocx/functional/rpc_scanblocks.py",
+      "sha256": "c8bddabe4387beca44f8dbdb008324dd4ff3a270153dc60a7fbc7c50a6207438"
+    },
+    {
+      "path": "test/pocx/functional/rpc_scantxoutset.py",
+      "sha256": "5df476bb84f7b0099d2df45ab7799b203cbb12a3d9806c711e3d511fdeb83e5b"
+    },
+    {
+      "path": "test/pocx/functional/rpc_signrawtransactionwithkey.py",
+      "sha256": "1cadc086b086674ae5e395affce286da6c45d3b1abdfdd55a4cd75dea6595ed8"
+    },
+    {
+      "path": "test/pocx/functional/rpc_validateaddress.py",
+      "sha256": "a240b612dcbab1b75c6ad5a66b6bf27030cbc258ab823c10443c739cff2c95c2"
+    },
+    {
+      "path": "test/pocx/functional/tool_signet_miner.py",
+      "sha256": "78c75e9982daa3a877fb0cdeaf09a14b6119ddff6916fe26cb2afd825406f78a"
+    },
+    {
+      "path": "test/pocx/functional/tool_utils.py",
+      "sha256": "2812d6e652c7c0aa155936067dcb182cd662fa7249de44845fdc626041bf6b36"
+    },
+    {
+      "path": "test/pocx/functional/tool_wallet.py",
+      "sha256": "b17ab8a8ef518e73f0da372f5804781ad82e2cb59c77191d51f20868cf7c2291"
+    },
+    {
+      "path": "test/pocx/functional/wallet_anchor.py",
+      "sha256": "5d7c1e9f3fea0c3a9069d36dc8a666689d91d735317c922360e07ffa5d24fe8e"
+    },
+    {
+      "path": "test/pocx/functional/wallet_assumeutxo.py",
+      "sha256": "9d6754b28f21f6f1d6201384c1ea7ef67c36390a2c08ec5b8b152eb2af4883f2"
+    },
+    {
+      "path": "test/pocx/functional/wallet_avoid_mixing_output_types.py",
+      "sha256": "6216cfa85640b7535867eb606962f3159d12c75d4eb1ee9117474a4fc0a9abee"
+    },
+    {
+      "path": "test/pocx/functional/wallet_backup.py",
+      "sha256": "00ac1ab6c8896bf8ade9ab0b3cea755f969fe3cb5229d325fe208c1e5b65f6b7"
+    },
+    {
+      "path": "test/pocx/functional/wallet_balance.py",
+      "sha256": "2ac5a16016ef6999e42bba6e5647b7538991b0989ad7f18ba9b83cf83a9f035f"
+    },
+    {
+      "path": "test/pocx/functional/wallet_basic.py",
+      "sha256": "1eb3aa335015b05a914e42c55f1cbfe7b97503ee940f63ed8428a0fad3917f9b"
+    },
+    {
+      "path": "test/pocx/functional/wallet_bumpfee.py",
+      "sha256": "493c3c35bce69620ef72eacf9f164464d3425b97702e3e29ba8ad52b86b9a0e3"
+    },
+    {
+      "path": "test/pocx/functional/wallet_change_address.py",
+      "sha256": "3e13d75b740153f58e179e24ab2ab2f2b15af7b0cc02827c42407f16959df12a"
+    },
+    {
+      "path": "test/pocx/functional/wallet_descriptor.py",
+      "sha256": "57dc58e2f9c21938006f3c235d2998760f6ba020b3907d612e83ef64c5cdcb56"
+    },
+    {
+      "path": "test/pocx/functional/wallet_fallbackfee.py",
+      "sha256": "7c4f958803f4820a24037b88a421fd5345cd8889d6c185a7cbc0dd18306a9fc4"
+    },
+    {
+      "path": "test/pocx/functional/wallet_fundrawtransaction.py",
+      "sha256": "6b78fc4e2fa8092886efa4c81fb98741b9033181784cb9d431946f8eeacfa9a7"
+    },
+    {
+      "path": "test/pocx/functional/wallet_groups.py",
+      "sha256": "b2306a13d54cc6fc71f966f8916647c677fdc7aca2bae481ede1dd150019ea2f"
+    },
+    {
+      "path": "test/pocx/functional/wallet_hd.py",
+      "sha256": "ca01b7a7496728e739fb8afa3780fa3d4772940bd0bf3c938721fdd2a5d88ead"
+    },
+    {
+      "path": "test/pocx/functional/wallet_importdescriptors.py",
+      "sha256": "f98e370d32e5a591050fccf59259723bc64e5f87047e31e1475fe6e38dcef4ac"
+    },
+    {
+      "path": "test/pocx/functional/wallet_importprunedfunds.py",
+      "sha256": "f369606748f3abc329322cec203757495e93a61f0752a1cb1f8f637652f46e6f"
+    },
+    {
+      "path": "test/pocx/functional/wallet_keypool_topup.py",
+      "sha256": "35bbadbf1f0e50f6603eafddccf0e273b87df6524313d6a0ea723ecb63336990"
+    },
+    {
+      "path": "test/pocx/functional/wallet_labels.py",
+      "sha256": "fe0c7ad7fd6ce4468c46bab233b9b83e10e8c8f6af6b027075866bf4675af919"
+    },
+    {
+      "path": "test/pocx/functional/wallet_listreceivedby.py",
+      "sha256": "9b08d3b6c68a8995e1ec2965ad32795ae0f10706469a059c21565afb2ae6f08a"
+    },
+    {
+      "path": "test/pocx/functional/wallet_listsinceblock.py",
+      "sha256": "c145d1773ad05393ccb29ae39babe993dbba36cc25a5b2aca4007448de6d40a3"
+    },
+    {
+      "path": "test/pocx/functional/wallet_listtransactions.py",
+      "sha256": "132dbe8f902e06fed0e5315c68561d7649f88c913ef36901e7f453756ebb94f0"
+    },
+    {
+      "path": "test/pocx/functional/wallet_multisig_descriptor_psbt.py",
+      "sha256": "fd43034b56223a71f52a26152168b82b52382e7ffaf2cc7ee0665f98179ad4bd"
+    },
+    {
+      "path": "test/pocx/functional/wallet_multiwallet.py",
+      "sha256": "c8966821d82eb1a348185718c8b17083fce32f75f9e90812dc81739fe2aa0029"
+    },
+    {
+      "path": "test/pocx/functional/wallet_orphanedreward.py",
+      "sha256": "07661c388b02bae5f78493bac4b6e59287235150765fb540844ea2eaafebca1f"
+    },
+    {
+      "path": "test/pocx/functional/wallet_pocx_type.py",
+      "sha256": "81d0da89dd8ca359f697242f03f7061bb8eb5c8a430e89581b67c1e6068bcf7a"
+    },
+    {
+      "path": "test/pocx/functional/wallet_reindex.py",
+      "sha256": "4ae6ed57fc95e94675a728527b6a01387576dda353283f253ae686117a6cb817"
+    },
+    {
+      "path": "test/pocx/functional/wallet_reorgsrestore.py",
+      "sha256": "9426fa9d2a363b687293bb5d5ea456cd7aa107b91b5ffbd6f1d59c6b97f51c15"
+    },
+    {
+      "path": "test/pocx/functional/wallet_resendwallettransactions.py",
+      "sha256": "73af3ac5b14ff628869008e23bbc7f36825ecb96178f59b2797c7f70f11e7a50"
+    },
+    {
+      "path": "test/pocx/functional/wallet_send.py",
+      "sha256": "492e03ba42c143f8d4567dc7b368aae520ceefb5249388b42a201039fbbdf946"
+    },
+    {
+      "path": "test/pocx/functional/wallet_sendall.py",
+      "sha256": "5657f639152b4e26074d581c992fd5ac50b494c99b59ba749ee90b0d3101d2f0"
+    },
+    {
+      "path": "test/pocx/functional/wallet_signer.py",
+      "sha256": "60fddfb5fa7cabbed499aba718ef3f6524bba3252638bc11461773e53a266505"
+    },
+    {
+      "path": "test/pocx/functional/wallet_signrawtransactionwithwallet.py",
+      "sha256": "643535b4413c849561e8bcd3e6158bbba8804520b8ea337ba50a30f097a9fe4d"
+    },
+    {
+      "path": "test/pocx/functional/wallet_simulaterawtx.py",
+      "sha256": "cf380dc9466259aa9034ac01cea22f16036ece64ecce1e02829153daad4b4ec2"
+    },
+    {
+      "path": "test/pocx/functional/wallet_taproot.py",
+      "sha256": "e015207139662bf7cbc35e8b17498a13edf3d80ac93ed63ca2f3ab10fe3b07fc"
+    },
+    {
+      "path": "test/pocx/functional/wallet_transactiontime_rescan.py",
+      "sha256": "209138b124255d9f9cce10d2bcac23643b4451e6d747e1912820f7196818a2c2"
+    },
+    {
+      "path": "test/pocx/functional/wallet_txn_clone.py",
+      "sha256": "54cabd3ff9848b0f16ba938c8e605cf7b9f9e730abea763f5fd98f0f5ed94afb"
+    },
+    {
+      "path": "test/pocx/functional/wallet_txn_doublespend.py",
+      "sha256": "2c0950b7b1e9a435d0e4db4e7555474de6a6c65bf902613d9d6fdfd4185a2d4c"
+    },
+    {
+      "path": "test/pocx/functional/wallet_v3_txs.py",
+      "sha256": "40f69fc68e9b253a41f324ff0882566f1f67d374e17ff51eab383d9a15ec4f6e"
+    },
+    {
+      "path": "test/pocx/functional_cases.py",
+      "sha256": "0386a05a3af507533d707a9de11a2a42859f67ecdf5f24f7e963453430ca3d3c"
+    },
+    {
+      "path": "test/pocx/functional_results.py",
+      "sha256": "9f1966466170619ecc8673cfcede4eaba62ac42678d6c330f3688e5f85680ffb"
+    },
+    {
+      "path": "test/pocx/gated-case-audit.json",
+      "sha256": "067d1d3656f53c055b18be0a7691166117b8a65731a7c4e008abb8a544a48d2f"
+    },
+    {
+      "path": "test/pocx/kernel-parity.json",
+      "sha256": "8c3f186071939a330cc7a8118322ca5505a5d70627d0333184263f7a687e4902"
+    },
+    {
+      "path": "test/pocx/kernel/provenance.json",
+      "sha256": "af19fbac2cff2fefc1db18d7f65c6e15a9b9e09484ff21f50ce113142ce97904"
+    },
+    {
+      "path": "test/pocx/known-baseline-failures.json",
+      "sha256": "dcb4acb5a67b6185955760861663dd6afc48c3b339441dac83938d51fb323d61"
+    },
+    {
+      "path": "test/pocx/manifest.json",
+      "sha256": "a95fa97a483142044ffa522b29c206c18588e7ee8688444eb9aa648603a55d0d"
+    },
+    {
+      "path": "test/pocx/mocks/signer.py",
+      "sha256": "3514f0817d0f7fad8c27b6d8d312e1aea9f8cd72856163ad98ee0911ca02192f"
+    },
+    {
+      "path": "test/pocx/production-findings.json",
+      "sha256": "ae5e89dd4af3c8d19868d7e6e72850d57f63b132b6b934f0cbe32b36d31b6964"
+    },
+    {
+      "path": "test/pocx/scenario-parity.json",
+      "sha256": "6c75ed8d2501fd8db4524fa5601e65870ead9958439792ee6d611b29c0c2d1d0"
+    },
+    {
+      "path": "test/pocx/stage.py",
+      "sha256": "dcad39be650a2e400ea210ea28d10937c2706c5c9aaccf80e695b915cd0cbe28"
+    },
+    {
+      "path": "test/pocx/test_infrastructure.py",
+      "sha256": "70218d7009e1566db65ad0aae9abfb869e2a6fd45effd9bc02535075459a1f3d"
+    },
+    {
+      "path": "test/pocx/test_runner.py",
+      "sha256": "dfd761bf314c143287fc16c523ff3081eaaa29fc02148db4a7e88e4fd7dcc6ac"
+    },
+    {
+      "path": "test/pocx/unit-parity.json",
+      "sha256": "0747e81eb26286c978388ef27a1cb894f320c6dc03b17a0e14de948449641c19"
+    },
+    {
+      "path": "test/pocx/update_inventory.py",
+      "sha256": "c8816297f36f3fe265c2deb660797b302fce1aaf165fa696130c0f184814ba6c"
+    },
+    {
+      "path": "test/pocx/upstream-functional-parity.json",
+      "sha256": "321b167b9d1a3f7ca48e881e9de3376d4821b1bea68a8ab1b8ffa8b96aecb545"
+    },
+    {
+      "path": "test/pocx/verify_functional.py",
+      "sha256": "053139e78b9f32a02ebca16c5b931afdf4bd2ac2a27fb81e150e85290584b6ee"
+    }
+  ],
+  "mismatches": [],
+  "original_files_changed": [],
+  "original_file_count": 378
+}

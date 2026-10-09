@@ -719,6 +719,7 @@ public:
 #ifdef ENABLE_POCX
         consensus.nPowTargetSpacing = 120; // 2 minutes for PoCX
         consensus.nPoCXRollingWindowSize = 24; // 24-block rolling window for difficulty adjustment
+        consensus.fPoCXLowCapacityCalibration = false;
 #else
         consensus.nPowTargetSpacing = 10 * 60;
 #endif
@@ -940,7 +941,7 @@ public:
                 .blockhash = uint256{"6affe030b7965ab538f820a56ef56c8149b7dc1d1c144af57113be080db7c397"},
 #endif
             },
-            // POCXTODO(regtest-redesign): regenerate the two entries below under PoCX.
+            // POCXTODO(regtest-redesign): regenerate the height200 fuzz entry under PoCX.
             {
                 // For use by fuzz target src/test/fuzz/utxo_snapshot.cpp
                 .height = 200,
@@ -950,10 +951,14 @@ public:
             },
             {
                 // For use by test/functional/feature_assumeutxo.py and test/functional/tool_bitcoin_chainstate.py
+#ifdef ENABLE_POCX
+#include <pocx/consensus/regtest_functional_assumeutxo.inc>
+#else
                 .height = 299,
                 .hash_serialized = AssumeutxoHash{uint256{"d2b051ff5e8eef46520350776f4100dd710a63447a8e01d917e92e79751a63e2"}},
                 .m_chain_tx_count = 334,
                 .blockhash = uint256{"7cc695046fec709f8c9394b6f928f81e81fd3ac20977bb68760fa1faa7916ea2"},
+#endif
             },
         };
 

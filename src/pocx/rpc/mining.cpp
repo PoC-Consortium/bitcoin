@@ -5,12 +5,17 @@
 #include <bitcoin-build-config.h> // IWYU pragma: keep
 
 #include <consensus/params.h>
+#include <core_io.h>
 #include <interfaces/mining.h>
 #include <logging.h>
 #include <node/context.h>
+#include <node/miner.h>
+#include <node/warnings.h>
 #include <rpc/server.h>
 #include <rpc/server_util.h>
 #include <rpc/util.h>
+#include <txmempool.h>
+#include <util/check.h>
 #include <util/strencodings.h>
 #include <validation.h>
 
@@ -82,6 +87,13 @@ static RPCHelpMan get_mining_info()
         RPCResult{
             RPCResult::Type::OBJ, "", "",
             {
+                {RPCResult::Type::NUM, "blocks", "Current block height"},
+                {RPCResult::Type::NUM, "currentblockweight", /*optional=*/true, "Weight of the last assembled block, including reserved weight"},
+                {RPCResult::Type::NUM, "currentblocktx", /*optional=*/true, "Transactions in the last assembled block, excluding coinbase"},
+                {RPCResult::Type::NUM, "pooledtx", "Transactions in the memory pool"},
+                {RPCResult::Type::STR_AMOUNT, "blockmintxfee", "Minimum package feerate for block inclusion in BTC/kvB"},
+                {RPCResult::Type::STR, "chain", "Current network name"},
+                {RPCResult::Type::STR_HEX, "signet_challenge", /*optional=*/true, "Signet block-signing challenge (signet only)"},
                 {RPCResult::Type::STR_HEX, "generation_signature", "Current block generation signature"},
                 {RPCResult::Type::NUM, "base_target", "Current difficulty base target"},
                 {RPCResult::Type::NUM, "height", "Next block height"},
@@ -89,6 +101,10 @@ static RPCHelpMan get_mining_info()
                 {RPCResult::Type::NUM, "target_quality", "Target quality threshold (uint64 max when unused)"},
                 {RPCResult::Type::NUM, "minimum_compression_level", "Minimum compression level for validation"},
                 {RPCResult::Type::NUM, "target_compression_level", "Target compression level for optimization"},
+                (IsDeprecatedRPCEnabled("warnings") ?
+                    RPCResult{RPCResult::Type::STR, "warnings", "Any network and blockchain warnings (DEPRECATED)"} :
+                    RPCResult{RPCResult::Type::ARR, "warnings", "Any network and blockchain warnings (run with -deprecatedrpc=warnings to return the latest warning as a single string)",
+                        {{RPCResult::Type::STR, "", "warning"}}}),
             }
         },
         RPCExamples{
@@ -98,17 +114,30 @@ static RPCHelpMan get_mining_info()
         [&](const RPCHelpMan& self, const JSONRPCRequest& request) -> UniValue
         {
             NodeContext& node = EnsureAnyNodeContext(request.context);
+            const CTxMemPool& mempool = EnsureMemPool(node);
             const ChainstateManager& chainman = EnsureChainman(node);
 
             if (chainman.m_blockman.LoadingBlocks()) {
                 throw JSONRPCError(RPC_CLIENT_IN_INITIAL_DOWNLOAD, "Is initial block downloading!");
             }
 
+            LOCK(cs_main);
             auto context = pocx::mining::GetNewBlockContext(chainman);
             const Consensus::Params& consensusParams = chainman.GetParams().GetConsensus();
             auto compression_bounds = pocx::consensus::GetPoCXCompressionBounds(context.height, consensusParams.nSubsidyHalvingInterval);
 
             UniValue result(UniValue::VOBJ);
+            result.pushKV("blocks", context.height - 1);
+            if (node::BlockAssembler::m_last_block_weight) result.pushKV("currentblockweight", *node::BlockAssembler::m_last_block_weight);
+            if (node::BlockAssembler::m_last_block_num_txs) result.pushKV("currentblocktx", *node::BlockAssembler::m_last_block_num_txs);
+            result.pushKV("pooledtx", mempool.size());
+            node::BlockAssembler::Options assembler_options;
+            node::ApplyArgsManOptions(*node.args, assembler_options);
+            result.pushKV("blockmintxfee", ValueFromAmount(assembler_options.blockMinFeeRate.GetFeePerK()));
+            result.pushKV("chain", chainman.GetParams().GetChainTypeString());
+            if (chainman.GetParams().GetChainType() == ChainType::SIGNET) {
+                result.pushKV("signet_challenge", HexStr(consensusParams.signet_challenge));
+            }
             result.pushKV("generation_signature", context.generation_signature.ToString());
             result.pushKV("base_target", context.base_target);
             result.pushKV("height", context.height);
@@ -116,6 +145,7 @@ static RPCHelpMan get_mining_info()
             result.pushKV("target_quality", std::numeric_limits<uint64_t>::max());
             result.pushKV("minimum_compression_level", static_cast<int>(compression_bounds.nPoCXMinCompression));
             result.pushKV("target_compression_level", static_cast<int>(compression_bounds.nPoCXTargetCompression));
+            result.pushKV("warnings", node::GetWarningsForRpc(*CHECK_NONFATAL(node.warnings), IsDeprecatedRPCEnabled("warnings")));
             return result;
         },
     };

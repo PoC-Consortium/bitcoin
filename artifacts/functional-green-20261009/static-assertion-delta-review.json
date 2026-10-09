@@ -1,0 +1,54 @@
+{
+  "scope": "Structural review aid, not a claim that static counts establish semantic coverage. Required assertions/preconditions are explained in individual parity reviews and executed in the final full matrix.",
+  "results": [
+    {
+      "test": "feature_assumeutxo.py",
+      "missing_functions": [],
+      "lower_static_assertion_counts": {
+        "assert_statements": 2
+      },
+      "review": "Preserve all original assumeUTXO scenarios and assertions. Reproduce snapshot height299 with original34self-transfers,334chain transactions, common native cached199block funding and deterministic600second timestamps. Native299block/UTXO commitments are independently reconstructed and must be compiled into native regtest parameters; do not bypass validation. Real validated native branch replaces two PoW fork headers. Per-branch base-target/generation-signature checks replace fixed PoW bits/target equality. Use native test-network magic name and scale snapshot-coinbase spend24.99 to9.99 for native10reward, preserving0.01fee. All malformed snapshot cases, counts, prior invalidation, fork-work gates, background sync, indices, blockfile segmentation, mempool, services and restarts remain required. Functional-only native regtest height299 commitment amendment, independently reconstructed from both scenario chains and all snapshot bytes. Bitcoin preprocessed translation unit byte-identical; native preprocessed delta consists only of the two299hash literals. Evidence: artifacts/functional-green-20261009/native-assumeutxo-preprocessing-review.json and native-assumeutxo-vectors.json. All mainnet/testnet/signet/height110/height200 parameters and proof fixture bytes unchanged. Independently derive pinned298rollback and four corrupted-snapshot hashes from raw/serialized records. Preserve EOF-after-one-coin corruption precondition by truncating the native malformed two-coin group after its first coin. Provide known prevout amount when signing the native WPKH snapshot coin. Independently predict NORMAL/ASSUMED file allocation from native block sizes,64KiB limits and cursor operations, then compare every stored block byte in every expected file and reject extra files/records. Keep divergent298block branch at600second cadence and assert lower chainwork than snapshot before import.",
+      "manual_structural_delta_review": "Three fixed two-file asserts replaced by stronger independent native file allocation oracle and byte-for-byte parsing of every block in every predicted NORMAL/ASSUMED file, including extra-file/record rejection. Branch-specific native base-target/generation-signature assertions replace fixed PoW bits/target equality. All original malformed snapshot/validation scenarios remain."
+    },
+    {
+      "test": "feature_taproot.py",
+      "missing_functions": [],
+      "lower_static_assertion_counts": {
+        "assertion_calls": 1
+      },
+      "review": "Native block/coinbase construction, compact re-signing after witness commitments, actual receiver deadlines and stored accepted timestamps replace PoW fixtures. Preserve byte-exact original published BIP34150coin coinbase txid and fully signed transaction SHA256 assertions by executing that deterministic vector computation offline. Repeat the complete deterministic key/tree/controlblock/sighash/signature computations and original on-chain credit/spend validation with exactly50coins legally consolidated from six matured native10coin coinbases; all original output amounts/scripts/sequences/hash types remain identical, only funding outpoints differ. Preserve all randomized consensus/nonstandard spenders, individual and combined input runs, every invalid-input toggle, mempool standardness rejection, exact error strings, old80ksigop saturation and witness/tapscript limits. No published vector changed or consensus-spend family omitted.",
+      "manual_structural_delta_review": "Original published50coin txid and signed-SHA256 vector assertions execute unchanged offline. The corresponding fully signed transaction is also accepted on chain from exactly50coins consolidated out of native rewards. The original height1 assertion described the impossible50coin native coinbase; native funding now independently asserts its legal consolidated value and spend acceptance. All randomized spend families run."
+    },
+    {
+      "test": "mining_basic.py",
+      "missing_functions": [],
+      "lower_static_assertion_counts": {
+        "assertion_calls": 8
+      },
+      "review": "Preserve all generic mining scenarios: initial/restarted mining statistics, blockversion, witness commitments, segwit/template capability errors, malformed and empty blocks, header-only/duplicate/invalid-merkle/nonfinal/invalid-parent/old-time handling, P2P block retrieval and activation, fees/sigops ordering,13minimum-fee settings with exact inclusion/exclusion in template and actual block, full block-weight/reserved-weight/invalid-startup boundaries, pruned-block restoration and coinbase height locktime. Use native real proof previews and signatures,10coin/500block subsidy,286byte headers, strictly increasing600second history and actual-proof receiver clocks. Native mining-info RPC must retain generic height/chain/template/mempool/fee metrics; no invented fallback passes. Specific partial exclusions: Bitcoin hash-rate/nBits/PoW-target output and BIP94 PoW retarget-timewarp method; native context and deliberately absent hash-rate RPC are checked instead. Empty native body has a valid signed header and must fail bad-blk-length rather than original early PoW high-hash rejection. Native generation-signature expectation independently hashes serialized previous signature and raw account bytes. Excluded BIP94 method retains node restart needed after invalid startup tests.",
+      "manual_structural_delta_review": "Only the explicitly reviewed BIP94 retarget/timewarp method and PoW hash-rate/nBits/target assertions are excluded. All generic mining statistics, template/weight/fee/header/body/duplicate/P2P/pruning/locktime assertions remain, with native field names/errors and independent generation-signature oracle."
+    },
+    {
+      "test": "mining_template_verification.py",
+      "missing_functions": [
+        "nbits_test",
+        "pow_test"
+      ],
+      "lower_static_assertion_counts": {},
+      "review": "Preserve proposal validation, all original missing/duplicate/malformed/truncated/nonfinal/overspending/double-spend transaction and merkle/count/timestamp/parent rejection cases, unchanged UTXO side-effect checks, actual valid submission and six concurrent clients with50 repeated invalid proposals each. Native block proof/coinbase constructors replace PoW fixtures; header-size count mutation uses native286byte constant. Re-sign mutated invalid headers before full submission so errors reach the intended check. Replace two Bitcoin nBits checks with maximumuint64 and one-unit-low native base targets, requiring bad-diff in both proposal and full submission. Replace missing-PoW proposal fixture with a one-unit-false claimed native quality: proposal accepted while full submission rejects bad-pocx-quality-mismatch, then original verified proof restored and valid proposal/submission preserved. Receiving clock advances to actual proof deadlines.",
+      "manual_structural_delta_review": "Missing original nbits_test/pow_test names are explicit semantic replacements base_target_test/native quality-proposal test. Both invalid native base targets fail; false claimed quality is accepted only in proposal and rejected by full validation before restoring the verified proof. All generic proposal/parallel-client cases remain."
+    },
+    {
+      "test": "rpc_blockchain.py",
+      "missing_functions": [
+        "solve_and_send_block"
+      ],
+      "lower_static_assertion_counts": {
+        "assert_statements": 1
+      },
+      "review": "Preserve original blockchain RPC methods/assertions, adapting header fields/hash serialization to native286bytes with zero signature, fixed600second block history to strictly increasing native times,10coin/500block subsidy to2000total at height200, real native competing/header-only/missing-undo proofs, and native reference/base-target difficulty ratio. Retain exact pruning fields and errors, chain/UTXO statistics, invalidate/reconsider, wait APIs, stop207, deployment144/287 threshold, all getblock verbosity/fee/prevout/coinbase/undo/disk checks, verificationprogress boundaries and uint32 timestamp maximum. Year2106 checks six increasing timestamps ending exactly uint32max and independently reconstructed11block median instead of impossible six equal native forging timestamps. Specific partial PoW exclusion: getnetworkhashps hash-rate and Bitcoin retarget-window tests, since that RPC is intentionally absent; assert method-not-found instead. No other coverage excluded. Native future-time startup assertions use the existing15second PoCX constant, retaining exact boundary and boundary-plus-one rejection.",
+      "manual_structural_delta_review": "Removed solve_and_send_block was a nested PoW constructor, replaced by native proof builders. Lower static assert count comes from specifically reviewed getnetworkhashps/Bitcoin retarget behavior exclusion; native method-not-found is asserted. All generic RPC, block/undo/disk/timestamp/wait/UTXO/deployment cases remain."
+    }
+  ],
+  "status": "Structural deltas individually accounted for; runtime parity remains established only by full execution."
+}
