@@ -1,0 +1,38 @@
+{
+  "scope": "Individually reviewed upstream fixture corrections shared by Bitcoin and PoCX; original tests/framework files remain unchanged. Corrected baseline passes are reported separately from raw upstream failures.",
+  "cases": {
+    "feature_bind_port_discover.py": {
+      "source": "test/functional/feature_bind_port_discover.py",
+      "source_sha256": "ef152f47651520cfbd1093b473e8add51209b463f045df67230a2ca1da43bc6f",
+      "replacement": "test/pocx/bitcoin_baseline/feature_bind_port_discover.py",
+      "replacement_sha256": "4a2276fdc3c3d0d9558b727083b36e3d760cee2692a13e5cbbb833389970beb6",
+      "reason": "Shared Bitcoin/PoCX fixture correction for an upstream-only harness defect, reproduced with ENABLE_POCX=OFF and byte-identical original test/framework sources. Explicitly suppress automatically appended bind arguments, use independent wildcard/selected-interface ports, and avoid the generic localhost/framework-port topology. Preserve every original address-membership and exact advertised-port assertion; externalip retains all12 option combinations. No original source file changed. Corrected Bitcoin baseline passes before native execution.",
+      "assertions": {
+        "assert_statements": 3,
+        "assertion_calls": 4
+      },
+      "raw_bitcoin_outcome": "failed",
+      "corrected_bitcoin_outcome": "passed",
+      "native_outcome": "unverified"
+    },
+    "feature_bind_port_externalip.py": {
+      "source": "test/functional/feature_bind_port_externalip.py",
+      "source_sha256": "3b611dcd1083e443501d75bf5f295c15597ed2933e966611ca730d299f475d4b",
+      "replacement": "test/pocx/bitcoin_baseline/feature_bind_port_externalip.py",
+      "replacement_sha256": "24a0d8b2e6204c107ade50684dc4a9ca742abea5fdb13f974a12085cd6c48cc5",
+      "reason": "Shared Bitcoin/PoCX fixture correction for an upstream-only harness defect, reproduced with ENABLE_POCX=OFF and byte-identical original test/framework sources. Explicitly suppress automatically appended bind arguments, use independent wildcard/selected-interface ports, and avoid the generic localhost/framework-port topology. Preserve every original address-membership and exact advertised-port assertion; externalip retains all12 option combinations. No original source file changed. Corrected Bitcoin baseline passes before native execution.",
+      "assertions": {
+        "assert_statements": 1,
+        "assertion_calls": 1
+      },
+      "raw_bitcoin_outcome": "failed",
+      "corrected_bitcoin_outcome": "passed",
+      "native_outcome": "unverified"
+    }
+  },
+  "raw_logs": [
+    "artifacts/ci-parity-20261009/bitcoin-address-baseline.log",
+    "artifacts/ci-parity-20261009/bitcoin-address-raw-externalip.log"
+  ],
+  "corrected_log": "artifacts/ci-parity-20261009/bitcoin-address-corrected-second.log"
+}

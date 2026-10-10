@@ -92,6 +92,17 @@ def check(root):
             issues.append({'source': source, 'reason': 'kernel adaptation or fixture dependency differs from independently verified provenance'})
     functional = json.loads((root / 'test/pocx/upstream-functional-parity.json').read_text())
     manifest = json.loads((root / 'test/pocx/manifest.json').read_text())
+    additions = manifest.get('framework_additions', {})
+    reviewed_additions = functional.get('owned_framework_additions', {})
+    if set(additions) != set(reviewed_additions):
+        issues.append({'source': 'test/pocx/manifest.json', 'reason': 'owned framework additions require review'})
+    for destination, record in reviewed_additions.items():
+        source = record['source']
+        if additions.get(destination) != source.removeprefix('test/pocx/'):
+            issues.append({'source': source, 'reason': 'owned framework addition selection changed since review'})
+        for dependency, expected in {source: record['sha256'], **record['dependencies']}.items():
+            if not (root / dependency).is_file() or digest(root / dependency) != expected:
+                issues.append({'source': dependency, 'reason': 'owned framework addition changed since review'})
     clock_sources = {'test/pocx/framework/test_framework.py', 'test/pocx/framework/blocktools.py'}
     reviewed_clocks = functional.get('native_forging_clock', {}).get('sources', {})
     if set(reviewed_clocks) != clock_sources:
@@ -103,6 +114,11 @@ def check(root):
             issues.append({'source': source, 'reason': 'native forging clock changed since review'})
     execution_sources = {'test/pocx/test_runner.py', 'test/pocx/functional_results.py',
                          'test/pocx/update_inventory.py', 'test/pocx/functional_cases.py',
+                         'test/pocx/functional_environment.py',
+                         'test/pocx/functional_execution.py',
+                         'test/pocx/build_configuration.py',
+                         'test/pocx/process_tree.py',
+                         'test/pocx/rpc_coverage.py',
                          'test/pocx/stage.py', 'test/pocx/verify_functional.py',
                          'test/pocx/functional-profile-skips.json'}
     reviewed_execution = functional.get('execution_infrastructure', {}).get('sources', {})
@@ -148,6 +164,28 @@ def check(root):
             'tool_signet_miner.py': {'contrib/signet/miner', 'test/pocx/kernel/provenance.json', 'test/pocx/functional/feature_signet.py'},
             'feature_assumeutxo.py': {'src/kernel/chainparams.cpp', 'src/pocx/consensus/regtest_functional_assumeutxo.inc'},
             'wallet_assumeutxo.py': {'src/kernel/chainparams.cpp', 'src/pocx/consensus/regtest_functional_assumeutxo.inc'},
+            'interface_ipc_mining.py': {'src/interfaces/mining.h', 'src/ipc/capnp/mining.capnp',
+                                      'src/node/interfaces.cpp'},
+            'tool_bitcoin_chainstate.py': {'src/bitcoin-chainstate.cpp',
+                'src/pocx/test/tools/chainstate_test_clock.cpp', 'src/pocx/test/tools/CMakeLists.txt',
+                'src/pocx/consensus/regtest_functional_assumeutxo.inc'},
+            'feature_unsupported_utxo_db.py': {'test/pocx/framework/test_framework.py',
+                                             'test/functional/test_framework/test_node.py'},
+            'mempool_compatibility.py': {'test/pocx/framework/test_framework.py',
+                'test/functional/test_framework/test_node.py', 'test/pocx/framework/blocktools.py',
+                'test/functional/test_framework/messages.py'},
+            'feature_coinstatsindex_compatibility.py': {'test/pocx/framework/test_framework.py',
+                'test/functional/test_framework/test_node.py', 'test/pocx/framework/blocktools.py',
+                'test/functional/test_framework/messages.py'},
+            'wallet_backwards_compatibility.py': {'test/pocx/framework/test_framework.py',
+                'test/functional/test_framework/test_node.py', 'test/pocx/framework/blocktools.py',
+                'test/pocx/framework/wallet_compatibility.py', 'test/functional/test_framework/messages.py'},
+            'wallet_migration.py': {'test/pocx/framework/test_framework.py',
+                'test/functional/test_framework/test_node.py', 'test/pocx/framework/test_node.py',
+                'test/pocx/framework/blocktools.py', 'test/pocx/framework/wallet_compatibility.py',
+                'test/pocx/framework/wallet_migration_fixtures.py',
+                'test/functional/test_framework/messages.py', 'src/rpc/mining.cpp',
+                'src/pocx/regtest/forging.cpp'},
         }.get(name, set())
         dependencies = record.get('dependencies', {})
         if set(dependencies) != required_dependencies:

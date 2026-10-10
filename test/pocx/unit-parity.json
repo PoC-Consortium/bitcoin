@@ -1146,8 +1146,8 @@
       "sha256": "c056c359cf0bc12eb0df177e51152ccb3e28fc1089aa0f61c2db49f64626eba9"
     },
     "src/CMakeLists.txt": {
-      "sha256": "dbba197be1097dc1bab814af63d7122f48ca0edeecefea8d1291e6629cb3b647",
-      "review": "Reviewed regtest kernel-context build selection and matching consensus/unit SSE2 processor spelling. Owned chainstate tool selection is a separate package.",
+      "sha256": "9838b770ffdfc39dd194291915e07ebfaa91799a31e02d3619bcfa19d0f45031",
+      "review": "Extract unchanged synthetic quality calculation into wallet/global-free regtest proof.cpp; an explicit default-false consensus permission is enabled only in CRegTestParams. CheckBlockHeader and header batching use passed context parameters in daemon and kernel. Real-proof validation, signatures, compression and future-time checks remain required; production networks retain synthetic rejection. Original Bitcoin preprocessing and kernel baseline are checked separately. Accept AMD64/X86_64 processor spelling in both production and test SSE2 gates and in the inventory. Four applicable SIMD comparisons remain mandatory on these x86-64 variants. Original Bitcoin-OFF gate behavior, ARM omissions, test bodies, assertions and PoW exclusions are unchanged.",
       "evidence": "artifacts/ci-parity-20261009/chainstate-clock/"
     },
     "src/kernel/CMakeLists.txt": {

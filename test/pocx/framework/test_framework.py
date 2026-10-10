@@ -25,6 +25,7 @@ from .authproxy import JSONRPCException
 from . import coverage
 from .messages import CAddress
 from .p2p import NetworkThread
+from .bitcoin_test_node import TestNode as BitcoinTestNode
 from .test_node import TestNode
 from .util import (
     Binaries,
@@ -443,7 +444,7 @@ class BitcoinTestFramework(metaclass=BitcoinTestMetaClass):
 
     # Public helper methods. These can be accessed by the subclass test scripts.
 
-    def add_nodes(self, num_nodes: int, extra_args=None, *, rpchost=None, versions=None):
+    def add_nodes(self, num_nodes: int, extra_args=None, *, rpchost=None, versions=None, node_classes=None):
         """Instantiate TestNode objects.
 
         Should only be called once after the nodes have been specified in
@@ -482,6 +483,15 @@ class BitcoinTestFramework(metaclass=BitcoinTestMetaClass):
                 extra_args[i] = extra_args[i] + ["-whitelist=noban,in,out@127.0.0.1"]
         if versions is None:
             versions = [None] * num_nodes
+        # A previous Bitcoin release requires the unchanged Bitcoin address/key
+        # fixtures. Explicit mixed-consensus tests keep those nodes on their own
+        # chain; existing consumers retain the native class by default.
+        if node_classes is None:
+            node_classes = [TestNode] * num_nodes
+        assert_equal(len(node_classes), num_nodes)
+        if any(not isinstance(cls, type) or not issubclass(cls, BitcoinTestNode)
+               for cls in node_classes):
+            raise ValueError('Expected reviewed Bitcoin or PoCX TestNode classes')
         bin_dirs = []
         for v in versions:
             bin_dir = bin_dir_from_version(v)
@@ -512,7 +522,7 @@ class BitcoinTestFramework(metaclass=BitcoinTestMetaClass):
                 uses_wallet=self.uses_wallet,
             )
             init.update(extra_init[i])
-            test_node_i = TestNode(
+            test_node_i = node_classes[i](
                 i,
                 get_datadir_path(self.options.tmpdir, i),
                 **init)

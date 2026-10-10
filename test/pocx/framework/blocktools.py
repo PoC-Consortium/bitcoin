@@ -14,8 +14,42 @@ import subprocess
 import tempfile
 
 from .messages import CBlock
+from .bitcoin_messages import CBlock as BitcoinBlock, CTransaction as BitcoinTransaction
 from .test_node import TestNode
 from .util import MAX_NODES, assert_equal, initialize_datadir
+
+
+def bitcoin_block_with_shared_coinbase(coinbase, template):
+    """Mine a Bitcoin header around an unchanged native coinbase transaction.
+
+    Independent test chains can share the same funding outpoint. Bitcoin allows
+    the smaller native reward as an underclaimed subsidy; neither consensus
+    validator is replaced and the chains retain their distinct headers/genesis.
+    """
+    return bitcoin_block_with_shared_transactions([coinbase], template)
+
+
+def bitcoin_block_with_shared_transactions(transactions, template):
+    """Mine an independent Bitcoin header around byte-identical transactions."""
+    if not transactions:
+        raise ValueError('A shared block requires a coinbase transaction')
+    bitcoin_transactions = []
+    for transaction in transactions:
+        copied = BitcoinTransaction()
+        copied.deserialize(BytesIO(transaction.serialize()))
+        assert_equal(copied.serialize(), transaction.serialize())
+        bitcoin_transactions.append(copied)
+    bitcoin_coinbase = bitcoin_transactions[0]
+    assert sum(output.nValue for output in bitcoin_coinbase.vout) <= template['coinbasevalue']
+    block = BitcoinBlock()
+    block.nVersion = template['version']
+    block.hashPrevBlock = int(template['previousblockhash'], 16)
+    block.nBits = int(template['bits'], 16)
+    block.nTime = max(template['curtime'], template['mintime'])
+    block.vtx = bitcoin_transactions
+    block.hashMerkleRoot = block.calc_merkle_root()
+    block.solve()
+    return block
 
 
 def create_empty_fork(node, fork_length=FORK_LENGTH):

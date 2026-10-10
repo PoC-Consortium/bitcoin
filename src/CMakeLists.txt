@@ -445,6 +445,9 @@ if(BUILD_KERNEL_LIB)
         bitcoinkernel
     )
     install_binary_component(bitcoin-chainstate INTERNAL)
+    if(ENABLE_POCX AND BUILD_TESTS)
+      add_subdirectory(pocx/test/tools)
+    endif()
   endif()
 endif()
 

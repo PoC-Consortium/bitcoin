@@ -181,7 +181,19 @@
     "p2p_segwit.py": "functional/p2p_segwit.py",
     "p2p_sendheaders.py": "functional/p2p_sendheaders.py",
     "feature_signet.py": "functional/feature_signet.py",
-    "tool_signet_miner.py": "functional/tool_signet_miner.py"
+    "tool_signet_miner.py": "functional/tool_signet_miner.py",
+    "interface_ipc_mining.py": "functional/interface_ipc_mining.py",
+    "feature_bind_port_discover.py": "bitcoin_baseline/feature_bind_port_discover.py",
+    "feature_bind_port_externalip.py": "bitcoin_baseline/feature_bind_port_externalip.py",
+    "interface_usdt_coinselection.py": "functional/interface_usdt_coinselection.py",
+    "interface_usdt_utxocache.py": "functional/interface_usdt_utxocache.py",
+    "interface_zmq.py": "functional/interface_zmq.py",
+    "tool_bitcoin_chainstate.py": "functional/tool_bitcoin_chainstate.py",
+    "feature_unsupported_utxo_db.py": "functional/feature_unsupported_utxo_db.py",
+    "mempool_compatibility.py": "functional/mempool_compatibility.py",
+    "feature_coinstatsindex_compatibility.py": "functional/feature_coinstatsindex_compatibility.py",
+    "wallet_backwards_compatibility.py": "functional/wallet_backwards_compatibility.py",
+    "wallet_migration.py": "functional/wallet_migration.py"
   },
   "reused_tests": [
     "feature_filelock.py",
@@ -214,10 +226,7 @@
     "feature_anchors.py",
     "feature_asmap.py",
     "feature_bind_extra.py",
-    "feature_bind_port_discover.py",
-    "feature_bind_port_externalip.py",
     "feature_blocksxor.py",
-    "feature_coinstatsindex_compatibility.py",
     "feature_dbcrash.py",
     "feature_dirsymlinks.py",
     "feature_discover.py",
@@ -232,16 +241,10 @@
     "feature_proxy.py",
     "feature_reindex_init.py",
     "feature_startupnotify.py",
-    "feature_unsupported_utxo_db.py",
     "interface_ipc.py",
-    "interface_ipc_mining.py",
-    "interface_usdt_coinselection.py",
     "interface_usdt_mempool.py",
     "interface_usdt_net.py",
-    "interface_usdt_utxocache.py",
     "interface_usdt_validation.py",
-    "interface_zmq.py",
-    "mempool_compatibility.py",
     "p2p_add_connections.py",
     "p2p_dns_seeds.py",
     "p2p_feefilter.py",
@@ -269,13 +272,11 @@
     "rpc_users.py",
     "rpc_whitelist.py",
     "tool_bitcoin.py",
-    "tool_bitcoin_chainstate.py",
     "tool_rpcauth.py",
     "tool_utxo_to_sqlite.py",
     "wallet_abandonconflict.py",
     "wallet_address_types.py",
     "wallet_avoidreuse.py",
-    "wallet_backwards_compatibility.py",
     "wallet_blank.py",
     "wallet_conflicts.py",
     "wallet_create_tx.py",
@@ -287,7 +288,6 @@
     "wallet_gethdkeys.py",
     "wallet_keypool.py",
     "wallet_listdescriptors.py",
-    "wallet_migration.py",
     "wallet_miniscript.py",
     "wallet_miniscript_decaying_multisig_descriptor_psbt.py",
     "wallet_musig.py",
@@ -301,7 +301,8 @@
   "framework_copies": {
     "test_framework/bitcoin_test_node.py": "test_framework/test_node.py",
     "test_framework/bitcoin_blocktools.py": "test_framework/blocktools.py",
-    "test_framework/bitcoin_util.py": "test_framework/util.py"
+    "test_framework/bitcoin_util.py": "test_framework/util.py",
+    "test_framework/bitcoin_messages.py": "test_framework/messages.py"
   },
   "support_copies": {
     "data/__init__.py": "data/__init__.py",
@@ -403,5 +404,9 @@
   },
   "dynamic_tests": {
     "tool_bench_sanity_check.py": "aggregate-original-default"
+  },
+  "framework_additions": {
+    "test_framework/wallet_compatibility.py": "framework/wallet_compatibility.py",
+    "test_framework/wallet_migration_fixtures.py": "framework/wallet_migration_fixtures.py"
   }
 }

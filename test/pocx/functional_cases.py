@@ -14,7 +14,7 @@ def case_spec(test, arguments):
     if (not isinstance(test, str) or Path(test).name != test or not test.endswith('.py') or
             not isinstance(arguments, list) or not all(isinstance(arg, str) and arg for arg in arguments) or
             any(arg.split('=', 1)[0] in {'--configfile', '--tmpdir', '--cachedir', '--portseed',
-                                        '--randomseed', '--nocleanup', *TRANSPORT_FLAGS}
+                                        '--randomseed', '--nocleanup', '--timeout-factor', *TRANSPORT_FLAGS}
                 for arg in arguments)):
         raise ValueError('Invalid functional case arguments')
     return {'id': shlex.join([test, *arguments]), 'test': test, 'arguments': arguments}

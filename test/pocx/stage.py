@@ -10,6 +10,7 @@ import shutil
 import subprocess
 
 from common import ROOT, OWNED, sha256, short_tmpdir, build_options
+import build_configuration
 
 
 def unique_object(pairs):
@@ -29,13 +30,13 @@ def framework_sources(root):
             if path.is_file() and path.suffix in ('.py', '.csv') and '__pycache__' not in path.parts}
 
 
-def stage(build, manifest_path=None):
+def stage(build, manifest_path=None, *, selected_config=None):
     build = Path(build).resolve()
     cache = (build / "CMakeCache.txt").read_text()
     if "ENABLE_POCX:BOOL=ON\n" not in cache:
         raise ValueError("PoCX runner requires ENABLE_POCX=ON")
-    if f"CMAKE_HOME_DIRECTORY:INTERNAL={ROOT}\n" not in cache:
-        raise ValueError("Build must belong to this source worktree")
+    build_configuration.require_source(cache, ROOT)
+    selected_config = build_configuration.configuration(cache, selected_config)
     if build == ROOT or not build.is_relative_to(ROOT):
         raise ValueError("Build must be a separate directory inside the isolated worktree")
     manifest = json.loads(Path(manifest_path or OWNED / "manifest.json").read_text(), object_pairs_hook=unique_object)
@@ -53,6 +54,14 @@ def stage(build, manifest_path=None):
         if not original.is_relative_to(ROOT / 'test/functional/test_framework'):
             raise ValueError(f'Framework copy source outside upstream framework: {source}')
         sources[dest] = original
+    for dest, source in manifest.get('framework_additions', {}).items():
+        destination = Path(dest)
+        owned_source = (OWNED / source).resolve()
+        if (dest in sources or destination.is_absolute() or '..' in destination.parts or
+                destination.parts[:1] != ('test_framework',) or destination.suffix != '.py' or
+                not owned_source.is_relative_to(OWNED / 'framework')):
+            raise ValueError(f'Invalid owned framework addition: {dest}: {source}')
+        sources[dest] = owned_source
     for dest, source in manifest.get('support_copies', {}).items():
         if dest in sources:
             raise ValueError(f'Conflicting support copy destination: {dest}')
@@ -97,7 +106,12 @@ def stage(build, manifest_path=None):
     with (temporary / "config.ini").open("w") as stream:
         config.write(stream)
     provenance = {"revision": subprocess.check_output(["git", "-C", str(ROOT), "rev-parse", "HEAD"], text=True).strip(),
-                  "build": str(build), "cache_sha256": sha256(build / "CMakeCache.txt"), "build_options": build_options(cache), "files": hashes}
+                  "build": str(build), "cache_sha256": sha256(build / "CMakeCache.txt"), "build_options": build_options(cache), "files": hashes,
+                  'build_configuration': selected_config,
+                  'staging_helpers': {name: sha256(ROOT / name) for name in (
+                      'test/pocx/stage.py', 'test/pocx/build_configuration.py',
+                      'test/pocx/functional_execution.py', 'test/pocx/functional_environment.py',
+                      'test/pocx/process_tree.py')}}
     (temporary / "provenance.json").write_text(json.dumps(provenance, indent=2) + "\n")
     if target.exists():
         shutil.rmtree(target)
@@ -108,5 +122,6 @@ def stage(build, manifest_path=None):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--build-dir", required=True)
+    parser.add_argument('--config')
     args = parser.parse_args()
-    print(stage(args.build_dir)[0])
+    print(stage(args.build_dir, selected_config=args.config)[0])

@@ -129,7 +129,7 @@
     "note": "Case-logic reuse is distinct from source reuse. The single original test translation unit mixes generic and block/chain cases; the owned adaptation currently contains all 16 cases."
   },
   "reviewed_sources": {
-    "src/CMakeLists.txt": "dbba197be1097dc1bab814af63d7122f48ca0edeecefea8d1291e6629cb3b647",
+    "src/CMakeLists.txt": "9838b770ffdfc39dd194291915e07ebfaa91799a31e02d3619bcfa19d0f45031",
     "src/consensus/params.h": "4ed972393e50604b258a4890e8556eb02589190db7835ed8b6a8d3425ad97db8",
     "src/kernel/CMakeLists.txt": "5ab444c0a05f7ce5b500f21e20656eaeb7de3da853fc46a5bf0b74d0e9675598",
     "src/kernel/bitcoinkernel.cpp": "174890768e31e67bb8decb166b40b61c51e097a41ef5cb80708bc423eb8a788f",
@@ -174,7 +174,7 @@
     "test/pocx/vectors/Cargo.lock": "2a959ccaa2c4c3fbddef9b0328e9c21a111ec13739bfc1beb441a194760e3786"
   },
   "execution_inputs": {
-    "src/CMakeLists.txt": "dbba197be1097dc1bab814af63d7122f48ca0edeecefea8d1291e6629cb3b647",
+    "src/CMakeLists.txt": "9838b770ffdfc39dd194291915e07ebfaa91799a31e02d3619bcfa19d0f45031",
     "src/consensus/params.h": "4ed972393e50604b258a4890e8556eb02589190db7835ed8b6a8d3425ad97db8",
     "src/kernel/CMakeLists.txt": "5ab444c0a05f7ce5b500f21e20656eaeb7de3da853fc46a5bf0b74d0e9675598",
     "src/kernel/bitcoinkernel.cpp": "174890768e31e67bb8decb166b40b61c51e097a41ef5cb80708bc423eb8a788f",

@@ -15380,17 +15380,17 @@
   },
   {
     "source": "test/functional/feature_bind_port_discover.py",
-    "classification": "reused",
-    "execution": "skipped",
+    "classification": "adapted",
+    "execution": "unverified",
     "gates": [],
     "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
     "baseline_revision": "5de2720ca47b3a753081e5ce545113cd3b616018",
     "follow_up": "M2: scenario/case parity; M3: consensus gaps; M4: drift/CI",
     "baseline_sha256": "ef152f47651520cfbd1093b473e8add51209b463f045df67230a2ca1da43bc6f",
     "upstream_sha256": "ef152f47651520cfbd1093b473e8add51209b463f045df67230a2ca1da43bc6f",
-    "reason": "Byte-identical original script selected against the owned framework for initial execution; applicability and runtime outcome remain unverified. No assertions edited.",
-    "replacement": null,
-    "current_sha256": "ef152f47651520cfbd1093b473e8add51209b463f045df67230a2ca1da43bc6f",
+    "reason": "Shared Bitcoin/PoCX fixture correction for an upstream-only harness defect, reproduced with ENABLE_POCX=OFF and byte-identical original test/framework sources. Explicitly suppress automatically appended bind arguments, use independent wildcard/selected-interface ports, and avoid the generic localhost/framework-port topology. Preserve every original address-membership and exact advertised-port assertion; externalip retains all12 option combinations. No original source file changed. Corrected Bitcoin baseline passes before native execution.",
+    "replacement": "test/pocx/bitcoin_baseline/feature_bind_port_discover.py",
+    "current_sha256": "4a2276fdc3c3d0d9558b727083b36e3d760cee2692a13e5cbbb833389970beb6",
     "covered_behavior": [
       "feature_bind_port_discover"
     ],
@@ -15478,17 +15478,17 @@
   },
   {
     "source": "test/functional/feature_bind_port_externalip.py",
-    "classification": "reused",
-    "execution": "skipped",
+    "classification": "adapted",
+    "execution": "unverified",
     "gates": [],
     "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
     "baseline_revision": "5de2720ca47b3a753081e5ce545113cd3b616018",
     "follow_up": "M2: scenario/case parity; M3: consensus gaps; M4: drift/CI",
     "baseline_sha256": "3b611dcd1083e443501d75bf5f295c15597ed2933e966611ca730d299f475d4b",
     "upstream_sha256": "3b611dcd1083e443501d75bf5f295c15597ed2933e966611ca730d299f475d4b",
-    "reason": "Byte-identical original script selected against the owned framework for initial execution; applicability and runtime outcome remain unverified. No assertions edited.",
-    "replacement": null,
-    "current_sha256": "3b611dcd1083e443501d75bf5f295c15597ed2933e966611ca730d299f475d4b",
+    "reason": "Shared Bitcoin/PoCX fixture correction for an upstream-only harness defect, reproduced with ENABLE_POCX=OFF and byte-identical original test/framework sources. Explicitly suppress automatically appended bind arguments, use independent wildcard/selected-interface ports, and avoid the generic localhost/framework-port topology. Preserve every original address-membership and exact advertised-port assertion; externalip retains all12 option combinations. No original source file changed. Corrected Bitcoin baseline passes before native execution.",
+    "replacement": "test/pocx/bitcoin_baseline/feature_bind_port_externalip.py",
+    "current_sha256": "24a0d8b2e6204c107ade50684dc4a9ca742abea5fdb13f974a12085cd6c48cc5",
     "covered_behavior": [
       "feature_bind_port_externalip"
     ],
@@ -16262,16 +16262,16 @@
   },
   {
     "source": "test/functional/feature_coinstatsindex_compatibility.py",
-    "classification": "reused",
-    "execution": "skipped",
+    "classification": "adapted",
+    "execution": "unverified",
     "gates": [],
     "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
     "baseline_revision": "5de2720ca47b3a753081e5ce545113cd3b616018",
     "follow_up": "M2: scenario/case parity; M3: consensus gaps; M4: drift/CI",
     "baseline_sha256": "8076a62c92e270a5a790341c47557d6179436c4244cea69f64e42c0e495af29b",
     "upstream_sha256": "8076a62c92e270a5a790341c47557d6179436c4244cea69f64e42c0e495af29b",
-    "reason": "Byte-identical original script selected against the owned framework for initial execution; applicability and runtime outcome remain unverified. No assertions edited.",
-    "replacement": null,
+    "reason": "Preserve199blocks, fullMuHash/statistic comparison, oldindexdirectory warning and nativeindexrebuild comparison. IndependentBitcoin/PoCXchains contain identicalnativecoinbase transactions. CompareeverylegacyRPCfield against explicitlyderived blockidentity and subsidyunderclaim differences, includinggenesis,Bitcoinheight150halving andnativeheight500halving. Retain exactres2==res0 after native rebuild. No fields discarded and no oldBitcoinheaders copiedinto nativecache. Fullfunctionalexecution remains unverified.",
+    "replacement": "test/pocx/functional/feature_coinstatsindex_compatibility.py",
     "current_sha256": "8076a62c92e270a5a790341c47557d6179436c4244cea69f64e42c0e495af29b",
     "covered_behavior": [
       "feature_coinstatsindex_compatibility"
@@ -16356,7 +16356,7 @@
       }
     },
     "latest_observed_outcome": "skipped",
-    "current_input_outcome": "skipped"
+    "current_input_outcome": "unverified"
   },
   {
     "source": "test/functional/feature_config_args.py",
@@ -20399,16 +20399,16 @@
   },
   {
     "source": "test/functional/feature_unsupported_utxo_db.py",
-    "classification": "reused",
-    "execution": "skipped",
+    "classification": "adapted",
+    "execution": "unverified",
     "gates": [],
     "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
     "baseline_revision": "5de2720ca47b3a753081e5ce545113cd3b616018",
     "follow_up": "M2: scenario/case parity; M3: consensus gaps; M4: drift/CI",
     "baseline_sha256": "df9326fe093c8392620be51f2f46fdbf2c4abaca1aec24378e94b619de6d6aae",
     "upstream_sha256": "df9326fe093c8392620be51f2f46fdbf2c4abaca1aec24378e94b619de6d6aae",
-    "reason": "Byte-identical original script selected against the owned framework for initial execution; applicability and runtime outcome remain unverified. No assertions edited.",
-    "replacement": null,
+    "reason": "Retain genuinev0.14.3 unsupported-format rejection and successfulreindex assertions. Use unchanged BitcoinTestNode for the oldrelease addressfixture. Construct a separate valid one-block nativechain, replace only its chainstate with the genuine oldformatdatabase, and reindex its own signednativeblocks. Check recoverednativeheight,ten-coin amount,MuHash and UTXO count. BitcoinPoWblockheaders are deliberately not copied into PoCX. Fullfunctionalexecution remains unverified.",
+    "replacement": "test/pocx/functional/feature_unsupported_utxo_db.py",
     "current_sha256": "df9326fe093c8392620be51f2f46fdbf2c4abaca1aec24378e94b619de6d6aae",
     "covered_behavior": [
       "feature_unsupported_utxo_db"
@@ -20493,7 +20493,7 @@
       }
     },
     "latest_observed_outcome": "skipped",
-    "current_input_outcome": "skipped"
+    "current_input_outcome": "unverified"
   },
   {
     "source": "test/functional/feature_utxo_set_hash.py",
@@ -20987,7 +20987,7 @@
   },
   {
     "source": "test/functional/interface_ipc_mining.py",
-    "classification": "reused",
+    "classification": "adapted",
     "execution": "skipped",
     "gates": [],
     "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
@@ -20995,9 +20995,9 @@
     "follow_up": "M2: scenario/case parity; M3: consensus gaps; M4: drift/CI",
     "baseline_sha256": "ced2595818744c3f46cc13ae6791b670c5df5005fdd304b45867e1ee7047e4dc",
     "upstream_sha256": "ced2595818744c3f46cc13ae6791b670c5df5005fdd304b45867e1ee7047e4dc",
-    "reason": "Byte-identical original script selected against the owned framework for initial execution; applicability and runtime outcome remain unverified. No assertions edited.",
-    "replacement": null,
-    "current_sha256": "ced2595818744c3f46cc13ae6791b670c5df5005fdd304b45867e1ee7047e4dc",
+    "reason": "Owned IPC mining adapter preserves generic IPC, template, coinbase and validation checks; explicitly reviews nonce-only PoW submission as inapplicable",
+    "replacement": "test/pocx/functional/interface_ipc_mining.py",
+    "current_sha256": "54ad16db02923d0c93b9b327bccaef3cf2870dbce9d51f3b5b68686795036faa",
     "covered_behavior": [
       "interface_ipc_mining"
     ],
@@ -21281,17 +21281,17 @@
   },
   {
     "source": "test/functional/interface_usdt_coinselection.py",
-    "classification": "reused",
-    "execution": "skipped",
+    "classification": "adapted",
+    "execution": "unverified",
     "gates": [],
     "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
     "baseline_revision": "5de2720ca47b3a753081e5ce545113cd3b616018",
     "follow_up": "M2: scenario/case parity; M3: consensus gaps; M4: drift/CI",
     "baseline_sha256": "83b8ca69d1326d6a09d364d1683f0cdd51c93321c16811f38cf09b2881d88598",
     "upstream_sha256": "83b8ca69d1326d6a09d364d1683f0cdd51c93321c16811f38cf09b2881d88598",
-    "reason": "Byte-identical original script selected against the owned framework for initial execution; applicability and runtime outcome remain unverified. No assertions edited.",
-    "replacement": null,
-    "current_sha256": "83b8ca69d1326d6a09d364d1683f0cdd51c93321c16811f38cf09b2881d88598",
+    "reason": "Keep every tracepoint ordering, count, algorithm/success/APS/change-position assertion. Scale two10coin wallet payments to2coins and the insufficient-funds request from102*50to102*10 for the native10coin subsidy. Same success, failure, reuse and full-balance/no-change scenarios.",
+    "replacement": "test/pocx/functional/interface_usdt_coinselection.py",
+    "current_sha256": "edbbf5fdfe8fbe97d6e9ab2c08785d03751ca2eebdea05f0ea2516e978076dbf",
     "covered_behavior": [
       "interface_usdt_coinselection"
     ],
@@ -21575,17 +21575,17 @@
   },
   {
     "source": "test/functional/interface_usdt_utxocache.py",
-    "classification": "reused",
-    "execution": "skipped",
+    "classification": "adapted",
+    "execution": "unverified",
     "gates": [],
     "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
     "baseline_revision": "5de2720ca47b3a753081e5ce545113cd3b616018",
     "follow_up": "M2: scenario/case parity; M3: consensus gaps; M4: drift/CI",
     "baseline_sha256": "fbfdbb13c9778aff7550d7e373185cf56c420d07fb5429a22ae54312f42f1bf6",
     "upstream_sha256": "fbfdbb13c9778aff7550d7e373185cf56c420d07fb5429a22ae54312f42f1bf6",
-    "reason": "Byte-identical original script selected against the owned framework for initial execution; applicability and runtime outcome remain unverified. No assertions edited.",
-    "replacement": null,
-    "current_sha256": "fbfdbb13c9778aff7550d7e373185cf56c420d07fb5429a22ae54312f42f1bf6",
+    "reason": "Retain all BPF programs, add/spend/uncache callback counts and exact txid, output index, height and coinbase/value assertions. Replace the early Bitcoin50coin subsidy expectation with native10coins. No callback failure is ignored or relabeled.",
+    "replacement": "test/pocx/functional/interface_usdt_utxocache.py",
+    "current_sha256": "722ad676fcc69c976cfaf104b54ad78e4cab5ad70eeb4d423f78a3decb610b02",
     "covered_behavior": [
       "interface_usdt_utxocache"
     ],
@@ -21771,17 +21771,17 @@
   },
   {
     "source": "test/functional/interface_zmq.py",
-    "classification": "reused",
-    "execution": "skipped",
+    "classification": "adapted",
+    "execution": "unverified",
     "gates": [],
     "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
     "baseline_revision": "5de2720ca47b3a753081e5ce545113cd3b616018",
     "follow_up": "M2: scenario/case parity; M3: consensus gaps; M4: drift/CI",
     "baseline_sha256": "9bedca528e498ee2bd15aebabaf1f831dc4f19411654d4cb8737eb48e93308b5",
     "upstream_sha256": "9bedca528e498ee2bd15aebabaf1f831dc4f19411654d4cb8737eb48e93308b5",
-    "reason": "Byte-identical original script selected against the owned framework for initial execution; applicability and runtime outcome remain unverified. No assertions edited.",
-    "replacement": null,
-    "current_sha256": "9bedca528e498ee2bd15aebabaf1f831dc4f19411654d4cb8737eb48e93308b5",
+    "reason": "Preserve all notification topic/sequence/transaction/eviction, socket/IPv6/Unix and RPC assertions. Validate received native blocks against canonical raw bytes, merkle root, transaction validity and node verifychain(4,0), then compare native signed-header hashes instead of Bitcoin80byte SHA256 headers. Conflict-block construction uses a signed native proof, unchanged conflicting transaction list and witness commitment; both validator clocks cover its actual deadline.",
+    "replacement": "test/pocx/functional/interface_zmq.py",
+    "current_sha256": "c5f63ba6f7bf1da7ca931160976192ac6cd5e80433a448e9742389fea21e785c",
     "covered_behavior": [
       "interface_zmq"
     ],
@@ -22163,16 +22163,16 @@
   },
   {
     "source": "test/functional/mempool_compatibility.py",
-    "classification": "reused",
-    "execution": "skipped",
+    "classification": "adapted",
+    "execution": "unverified",
     "gates": [],
     "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
     "baseline_revision": "5de2720ca47b3a753081e5ce545113cd3b616018",
     "follow_up": "M2: scenario/case parity; M3: consensus gaps; M4: drift/CI",
     "baseline_sha256": "e7023ecfa2d1629658a0997f9836f08a7258691c2dca6ef657de3928523f37e9",
     "upstream_sha256": "e7023ecfa2d1629658a0997f9836f08a7258691c2dca6ef657de3928523f37e9",
-    "reason": "Byte-identical original script selected against the owned framework for initial execution; applicability and runtime outcome remain unverified. No assertions edited.",
-    "replacement": null,
+    "reason": "Retain every originalassertion and both actualmempool.dat transfers, includingunbroadcast persistence. Generate exactsamecoinbasetransaction in native and genuineBitcoinPoWheaders on independentchains; Bitcoinunderclaims its subsidy. Matureboth identicaloutpoints and comparetheir value,script,confirmationcount andcoinbasestatus. No crossconsensusblocksync or UTXOacceptance bypass. Fullfunctionalexecution remains unverified.",
+    "replacement": "test/pocx/functional/mempool_compatibility.py",
     "current_sha256": "e7023ecfa2d1629658a0997f9836f08a7258691c2dca6ef657de3928523f37e9",
     "covered_behavior": [
       "mempool_compatibility"
@@ -22257,7 +22257,7 @@
       }
     },
     "latest_observed_outcome": "skipped",
-    "current_input_outcome": "skipped"
+    "current_input_outcome": "unverified"
   },
   {
     "source": "test/functional/mempool_datacarrier.py",
@@ -35115,16 +35115,16 @@
   },
   {
     "source": "test/functional/tool_bitcoin_chainstate.py",
-    "classification": "reused",
-    "execution": "skipped",
+    "classification": "adapted",
+    "execution": "unverified",
     "gates": [],
     "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
     "baseline_revision": "5de2720ca47b3a753081e5ce545113cd3b616018",
     "follow_up": "M2: scenario/case parity; M3: consensus gaps; M4: drift/CI",
     "baseline_sha256": "66631a702455c9e3503d49c7b3ce332530f24728352a5ecf7501cb5f26be3c80",
     "upstream_sha256": "66631a702455c9e3503d49c7b3ce332530f24728352a5ecf7501cb5f26be3c80",
-    "reason": "Byte-identical original script selected against the owned framework for initial execution; applicability and runtime outcome remain unverified. No assertions edited.",
-    "replacement": null,
+    "reason": "Preserve every original method and assertion. Use the already independently verified cached199+100native blocks at600second intervals and committed299 snapshot hash. A separate test-only executable compiles the unchanged tool entry point and supplies NodeClock; shared builds use a private static copy of the same kernel source selection/interfaces. Retain native proof/signature/header checks. Add16second-future rejection, terminal status assertions and malformed/empty checks through the unchanged real-clock executable. Full current functional execution remains unverified under socket restrictions.",
+    "replacement": "test/pocx/functional/tool_bitcoin_chainstate.py",
     "current_sha256": "66631a702455c9e3503d49c7b3ce332530f24728352a5ecf7501cb5f26be3c80",
     "covered_behavior": [
       "tool_bitcoin_chainstate"
@@ -35144,7 +35144,7 @@
         "dynamic": false,
         "execution_by_profile": {
           "pocx": {
-            "status": "skipped",
+            "status": "unverified",
             "observed_status": "skipped",
             "evidence": "build-pocx-clean/pocx-results-fgwf4s35/results.json",
             "log": "build-pocx-clean/pocx-results-fgwf4s35/tool_bitcoin_chainstate.py.log",
@@ -35152,11 +35152,11 @@
             "global_transport": "v1",
             "skip_reason": "bitcoin-chainstate has not been compiled",
             "recorded_tree_matches_current_sources": true,
-            "selected_script_matches_execution": true,
-            "shared_inputs_match_execution": true
+            "selected_script_matches_execution": false,
+            "shared_inputs_match_execution": false
           },
           "pocx-v2": {
-            "status": "skipped",
+            "status": "unverified",
             "observed_status": "skipped",
             "evidence": "build-pocx-clean/pocx-results-fgwf4s35/results.json",
             "log": "build-pocx-clean/pocx-results-fgwf4s35/v2/tool_bitcoin_chainstate.py.log",
@@ -35164,8 +35164,8 @@
             "global_transport": "v2",
             "skip_reason": "bitcoin-chainstate has not been compiled",
             "recorded_tree_matches_current_sources": true,
-            "selected_script_matches_execution": true,
-            "shared_inputs_match_execution": true
+            "selected_script_matches_execution": false,
+            "shared_inputs_match_execution": false
           }
         }
       }
@@ -35181,7 +35181,7 @@
       },
       "pocx": {
         "tool_bitcoin_chainstate.py": {
-          "status": "skipped",
+          "status": "unverified",
           "observed_status": "skipped",
           "evidence": "build-pocx-clean/pocx-results-fgwf4s35/results.json",
           "log": "build-pocx-clean/pocx-results-fgwf4s35/tool_bitcoin_chainstate.py.log",
@@ -35189,13 +35189,13 @@
           "global_transport": "v1",
           "skip_reason": "bitcoin-chainstate has not been compiled",
           "recorded_tree_matches_current_sources": true,
-          "selected_script_matches_execution": true,
-          "shared_inputs_match_execution": true
+          "selected_script_matches_execution": false,
+          "shared_inputs_match_execution": false
         }
       },
       "pocx-v2": {
         "tool_bitcoin_chainstate.py": {
-          "status": "skipped",
+          "status": "unverified",
           "observed_status": "skipped",
           "evidence": "build-pocx-clean/pocx-results-fgwf4s35/results.json",
           "log": "build-pocx-clean/pocx-results-fgwf4s35/v2/tool_bitcoin_chainstate.py.log",
@@ -35203,13 +35203,13 @@
           "global_transport": "v2",
           "skip_reason": "bitcoin-chainstate has not been compiled",
           "recorded_tree_matches_current_sources": true,
-          "selected_script_matches_execution": true,
-          "shared_inputs_match_execution": true
+          "selected_script_matches_execution": false,
+          "shared_inputs_match_execution": false
         }
       }
     },
     "latest_observed_outcome": "skipped",
-    "current_input_outcome": "skipped"
+    "current_input_outcome": "unverified"
   },
   {
     "source": "test/functional/tool_rpcauth.py",
@@ -36389,16 +36389,16 @@
   },
   {
     "source": "test/functional/wallet_backwards_compatibility.py",
-    "classification": "reused",
-    "execution": "skipped",
+    "classification": "adapted",
+    "execution": "unverified",
     "gates": [],
     "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
     "baseline_revision": "5de2720ca47b3a753081e5ce545113cd3b616018",
     "follow_up": "M2: scenario/case parity; M3: consensus gaps; M4: drift/CI",
     "baseline_sha256": "fd4eb01644c028d8eb4f51006c528e2eacef3728e8e5ee56bb12ee3c8d370eba",
     "upstream_sha256": "fd4eb01644c028d8eb4f51006c528e2eacef3728e8e5ee56bb12ee3c8d370eba",
-    "reason": "Byte-identical original script selected against the owned framework for initial execution; applicability and runtime outcome remain unverified. No assertions edited.",
-    "replacement": null,
+    "reason": "Owned wallet compatibility scenarios with explicit native-context fixtures and genuine old Bitcoin validation; full execution unverified",
+    "replacement": "test/pocx/functional/wallet_backwards_compatibility.py",
     "current_sha256": "fd4eb01644c028d8eb4f51006c528e2eacef3728e8e5ee56bb12ee3c8d370eba",
     "covered_behavior": [
       "wallet_backwards_compatibility"
@@ -36406,7 +36406,7 @@
     "guarded_case_source": "test/functional/wallet_backwards_compatibility.py",
     "guarded_cases": [],
     "pocx_conditional_lines": [],
-    "profile_status": "Final complete matrix verified for the declared profile; explicit skips remain unverified feature combinations.",
+    "profile_status": "Owned adapter and detached native-context fixtures prepared; full current-input functional execution remains unverified.",
     "upstream_functional_cases": [
       {
         "id": "wallet_backwards_compatibility.py",
@@ -36418,28 +36418,28 @@
         "dynamic": false,
         "execution_by_profile": {
           "pocx": {
-            "status": "skipped",
+            "status": "unverified",
             "observed_status": "skipped",
             "evidence": "build-pocx-clean/pocx-results-fgwf4s35/results.json",
             "log": "build-pocx-clean/pocx-results-fgwf4s35/wallet_backwards_compatibility.py.log",
             "test": "wallet_backwards_compatibility.py",
             "global_transport": "v1",
             "skip_reason": "previous releases not available or disabled",
-            "recorded_tree_matches_current_sources": true,
-            "selected_script_matches_execution": true,
-            "shared_inputs_match_execution": true
+            "recorded_tree_matches_current_sources": false,
+            "selected_script_matches_execution": false,
+            "shared_inputs_match_execution": false
           },
           "pocx-v2": {
-            "status": "skipped",
+            "status": "unverified",
             "observed_status": "skipped",
             "evidence": "build-pocx-clean/pocx-results-fgwf4s35/results.json",
             "log": "build-pocx-clean/pocx-results-fgwf4s35/v2/wallet_backwards_compatibility.py.log",
             "test": "wallet_backwards_compatibility.py",
             "global_transport": "v2",
             "skip_reason": "previous releases not available or disabled",
-            "recorded_tree_matches_current_sources": true,
-            "selected_script_matches_execution": true,
-            "shared_inputs_match_execution": true
+            "recorded_tree_matches_current_sources": false,
+            "selected_script_matches_execution": false,
+            "shared_inputs_match_execution": false
           }
         }
       }
@@ -36455,35 +36455,35 @@
       },
       "pocx": {
         "wallet_backwards_compatibility.py": {
-          "status": "skipped",
+          "status": "unverified",
           "observed_status": "skipped",
           "evidence": "build-pocx-clean/pocx-results-fgwf4s35/results.json",
           "log": "build-pocx-clean/pocx-results-fgwf4s35/wallet_backwards_compatibility.py.log",
           "test": "wallet_backwards_compatibility.py",
           "global_transport": "v1",
           "skip_reason": "previous releases not available or disabled",
-          "recorded_tree_matches_current_sources": true,
-          "selected_script_matches_execution": true,
-          "shared_inputs_match_execution": true
+          "recorded_tree_matches_current_sources": false,
+          "selected_script_matches_execution": false,
+          "shared_inputs_match_execution": false
         }
       },
       "pocx-v2": {
         "wallet_backwards_compatibility.py": {
-          "status": "skipped",
+          "status": "unverified",
           "observed_status": "skipped",
           "evidence": "build-pocx-clean/pocx-results-fgwf4s35/results.json",
           "log": "build-pocx-clean/pocx-results-fgwf4s35/v2/wallet_backwards_compatibility.py.log",
           "test": "wallet_backwards_compatibility.py",
           "global_transport": "v2",
           "skip_reason": "previous releases not available or disabled",
-          "recorded_tree_matches_current_sources": true,
-          "selected_script_matches_execution": true,
-          "shared_inputs_match_execution": true
+          "recorded_tree_matches_current_sources": false,
+          "selected_script_matches_execution": false,
+          "shared_inputs_match_execution": false
         }
       }
     },
     "latest_observed_outcome": "skipped",
-    "current_input_outcome": "skipped"
+    "current_input_outcome": "unverified"
   },
   {
     "source": "test/functional/wallet_balance.py",
@@ -39396,16 +39396,16 @@
   },
   {
     "source": "test/functional/wallet_migration.py",
-    "classification": "reused",
-    "execution": "skipped",
+    "classification": "adapted",
+    "execution": "unverified",
     "gates": [],
     "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
     "baseline_revision": "5de2720ca47b3a753081e5ce545113cd3b616018",
     "follow_up": "M2: scenario/case parity; M3: consensus gaps; M4: drift/CI",
     "baseline_sha256": "2a26f66b94ea805b357e9e3f8270750465df8bdb2f69e2e5b4dd5a6e3f71e78c",
     "upstream_sha256": "2a26f66b94ea805b357e9e3f8270750465df8bdb2f69e2e5b4dd5a6e3f71e78c",
-    "reason": "Byte-identical original script selected against the owned framework for initial execution; applicability and runtime outcome remain unverified. No assertions edited.",
-    "replacement": null,
+    "reason": "Owned migration scenarios with genuine old Bitcoin BDB fixtures and explicit paired native contexts; full functional execution unverified",
+    "replacement": "test/pocx/functional/wallet_migration.py",
     "current_sha256": "2a26f66b94ea805b357e9e3f8270750465df8bdb2f69e2e5b4dd5a6e3f71e78c",
     "covered_behavior": [
       "wallet_migration"
@@ -39413,7 +39413,7 @@
     "guarded_case_source": "test/functional/wallet_migration.py",
     "guarded_cases": [],
     "pocx_conditional_lines": [],
-    "profile_status": "Final complete matrix verified for the declared profile; explicit skips remain unverified feature combinations.",
+    "profile_status": "Owned adapter retains all289original assertions; full current-input functional execution remains unverified.",
     "upstream_functional_cases": [
       {
         "id": "wallet_migration.py",
@@ -39425,28 +39425,28 @@
         "dynamic": false,
         "execution_by_profile": {
           "pocx": {
-            "status": "skipped",
+            "status": "unverified",
             "observed_status": "skipped",
             "evidence": "build-pocx-clean/pocx-results-fgwf4s35/results.json",
             "log": "build-pocx-clean/pocx-results-fgwf4s35/wallet_migration.py.log",
             "test": "wallet_migration.py",
             "global_transport": "v1",
             "skip_reason": "previous releases not available or disabled",
-            "recorded_tree_matches_current_sources": true,
-            "selected_script_matches_execution": true,
-            "shared_inputs_match_execution": true
+            "recorded_tree_matches_current_sources": false,
+            "selected_script_matches_execution": false,
+            "shared_inputs_match_execution": false
           },
           "pocx-v2": {
-            "status": "skipped",
+            "status": "unverified",
             "observed_status": "skipped",
             "evidence": "build-pocx-clean/pocx-results-fgwf4s35/results.json",
             "log": "build-pocx-clean/pocx-results-fgwf4s35/v2/wallet_migration.py.log",
             "test": "wallet_migration.py",
             "global_transport": "v2",
             "skip_reason": "previous releases not available or disabled",
-            "recorded_tree_matches_current_sources": true,
-            "selected_script_matches_execution": true,
-            "shared_inputs_match_execution": true
+            "recorded_tree_matches_current_sources": false,
+            "selected_script_matches_execution": false,
+            "shared_inputs_match_execution": false
           }
         }
       }
@@ -39462,35 +39462,35 @@
       },
       "pocx": {
         "wallet_migration.py": {
-          "status": "skipped",
+          "status": "unverified",
           "observed_status": "skipped",
           "evidence": "build-pocx-clean/pocx-results-fgwf4s35/results.json",
           "log": "build-pocx-clean/pocx-results-fgwf4s35/wallet_migration.py.log",
           "test": "wallet_migration.py",
           "global_transport": "v1",
           "skip_reason": "previous releases not available or disabled",
-          "recorded_tree_matches_current_sources": true,
-          "selected_script_matches_execution": true,
-          "shared_inputs_match_execution": true
+          "recorded_tree_matches_current_sources": false,
+          "selected_script_matches_execution": false,
+          "shared_inputs_match_execution": false
         }
       },
       "pocx-v2": {
         "wallet_migration.py": {
-          "status": "skipped",
+          "status": "unverified",
           "observed_status": "skipped",
           "evidence": "build-pocx-clean/pocx-results-fgwf4s35/results.json",
           "log": "build-pocx-clean/pocx-results-fgwf4s35/v2/wallet_migration.py.log",
           "test": "wallet_migration.py",
           "global_transport": "v2",
           "skip_reason": "previous releases not available or disabled",
-          "recorded_tree_matches_current_sources": true,
-          "selected_script_matches_execution": true,
-          "shared_inputs_match_execution": true
+          "recorded_tree_matches_current_sources": false,
+          "selected_script_matches_execution": false,
+          "shared_inputs_match_execution": false
         }
       }
     },
     "latest_observed_outcome": "skipped",
-    "current_input_outcome": "skipped"
+    "current_input_outcome": "unverified"
   },
   {
     "source": "test/functional/wallet_miniscript.py",
@@ -52020,5 +52020,11 @@
         }
       }
     }
+  },
+  {
+    "source": "src/pocx/test/tools/chainstate_test_clock.cpp",
+    "classification": "native-only support",
+    "execution": "unverified",
+    "reason": "Test-only fixture-clock entry point for the unchanged chainstate tool. It defines no independent upstream case or production API."
   }
 ]

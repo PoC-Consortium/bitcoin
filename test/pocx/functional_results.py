@@ -2,6 +2,11 @@
 # Distributed under the MIT software license; see COPYING.
 """Validate execution identities before using transport-specific evidence."""
 from functional_cases import case_spec, selection_digest
+from functional_environment import arguments as environment_arguments
+from functional_environment import timeout_arguments
+import functional_execution
+import process_tree
+import rpc_coverage
 
 
 def transport_results(report):
@@ -13,8 +18,16 @@ def transport_results(report):
     provenance = report['provenance']
     results = report['results']
     version = provenance.get('format_version', 1)
-    if type(version) is not int or version not in (1, 2, 3, 4):
+    if type(version) is not int or version not in (1, 2, 3, 4, 5, 6, 7, 8, 9, 10):
         raise ValueError('Unknown functional execution format')
+    rpc_coverage.verify(report)
+    if version >= 8 and ('build_configuration' not in provenance or
+                          (provenance['build_configuration'] is not None and
+                           (not isinstance(provenance['build_configuration'], str) or
+                            not provenance['build_configuration']))):
+        raise ValueError('Missing or invalid functional build configuration')
+    execution_options = functional_execution.recorded(provenance)
+    timing = timeout_arguments(provenance)
     seen = set()
     pairs = []
     for result in results:
@@ -31,11 +44,17 @@ def transport_results(report):
             raise ValueError('Invalid or duplicate functional transport case')
         seen.add(key)
         command = result['command']
-        if not isinstance(command, list) or not all(isinstance(arg, str) for arg in command):
+        if not isinstance(command, list) or not command or not all(isinstance(arg, str) for arg in command):
             raise ValueError('Invalid functional execution command')
+        if version >= 9:
+            process_tree.validate_control(provenance.get('process_controller'), result.get('process_control'), command)
         if version >= 2:
             flag = f'--{mode}transport'
-            expected_arguments = [*arguments, flag]
+            prerequisites = environment_arguments(result['test'], provenance['environment_profile']) if version >= 5 else []
+            expected_arguments = [*arguments, *functional_execution.arguments(provenance, arguments),
+                                  *prerequisites, *timing, *rpc_coverage.arguments(report, mode), flag]
+            if version >= 7 and result.get('execution_options') != execution_options:
+                raise ValueError('Functional execution settings differ from recorded invocation')
             if (result.get('test_arguments') != expected_arguments or
                     command[-len(expected_arguments):] != expected_arguments or command.count(flag) != 1 or
                     f'--{"v1" if mode == "v2" else "v2"}transport' in command):
