@@ -591,9 +591,9 @@ jobs:
 
       - name: Enable bpfcc script
         if: ${{ env.CONTAINER_NAME == 'ci_native_asan' }}
-        # In the image build step, no external environment variables are available,
-        # so any settings will need to be written to the settings env file:
-        run: sed -i "s|\${INSTALL_BCC_TRACING_TOOLS}|true|g" ./ci/test/00_setup_env_native_asan.sh
+        # Select an owned wrapper available inside the image build too. Keep the
+        # checksum-reviewed original environment script unchanged.
+        run: echo 'FILE_ENV=./test/pocx/ci/00_setup_env_native_asan_tracing.sh' >> "$GITHUB_ENV"
 
       - name: Set mmap_rnd_bits
         if: ${{ env.CONTAINER_NAME == 'ci_native_tsan' || env.CONTAINER_NAME == 'ci_native_msan' }}

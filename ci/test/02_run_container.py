@@ -26,6 +26,12 @@ def test_script(root, environment):
     return ['python3', f'{root}/test/pocx/inherited_ci.py']
 
 
+def imagefile(root, environment):
+    if environment.get('RUN_FUZZ_TESTS') == 'true':
+        return f'{root}/ci/test_imagefile'
+    return f'{root}/test/pocx/ci/test_imagefile'
+
+
 def capture_evidence(container_id, environment, *, invoke=run):
     destination = Path(environment['BASE_READ_ONLY_DIR']) / 'artifacts'
     destination.mkdir(parents=True, exist_ok=True)
@@ -81,7 +87,7 @@ def main():
         # Using buildx is required to properly load the correct driver, for use with registry caching. Neither build, nor BUILDKIT=1 currently do this properly
         cmd_build = ["docker", "buildx", "build"]
         cmd_build += [
-            f"--file={os.environ['BASE_READ_ONLY_DIR']}/ci/test_imagefile",
+            '--file=' + imagefile(os.environ['BASE_READ_ONLY_DIR'], os.environ),
             f"--build-arg=CI_IMAGE_NAME_TAG={os.environ['CI_IMAGE_NAME_TAG']}",
             f"--build-arg=FILE_ENV={os.environ['FILE_ENV']}",
             f"--build-arg=BASE_ROOT_DIR={os.environ['BASE_ROOT_DIR']}",

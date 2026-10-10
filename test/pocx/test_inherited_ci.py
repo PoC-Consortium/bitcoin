@@ -52,6 +52,8 @@ class InheritedTest(unittest.TestCase):
         module = importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
         self.assertEqual(module.test_script('/source', {}), ['python3','/source/test/pocx/inherited_ci.py'])
         self.assertEqual(module.test_script('/source', {'RUN_FUZZ_TESTS':'true'}), ['/source/ci/test/03_test_script.sh'])
+        self.assertEqual(module.imagefile('/source', {}), '/source/test/pocx/ci/test_imagefile')
+        self.assertEqual(module.imagefile('/source', {'RUN_FUZZ_TESTS':'true'}), '/source/ci/test_imagefile')
 
     def test_review_rejects_recipe_drift(self):
         self.assertTrue(inherited_ci.verify_recipe()['source_sha256'])
