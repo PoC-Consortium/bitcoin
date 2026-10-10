@@ -78,7 +78,8 @@ class PreviousReleaseFixturesTest(unittest.TestCase):
             framework=FixtureFramework(str(staged/'mempool_compatibility.py'))
         framework.options.tmpdir=directory
         framework.options.previous_releases_path=str(ROOT/'releases')
-        for i in range(2):initialize_datadir(directory,i,'regtest')
+        for i in range(2):
+            initialize_datadir(directory,i,'regtest')
         return framework
 
     def test_default_nodes_keep_native_address_fixtures(self):
@@ -226,7 +227,8 @@ class WalletContextFixturesTest(unittest.TestCase):
             with sqlite3.connect(path) as db:
                 db.execute('CREATE TABLE main(key BLOB PRIMARY KEY NOT NULL,value BLOB NOT NULL)')
                 db.executemany('INSERT INTO main VALUES(?,?)',[(key,invalid),opaque])
-            with self.assertRaises(ValueError):rebase_wallet_file(path,self.context())
+            with self.assertRaises(ValueError):
+                rebase_wallet_file(path,self.context())
             with sqlite3.connect(path) as db:
                 self.assertEqual(sorted(db.execute('SELECT key,value FROM main').fetchall()),sorted([(key,invalid),opaque]))
                 valid=bytes(4)+b'\x01'+bytes.fromhex(BITCOIN_GENESIS)[::-1]
@@ -246,9 +248,11 @@ class WalletContextFixturesTest(unittest.TestCase):
             write_wallet_dump(path,records)
             self.assertEqual(read_wallet_dump(path),records)
             path.write_bytes(path.read_bytes().replace(b'format,bdb',b'format,xyz'))
-            with self.assertRaises(ValueError):read_wallet_dump(path)
+            with self.assertRaises(ValueError):
+                read_wallet_dump(path)
             write_wallet_dump(path,records+records)
-            with self.assertRaises(ValueError):read_wallet_dump(path)
+            with self.assertRaises(ValueError):
+                read_wallet_dump(path)
 
     def test_backward_adapter_retains_every_original_assertion_and_method(self):
         original=ast.parse((ROOT/'test/functional/wallet_backwards_compatibility.py').read_text())
@@ -342,10 +346,12 @@ class MigrationFixturesTest(unittest.TestCase):
     def test_descriptor_conversion_validates_checksum_and_does_not_touch_labels(self):
         from test_framework.descriptors import descsum_create
         bitcoin,native=self.addresses()
-        old=descsum_create('addr('+bitcoin+')');new=descsum_create('addr('+native+')')
+        old=descsum_create('addr('+bitcoin+')')
+        new=descsum_create('addr('+native+')')
         self.assertEqual(rpc_descriptor(old,'rpocx'),new)
         self.assertEqual(rpc_descriptor(new,'bcrt'),old)
-        with self.assertRaises(ValueError):rpc_descriptor(old[:-1]+'!','rpocx')
+        with self.assertRaises(ValueError):
+            rpc_descriptor(old[:-1]+'!','rpocx')
         requests=[{'desc':new,'label':native,'scriptPubKey':{'address':native},'timestamp':'now'}]
         self.assertEqual(wallet_rpc_parameters('importmulti',[requests],{}),
                          ([[{'desc':old,'label':native,'scriptPubKey':{'address':bitcoin},'timestamp':'now'}]],{}))
@@ -358,7 +364,9 @@ class MigrationFixturesTest(unittest.TestCase):
              'confirmations':-1,'walletconflicts':['bb'*32],
              'details':[{'address':bitcoin,'label':bitcoin}],
              'future_field':{'address':bitcoin,'blockhash':'11'*32}}
-        expected=deepcopy(row);expected['address']=native;expected['blockhash']='22'*32
+        expected=deepcopy(row)
+        expected['address']=native
+        expected['blockhash']='22'*32
         expected['details'][0]['address']=native
         self.assertEqual(wallet_rpc_result('gettransaction',row,self.context()),expected)
         self.assertEqual(row['address'],bitcoin)
@@ -366,7 +374,8 @@ class MigrationFixturesTest(unittest.TestCase):
         groups=[[[bitcoin,Decimal('2.5'),bitcoin]]]
         self.assertEqual(wallet_rpc_result('listaddressgroupings',groups,self.context()),[[[native,Decimal('2.5'),bitcoin]]])
         row['blockhash']='33'*32
-        with self.assertRaises(ValueError):wallet_rpc_result('gettransaction',row,self.context())
+        with self.assertRaises(ValueError):
+            wallet_rpc_result('gettransaction',row,self.context())
 
     def test_balance_context_preserves_amounts_and_requires_known_tip(self):
         row = {'mine': {'trusted': Decimal('1.25'), 'untrusted_pending': Decimal('0.5'),
@@ -386,88 +395,123 @@ class MigrationFixturesTest(unittest.TestCase):
 
     def test_rpc_proxy_tracks_successful_producers_and_preserves_exceptions(self):
         from types import SimpleNamespace
-        bitcoin,native=self.addresses();calls=[];producers=[]
+        bitcoin,native=self.addresses()
+        calls=[]
+        producers=[]
         class RPC:
-            def sendtoaddress(self,*args,**kwargs):calls.append((args,kwargs));return 'txid'
+            def sendtoaddress(self,*args,**kwargs):
+                calls.append((args,kwargs))
+                return 'txid'
             def bumpfee(self,*args,**kwargs):raise failure
         failure=RuntimeError('actual RPC failure')
         proxy=MigrationWalletRPC(RPC(),SimpleNamespace(index=1,wallet_fixture_producer=producers.append),context=self.context)
         self.assertEqual(proxy.sendtoaddress(native,2,comment=native),'txid')
-        self.assertEqual(calls,[((bitcoin,2),{'comment':native})]);self.assertEqual(producers,[1])
-        with self.assertRaises(RuntimeError) as caught:proxy.bumpfee('txid')
-        self.assertIs(caught.exception,failure);self.assertEqual(producers,[1])
+        self.assertEqual(calls,[((bitcoin,2),{'comment':native})])
+        self.assertEqual(producers,[1])
+        with self.assertRaises(RuntimeError) as caught:
+            proxy.bumpfee('txid')
+        self.assertIs(caught.exception,failure)
+        self.assertEqual(producers,[1])
 
     def test_shared_subsidy_covers_both_different_halving_schedules(self):
         for height,amount in [(1,1000000000),(149,1000000000),(150,1000000000),
                               (449,1000000000),(450,625000000),(499,625000000),
                               (500,500000000),(599,500000000),(600,312500000),
                               (750,156250000),(1000,78125000)]:
-            with self.subTest(height=height):self.assertEqual(shared_regtest_subsidy(height),amount)
+            with self.subTest(height=height):
+                self.assertEqual(shared_regtest_subsidy(height),amount)
         for invalid in [0,-1,True,1.5]:
-            with self.assertRaises(ValueError):shared_regtest_subsidy(invalid)
+            with self.assertRaises(ValueError):
+                shared_regtest_subsidy(invalid)
 
     def test_subsidy_cap_preserves_all_other_outputs_and_non_coinbase_transactions(self):
         from test_framework.blocktools import _REGTEST_ACCOUNT, _REGTEST_SIGNING_KEY
         from test_framework.key import ECKey
         from test_framework.messages import CBlock
-        block=CBlock();block.nHeight=450;block.pocxProof.account_id=_REGTEST_ACCOUNT
-        key=ECKey();key.set(_REGTEST_SIGNING_KEY,compressed=True);block.vchPubKey=key.get_pubkey().get_bytes()
+        block=CBlock()
+        block.nHeight=450
+        block.pocxProof.account_id=_REGTEST_ACCOUNT
+        key=ECKey()
+        key.set(_REGTEST_SIGNING_KEY,compressed=True)
+        block.vchPubKey=key.get_pubkey().get_bytes()
         coinbase=PreviousReleaseFixturesTest().coinbase(1000000000)
         coinbase.vout.append(CTxOut(0,b'\x6a'+bytes(36)))
         block.vtx=[coinbase,PreviousReleaseFixturesTest().coinbase(12345)]
         protected=deepcopy((block.vtx[0].vin,block.vtx[0].vout[0].scriptPubKey))
-        second_output=block.vtx[0].vout[1].serialize();transaction=block.vtx[1].serialize()
+        second_output=block.vtx[0].vout[1].serialize()
+        transaction=block.vtx[1].serialize()
         cap_shared_coinbase(block)
         self.assertEqual(block.vtx[0].vout[0].nValue,625000000)
         self.assertEqual(block.vtx[0].vout[1].serialize(),second_output)
         self.assertEqual(block.vtx[1].serialize(),transaction)
         self.assertEqual([vin.serialize() for vin in block.vtx[0].vin],[vin.serialize() for vin in protected[0]])
         self.assertEqual(block.vtx[0].vout[0].scriptPubKey,protected[1])
-        self.assertEqual(block.hashMerkleRoot,block.calc_merkle_root());self.assertEqual(len(block.vchSignature),65)
-        with self.assertRaises(AssertionError):cap_shared_coinbase(block)
+        self.assertEqual(block.hashMerkleRoot,block.calc_merkle_root())
+        self.assertEqual(len(block.vchSignature),65)
+        with self.assertRaises(AssertionError):
+            cap_shared_coinbase(block)
 
     def test_relay_prioritizes_a_real_replacement_over_stale_conflicts(self):
         calls=[]
         class Node:
-            def __init__(self,name,pool):self.name=name;self.pool=pool
+            def __init__(self,name,pool):
+                self.name=name
+                self.pool=pool
             def syncwithvalidationinterfacequeue(self):calls.append((self.name,'flush'))
             def getrawmempool(self,verbose=False):return {tx:{'depends':[]} for tx in self.pool} if verbose else list(self.pool)
             def getrawtransaction(self,txid):return txid
             def sendrawtransaction(self,txid):
                 calls.append((self.name,txid))
-                if txid=='stale':raise AssertionError('Must not relay stale conflict after replacement')
-                self.pool={'replacement'};return txid
-        class Fixture(PairedMigrationWallets):pass
-        fixture=Fixture();fixture.nodes=[Node('native',{'stale'}),Node('bitcoin',{'replacement'})]
-        fixture.wallet_relay_source=1;fixture.sync_mempools()
+                if txid=='stale':
+                    raise AssertionError('Must not relay stale conflict after replacement')
+                self.pool={'replacement'}
+                return txid
+        class Fixture(PairedMigrationWallets):
+            pass
+        fixture=Fixture()
+        fixture.nodes=[Node('native',{'stale'}),Node('bitcoin',{'replacement'})]
+        fixture.wallet_relay_source=1
+        fixture.sync_mempools()
         self.assertEqual(calls,[('native','replacement'),('native','flush'),('bitcoin','flush')])
         self.assertEqual(fixture.nodes[0].pool,fixture.nodes[1].pool)
 
     def test_mempool_dependency_cycles_and_relay_rejections_are_not_suppressed(self):
         from types import SimpleNamespace
         node=SimpleNamespace(getrawmempool=lambda verbose:{'a':{'depends':['b']},'b':{'depends':['a']}})
-        with self.assertRaises(AssertionError):PairedMigrationWallets.ordered_mempool(node)
+        with self.assertRaises(AssertionError):
+            PairedMigrationWallets.ordered_mempool(node)
         calls=[]
-        class Fixture(PairedMigrationWallets):pass
+        class Fixture(PairedMigrationWallets):
+            pass
         failure=RuntimeError('genuine policy rejection')
-        def reject(raw):calls.append(raw);raise failure
+        def reject(raw):
+            calls.append(raw)
+            raise failure
         source=SimpleNamespace(getrawmempool=lambda verbose=False:{'a':{'depends':[]}} if verbose else ['a'],getrawtransaction=lambda txid:'raw')
         destination=SimpleNamespace(getrawmempool=lambda:[],sendrawtransaction=reject)
-        fixture=Fixture();fixture.nodes=[source,destination];fixture.wallet_relay_source=0
-        with self.assertRaises(RuntimeError) as caught:fixture.sync_mempools()
-        self.assertIs(caught.exception,failure);self.assertEqual(calls,['raw'])
+        fixture=Fixture()
+        fixture.nodes=[source,destination]
+        fixture.wallet_relay_source=0
+        with self.assertRaises(RuntimeError) as caught:
+            fixture.sync_mempools()
+        self.assertIs(caught.exception,failure)
+        self.assertEqual(calls,['raw'])
 
     def test_backward_fixture_relays_native_replacement_before_old_conflicts(self):
         from wallet_backwards_compatibility import BackwardsCompatibilityTest
         calls=[]
         class Node:
-            def __init__(self,index,pool):self.index=index;self.pool=pool
+            def __init__(self,index,pool):
+                self.index=index
+                self.pool=pool
             def getrawmempool(self):return sorted(self.pool)
             def getrawtransaction(self,txid):return txid
             def sendrawtransaction(self,txid):
                 calls.append((self.index,txid))
-                if txid=='stale':raise AssertionError('Old conflict must not be resent')
-                self.pool={'replacement'};return txid
+                if txid=='stale':
+                    raise AssertionError('Old conflict must not be resent')
+                self.pool={'replacement'}
+                return txid
         from types import SimpleNamespace
         fixture=SimpleNamespace(nodes=[Node(0,{'replacement'}),Node(1,{'replacement'}),Node(2,{'stale'})])
         fixture.relay_wallet_transactions=lambda sources,destinations:BackwardsCompatibilityTest.relay_wallet_transactions(fixture,sources,destinations)

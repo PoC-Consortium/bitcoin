@@ -41,10 +41,12 @@ def functional_rows(cases, native, *, root=ROOT):
         seen = set()
         for case in upstream:
             name = case['test']
-            if name not in manifest.get('excluded_tests', {}): continue
+            if name not in manifest.get('excluded_tests', {}):
+                continue
             for mode in ('v1', 'v2'):
                 key = (case['id'], mode)
-                if key in seen: continue
+                if key in seen:
+                    continue
                 seen.add(key)
                 rows.append({'framework': 'functional', 'counting_unit': 'Argument case per transport',
                     'case': case['id'], 'transport': mode, 'effective_transport': mode,
@@ -58,13 +60,15 @@ def run_pair(bundle, output, assets, jobs, factor, *, environment=None, timeout=
     if type(jobs) is not int or jobs < 1 or type(timeout) is not int or timeout < 1:
         raise ValueError('Expected positive runtime jobs and timeout')
     output = output.resolve()
-    if output.is_relative_to(bundle.resolve()): raise ValueError('Reports must be outside immutable artifact bundle')
+    if output.is_relative_to(bundle.resolve()):
+        raise ValueError('Reports must be outside immutable artifact bundle')
     pair = windows_artifacts.verify_pair(bundle, root=root, revision=revision)
     env = dict(os.environ if environment is None else environment)
     env['PYTHONDONTWRITEBYTECODE'] = '1'
     env['DOWNLOAD_PREVIOUS_RELEASES'] = 'true'
     profile = functional.execution_profile(env, factor)
-    if not env.get('PREVIOUS_RELEASES_DIR'): raise ValueError('Full Windows runtime requires PREVIOUS_RELEASES_DIR')
+    if not env.get('PREVIOUS_RELEASES_DIR'):
+        raise ValueError('Full Windows runtime requires PREVIOUS_RELEASES_DIR')
     output.mkdir(parents=True, exist_ok=False)
     report = {'status': 'running', 'scope': 'Complete applicable paired artifact runtime; hosted producer/workflow evidence remains separate',
         'full_windows_runtime_pass': False, 'full_windows_ci_pass': False, 'host_platform': sys.platform,
@@ -75,65 +79,91 @@ def run_pair(bundle, output, assets, jobs, factor, *, environment=None, timeout=
         columns = ['consensus', 'framework', 'counting_unit', 'case', 'transport', 'effective_transport',
                    'origin', 'adaptation', 'status', 'reason', 'execution_status', 'assertions_passed', 'seconds']
         with (output / 'cases.csv').open('w', newline='') as stream:
-            writer = csv.DictWriter(stream, fieldnames=columns, extrasaction='ignore'); writer.writeheader(); writer.writerows(report['cases'])
+            writer = csv.DictWriter(stream, fieldnames=columns, extrasaction='ignore')
+            writer.writeheader()
+            writer.writerows(report['cases'])
     def unchanged():
         windows_artifacts.verify_pair(bundle, root=root, revision=revision)
-        if sha256(bundle / 'pair.json') != report['pair_sha256']: raise ValueError('Immutable artifact manifest changed')
+        if sha256(bundle / 'pair.json') != report['pair_sha256']:
+            raise ValueError('Immutable artifact manifest changed')
     save()
     try:
         for row in pair['phases']:
-            consensus = row['consensus']; payload = bundle / consensus
-            if consensus == 'pocx': report['native_execution'] = 'started after complete original framework/functional runtime passed'
-            directory = output / consensus; directory.mkdir()
+            consensus = row['consensus']
+            payload = bundle / consensus
+            if consensus == 'pocx':
+                report['native_execution'] = 'started after complete original framework/functional runtime passed'
+            directory = output / consensus
+            directory.mkdir()
             phase = {'consensus': consensus, 'status': 'running', 'steps': []}
-            report['phases'].append(phase); save()
+            report['phases'].append(phase)
+            save()
             def invoke(name, command):
                 unchanged()
                 step = {'name': name, 'command': command, 'status': 'running'}
-                phase['steps'].append(step); save()
+                phase['steps'].append(step)
+                save()
                 log = directory / (name + '.log')
-                with log.open('w') as stream: result = execute(command, cwd=root, env=env, log=stream, timeout=2400)
-                step.update(**result, log_sha256=sha256(log)); save()
+                with log.open('w') as stream:
+                    result = execute(command, cwd=root, env=env, log=stream, timeout=2400)
+                step.update(**result, log_sha256=sha256(log))
+                save()
                 process_tree.validate_control(report['process_controller'], result['process_control'], command)
-                if result['returncode'] or result['timed_out']: raise ValueError('Windows artifact prerequisite failed: ' + name)
-                unchanged(); step['status'] = 'passed'; save()
+                if result['returncode'] or result['timed_out']:
+                    raise ValueError('Windows artifact prerequisite failed: ' + name)
+                unchanged()
+                step['status'] = 'passed'
+                save()
             if consensus == 'bitcoin':
                 invoke('host-process-lifecycle', [sys.executable, '-B', str(root / 'test/pocx/test_process_tree.py')])
             invoke('version', [str(payload / 'bin/bitcoind.exe'), '-version'])
             manifest = directory / 'bitcoind.manifest'
             invoke('extract-manifest', ['mt.exe', '-nologo', '-inputresource:' + str(payload / 'bin/bitcoind.exe'), '-out:' + str(manifest)])
-            if not manifest.is_file() or not manifest.stat().st_size: raise ValueError('Extracted Windows manifest missing or empty')
+            if not manifest.is_file() or not manifest.stat().st_size:
+                raise ValueError('Extracted Windows manifest missing or empty')
             phase['extracted_manifest_sha256'] = sha256(manifest)
             phase['manifest_exemptions'] = []
             for name in sorted(row['files']):
-                if not name.startswith('bin/') or not name.endswith('.exe'): continue
+                if not name.startswith('bin/') or not name.endswith('.exe'):
+                    continue
                 if Path(name).name in MANIFEST_SKIPS:
                     phase['manifest_exemptions'].append({'binary': name, 'reason': 'Unchanged original cross-driver manifest exemption'})
                     continue
                 invoke('validate-' + Path(name).stem, ['mt.exe', '-nologo', '-inputresource:' + str(payload / name), '-validate_manifest'])
             child = frameworks.run_phase(payload, row, directory / 'frameworks', assets,
                 environment=env, timeout=2400, execute=execute)
-            if child['status'] != 'passed': raise ValueError('Original/native artifact framework profile failed')
+            if child['status'] != 'passed':
+                raise ValueError('Original/native artifact framework profile failed')
             phase['framework_report_sha256'] = sha256(directory / 'frameworks/results.json')
-            report['cases'].extend(dict(case, consensus=consensus) for case in child['cases']); save(); unchanged()
+            report['cases'].extend(dict(case, consensus=consensus) for case in child['cases'])
+            save()
+            unchanged()
             child = functional.run_phase(bundle, row, directory / 'functional', jobs, factor,
                 environment=env, timeout=timeout, execute=execute, root=root, revision=revision)
-            if child['status'] != 'passed': raise ValueError('Original/native artifact functional profile failed')
+            if child['status'] != 'passed':
+                raise ValueError('Original/native artifact functional profile failed')
             phase['functional_report_sha256'] = sha256(directory / 'functional/results.json')
             report['cases'].extend(dict(case, consensus=consensus) for case in functional_rows(child['cases'], consensus == 'pocx', root=root))
-            unchanged(); phase['status'] = 'passed'; save()
+            unchanged()
+            phase['status'] = 'passed'
+            save()
         report.update(status='passed', full_windows_runtime_pass=True)
     except BaseException as error:
         if report['phases']:
             phase = report['phases'][-1]
-            if phase['status'] == 'running': phase['status'] = 'failed'
+            if phase['status'] == 'running':
+                phase['status'] = 'failed'
             for step in phase['steps']:
-                if step['status'] == 'running': step['status'] = 'failed'
+                if step['status'] == 'running':
+                    step['status'] = 'failed'
             phase['retained_reports'] = {}
             for name in ('frameworks', 'functional'):
                 path = output / phase['consensus'] / name / 'results.json'
-                if path.is_file(): phase['retained_reports'][name] = {'path': str(path), 'sha256': sha256(path)}
-        report.update(status='failed', error=str(error)); save(); raise
+                if path.is_file():
+                    phase['retained_reports'][name] = {'path': str(path), 'sha256': sha256(path)}
+        report.update(status='failed', error=str(error))
+        save()
+        raise
     save()
     return report
 
@@ -147,7 +177,8 @@ def main():
     parser.add_argument('--timeout', type=int, default=86400)
     parser.add_argument('--plan', action='store_true')
     args = parser.parse_args()
-    if not args.plan and os.name != 'nt': parser.error('Actual complete artifact runtime requires Windows')
+    if not args.plan and os.name != 'nt':
+        parser.error('Actual complete artifact runtime requires Windows')
     windows_artifacts.verify_recipe()
     pair = windows_artifacts.verify_pair(args.artifacts)
     if args.plan:
@@ -155,7 +186,8 @@ def main():
             'phases': [{'consensus': row['consensus'], 'steps': ['manifest', 'qt/unit/libraries/kernel', 'functional v1/v2 including previous releases']}
                        for row in pair['phases']]}, indent=2))
         return
-    if args.output is None: parser.error('Execution requires a new --output directory')
+    if args.output is None:
+        parser.error('Execution requires a new --output directory')
     assets = unit_assets.provision(ROOT / 'unit_test_data')
     run_pair(args.artifacts, args.output, assets, args.jobs, args.timeout_factor, timeout=args.timeout)
 

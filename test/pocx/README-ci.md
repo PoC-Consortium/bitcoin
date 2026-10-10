@@ -19,6 +19,17 @@ original `ci/lint.py` Docker build, a pull-request merge range or hosted lint.
 The retained comparison is under
 `artifacts/ci-parity-20261010/lint-execution-checkpoint/`.
 
+The owned Python statement-formatting cleanup now removes all E701/E702 findings.
+All35 affected files retain identical runtime syntax trees and ordered comment
+tokens. The25 affected standalone infrastructure scripts passed287 checks;
+build-bound scripts use their explicit build argument rather than generic test
+discovery. Current review hashes and their dependent manifests were refreshed,
+including stale Windows pins for the already-reviewed controller and eviction
+fixes. Evidence is under
+`artifacts/ci-parity-20261010/lint-python-statement-formatting/`.
+Other Python and source lint findings remain required; this is not a complete
+lint pass or a replay of any original Bitcoin baseline.
+
 The inherited workflow also includes the original 32-bit x86 without IPC and
 previous-release compatibility profiles. Both retain their upstream environment
 scripts and run through the Bitcoin-first PoCX controller. The previous-release

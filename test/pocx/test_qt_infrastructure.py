@@ -28,7 +28,8 @@ class QtExecutionTest(unittest.TestCase):
         for log in (self.log().replace('1: PASS : URITests::uriTests()', ''),
                     self.log() + '\nSKIP : URITests::uriTests()',
                     self.log() + '\nPASS : URITests::uriTests()'):
-            with self.assertRaises(ValueError): verify_methods(log, True, True)
+            with self.assertRaises(ValueError):
+                verify_methods(log, True, True)
 
     def test_successful_exit_with_missing_case_is_rejected(self):
         with self.assertRaisesRegex(ValueError, 'inventory mismatch'):

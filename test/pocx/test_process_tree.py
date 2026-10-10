@@ -57,7 +57,9 @@ def alive(pid):
 class ProcessTreeTest(unittest.TestCase):
     def fixture(self, mode, code=0):
         with tempfile.TemporaryDirectory(prefix='owned-process-tree-') as directory:
-            root = Path(directory);pidfile = root / 'child.pid';script = root / 'fixture.py'
+            root = Path(directory)
+            pidfile = root / 'child.pid'
+            script = root / 'fixture.py'
             script.write_text('''import os, pathlib, signal, subprocess, sys, time
 mode, target, code = sys.argv[1:]
 child = "import os,pathlib,signal,sys,time; pathlib.Path(sys.argv[1]).write_text(str(os.getpid())); time.sleep(120)"
@@ -129,12 +131,15 @@ sys.exit(int(code))
 
     def test_windows_worker_joins_before_spawn_and_preserves_arguments(self):
         events = []
-        api = Mock();api.join.side_effect = lambda name: events.append(('join', name))
+        api = Mock()
+        api.join.side_effect = lambda name: events.append(('join', name))
         command = ['python', 'test with spaces.py', '']
         name = 'Local\\pocx-functional-' + 'a' * 32
         def run(actual, **kwargs):
-            self.assertEqual(actual, command);self.assertEqual(kwargs, {'check': False})
-            events.append(('spawn', actual));return SimpleNamespace(returncode=77)
+            self.assertEqual(actual, command)
+            self.assertEqual(kwargs, {'check': False})
+            events.append(('spawn', actual))
+            return SimpleNamespace(returncode=77)
         with patch.object(trees, 'os', SimpleNamespace(name='nt')), \
              patch.object(trees, 'WindowsApi', return_value=api), \
              patch.object(trees.subprocess, 'run', side_effect=run):
@@ -142,7 +147,8 @@ sys.exit(int(code))
         self.assertEqual(events, [('join', name), ('spawn', command)])
 
     def test_windows_worker_cannot_spawn_when_job_assignment_fails(self):
-        api = Mock();api.join.side_effect = OSError('cannot join test job')
+        api = Mock()
+        api.join.side_effect = OSError('cannot join test job')
         with patch.object(trees, 'os', SimpleNamespace(name='nt')), \
              patch.object(trees, 'WindowsApi', return_value=api), \
              patch.object(trees.subprocess, 'run') as spawn, self.assertRaises(OSError):
@@ -150,9 +156,13 @@ sys.exit(int(code))
         spawn.assert_not_called()
 
     def windows_parent(self, *, timeout=False, configure_error=False, spawn_error=False, active=False):
-        api = Mock();api.create.return_value = 123;api.active.return_value = int(active)
-        if configure_error:api.configure.side_effect = OSError('job policy failed')
-        process = Mock();process.returncode = 1 if timeout else 77
+        api = Mock()
+        api.create.return_value = 123
+        api.active.return_value = int(active)
+        if configure_error:
+            api.configure.side_effect = OSError('job policy failed')
+        process = Mock()
+        process.returncode = 1 if timeout else 77
         process.wait.side_effect = [subprocess.TimeoutExpired('fixture', 1), 1, 1] if timeout else [77, 77, 77]
         command = ['python', 'fixture.py']
         spawn = Mock(side_effect=OSError('spawn failed')) if spawn_error else Mock(return_value=process)
@@ -163,7 +173,8 @@ sys.exit(int(code))
             finally:
                 api.terminate.assert_called_once_with(123)
                 api.close.assert_called_once_with(123)
-                if configure_error:spawn.assert_not_called()
+                if configure_error:
+                    spawn.assert_not_called()
         self.assertEqual(result['returncode'], process.returncode)
         self.assertIs(result['timed_out'], timeout)
         controller = dict(trees.description(), kind='windows-job')
@@ -172,7 +183,8 @@ sys.exit(int(code))
 
     def test_windows_parent_preserves_skip_and_times_out_the_owned_job(self):
         for timeout in (False, True):
-            with self.subTest(timeout=timeout):self.windows_parent(timeout=timeout)
+            with self.subTest(timeout=timeout):
+                self.windows_parent(timeout=timeout)
 
     def test_windows_parent_cleans_up_after_policy_or_spawn_failure(self):
         for failure in ('configure_error', 'spawn_error'):
@@ -196,14 +208,16 @@ sys.exit(int(code))
         dll = Mock()
         for name in ('SetInformationJobObject', 'AssignProcessToJobObject', 'CloseHandle'):
             getattr(dll, name).return_value = 1
-        dll.CreateJobObjectW.return_value = 123;dll.OpenJobObjectW.return_value = 123
+        dll.CreateJobObjectW.return_value = 123
+        dll.OpenJobObjectW.return_value = 123
         dll.GetCurrentProcess.return_value = 456
         with patch.object(trees.ctypes, 'WinDLL', return_value=dll, create=True):
             api = trees.WindowsApi()
         return api, dll
 
     def test_windows_api_sets_kill_on_close_without_breakaway_flags(self):
-        api, dll = self.windows_api();api.configure(123)
+        api, dll = self.windows_api()
+        api.configure(123)
         handle, kind, pointer, size = dll.SetInformationJobObject.call_args.args
         self.assertEqual((handle, kind, size), (123, 9, ctypes.sizeof(trees.ExtendedLimits)))
         self.assertEqual(pointer._obj.BasicLimitInformation.LimitFlags, 0x2000)
@@ -216,17 +230,20 @@ sys.exit(int(code))
              self.assertRaisesRegex(OSError, 'already exists'):
             api.create('collision fixture')
         dll.CloseHandle.assert_called_once_with(123)
-        dll.SetInformationJobObject.assert_not_called();dll.TerminateJobObject.assert_not_called()
+        dll.SetInformationJobObject.assert_not_called()
+        dll.TerminateJobObject.assert_not_called()
 
     def test_windows_api_closes_worker_handle_before_spawn_even_on_assignment_failure(self):
         for assigned in (0, 1):
-            api, dll = self.windows_api();dll.AssignProcessToJobObject.return_value = assigned
+            api, dll = self.windows_api()
+            dll.AssignProcessToJobObject.return_value = assigned
             with patch.object(trees.ctypes, 'get_last_error', return_value=5, create=True), \
                  patch.object(trees.ctypes, 'WinError', side_effect=lambda code: OSError(code, 'assignment failed'), create=True):
                 if assigned:
                     api.join('job fixture')
                 else:
-                    with self.assertRaises(OSError):api.join('job fixture')
+                    with self.assertRaises(OSError):
+                        api.join('job fixture')
             dll.OpenJobObjectW.assert_called_once_with(1, False, 'job fixture')
             dll.AssignProcessToJobObject.assert_called_once_with(123, 456)
             dll.CloseHandle.assert_called_once_with(123)
@@ -238,11 +255,14 @@ sys.exit(int(code))
         trees.validate_control(controller, control, command)
         for field, value in [('cleanup_complete',False),('cleanup_complete',1),
                              ('kind','windows-job'),('invocation',['different'])]:
-            broken = deepcopy(control);broken[field] = value
+            broken = deepcopy(control)
+            broken[field] = value
             with self.subTest(field=field, value=value), self.assertRaises(ValueError):
                 trees.validate_control(controller, broken, command)
-        with self.assertRaises(ValueError):trees.validate_control(None, control, command)
-        with self.assertRaises(ValueError):trees.validate_control(controller, None, command)
+        with self.assertRaises(ValueError):
+            trees.validate_control(None, control, command)
+        with self.assertRaises(ValueError):
+            trees.validate_control(controller, None, command)
 
 
 if __name__ == '__main__':

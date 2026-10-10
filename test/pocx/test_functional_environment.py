@@ -26,7 +26,8 @@ class FunctionalEnvironmentTest(unittest.TestCase):
         # Source staging and fake executable bytes exercise strict provenance.
         # No test process or functional case is counted as executed here.
         with tempfile.TemporaryDirectory(prefix='build-config-proof-', dir=ROOT) as scratch:
-            build = Path(scratch);(build / 'test').mkdir()
+            build = Path(scratch)
+            (build / 'test').mkdir()
             cache = (f'ENABLE_POCX:BOOL=ON\nCMAKE_HOME_DIRECTORY:INTERNAL={ROOT / "unused/.."}\n'
                      'CMAKE_CONFIGURATION_TYPES:STRING=Debug;Release\n')
             (build / 'CMakeCache.txt').write_text(cache)
@@ -39,7 +40,8 @@ class FunctionalEnvironmentTest(unittest.TestCase):
             paths = functional_execution.binary_paths(build, cache, 'Release')
             binaries = {}
             for name in ('bitcoind', 'bitcoin-cli'):
-                path = paths[name];path.parent.mkdir(parents=True, exist_ok=True)
+                path = paths[name]
+                path.parent.mkdir(parents=True, exist_ok=True)
                 path.write_bytes(b'fake executable, not a test run')
                 binaries[name] = {'path': str(path), 'sha256': sha256(path)}
             provenance.update(format_version=8, binaries=binaries,
@@ -53,26 +55,33 @@ class FunctionalEnvironmentTest(unittest.TestCase):
             controlled['provenance'].update(format_version=9, process_controller=process_tree.description())
             self.assertEqual(verify_current_inputs(controlled, build), manifest)
             for value in (None, dict(process_tree.description(), sha256='0' * 64)):
-                broken = deepcopy(controlled);broken['provenance']['process_controller'] = value
+                broken = deepcopy(controlled)
+                broken['provenance']['process_controller'] = value
                 with self.subTest(controller=value), self.assertRaisesRegex(ValueError, 'process controller provenance'):
                     verify_current_inputs(broken, build)
             for selected in (None, 'Debug', 'Unknown'):
-                broken = deepcopy(report);broken['provenance']['build_configuration'] = selected
+                broken = deepcopy(report)
+                broken['provenance']['build_configuration'] = selected
                 with self.subTest(selected=selected), self.assertRaises(ValueError):
                     verify_current_inputs(broken, build)
             for helper in provenance['staging_helpers']:
-                broken = deepcopy(report);broken['provenance']['staging_helpers'].pop(helper)
+                broken = deepcopy(report)
+                broken['provenance']['staging_helpers'].pop(helper)
                 with self.subTest(helper=helper), self.assertRaisesRegex(ValueError, 'staging helper'):
                     verify_current_inputs(broken, build)
             for name in ('bitcoind', 'bitcoin-cli'):
-                wrong = build / 'bin' / paths[name].name;wrong.write_bytes(paths[name].read_bytes())
-                broken = deepcopy(report);broken['provenance']['binaries'][name]['path'] = str(wrong)
+                wrong = build / 'bin' / paths[name].name
+                wrong.write_bytes(paths[name].read_bytes())
+                broken = deepcopy(report)
+                broken['provenance']['binaries'][name]['path'] = str(wrong)
                 with self.subTest(name=name), self.assertRaisesRegex(ValueError, 'binary changed'):
                     verify_current_inputs(broken, build)
-            broken = deepcopy(report);broken['provenance']['build_options']['ENABLE_IPC'] = 'ON'
+            broken = deepcopy(report)
+            broken['provenance']['build_options']['ENABLE_IPC'] = 'ON'
             with self.assertRaisesRegex(ValueError, 'recorded features'):
                 verify_current_inputs(broken, build)
-            broken = deepcopy(report);broken['provenance']['binaries'].pop('bitcoin-cli')
+            broken = deepcopy(report)
+            broken['provenance']['binaries'].pop('bitcoin-cli')
             with self.assertRaisesRegex(ValueError, 'required functional binaries'):
                 verify_current_inputs(broken, build)
             paths['bitcoin-util'].write_bytes(b'optional tool added after execution')

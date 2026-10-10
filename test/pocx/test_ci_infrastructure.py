@@ -179,7 +179,9 @@ case "$CI_CONTAINER_CAP" in *--privileged*) ;; *) exit 23 ;; esac
         recorded = build_snapshot(root)
         self.assertEqual(set(recorded), set(paths))
         for name in ('BitcoinCore.slnx','src/test/test_bitcoin.vcxproj','CMakeFiles/flags.props'):
-            path = root / name;original = path.read_bytes();path.write_text('changed graph')
+            path = root / name
+            original = path.read_bytes()
+            path.write_text('changed graph')
             with self.subTest(name=name), self.assertRaises(ValueError):
                 require_unchanged('Build inputs', recorded, build_snapshot(root))
             path.write_bytes(original)
@@ -197,9 +199,11 @@ case "$CI_CONTAINER_CAP" in *--privileged*) ;; *) exit 23 ;; esac
         recorded = build_snapshot(root)
         self.assertEqual(set(recorded),set(paths))
         (root / 'CMakeFiles/impl-Release.ninja').write_text('changed selected graph')
-        with self.assertRaises(ValueError):require_unchanged('Build inputs',recorded,build_snapshot(root))
+        with self.assertRaises(ValueError):
+            require_unchanged('Build inputs',recorded,build_snapshot(root))
         (root / 'CMakeCache.txt').write_text('CMAKE_GENERATOR:INTERNAL=unknown\n')
-        with self.assertRaisesRegex(ValueError, 'unsupported CI build generator'):build_snapshot(root)
+        with self.assertRaisesRegex(ValueError, 'unsupported CI build generator'):
+            build_snapshot(root)
 
     def test_unix_makefiles_snapshot_binds_generated_rules_and_target_commands(self):
         paths = ['CMakeCache.txt', 'test/config.ini', 'Makefile', 'CMakeFiles/Makefile.cmake',
@@ -215,14 +219,17 @@ case "$CI_CONTAINER_CAP" in *--privileged*) ;; *) exit 23 ;; esac
         (root / cache).write_text('consolidated compiler-discovered dependency cache')
         require_unchanged('Build inputs', recorded, build_snapshot(root))
         for name in set(paths) - {cache}:
-            path = root / name;before = path.read_bytes()
+            path = root / name
+            before = path.read_bytes()
             with self.subTest(name=name):
                 path.write_text('changed target input')
                 with self.assertRaises(ValueError):
                     require_unchanged('Build inputs', recorded, build_snapshot(root))
                 path.write_bytes(before)
         for name in ('Makefile', 'CMakeFiles/Makefile.cmake', 'CMakeFiles/Makefile2'):
-            path = root / name;before = path.read_bytes();path.unlink()
+            path = root / name
+            before = path.read_bytes()
+            path.unlink()
             with self.subTest(missing=name), self.assertRaisesRegex(ValueError, 'Missing Unix Makefiles'):
                 build_snapshot(root)
             path.write_bytes(before)

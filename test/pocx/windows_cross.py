@@ -31,7 +31,8 @@ def is_cross_pair(pairs):
 
 
 def export(pairs, output, *, root=ROOT, revision=None):
-    if not is_cross_pair(pairs): raise ValueError('Export requires a reviewed Windows cross-build pair')
+    if not is_cross_pair(pairs):
+        raise ValueError('Export requires a reviewed Windows cross-build pair')
     windows_artifacts.verify_recipe(root)
     for row in pairs:
         env = row['environment']
@@ -57,14 +58,16 @@ def publish(bundle, destination, *, root=ROOT, revision=None):
         if windows_artifacts.verify_pair(destination, root=root, revision=revision) != pair:
             raise ValueError('Windows pair changed during publication')
     except BaseException:
-        if destination.is_dir(): shutil.rmtree(destination)
+        if destination.is_dir():
+            shutil.rmtree(destination)
         raise
     return destination
 
 
 def collect_runtime(source, destination):
     """Retain bounded reports/logs, excluding binaries, caches and node data."""
-    if source.is_symlink() or destination.is_symlink(): raise ValueError('Symlinked runtime evidence root or destination')
+    if source.is_symlink() or destination.is_symlink():
+        raise ValueError('Symlinked runtime evidence root or destination')
     source, destination = source.resolve(), destination.resolve()
     if destination.exists() or destination.is_relative_to(source):
         raise ValueError('Use a new evidence destination outside the runtime tree')
@@ -72,13 +75,17 @@ def collect_runtime(source, destination):
     def add(path):
         if any(parent.is_symlink() for parent in (path, *path.parents)):
             raise ValueError('Symlinked runtime evidence input')
-        if path.is_file(): candidates.add(path)
+        if path.is_file():
+            candidates.add(path)
     def shallow(directory, suffixes):
-        if directory.is_symlink(): raise ValueError('Symlinked runtime evidence directory')
+        if directory.is_symlink():
+            raise ValueError('Symlinked runtime evidence directory')
         if directory.is_dir():
             for path in directory.iterdir():
-                if path.suffix in suffixes: add(path)
-    for name in ('results.json', 'cases.csv'): add(source / name)
+                if path.suffix in suffixes:
+                    add(path)
+    for name in ('results.json', 'cases.csv'):
+        add(source / name)
     for consensus in ('bitcoin', 'pocx'):
         phase = source / consensus
         shallow(phase, {'.log', '.manifest'})
@@ -87,9 +94,11 @@ def collect_runtime(source, destination):
         runtime = phase / 'functional/runtime'
         for relative in ('artifact-functional-view.json', 'CMakeCache.txt', 'test/config.ini'):
             add(runtime / relative)
-        if runtime.is_symlink(): raise ValueError('Symlinked functional runtime tree')
+        if runtime.is_symlink():
+            raise ValueError('Symlinked functional runtime tree')
         for result in runtime.glob('pocx-results-*'):
-            if result.is_symlink(): raise ValueError('Symlinked native functional result tree')
+            if result.is_symlink():
+                raise ValueError('Symlinked native functional result tree')
             add(result / 'results.json')
             shallow(result, {'.log'})
             shallow(result / 'v2', {'.log'})
@@ -99,8 +108,10 @@ def collect_runtime(source, destination):
         files = {}
         for path in sorted(candidates):
             relative = path.relative_to(source)
-            target = temporary / relative; target.parent.mkdir(parents=True, exist_ok=True)
-            digest = sha256(path); shutil.copyfile(path, target)
+            target = temporary / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+            digest = sha256(path)
+            shutil.copyfile(path, target)
             if sha256(target) != digest or sha256(path) != digest:
                 raise ValueError('Runtime report changed during evidence collection')
             files[relative.as_posix()] = digest
@@ -109,7 +120,8 @@ def collect_runtime(source, destination):
         (temporary / 'collection.json').write_text(json.dumps(report, indent=2) + '\n')
         temporary.rename(destination)
     finally:
-        if temporary.exists(): shutil.rmtree(temporary)
+        if temporary.exists():
+            shutil.rmtree(temporary)
     return report
 
 

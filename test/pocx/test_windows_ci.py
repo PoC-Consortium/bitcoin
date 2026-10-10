@@ -65,10 +65,12 @@ class WindowsCITest(unittest.TestCase):
 
     def test_invalid_jobs_fuzz_and_timeout_settings_rejected_before_execution(self):
         for count in (0, -1, True, 1.5):
-            with self.subTest(count=count), self.assertRaises(ValueError): windows.plan(count, {})
+            with self.subTest(count=count), self.assertRaises(ValueError):
+                windows.plan(count, {})
         for env in ({'RUN_FUZZ_TESTS': 'true'}, {'TEST_RUNNER_EXTRA': '--timeout-factor=nan'},
                     *({'TEST_RUNNER_TIMEOUT_FACTOR': value} for value in ('bad', '0', '-1', 'nan', 'inf', '1e308'))):
-            with self.subTest(env=env), self.assertRaises(ValueError): windows.plan(2, env)
+            with self.subTest(env=env), self.assertRaises(ValueError):
+                windows.plan(2, env)
 
     def phase(self, root, consensus, *, configure_codes=(0,), build_codes=(0,), failure=None):
         calls, sleeps, provisioned = [], [], []
@@ -81,7 +83,8 @@ class WindowsCITest(unittest.TestCase):
                 code = next(builds if '--build' in command else configs)
             elif command[0] == 'mt.exe' and command[-1].startswith('-out:'):
                 Path(command[-1][5:]).write_text('<assembly/>\n')
-            if failure and failure(command): code = 9
+            if failure and failure(command):
+                code = 9
             return subprocess.CompletedProcess(command, code)
         def provision(directory):
             provisioned.append(directory)
@@ -164,7 +167,8 @@ class WindowsCITest(unittest.TestCase):
         for name in ('.github/ci-windows.py', 'test/pocx/windows_ci.py', '.github/workflows/ci.yml'):
             with self.subTest(name=name), patch.object(windows, 'sha256', side_effect=lambda path:
                     '0' * 64 if path == ROOT / name else original(path)):
-                with self.assertRaisesRegex(ValueError, 'changed without review'): windows.verify_recipe()
+                with self.assertRaisesRegex(ValueError, 'changed without review'):
+                    windows.verify_recipe()
         workflow = (ROOT / '.github/workflows/ci.yml').read_text()
         job = workflow.split('  windows-native-dll:\n', 1)[1].split('  record-frozen-commit:\n', 1)[0]
         self.assertIn('py -3 test/pocx/windows_ci.py', job)
@@ -177,7 +181,8 @@ class WindowsCITest(unittest.TestCase):
 
     def test_readonly_plan_and_non_windows_execution_guard(self):
         env = dict(os.environ)
-        for key in ('RUN_FUZZ_TESTS', 'TEST_RUNNER_EXTRA', 'TEST_RUNNER_TIMEOUT_FACTOR'): env.pop(key, None)
+        for key in ('RUN_FUZZ_TESTS', 'TEST_RUNNER_EXTRA', 'TEST_RUNNER_TIMEOUT_FACTOR'):
+            env.pop(key, None)
         before = {path.name for path in ROOT.iterdir()}
         result = subprocess.run([sys.executable, str(ROOT / 'test/pocx/windows_ci.py'), '--plan', '--jobs', '2'],
                                 cwd=ROOT, env=env, text=True, capture_output=True, check=True)

@@ -44,16 +44,20 @@ LEGACY_UTXO = 'feature_unsupported_utxo_db.py'
 
 
 def original_inventory(source, benchmarks, bench_enabled):
-    if type(bench_enabled) is not bool: raise ValueError('Missing explicit benchmark feature')
-    if bench_enabled: return expected_cases(source, benchmarks)
-    if benchmarks: raise ValueError('Disabled benchmark feature has an executed benchmark inventory')
+    if type(bench_enabled) is not bool:
+        raise ValueError('Missing explicit benchmark feature')
+    if bench_enabled:
+        return expected_cases(source, benchmarks)
+    if benchmarks:
+        raise ValueError('Disabled benchmark feature has an executed benchmark inventory')
     # Upstream expands the dynamic script only when benchmarks are compiled.
     # Keep its unexpanded, source-guarded skip in an explicitly disabled build.
     return [row['upstream_case'] for row in upstream_cases(source)]
 
 
 def original_groups(expected, options):
-    if options.get('target_system') != 'Windows': return [('complete', expected, False)]
+    if options.get('target_system') != 'Windows':
+        return [('complete', expected, False)]
     if expected.count(LEGACY_UTXO) != 1:
         raise ValueError('Windows selection must retain the original old-release UTXO case exactly once')
     return [('complete', [case for case in expected if case != LEGACY_UTXO], False),
@@ -63,8 +67,10 @@ def original_groups(expected, options):
 def original_command(build, output, group, mode, jobs, factor, profile, *, windows=False):
     name, _, direct = group
     common = ['--timeout-factor=' + str(factor), '--' + mode + 'transport']
-    if profile['use_cli']: common.append('--usecli')
-    if profile['previous_releases']: common.append('--previous-releases')
+    if profile['use_cli']:
+        common.append('--usecli')
+    if profile['previous_releases']:
+        common.append('--previous-releases')
     if direct:
         directory = (output / ('legacy-utxo-' + mode)).resolve()
         if not str(directory).isascii():
@@ -75,9 +81,12 @@ def original_command(build, output, group, mode, jobs, factor, profile, *, windo
     command = [sys.executable, str(build / 'test/functional/test_runner.py'), '--jobs=' + str(jobs),
         '--extended', '--resultsfile=' + str(output / (mode + '.csv')),
         '--tmpdirprefix=' + str(output / mode), '--combinedlogslen=100', *common]
-    if name != 'complete': raise ValueError('Unknown original functional group')
-    if profile.get('coverage'): command.append('--coverage')
-    if windows: command.append('--exclude=' + LEGACY_UTXO)
+    if name != 'complete':
+        raise ValueError('Unknown original functional group')
+    if profile.get('coverage'):
+        command.append('--coverage')
+    if windows:
+        command.append('--exclude=' + LEGACY_UTXO)
     return command
 
 
@@ -85,11 +94,14 @@ def native_command(build, jobs, factor, profile, environment, selected_config=No
     command = [sys.executable, str(ROOT / 'test/pocx/test_runner.py'), '--build-dir', str(build),
                '--jobs', str(jobs), '--transport', 'matrix', '--timeout-factor', str(factor),
                '--timeout', str(math.ceil(2400 * factor))]
-    if selected_config is not None: command += ['--config', selected_config]
-    if profile.get('coverage'): command.append('--coverage')
+    if selected_config is not None:
+        command += ['--config', selected_config]
+    if profile.get('coverage'):
+        command.append('--coverage')
     for key, flag in (('use_cli', '--usecli'), ('multiprocess', '--multiprocess'),
                       ('previous_releases', '--previous-releases')):
-        if profile[key]: command.append(flag)
+        if profile[key]:
+            command.append(flag)
     if profile['previous_releases']:
         command += ['--previous-releases-dir', environment['PREVIOUS_RELEASES_DIR']]
     return command
@@ -105,7 +117,8 @@ def inherited_options(environment):
         argument = extra[index]
         if argument == '--timeout-factor':
             index += 1
-            if index == len(extra):raise ValueError('Missing inherited functional timeout factor')
+            if index == len(extra):
+                raise ValueError('Missing inherited functional timeout factor')
             factors.append(extra[index])
         elif argument.startswith('--timeout-factor='):
             factors.append(argument.split('=', 1)[1])
@@ -123,9 +136,12 @@ def inherited_options(environment):
         raise ValueError('Duplicate inherited functional timeout factors')
     factor = None
     if factors:
-        try:factor = float(factors[0])
-        except ValueError as error:raise ValueError('Invalid inherited functional timeout factor') from error
-        if not math.isfinite(factor) or factor <= 0:raise ValueError('Invalid inherited functional timeout factor')
+        try:
+            factor = float(factors[0])
+        except ValueError as error:
+            raise ValueError('Invalid inherited functional timeout factor') from error
+        if not math.isfinite(factor) or factor <= 0:
+            raise ValueError('Invalid inherited functional timeout factor')
     wrapper = shlex.split(environment.get('BITCOIN_CMD', ''))
     if wrapper not in ([], ['bitcoin', '-m']):
         raise ValueError('Unreviewed inherited BITCOIN_CMD; expected bitcoin -m')
@@ -227,7 +243,8 @@ def classify(case, status, options, profile, *, native=False, root=ROOT):
 
 
 def run(build, output, options, jobs, factor, *, environment=None, selected_config=None):
-    if type(jobs) is not int or jobs < 1: raise ValueError('Expected positive functional job count')
+    if type(jobs) is not int or jobs < 1:
+        raise ValueError('Expected positive functional job count')
     env = dict(os.environ if environment is None else environment)
     profile = inherited_options(env)
     factor = profile['timeout_factor'] if profile['timeout_factor'] is not None else factor
@@ -259,7 +276,8 @@ def run(build, output, options, jobs, factor, *, environment=None, selected_conf
         with (output / 'cases.csv').open('w', newline='') as stream:
             writer = csv.DictWriter(stream, fieldnames=['case', 'transport', 'effective_transport', 'status',
                                                         'reason', 'execution_status', 'seconds'])
-            writer.writeheader(); writer.writerows(report['cases'])
+            writer.writeheader()
+            writer.writerows(report['cases'])
     def execute(name, command, child_env):
         log = output / (name + '.log')
         start = time.monotonic()
@@ -321,7 +339,8 @@ def run(build, output, options, jobs, factor, *, environment=None, selected_conf
                 command = [str(paths['bench_bitcoin']), '-list']
                 listing = subprocess.check_output(command, env=env, cwd=ROOT, text=True)
                 benchmarks = listing.splitlines()
-                log = output / 'benchmarks.log'; log.write_text(listing)
+                log = output / 'benchmarks.log'
+                log.write_text(listing)
                 report['benchmark_discovery'] = {'command': command, 'log_sha256': sha256(log)}
             report['benchmarks'] = benchmarks
             expected = original_inventory(ROOT / 'test/functional/test_runner.py', benchmarks, options['BUILD_BENCH'] == 'ON')
@@ -381,12 +400,14 @@ def main():
     parser.add_argument('--config')
     args = parser.parse_args()
     build = args.build_dir.resolve()
-    if build == ROOT or not build.is_relative_to(ROOT): parser.error('Use a separate runtime directory inside this worktree')
+    if build == ROOT or not build.is_relative_to(ROOT):
+        parser.error('Use a separate runtime directory inside this worktree')
     cache = (build / 'CMakeCache.txt').read_text()
     build_configuration.require_source(cache, ROOT)
     import unit_matrix
     from check_drift import check
-    if check(ROOT): raise ValueError('Inherited functional source review failed')
+    if check(ROOT):
+        raise ValueError('Inherited functional source review failed')
     options, _ = unit_matrix.configuration(build)
     run(build, args.output.resolve(), options, args.jobs, args.timeout_factor, selected_config=args.config)
 

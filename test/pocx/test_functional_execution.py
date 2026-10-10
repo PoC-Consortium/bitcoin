@@ -29,14 +29,19 @@ class ExecutionTest(unittest.TestCase):
         # These executable placeholders never run Bitcoin or PoCX test cases.
         from test_process_tree import alive
         spec = importlib.util.spec_from_file_location('owned_process_dispatch_fixture', OWNED / 'test_runner.py')
-        runner = importlib.util.module_from_spec(spec);spec.loader.exec_module(runner)
+        runner = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(runner)
         with tempfile.TemporaryDirectory(prefix='process-dispatch-') as directory:
-            build = Path(directory);tree = build / 'staged';framework = tree / 'test_framework'
-            framework.mkdir(parents=True);(build / 'bin').mkdir()
+            build = Path(directory)
+            tree = build / 'staged'
+            framework = tree / 'test_framework'
+            framework.mkdir(parents=True)
+            (build / 'bin').mkdir()
             (framework / '__init__.py').write_text('')
             (framework / 'test_framework.py').write_text('')
             (framework / 'util.py').write_text('MAX_NODES = 12\nPORT_RANGE = 5000\n')
-            cache = build / 'CMakeCache.txt';cache.write_text('ENABLE_POCX:BOOL=ON\n')
+            cache = build / 'CMakeCache.txt'
+            cache.write_text('ENABLE_POCX:BOOL=ON\n')
             for name in ('bitcoind', 'bitcoin-cli'):
                 path = build_configuration.executable(build, name, cache.read_text())
                 path.write_bytes(b'placeholder, never executed')
@@ -63,7 +68,8 @@ if pathlib.Path(__file__).name == 'feature_abort.py':
     sys.exit(1)
 '''
             manifest = {'tests': {name:'synthetic' for name in ('p2p_ping.py','interface_ipc.py','feature_abort.py')}, 'reused_tests': []}
-            for name in manifest['tests']:(tree / name).write_text(script)
+            for name in manifest['tests']:
+                (tree / name).write_text(script)
             provenance = {'build_configuration': None, 'build_options': {'ENABLE_POCX':'ON'}}
             output = io.StringIO()
             with patch.object(runner, 'stage', return_value=(tree, manifest, provenance)), \
@@ -120,14 +126,19 @@ if pathlib.Path(__file__).name == 'feature_abort.py':
         row['process_control'] = {'kind': 'posix-session', 'cleanup_complete': True, 'invocation': row['command']}
         self.assertEqual(len(transport_results(report)), 1)
         for field in ('process_controller',):
-            broken = deepcopy(report);broken['provenance'].pop(field)
-            with self.assertRaisesRegex(ValueError, 'controller provenance'):transport_results(broken)
+            broken = deepcopy(report)
+            broken['provenance'].pop(field)
+            with self.assertRaisesRegex(ValueError, 'controller provenance'):
+                transport_results(broken)
         for field, value in [('cleanup_complete', False), ('invocation', ['different test']), ('kind', 'windows-job')]:
-            broken = deepcopy(report);broken['results'][0]['process_control'][field] = value
-            with self.subTest(field=field), self.assertRaises(ValueError):transport_results(broken)
+            broken = deepcopy(report)
+            broken['results'][0]['process_control'][field] = value
+            with self.subTest(field=field), self.assertRaises(ValueError):
+                transport_results(broken)
 
     def test_windows_controller_report_requires_the_exact_worker_and_owned_job(self):
-        report = self.report();row = report['results'][0]
+        report = self.report()
+        row = report['results'][0]
         controller = dict(process_tree.description(), kind='windows-job')
         job = 'Local\\pocx-functional-' + 'c' * 32
         report['provenance'].update(format_version=9, build_configuration='Release', process_controller=controller)
@@ -135,8 +146,10 @@ if pathlib.Path(__file__).name == 'feature_abort.py':
             'invocation': [controller['interpreter'], controller['path'], '--windows-worker', job, '--', *row['command']]}
         self.assertEqual(len(transport_results(report)), 1)
         for field, value in [('job', 'foreign-job'), ('job', None), ('invocation', row['command'])]:
-            broken = deepcopy(report);broken['results'][0]['process_control'][field] = value
-            with self.subTest(field=field), self.assertRaises(ValueError):transport_results(broken)
+            broken = deepcopy(report)
+            broken['results'][0]['process_control'][field] = value
+            with self.subTest(field=field), self.assertRaises(ValueError):
+                transport_results(broken)
 
     def test_all_tool_paths_and_environment_select_one_configuration(self):
         build = Path('/build')
@@ -157,7 +170,8 @@ if pathlib.Path(__file__).name == 'feature_abort.py':
             execution.binary_paths(build, multi, 'Unknown')
 
     def test_current_report_format_requires_recorded_configuration(self):
-        report = self.report();report['provenance'].update(format_version=8, build_configuration='Release')
+        report = self.report()
+        report['provenance'].update(format_version=8, build_configuration='Release')
         self.assertEqual(len(transport_results(report)), 1)
         for value in ('', True, 42, []):
             report['provenance']['build_configuration'] = value
@@ -170,11 +184,13 @@ if pathlib.Path(__file__).name == 'feature_abort.py':
     def test_functional_runner_imports_without_unix_only_fcntl(self):
         original=builtins.__import__
         def load(name,*args,**kwargs):
-            if name=='fcntl':raise ModuleNotFoundError('Unix module unavailable in portability fixture')
+            if name=='fcntl':
+                raise ModuleNotFoundError('Unix module unavailable in portability fixture')
             return original(name,*args,**kwargs)
         with patch('builtins.__import__',side_effect=load):
             spec=importlib.util.spec_from_file_location('functional_lock_fixture',OWNED/'test_runner.py')
-            module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+            module=importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(module)
 
     def report(self, arguments=None):
         case = case_spec('p2p_ping.py', arguments or [])
@@ -201,23 +217,31 @@ if pathlib.Path(__file__).name == 'feature_abort.py':
 
     def test_missing_cli_flag_rejects_a_green_result(self):
         report = self.report()
-        for field in ('command', 'test_arguments'): report['results'][0][field].remove('--usecli')
-        with self.assertRaises(ValueError): transport_results(report)
+        for field in ('command', 'test_arguments'):
+            report['results'][0][field].remove('--usecli')
+        with self.assertRaises(ValueError):
+            transport_results(report)
 
     def test_missing_malformed_or_unknown_settings_rejected(self):
         for value in (None, {}, {'use_cli': True}, {'use_cli': 1, 'multiprocess': False},
                       {'use_cli': True, 'multiprocess': False, 'other': True}):
-            report = self.report();report['provenance']['execution_options'] = value
-            with self.subTest(value=value), self.assertRaises(ValueError): transport_results(report)
+            report = self.report()
+            report['provenance']['execution_options'] = value
+            with self.subTest(value=value), self.assertRaises(ValueError):
+                transport_results(report)
 
     def test_changed_row_settings_rejected(self):
-        report = deepcopy(self.report());report['results'][0]['execution_options']['multiprocess'] = False
+        report = deepcopy(self.report())
+        report['results'][0]['execution_options']['multiprocess'] = False
         report['provenance']['execution_options'] = execution.settings(True, True)
-        with self.assertRaises(ValueError): transport_results(report)
+        with self.assertRaises(ValueError):
+            transport_results(report)
 
     def test_legacy_reports_cannot_claim_new_modes(self):
-        report = self.report();report['provenance']['format_version'] = 6
-        with self.assertRaisesRegex(ValueError, 'unrecorded'): transport_results(report)
+        report = self.report()
+        report['provenance']['format_version'] = 6
+        with self.assertRaisesRegex(ValueError, 'unrecorded'):
+            transport_results(report)
 
     def test_multiprocess_binds_the_built_wrapper_and_node(self):
         provenance = self.report()['provenance']
@@ -227,7 +251,8 @@ if pathlib.Path(__file__).name == 'feature_abort.py':
         for missing in ('bitcoin', 'bitcoin-node'):
             with self.subTest(missing=missing), self.assertRaises(ValueError):
                 execution.environment(provenance, {k:v for k,v in binaries.items() if k != missing}, {'ENABLE_IPC': 'ON'})
-        with self.assertRaises(ValueError): execution.environment(provenance, binaries, {'ENABLE_IPC': 'OFF'})
+        with self.assertRaises(ValueError):
+            execution.environment(provenance, binaries, {'ENABLE_IPC': 'OFF'})
 
 
 if __name__ == '__main__':

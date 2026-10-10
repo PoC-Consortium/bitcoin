@@ -49,10 +49,14 @@ class RevisionTest(unittest.TestCase):
 
     def test_invalid_jobs_consensus_and_fuzz_rejected(self):
         for count in (0, -1, True, 2.5, '4'):
-            with self.subTest(count=count), self.assertRaises(ValueError): revision_ci.plan(count, {})
-        with self.assertRaises(ValueError): revision_ci.plan(4, {'RUN_FUZZ_TESTS': 'true'})
-        with self.assertRaises(ValueError): revision_ci.build_directory('unknown')
-        with self.assertRaises(ValueError): revision_ci.configure_command(ROOT/'ci_build', 'unknown')
+            with self.subTest(count=count), self.assertRaises(ValueError):
+                revision_ci.plan(count, {})
+        with self.assertRaises(ValueError):
+            revision_ci.plan(4, {'RUN_FUZZ_TESTS': 'true'})
+        with self.assertRaises(ValueError):
+            revision_ci.build_directory('unknown')
+        with self.assertRaises(ValueError):
+            revision_ci.configure_command(ROOT/'ci_build', 'unknown')
 
     def phase(self, codes):
         commands = []
@@ -60,16 +64,20 @@ class RevisionTest(unittest.TestCase):
             commands.append(command)
             return subprocess.CompletedProcess(command, codes[len(commands) - 1])
         with redirect_stdout(io.StringIO()):
-            try: revision_ci.run_phase('bitcoin', 4, run=run)
-            except subprocess.CalledProcessError: pass
+            try:
+                revision_ci.run_phase('bitcoin', 4, run=run)
+            except subprocess.CalledProcessError:
+                pass
         return commands
 
     def test_phase_uses_strict_ctest_then_full_functional_runtime(self):
         commands = self.phase([0, 0, 0, 0])
         self.assertEqual(len(commands), 4)
-        self.assertIn('--phase', commands[2]);self.assertIn('ctest', commands[2])
+        self.assertIn('--phase', commands[2])
+        self.assertIn('ctest', commands[2])
         self.assertEqual(commands[2][-2:], ['--timeout', '180'])
-        self.assertIn('functional', commands[3]);self.assertIn('inherited_tests.py', commands[3][1])
+        self.assertIn('functional', commands[3])
+        self.assertIn('inherited_tests.py', commands[3][1])
         self.assertEqual(commands[3][-4:], ['--jobs', '8', '--timeout-factor', '1'])
 
     def test_configure_failure_stops_build_and_runtime(self):
@@ -106,20 +114,25 @@ class RevisionTest(unittest.TestCase):
 
     def test_failed_original_phase_is_published_without_native_launch(self):
         with tempfile.TemporaryDirectory() as directory:
-            root=Path(directory);output=root/'pocx-inherited-fixture/execution';calls=[]
+            root=Path(directory)
+            output=root/'pocx-inherited-fixture/execution'
+            calls=[]
             def run(command, **kwargs):
-                calls.append(command);return subprocess.CompletedProcess(command,7)
+                calls.append(command)
+                return subprocess.CompletedProcess(command,7)
             with patch.object(inherited_ci, 'source_snapshot', return_value={}), redirect_stdout(io.StringIO()):
                 with self.assertRaises(ValueError):
                     inherited_ci.execute_and_publish(revision_ci.plan(4,{},root), output, root=root, run=run)
             self.assertEqual(len(calls),1)
             report=json.loads((root/'artifacts/pocx-inherited/pocx-inherited-fixture/results.json').read_text())
-            self.assertEqual(report['status'],'failed');self.assertEqual(report['native_execution'],'deferred')
+            self.assertEqual(report['status'],'failed')
+            self.assertEqual(report['native_execution'],'deferred')
 
     def test_publication_failure_cannot_turn_success_green_or_hide_original_failure(self):
         for code, expected in [(0, OSError), (7, ValueError)]:
             with self.subTest(code=code), tempfile.TemporaryDirectory() as directory:
-                root=Path(directory);output=root/'pocx-inherited-fixture/execution'
+                root=Path(directory)
+                output=root/'pocx-inherited-fixture/execution'
                 with patch.object(inherited_ci,'source_snapshot',return_value={}), \
                      patch.object(inherited_ci,'publish',side_effect=OSError('copy failed')), \
                      redirect_stderr(io.StringIO()), self.assertRaises(expected):
@@ -128,9 +141,12 @@ class RevisionTest(unittest.TestCase):
 
     def test_source_mutation_stops_native_phase(self):
         with tempfile.TemporaryDirectory() as directory:
-            root=Path(directory);output=root/'pocx-inherited-fixture/execution';calls=[]
+            root=Path(directory)
+            output=root/'pocx-inherited-fixture/execution'
+            calls=[]
             def run(command, **kwargs):
-                calls.append(command);return subprocess.CompletedProcess(command,0)
+                calls.append(command)
+                return subprocess.CompletedProcess(command,0)
             with patch.object(inherited_ci,'source_snapshot',side_effect=[{}, {'changed':'hash'}]), \
                  redirect_stdout(io.StringIO()), self.assertRaisesRegex(ValueError,'Source inputs changed'):
                 inherited_ci.execute_and_publish(revision_ci.plan(4,{},root),output,root=root,run=run)

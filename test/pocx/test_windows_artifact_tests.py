@@ -26,7 +26,8 @@ class ArtifactTestsTest(unittest.TestCase):
             'ENABLE_WALLET': 'ON', 'BUILD_GUI': 'ON' if gui else 'OFF', 'BUILD_GUI_TESTS': 'ON',
             'BUILD_KERNEL_LIB': 'ON' if kernel else 'OFF', 'BUILD_KERNEL_TEST': 'ON' if kernel else 'OFF'}
         for name in ('bin/test_bitcoin-qt.exe', 'bin/test_kernel.exe', *tests.windows_artifacts.AUXILIARY):
-            path = payload / name; path.parent.mkdir(parents=True, exist_ok=True)
+            path = payload / name
+            path.parent.mkdir(parents=True, exist_ok=True)
             path.write_text('Synthetic artifact executable; injected process callbacks only\n')
             row['files'][name] = sha256(path)
         return payload, row
@@ -61,12 +62,14 @@ class ArtifactTestsTest(unittest.TestCase):
                     sink = next(arg.split('=', 1)[1] for arg in command if arg.startswith('--report_sink='))
                     Path(sink).write_text(self.kernel_xml() if kernel_xml is None else kernel_xml)
                     kwargs['log'].write('Synthetic kernel callback\n')
-            else: kwargs['log'].write('Synthetic auxiliary completion callback\n')
+            else:
+                kwargs['log'].write('Synthetic auxiliary completion callback\n')
             control = {'kind': controller['kind'], 'cleanup_complete': cleanup, 'invocation': command}
             if controller['kind'] == 'windows-job':
                 control['job'] = 'Local\\pocx-functional-' + 'a' * 32
                 control['invocation'] = [controller['interpreter'], controller['path'], '--windows-worker', control['job'], '--', *command]
-            if mutate is not None: mutate(binary)
+            if mutate is not None:
+                mutate(binary)
             return {'returncode': code if failed == binary.name else 0,
                     'timed_out': timed_out, 'process_control': control}
         return execute
@@ -81,9 +84,12 @@ class ArtifactTestsTest(unittest.TestCase):
     def test_preserves_upstream_qt_whole_unit_and_five_auxiliary_process_order(self):
         for consensus, methods in (('bitcoin', 9), ('pocx', 10)):
             with self.subTest(consensus=consensus), tempfile.TemporaryDirectory() as directory:
-                root = Path(directory); payload, row = self.fixture(root, consensus); calls = []
+                root = Path(directory)
+                payload, row = self.fixture(root, consensus)
+                calls = []
                 report = self.run_phase(payload, row, root / 'reports', calls)
-                self.assertEqual(report['status'], 'passed'); self.assertFalse(report['full_windows_ci_pass'])
+                self.assertEqual(report['status'], 'passed')
+                self.assertFalse(report['full_windows_ci_pass'])
                 self.assertEqual(report['qt']['original_green'], 9)
                 self.assertEqual(report['qt']['native_only_green'], int(consensus == 'pocx'))
                 names = [Path(command[0]).name for command, _ in calls]
@@ -106,8 +112,11 @@ class ArtifactTestsTest(unittest.TestCase):
         for log in (good.replace('PASS : URITests::uriTests()', ''),
                     good + '\nSKIP : URITests::uriTests()', good + '\nPASS : URITests::uriTests()'):
             with self.subTest(log=log), tempfile.TemporaryDirectory() as directory:
-                root = Path(directory); payload, row = self.fixture(root); calls = []
-                with self.assertRaises(ValueError): self.run_phase(payload, row, root / 'reports', calls, qt_log=log)
+                root = Path(directory)
+                payload, row = self.fixture(root)
+                calls = []
+                with self.assertRaises(ValueError):
+                    self.run_phase(payload, row, root / 'reports', calls, qt_log=log)
                 self.assertEqual(len(calls), 1)
                 report = json.loads((root / 'reports/results.json').read_text())
                 self.assertEqual(report['status'], 'failed')
@@ -118,7 +127,9 @@ class ArtifactTestsTest(unittest.TestCase):
     def test_auxiliary_nonzero_timeout_and_incomplete_cleanup_are_rejected(self):
         for binary in tests.windows_artifacts.AUXILIARY:
             with self.subTest(binary=binary), tempfile.TemporaryDirectory() as directory:
-                root = Path(directory); payload, row = self.fixture(root); calls = []
+                root = Path(directory)
+                payload, row = self.fixture(root)
+                calls = []
                 with self.assertRaises(ValueError):
                     self.run_phase(payload, row, root / 'reports', calls, failed=Path(binary).name)
                 report = json.loads((root / 'reports/results.json').read_text())
@@ -126,33 +137,42 @@ class ArtifactTestsTest(unittest.TestCase):
                 self.assertEqual(report['steps'][-1]['status'], 'failed')
         for kwargs in ({'timed_out': True}, {'cleanup': False}):
             with self.subTest(kwargs=kwargs), tempfile.TemporaryDirectory() as directory:
-                root = Path(directory); payload, row = self.fixture(root)
-                with self.assertRaises(ValueError): self.run_phase(payload, row, root / 'reports', [], **kwargs)
+                root = Path(directory)
+                payload, row = self.fixture(root)
+                with self.assertRaises(ValueError):
+                    self.run_phase(payload, row, root / 'reports', [], **kwargs)
 
     def test_enabled_missing_qt_or_auxiliary_and_changed_executables_never_pass(self):
         for name in ('bin/test_bitcoin-qt.exe', *tests.windows_artifacts.AUXILIARY):
             with self.subTest(name=name), tempfile.TemporaryDirectory() as directory:
-                root = Path(directory); payload, row = self.fixture(root)
+                root = Path(directory)
+                payload, row = self.fixture(root)
                 (payload / name).unlink()
-                with self.assertRaises(ValueError): self.run_phase(payload, row, root / 'reports', [])
+                with self.assertRaises(ValueError):
+                    self.run_phase(payload, row, root / 'reports', [])
         with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory); payload, row = self.fixture(root)
+            root = Path(directory)
+            payload, row = self.fixture(root)
             with self.assertRaisesRegex(ValueError, 'changed'):
                 self.run_phase(payload, row, root / 'reports', [], mutate=lambda path: path.write_text('changed executable'))
 
     def test_only_explicitly_disabled_gui_features_omit_qt_execution(self):
         with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory); payload, row = self.fixture(root, gui=False); calls = []
+            root = Path(directory)
+            payload, row = self.fixture(root, gui=False)
+            calls = []
             report = self.run_phase(payload, row, root / 'reports', calls)
             self.assertEqual(report['qt']['status'], 'configuration-disabled')
             self.assertIn('BUILD_GUI=OFF', report['qt']['reason'])
             self.assertFalse(any(Path(command[0]).name == 'test_bitcoin-qt.exe' for command, _ in calls))
             self.assertTrue(all(case['status'] == 'configuration-disabled' for case in report['cases'] if case['framework'] == 'qt'))
-        with self.assertRaises(ValueError): tests.qt_disabled_reason({'BUILD_GUI': 'ON'})
+        with self.assertRaises(ValueError):
+            tests.qt_disabled_reason({'BUILD_GUI': 'ON'})
 
     def test_expected_inventory_preserves_exclusions_disabled_cases_and_adaptation_categories(self):
         with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory); payload, row = self.fixture(root, 'pocx')
+            root = Path(directory)
+            payload, row = self.fixture(root, 'pocx')
             excluded = next(iter(json.loads((ROOT / 'test/pocx/unit-parity.json').read_text())['excluded']))
             row['expected_unit']['original'].extend([excluded, 'disabled/case'])
             row['expected_unit']['excluded'] = [excluded]
@@ -167,7 +187,9 @@ class ArtifactTestsTest(unittest.TestCase):
     def test_enabled_kernel_requires_complete_inventory_and_actual_assertion_results(self):
         for consensus in ('bitcoin', 'pocx'):
             with self.subTest(consensus=consensus), tempfile.TemporaryDirectory() as directory:
-                root = Path(directory); payload, row = self.fixture(root, consensus, kernel=True); calls = []
+                root = Path(directory)
+                payload, row = self.fixture(root, consensus, kernel=True)
+                calls = []
                 report = self.run_phase(payload, row, root / 'reports', calls)
                 self.assertEqual(report['kernel']['status'], 'passed')
                 self.assertEqual(report['kernel']['original_green'], 16)
@@ -186,29 +208,37 @@ class ArtifactTestsTest(unittest.TestCase):
                     good.replace('name="btck_block" result="passed"', 'name="btck_block" result="skipped"'),
                     '<TestResult/>', good + good):
             with self.subTest(xml=xml), tempfile.TemporaryDirectory() as directory:
-                root = Path(directory); payload, row = self.fixture(root, kernel=True)
-                with self.assertRaises(ValueError): self.run_phase(payload, row, root / 'reports', [], kernel_xml=xml)
+                root = Path(directory)
+                payload, row = self.fixture(root, kernel=True)
+                with self.assertRaises(ValueError):
+                    self.run_phase(payload, row, root / 'reports', [], kernel_xml=xml)
                 report = json.loads((root / 'reports/results.json').read_text())
                 self.assertEqual(report['status'], 'failed')
                 self.assertTrue(all(case['status'] == 'unverified' for case in report['cases'] if case['framework'] == 'kernel'))
 
     def test_missing_enabled_kernel_and_ambiguous_feature_flags_are_not_omissions(self):
         with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory); payload, row = self.fixture(root, kernel=True)
+            root = Path(directory)
+            payload, row = self.fixture(root, kernel=True)
             (payload / 'bin/test_kernel.exe').unlink()
-            with self.assertRaises(ValueError): self.run_phase(payload, row, root / 'reports', [])
-        with self.assertRaises(ValueError): tests.kernel_disabled_reason({'BUILD_KERNEL_LIB': 'ON'})
+            with self.assertRaises(ValueError):
+                self.run_phase(payload, row, root / 'reports', [])
+        with self.assertRaises(ValueError):
+            tests.kernel_disabled_reason({'BUILD_KERNEL_LIB': 'ON'})
         self.assertEqual(tests.kernel_disabled_reason({'BUILD_KERNEL_LIB': 'OFF'}), 'BUILD_KERNEL_LIB=OFF')
 
     def test_any_original_framework_failure_defers_all_native_tests(self):
         for failed in ('test_bitcoin-qt.exe', 'unit', 'unitester.exe', 'test_kernel.exe'):
             with self.subTest(failed=failed), tempfile.TemporaryDirectory() as directory:
-                root = Path(directory); bundle = root / 'bundle'; bundle.mkdir()
+                root = Path(directory)
+                bundle = root / 'bundle'
+                bundle.mkdir()
                 (bundle / 'pair.json').write_text('Synthetic pair metadata; mocked verifier\n')
                 pair = {'phases': [self.fixture(bundle, consensus, kernel=failed == 'test_kernel.exe')[1] for consensus in ('bitcoin', 'pocx')]}
                 calls = []
                 with patch.object(tests.windows_artifacts, 'verify_pair', return_value=pair), patch.object(tests.units, 'validate_assets'):
-                    with self.assertRaises(ValueError): tests.run_pair(bundle, root / 'reports',
+                    with self.assertRaises(ValueError):
+                        tests.run_pair(bundle, root / 'reports',
                         {'directory': str(root)}, execute=self.callback(calls, failed=failed))
                 report = json.loads((root / 'reports/results.json').read_text())
                 self.assertEqual(report['native_execution'], 'deferred')
@@ -218,26 +248,33 @@ class ArtifactTestsTest(unittest.TestCase):
 
     def test_pair_is_reverified_before_native_and_retains_failed_evidence(self):
         with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory); bundle = root / 'bundle'; bundle.mkdir()
+            root = Path(directory)
+            bundle = root / 'bundle'
+            bundle.mkdir()
             (bundle / 'pair.json').write_text('Synthetic pair metadata; mocked verifier\n')
             pair = {'phases': [self.fixture(bundle, consensus)[1] for consensus in ('bitcoin', 'pocx')]}
             with patch.object(tests.windows_artifacts, 'verify_pair', side_effect=[pair, ValueError('Changed immutable artifact')]), patch.object(tests.units, 'validate_assets'):
-                with self.assertRaisesRegex(ValueError, 'immutable'): tests.run_pair(bundle, root / 'reports',
+                with self.assertRaisesRegex(ValueError, 'immutable'):
+                    tests.run_pair(bundle, root / 'reports',
                     {'directory': str(root)}, execute=self.callback([]))
             report = json.loads((root / 'reports/results.json').read_text())
-            self.assertEqual(report['status'], 'failed'); self.assertEqual(report['native_execution'], 'deferred')
+            self.assertEqual(report['status'], 'failed')
+            self.assertEqual(report['native_execution'], 'deferred')
             self.assertEqual(report['phases'][0]['status'], 'passed')
             self.assertEqual(report['phases'][0]['report_sha256'], sha256(root / 'reports/bitcoin/results.json'))
 
     def test_non_windows_cli_and_output_inside_payload_fail_before_execution(self):
         with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory); payload, row = self.fixture(root)
-            with self.assertRaises(ValueError): self.run_phase(payload, row, payload / 'reports', [])
+            root = Path(directory)
+            payload, row = self.fixture(root)
+            with self.assertRaises(ValueError):
+                self.run_phase(payload, row, payload / 'reports', [])
             self.assertFalse((payload / 'reports').exists())
             if os.name != 'nt':
                 result = subprocess.run([sys.executable, str(ROOT / 'test/pocx/windows_artifact_tests.py'),
                     '--artifacts', str(root / 'missing'), '--output', str(root / 'reports')], capture_output=True, text=True)
-                self.assertEqual(result.returncode, 2); self.assertIn('requires Windows', result.stderr)
+                self.assertEqual(result.returncode, 2)
+                self.assertIn('requires Windows', result.stderr)
                 self.assertFalse((root / 'reports').exists())
 
 

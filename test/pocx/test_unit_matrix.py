@@ -24,9 +24,12 @@ class UnitMatrixTests(unittest.TestCase):
         # Execute the production CMake discovery block against small compiled
         # probes. These are infrastructure checks, not Bitcoin/PoCX case proof.
         with tempfile.TemporaryDirectory(prefix='unit-config-') as directory:
-            root = Path(directory); build = root / 'build'
-            source = root / 'src/pocx/test'; source.mkdir(parents=True)
-            scripts = root / 'test/pocx'; scripts.mkdir(parents=True)
+            root = Path(directory)
+            build = root / 'build'
+            source = root / 'src/pocx/test'
+            source.mkdir(parents=True)
+            scripts = root / 'test/pocx'
+            scripts.mkdir(parents=True)
             for name in ('register_unit.py', 'unit_build.py'):
                 (scripts / name).write_bytes((ROOT / 'test/pocx' / name).read_bytes())
             (root / 'CMakeLists.txt').write_text('''cmake_minimum_required(VERSION 3.22)
@@ -103,14 +106,20 @@ set(POCX_UNIT_INPUTS "${CMAKE_CURRENT_SOURCE_DIR}/fixture.cpp")
         # silently overriding both ordinary and sanitizer runner settings.
         # This fake executable provides infrastructure evidence, not unit cases.
         with tempfile.TemporaryDirectory() as directory:
-            root=Path(directory);binary=root/'fixture-unit';source=root/'fixture.cpp'
-            inputs=root/'inputs.txt';cache=root/'CMakeCache.txt';registration=root/'discovered.cmake'
+            root=Path(directory)
+            binary=root/'fixture-unit'
+            source=root/'fixture.cpp'
+            inputs=root/'inputs.txt'
+            cache=root/'CMakeCache.txt'
+            registration=root/'discovered.cmake'
             binary.write_text('#!'+sys.executable+'\nimport sys,time\n'
                 'if "--list_content" in sys.argv:\n'
                 ' print("pocx_tests*\\npocx_simd_tests*\\npocx_wire_tests*\\npocx_real_proof_tests*")\n'
                 'else:\n time.sleep(2)\n print("infrastructure delay fixture complete")\n')
-            binary.chmod(0o755);source.write_text('timing fixture\n')
-            inputs.write_text(str(source)+'\n');cache.write_text('ENABLE_WALLET:BOOL=OFF\n')
+            binary.chmod(0o755)
+            source.write_text('timing fixture\n')
+            inputs.write_text(str(source)+'\n')
+            cache.write_text('ENABLE_WALLET:BOOL=OFF\n')
             subprocess.run([sys.executable,str(ROOT/'test/pocx/register_unit.py'),
                 '--binary',str(binary),'--output',str(registration),'--inputs',str(inputs),
                 '--cache',str(cache)],capture_output=True,text=True,check=True)
@@ -118,7 +127,8 @@ set(POCX_UNIT_INPUTS "${CMAKE_CURRENT_SOURCE_DIR}/fixture.cpp")
             command=['ctest','--test-dir',str(root),'-R','^pocx_tests$',
                      '--no-tests=error','--output-on-failure']
             short=subprocess.run([*command,'--timeout','1'],capture_output=True,text=True)
-            self.assertNotEqual(short.returncode,0);self.assertIn('Timeout',short.stdout)
+            self.assertNotEqual(short.returncode,0)
+            self.assertIn('Timeout',short.stdout)
             longer=subprocess.run([*command,'--timeout','3'],capture_output=True,text=True)
             self.assertEqual(longer.returncode,0,longer.stdout+longer.stderr)
             self.assertIn('100% tests passed',longer.stdout)
@@ -155,7 +165,8 @@ set(POCX_UNIT_INPUTS "${CMAKE_CURRENT_SOURCE_DIR}/fixture.cpp")
             build=Path(directory)
             with exclusive_lock(build/'pocx-unit.lock'), \
                  patch.object(unit_matrix.subprocess,'check_output') as inspect:
-                with self.assertRaises(OSError):unit_matrix.registered_timeouts(build,{'suite'},180)
+                with self.assertRaises(OSError):
+                    unit_matrix.registered_timeouts(build,{'suite'},180)
                 inspect.assert_not_called()
                 inspect.return_value=json.dumps({'tests':[{'name':'suite','properties':[]}]})
                 self.assertEqual(unit_matrix.registered_timeouts(build,{'suite'},180,lock_held=True),{'suite':180})
@@ -253,20 +264,30 @@ set(POCX_UNIT_INPUTS "${CMAKE_CURRENT_SOURCE_DIR}/fixture.cpp")
         # A synthetic execution fixture tests the verifier's failure paths. It
         # never establishes a passing Bitcoin/PoCX runtime checkpoint.
         with tempfile.TemporaryDirectory() as temp:
-            root = Path(temp);build = root / 'build';(build / 'bin').mkdir(parents=True)
-            binary = build / 'bin/test_pocx';binary.write_bytes(b'fixture binary')
-            cache = build / 'CMakeCache.txt';cache.write_text('fixture config')
-            system = build / 'system.cmake';system.write_text('fixture target')
+            root = Path(temp)
+            build = root / 'build'
+            (build / 'bin').mkdir(parents=True)
+            binary = build / 'bin/test_pocx'
+            binary.write_bytes(b'fixture binary')
+            cache = build / 'CMakeCache.txt'
+            cache.write_text('fixture config')
+            system = build / 'system.cmake'
+            system.write_text('fixture target')
             helpers = {source: sha256(ROOT / source) for source in (
                 'test/pocx/run_unit.py', 'test/pocx/unit_matrix.py',
                 'test/pocx/unit_parity.py', 'test/pocx/common.py', 'test/pocx/unit_build.py',
                 'test/pocx/build_configuration.py')}
             for source in helpers:
-                path = root / source;path.parent.mkdir(parents=True, exist_ok=True);path.write_bytes((ROOT / source).read_bytes())
+                path = root / source
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_bytes((ROOT / source).read_bytes())
             provenance = build / 'src/pocx/test/discovered.build.json'
-            provenance.parent.mkdir(parents=True);provenance.write_text('{}')
-            boost = build / 'boost.log';boost.write_text(ET.tostring(self.boost(), encoding='unicode'))
-            junit = build / 'junit.xml';junit.write_text('<testsuites><testsuite><testcase name="suite"/></testsuite></testsuites>')
+            provenance.parent.mkdir(parents=True)
+            provenance.write_text('{}')
+            boost = build / 'boost.log'
+            boost.write_text(ET.tostring(self.boost(), encoding='unicode'))
+            junit = build / 'junit.xml'
+            junit.write_text('<testsuites><testsuite><testcase name="suite"/></testsuite></testsuites>')
             expected = {'original': {'suite/kept', 'suite/nested/other'}, 'applicable': {'suite/kept', 'suite/nested/other'},
                         'additional': set(), 'excluded': set(), 'configuration_disabled': {},
                         'expected': {'suite/kept', 'suite/nested/other'}}
@@ -277,27 +298,34 @@ set(POCX_UNIT_INPUTS "${CMAKE_CURRENT_SOURCE_DIR}/fixture.cpp")
                       'test_sources': {}, 'execution_helpers': helpers,
                       'unit_build_provenance': str(provenance), 'unit_build_provenance_sha256': sha256(provenance), 'selected': ['suite'], 'registered': ['suite'],
                       'boost.log_sha256': sha256(boost), 'junit.xml_sha256': sha256(junit)}
-            path = build / 'results.json';path.write_text(json.dumps(record))
+            path = build / 'results.json'
+            path.write_text(json.dumps(record))
             with patch.object(unit_matrix, 'configuration', return_value=(self.options, system)), \
                  patch.object(unit_matrix, 'inventory', return_value=expected), \
                  patch.object(unit_matrix, 'runtime_inventory', return_value=expected['expected']), \
                  patch.object(unit_matrix, 'registered_timeouts', return_value={'suite':180}), \
                  patch.object(unit_matrix.unit_build, 'verify', return_value={'sources': {}}):
                 self.assertEqual(unit_matrix.verify_execution(root, build, path)['original_green'], 2)
-                broken = deepcopy(record);broken.pop('build_configuration');path.write_text(json.dumps(broken))
+                broken = deepcopy(record)
+                broken.pop('build_configuration')
+                path.write_text(json.dumps(broken))
                 with self.assertRaisesRegex(ValueError, 'recorded unit build configuration'):
                     unit_matrix.verify_execution(root, build, path)
                 for extra in (['--build-config', 'Debug'], ['--build-config=Debug'], ['-CDebug']):
-                    broken = deepcopy(record);broken['command'] += extra;path.write_text(json.dumps(broken))
+                    broken = deepcopy(record)
+                    broken['command'] += extra
+                    path.write_text(json.dumps(broken))
                     with self.subTest(extra=extra), self.assertRaisesRegex(ValueError, 'build configuration'):
                         unit_matrix.verify_execution(root, build, path)
                 # Bind the command and executable path to the recorded
                 # selection, including duplicate/alternate flag attacks.
                 cache.write_text('CMAKE_CONFIGURATION_TYPES:STRING=Debug;Release\n')
                 selected_binary = build / 'bin/Release/test_pocx'
-                selected_binary.parent.mkdir();selected_binary.write_bytes(binary.read_bytes())
+                selected_binary.parent.mkdir()
+                selected_binary.write_bytes(binary.read_bytes())
                 selected_provenance = provenance.parent / 'Release/discovered.build.json'
-                selected_provenance.parent.mkdir();selected_provenance.write_bytes(provenance.read_bytes())
+                selected_provenance.parent.mkdir()
+                selected_provenance.write_bytes(provenance.read_bytes())
                 selected_record = deepcopy(record)
                 selected_record.update(build_configuration='Release', binary=str(selected_binary),
                     cache_sha256=sha256(cache), unit_build_provenance=str(selected_provenance),
@@ -307,23 +335,35 @@ set(POCX_UNIT_INPUTS "${CMAKE_CURRENT_SOURCE_DIR}/fixture.cpp")
                 for command in (record['command'], record['command'] + ['--build-config', 'Debug'],
                                 selected_record['command'] + ['--build-config', 'Debug'],
                                 selected_record['command'] + ['-CDebug']):
-                    broken = deepcopy(selected_record);broken['command'] = command
+                    broken = deepcopy(selected_record)
+                    broken['command'] = command
                     path.write_text(json.dumps(broken))
                     with self.subTest(command=command), self.assertRaisesRegex(ValueError, 'build configuration'):
                         unit_matrix.verify_execution(root, build, path)
                 cache.write_text('fixture config')
                 for field in ('binary_sha256', 'cache_sha256', 'target_system_sha256', 'boost.log_sha256', 'junit.xml_sha256', 'unit_build_provenance_sha256', 'suite_timeouts'):
-                    broken = deepcopy(record);broken[field] = '0' * 64;path.write_text(json.dumps(broken))
+                    broken = deepcopy(record)
+                    broken[field] = '0' * 64
+                    path.write_text(json.dumps(broken))
                     with self.subTest(field=field), self.assertRaises(ValueError):
                         unit_matrix.verify_execution(root, build, path)
-                broken = deepcopy(record);broken['execution_helpers'].pop('test/pocx/run_unit.py');path.write_text(json.dumps(broken))
+                broken = deepcopy(record)
+                broken['execution_helpers'].pop('test/pocx/run_unit.py')
+                path.write_text(json.dumps(broken))
                 with self.assertRaisesRegex(ValueError, 'helper provenance'):
                     unit_matrix.verify_execution(root, build, path)
-                broken = deepcopy(record);broken['test_sources'] = {'fabricated.cpp': '0' * 64};path.write_text(json.dumps(broken))
+                broken = deepcopy(record)
+                broken['test_sources'] = {'fabricated.cpp': '0' * 64}
+                path.write_text(json.dumps(broken))
                 with self.assertRaisesRegex(ValueError, 'source provenance'):
                     unit_matrix.verify_execution(root, build, path)
-                xml = self.boost();suite = xml.find('TestSuite/TestSuite');suite.remove(suite.find('TestCase'))
-                boost.write_text(ET.tostring(xml, encoding='unicode'));broken = deepcopy(record);broken['boost.log_sha256'] = sha256(boost);path.write_text(json.dumps(broken))
+                xml = self.boost()
+                suite = xml.find('TestSuite/TestSuite')
+                suite.remove(suite.find('TestCase'))
+                boost.write_text(ET.tostring(xml, encoding='unicode'))
+                broken = deepcopy(record)
+                broken['boost.log_sha256'] = sha256(boost)
+                path.write_text(json.dumps(broken))
                 with self.assertRaisesRegex(ValueError, 'executed unit leaf'):
                     unit_matrix.verify_execution(root, build, path)
 

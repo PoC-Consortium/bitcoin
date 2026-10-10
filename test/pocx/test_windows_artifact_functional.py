@@ -20,24 +20,29 @@ import test_artifact_functional_view
 
 class ArtifactFunctionalTest(unittest.TestCase):
     def controlled_fixture(self, directory, *, code=0, timed_out=False, cleanup=True, mutation=None):
-        helper = test_artifact_functional_view.FunctionalArtifactViewTest(); helper.setUp()
+        helper = test_artifact_functional_view.FunctionalArtifactViewTest()
+        helper.setUp()
         self.addCleanup(helper.doCleanups)
         root, bundle = helper.fixture(directory)
         pair = artifact.windows_artifacts.verify_pair(bundle, root=root, revision='a' * 40)
         row = pair['phases'][0]
-        release = root / 'release-wallet.exe'; release.write_text('Synthetic pinned prerequisite\n')
+        release = root / 'release-wallet.exe'
+        release.write_text('Synthetic pinned prerequisite\n')
         controller = process_tree.description()
         def execute(command, **kwargs):
             self.assertEqual(kwargs['env']['PYTHONDONTWRITEBYTECODE'], '1')
             self.assertNotIn('PYTHONPATH', kwargs['env'])
-            child = Path(command[command.index('--output') + 1]); child.mkdir()
+            child = Path(command[command.index('--output') + 1])
+            child.mkdir()
             (child / 'results.json').write_text('{"status":"passed"}\n')
             kwargs['log'].write('Synthetic functional process callback\n')
-            if mutation == 'release': release.write_text('Changed prerequisite\n')
+            if mutation == 'release':
+                release.write_text('Changed prerequisite\n')
             if mutation == 'runtime':
                 view = Path(command[command.index('--build-dir') + 1])
                 (view / 'bin/bitcoind.exe').write_text('Changed runtime binary\n')
-            if mutation == 'payload': (bundle / 'bitcoin/bin/bitcoind.exe').write_text('Changed payload\n')
+            if mutation == 'payload':
+                (bundle / 'bitcoin/bin/bitcoind.exe').write_text('Changed payload\n')
             control = {'kind': controller['kind'], 'cleanup_complete': cleanup, 'invocation': command}
             if controller['kind'] == 'windows-job':
                 control['job'] = 'Local\\pocx-functional-' + 'a' * 32
@@ -47,16 +52,19 @@ class ArtifactFunctionalTest(unittest.TestCase):
         cases = [{'case': 'fixture.py', 'transport': mode, 'status': 'passed', 'seconds': 0.1} for mode in ('v1', 'v2')]
         with patch.object(artifact, 'verify_child', return_value=cases), \
                 patch.object(artifact.functional_environment, 'release_binaries', return_value={'v28.2/bitcoin-wallet': release}):
-            try: artifact.run_phase(bundle, row, output, 3, 7.5, root=root, revision='a' * 40,
+            try:
+                artifact.run_phase(bundle, row, output, 3, 7.5, root=root, revision='a' * 40,
                 environment={'PREVIOUS_RELEASES_DIR': str(root / 'releases'), 'DOWNLOAD_PREVIOUS_RELEASES': 'true',
                              'PYTHONPATH': '/unreviewed'}, execute=execute)
-            except ValueError: pass
+            except ValueError:
+                pass
         return json.loads((output / 'results.json').read_text())
 
     def test_controlled_phase_preserves_real_view_and_previous_release_inputs(self):
         with tempfile.TemporaryDirectory() as directory:
             report = self.controlled_fixture(directory)
-            self.assertEqual(report['status'], 'passed'); self.assertFalse(report['full_windows_ci_pass'])
+            self.assertEqual(report['status'], 'passed')
+            self.assertFalse(report['full_windows_ci_pass'])
             self.assertEqual(report['counts'], {'passed': 2})
             self.assertEqual(report['previous_release_binaries']['v28.2/bitcoin-wallet']['sha256'],
                              sha256(Path(report['previous_release_binaries']['v28.2/bitcoin-wallet']['path'])))
@@ -66,11 +74,15 @@ class ArtifactFunctionalTest(unittest.TestCase):
                        {'mutation': 'release'}, {'mutation': 'runtime'}, {'mutation': 'payload'}):
             with self.subTest(kwargs=kwargs), tempfile.TemporaryDirectory() as directory:
                 report = self.controlled_fixture(directory, **kwargs)
-                self.assertEqual(report['status'], 'failed'); self.assertFalse(report['full_windows_ci_pass'])
+                self.assertEqual(report['status'], 'failed')
+                self.assertFalse(report['full_windows_ci_pass'])
 
     def original_fixture(self, directory, *, bench=True, previous=True, legacy_code=0, omit=None):
-        root = Path(directory); build = root / 'runtime'; build.mkdir()
-        directory = root / 'test/functional'; directory.mkdir(parents=True)
+        root = Path(directory)
+        build = root / 'runtime'
+        build.mkdir()
+        directory = root / 'test/functional'
+        directory.mkdir(parents=True)
         (directory / 'test_runner.py').write_text(
             "TOOL_BENCH_SANITY_CHECK='tool_bench_sanity_check.py'\n"
             "BASE_SCRIPTS=['p2p_ping.py','feature_bind_port_discover.py','feature_bind_port_externalip.py','feature_unsupported_utxo_db.py',"
@@ -98,9 +110,11 @@ class ArtifactFunctionalTest(unittest.TestCase):
             self.assertFalse(any('wallet_multiwallet' in arg for arg in command if arg.startswith('--exclude')))
             path = Path(next(arg.split('=', 1)[1] for arg in command if arg.startswith('--resultsfile=')))
             with path.open('w', newline='') as stream:
-                writer = csv.writer(stream); writer.writerow(['test', 'status', 'duration(seconds)'])
+                writer = csv.writer(stream)
+                writer.writerow(['test', 'status', 'duration(seconds)'])
                 for case in expected:
-                    if case in (functional.LEGACY_UTXO, omit): continue
+                    if case in (functional.LEGACY_UTXO, omit):
+                        continue
                     writer.writerow([case, 'Skipped' if case in functional.ADDRESS or
                         (not bench and case == 'tool_bench_sanity_check.py') else 'Passed', 0.1])
                 writer.writerow(['ALL', 'Passed', 0.1])
@@ -109,8 +123,10 @@ class ArtifactFunctionalTest(unittest.TestCase):
                 patch.object(functional.functional_execution, 'binary_paths', return_value=paths), \
                 patch.object(functional.subprocess, 'check_output', return_value='Alpha\nBeta\n'), \
                 patch.object(functional.subprocess, 'run', side_effect=run):
-            try: functional.run(build, output, options, 3, 7.5, environment=env)
-            except ValueError: pass
+            try:
+                functional.run(build, output, options, 3, 7.5, environment=env)
+            except ValueError:
+                pass
         return root, build, output, options, env, json.loads((output / 'results.json').read_text()), calls
 
     def verify(self, root, build, output, options, env, report):
@@ -145,7 +161,8 @@ class ArtifactFunctionalTest(unittest.TestCase):
                 root, build, output, options, env, report, _ = self.original_fixture(directory, previous=previous, legacy_code=77)
                 self.assertEqual(report['status'], wanted)
                 if previous:
-                    with self.assertRaises(ValueError): self.verify(root, build, output, options, env, report)
+                    with self.assertRaises(ValueError):
+                        self.verify(root, build, output, options, env, report)
                 else:
                     self.verify(root, build, output, options, env, report)
                     self.assertEqual(report['counts']['configuration-disabled'], 6)
@@ -155,43 +172,63 @@ class ArtifactFunctionalTest(unittest.TestCase):
             with self.subTest(kwargs=kwargs), tempfile.TemporaryDirectory() as directory:
                 root, build, output, options, env, report, _ = self.original_fixture(directory, **kwargs)
                 self.assertEqual(report['status'], 'failed')
-                with self.assertRaises(ValueError): self.verify(root, build, output, options, env, report)
+                with self.assertRaises(ValueError):
+                    self.verify(root, build, output, options, env, report)
 
     def test_green_child_report_cannot_hide_raw_case_command_or_log_changes(self):
         with tempfile.TemporaryDirectory() as directory:
             root, build, output, options, env, original, _ = self.original_fixture(directory)
             for mutation in ('case', 'command', 'returncode', 'log', 'inventory', 'transport', 'factor', 'counts', 'benchmarks'):
                 report = deepcopy(original)
-                if mutation == 'case': report['cases'].pop()
-                elif mutation == 'command': report['runs'][0]['command'].append('--exclude=wallet_multiwallet.py')
-                elif mutation == 'returncode': report['runs'][1]['returncode'] = 77
-                elif mutation == 'log': report['runs'][0]['log_sha256'] = '0' * 64
-                elif mutation == 'inventory': report['expected_cases'].pop()
-                elif mutation == 'transport': report['cases'][0]['transport'] = 'v2'
-                elif mutation == 'factor': report['profile']['effective_timeout_factor'] = 1
-                elif mutation == 'counts': report['counts']['passed'] += 1
-                else: report['benchmarks'] = ['Alpha']
+                if mutation == 'case':
+                    report['cases'].pop()
+                elif mutation == 'command':
+                    report['runs'][0]['command'].append('--exclude=wallet_multiwallet.py')
+                elif mutation == 'returncode':
+                    report['runs'][1]['returncode'] = 77
+                elif mutation == 'log':
+                    report['runs'][0]['log_sha256'] = '0' * 64
+                elif mutation == 'inventory':
+                    report['expected_cases'].pop()
+                elif mutation == 'transport':
+                    report['cases'][0]['transport'] = 'v2'
+                elif mutation == 'factor':
+                    report['profile']['effective_timeout_factor'] = 1
+                elif mutation == 'counts':
+                    report['counts']['passed'] += 1
+                else:
+                    report['benchmarks'] = ['Alpha']
                 with self.subTest(mutation=mutation), self.assertRaises(ValueError):
                     self.verify(root, build, output, options, env, report)
-            path = output / 'v1.csv'; path.write_text(path.read_text().replace('p2p_ping.py,Passed', 'p2p_ping.py,Skipped'))
-            with self.assertRaises(ValueError): self.verify(root, build, output, options, env, original)
+            path = output / 'v1.csv'
+            path.write_text(path.read_text().replace('p2p_ping.py,Passed', 'p2p_ping.py,Skipped'))
+            with self.assertRaises(ValueError):
+                self.verify(root, build, output, options, env, original)
 
     def test_ascii_directory_requirement_and_invalid_features_are_explicit(self):
         profile = functional.inherited_options({})
         with self.assertRaisesRegex(ValueError, 'ASCII-only'):
             functional.original_command(Path('/runtime'), Path('/tmp/₿'), ('legacy-utxo', [functional.LEGACY_UTXO], True),
                 'v1', 3, 7.5, profile, windows=True)
-        with self.assertRaises(ValueError): functional.original_groups(['p2p_ping.py'], {'target_system': 'Windows'})
-        with self.assertRaises(ValueError): functional.original_inventory(Path('unused'), [], None)
+        with self.assertRaises(ValueError):
+            functional.original_groups(['p2p_ping.py'], {'target_system': 'Windows'})
+        with self.assertRaises(ValueError):
+            functional.original_inventory(Path('unused'), [], None)
         for factor in (0, -1, float('nan'), float('inf'), True):
-            with self.subTest(factor=factor), self.assertRaises(ValueError): artifact.execution_profile({}, factor)
+            with self.subTest(factor=factor), self.assertRaises(ValueError):
+                artifact.execution_profile({}, factor)
 
     def test_native_verification_requires_complete_selected_matrix_and_terminal_results(self):
         from functional_cases import case_spec, selection_digest
         with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory); view = root / 'runtime'; proof_dir = view / 'native-proof'; proof_dir.mkdir(parents=True)
-            execution = root / 'execution'; execution.mkdir()
-            original_dir = root / 'test/functional'; original_dir.mkdir(parents=True)
+            root = Path(directory)
+            view = root / 'runtime'
+            proof_dir = view / 'native-proof'
+            proof_dir.mkdir(parents=True)
+            execution = root / 'execution'
+            execution.mkdir()
+            original_dir = root / 'test/functional'
+            original_dir.mkdir(parents=True)
             (original_dir / 'test_runner.py').write_text("BASE_SCRIPTS=['p2p_ping.py']\nEXTENDED_SCRIPTS=['feature_long.py']\n")
             (original_dir / 'p2p_ping.py').write_text('class Test:\n def skip_test_if_missing_module(self):\n  pass\n')
             spec = case_spec('p2p_ping.py', [])
@@ -202,7 +239,8 @@ class ArtifactFunctionalTest(unittest.TestCase):
                 'environment_profile': {'previous_releases': False, 'network_addresses': False},
                 'execution_options': {'use_cli': False, 'multiprocess': False},
                 'case_selection': {'selected_cases_sha256': selection_digest([spec])}}
-            controller = process_tree.description(); provenance['process_controller'] = controller
+            controller = process_tree.description()
+            provenance['process_controller'] = controller
             results = []
             for mode in ('v1', 'v2'):
                 flags = ['--timeout-factor=7.5', '--' + mode + 'transport']
@@ -216,8 +254,10 @@ class ArtifactFunctionalTest(unittest.TestCase):
                     control['job'] = 'Local\\pocx-functional-' + 'a' * 32
                     control['invocation'] = [controller['interpreter'], controller['path'], '--windows-worker', control['job'], '--', *command]
                 results[-1]['process_control'] = control
-            proof_path = proof_dir / 'results.json'; proof_path.write_text(json.dumps({'provenance': provenance, 'results': results}))
-            log = execution / 'native.log'; log.write_text('Synthetic native proof fixture\n')
+            proof_path = proof_dir / 'results.json'
+            proof_path.write_text(json.dumps({'provenance': provenance, 'results': results}))
+            log = execution / 'native.log'
+            log.write_text('Synthetic native proof fixture\n')
             options = {'ENABLE_POCX': 'ON', 'target_system': 'Windows'}
             with patch.object(functional, 'ROOT', root), patch.object(artifact, 'dependency_hashes', return_value={}), \
                     patch.object(artifact, 'verify_current_inputs', return_value=manifest):
@@ -229,9 +269,11 @@ class ArtifactFunctionalTest(unittest.TestCase):
                     'counts': {'passed': 2}, 'cases': [{'case': spec['id'], 'transport': mode, 'effective_transport': mode,
                         'status': 'passed', 'reason': '', 'execution_status': 'passed', 'seconds': 0.1} for mode in ('v1', 'v2')]}
                 self.assertEqual(len(artifact.verify_child(report, execution, view, options, 3, 7.5, {}, root=root)), 2)
-                results.pop(); proof_path.write_text(json.dumps({'provenance': provenance, 'results': results}))
+                results.pop()
+                proof_path.write_text(json.dumps({'provenance': provenance, 'results': results}))
                 report['native_proof']['sha256'] = sha256(proof_path)
-                with self.assertRaises(ValueError): artifact.verify_child(report, execution, view, options, 3, 7.5, {}, root=root)
+                with self.assertRaises(ValueError):
+                    artifact.verify_child(report, execution, view, options, 3, 7.5, {}, root=root)
 
 
 if __name__ == '__main__':

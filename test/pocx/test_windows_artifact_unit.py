@@ -31,7 +31,8 @@ class ArtifactUnitTest(unittest.TestCase):
 
     def row(self, payload, consensus='bitcoin'):
         name = 'bin/test_bitcoin.exe' if consensus == 'bitcoin' else 'bin/test_pocx.exe'
-        binary = payload / name; binary.parent.mkdir(parents=True, exist_ok=True)
+        binary = payload / name
+        binary.parent.mkdir(parents=True, exist_ok=True)
         binary.write_text('synthetic executable; callbacks only')
         return {'consensus': consensus, 'unit_binary': name, 'files': {name: sha256(binary)},
             'expected_unit': {'expected': sorted(self.expected), 'original': sorted(self.expected),
@@ -42,8 +43,10 @@ class ArtifactUnitTest(unittest.TestCase):
         self.assertEqual(disabled, {'mock_process/valid_json'})
         self.assertEqual(units.single_process_leaves(self.xml(), self.expected, disabled),
                          {'first/set_state': 1, 'second/check_state': 2})
-        with self.assertRaises(ValueError): units.runtime_cases(self.listing() + 'hidden\n    case\n', self.expected)
-        with self.assertRaises(ValueError): units.runtime_cases(self.listing().replace('check_state*', 'check_state'), self.expected)
+        with self.assertRaises(ValueError):
+            units.runtime_cases(self.listing() + 'hidden\n    case\n', self.expected)
+        with self.assertRaises(ValueError):
+            units.runtime_cases(self.listing().replace('check_state*', 'check_state'), self.expected)
 
     def test_green_summary_cannot_hide_missing_skipped_failed_or_duplicate_cases(self):
         original = self.xml()
@@ -58,15 +61,18 @@ class ArtifactUnitTest(unittest.TestCase):
                 units.single_process_leaves(xml, self.expected, {'mock_process/valid_json'})
 
     def test_compiled_simd_comparison_needs_executed_assertions(self):
-        case = next(iter(units.unit_matrix.SSE2_CASES)); suite, name = case.split('/')
+        case = next(iter(units.unit_matrix.SSE2_CASES))
+        suite, name = case.split('/')
         xml = f'<TestResult><TestSuite name="module" result="passed" assertions_failed="0" test_cases_passed="1" test_cases_skipped="0"><TestSuite name="{suite}" result="passed"><TestCase name="{name}" result="passed" assertions_passed="0" assertions_failed="0"/></TestSuite></TestSuite></TestResult>'
-        with self.assertRaisesRegex(ValueError, 'assertions'): units.single_process_leaves(xml, {case}, set())
+        with self.assertRaisesRegex(ValueError, 'assertions'):
+            units.single_process_leaves(xml, {case}, set())
 
     def callback(self, calls, *, code=0, cleanup=True, timeout=False):
         controller = process_tree.description()
         def execute(command, **kwargs):
             calls.append((command, kwargs['env']))
-            if '--list_content' in command: kwargs['log'].write(self.listing())
+            if '--list_content' in command:
+                kwargs['log'].write(self.listing())
             else:
                 sink = next(arg.split('=', 1)[1] for arg in command if arg.startswith('--report_sink='))
                 Path(sink).write_text(self.xml())
@@ -81,11 +87,15 @@ class ArtifactUnitTest(unittest.TestCase):
 
     def test_phase_preserves_one_unfiltered_unit_process_and_clears_boost_overrides(self):
         with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory); payload = root / 'payload'; row = self.row(payload); calls = []
+            root = Path(directory)
+            payload = root / 'payload'
+            row = self.row(payload)
+            calls = []
             report = units.run_phase(payload, row, root / 'results', {'directory': str(root)},
                 environment={'BOOST_TEST_RUN_FILTERS': 'first', 'BOOST_TEST_REPORT_SINK': 'wrong'},
                 execute=self.callback(calls))
-            self.assertEqual(report['status'], 'passed'); self.assertEqual(len(report['cases']), 2)
+            self.assertEqual(report['status'], 'passed')
+            self.assertEqual(len(report['cases']), 2)
             self.assertEqual(len(calls), 2)
             self.assertEqual(calls[0][0], [str(payload / row['unit_binary']), '--list_content'])
             self.assertEqual(calls[1][0][1:3], ['-l', 'test_suite'])
@@ -95,19 +105,25 @@ class ArtifactUnitTest(unittest.TestCase):
     def test_failures_timeouts_and_incomplete_cleanup_remain_failed(self):
         for options in ({'code': 7}, {'cleanup': False}, {'timeout': True}):
             with self.subTest(options=options), tempfile.TemporaryDirectory() as directory:
-                root = Path(directory); payload = root / 'payload'; row = self.row(payload)
-                with self.assertRaises(ValueError): units.run_phase(payload, row, root / 'results',
+                root = Path(directory)
+                payload = root / 'payload'
+                row = self.row(payload)
+                with self.assertRaises(ValueError):
+                    units.run_phase(payload, row, root / 'results',
                     {'directory': str(root)}, execute=self.callback([], **options))
                 self.assertEqual(json.loads((root / 'results/results.json').read_text())['status'], 'failed')
 
     def test_original_failure_prevents_any_native_unit_execution(self):
         with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory); bundle = root / 'bundle'; bundle.mkdir()
+            root = Path(directory)
+            bundle = root / 'bundle'
+            bundle.mkdir()
             (bundle / 'pair.json').write_text('synthetic fixture')
             pair = {'phases': [self.row(bundle / consensus, consensus) for consensus in ('bitcoin', 'pocx')]}
             calls = []
             with patch.object(units.windows_artifacts, 'verify_pair', return_value=pair), patch.object(units, 'validate_assets'):
-                with self.assertRaises(ValueError): units.run_pair(bundle, root / 'results',
+                with self.assertRaises(ValueError):
+                    units.run_pair(bundle, root / 'results',
                     {'directory': str(root)}, execute=self.callback(calls, code=7))
             report = json.loads((root / 'results/results.json').read_text())
             self.assertEqual(report['native_execution'], 'deferred')
@@ -119,7 +135,9 @@ class ArtifactUnitTest(unittest.TestCase):
                          Path('/usr/include/boost/test/included/unit_test.hpp').is_file(), 'Native Boost/compiler fixture prerequisite unavailable')
     def test_real_boost_fixture_catches_replacing_one_process_with_per_suite_runs(self):
         with tempfile.TemporaryDirectory(prefix='boost-artifact-') as directory:
-            root = Path(directory); payload = root / 'payload'; row = self.row(payload)
+            root = Path(directory)
+            payload = root / 'payload'
+            row = self.row(payload)
             cpp = root / 'fixture.cpp'
             cpp.write_text('''#define BOOST_TEST_MODULE StateOrderProbe
 #include <boost/test/included/unit_test.hpp>
@@ -146,16 +164,20 @@ BOOST_AUTO_TEST_SUITE_END()
     def test_missing_or_corrupt_assets_and_non_windows_cli_never_run_tests(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
-            with self.assertRaises(ValueError): units.validate_assets({'directory': str(root)})
+            with self.assertRaises(ValueError):
+                units.validate_assets({'directory': str(root)})
             assets = {'directory': str(root), 'commit': units.unit_assets.COMMIT,
                       'sha256': units.unit_assets.SHA256, 'vectors': units.unit_assets.VECTORS}
-            with self.assertRaises(FileNotFoundError): units.validate_assets(assets)
+            with self.assertRaises(FileNotFoundError):
+                units.validate_assets(assets)
             (root / 'script_assets_test.json').write_text('corrupt vectors')
-            with self.assertRaises(ValueError): units.validate_assets(assets)
+            with self.assertRaises(ValueError):
+                units.validate_assets(assets)
             if os.name != 'nt':
                 result = subprocess.run([sys.executable, str(ROOT / 'test/pocx/windows_artifact_unit.py'),
                     '--artifacts', str(root / 'missing'), '--output', str(root / 'reports')], capture_output=True, text=True)
-                self.assertEqual(result.returncode, 2); self.assertIn('requires Windows', result.stderr)
+                self.assertEqual(result.returncode, 2)
+                self.assertIn('requires Windows', result.stderr)
                 self.assertFalse((root / 'reports').exists())
 
 

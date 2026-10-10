@@ -57,7 +57,8 @@ class InheritedTest(unittest.TestCase):
         self.assertEqual([row['consensus'] for row in pair], ['bitcoin', 'pocx'])
         for row, mode in zip(pair, ('OFF', 'ON')):
             flags = shlex.split(row['environment']['BITCOIN_CONFIG'])
-            self.assertIn('-DENABLE_WALLET=OFF', flags);self.assertIn('-DSANITIZERS=thread', flags)
+            self.assertIn('-DENABLE_WALLET=OFF', flags)
+            self.assertIn('-DSANITIZERS=thread', flags)
             self.assertEqual(flags[-3:], ['-DENABLE_POCX='+mode, '-DBUILD_FUZZ_BINARY=OFF', '-DBUILD_FOR_FUZZING=OFF'])
         for key in ('BASE_BUILD_DIR', 'BASE_OUTDIR'):
             self.assertNotEqual(pair[0]['environment'][key], pair[1]['environment'][key])
@@ -71,7 +72,8 @@ class InheritedTest(unittest.TestCase):
 
     def test_actual_container_entrypoint_dispatch(self):
         spec = importlib.util.spec_from_file_location('container_entry', ROOT/'ci/test/02_run_container.py')
-        module = importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
         self.assertEqual(module.test_script('/source', {}), ['python3','/source/test/pocx/inherited_ci.py'])
         self.assertEqual(module.test_script('/source', {'RUN_FUZZ_TESTS':'true'}), ['/source/ci/test/03_test_script.sh'])
         self.assertEqual(module.imagefile('/source', {}), '/source/test/pocx/ci/test_imagefile')
@@ -79,7 +81,8 @@ class InheritedTest(unittest.TestCase):
 
     def test_enabled_linux_tracing_prerequisites_preserve_compiler_and_feature_settings(self):
         spec = importlib.util.spec_from_file_location('container_runtime', ROOT/'ci/test/02_run_container.py')
-        module = importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
         names = ('ci_native_asan', 'ci_native_tsan', 'ci_native_msan', 'ci_native_nowallet',
                  'ci_native_previous_releases', 'ci_native_alpine_musl',
                  'ci_i686_no_multiprocess', 'ci_arm_linux')
@@ -91,7 +94,8 @@ class InheritedTest(unittest.TestCase):
                     BITCOIN_CONFIG='--preset=dev-mode -DENABLE_WALLET=OFF', DEP_OPTS='NO_WALLET=1 CC=clang-17')
                 result = module.configure_runtime_environment(ROOT, original)
                 expected = ('py3-bcc', 'bcc-tools') if 'alpine' in name else ('python3-bpfcc', 'bpfcc-tools','python3-zmq')
-                for package in expected:self.assertEqual(result['PACKAGES'].split().count(package), 1)
+                for package in expected:
+                    self.assertEqual(result['PACKAGES'].split().count(package), 1)
                 for flag in ('--security-opt seccomp=unconfined', '--privileged',
                              '/usr/src:/usr/src:ro', '/lib/modules:/lib/modules:ro'):
                     self.assertIn(flag, result['CI_CONTAINER_CAP'])
@@ -109,7 +113,8 @@ class InheritedTest(unittest.TestCase):
 
     def test_actual_recipes_have_python_bindings_for_enabled_functional_features(self):
         spec = importlib.util.spec_from_file_location('python_runtime', ROOT/'ci/test/02_run_container.py')
-        module = importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
         for name in ('arm','i686_no_ipc','native_asan','native_tsan','native_msan',
                      'native_nowallet','native_previous_releases','native_alpine_musl'):
             command=['bash','-ec','source ./ci/test/00_setup_env.sh >/dev/null 2>&1; python3 -c "import json,os; print(json.dumps(dict(os.environ)))"']
@@ -138,7 +143,8 @@ class InheritedTest(unittest.TestCase):
         self.assertTrue(inherited_ci.verify_recipe()['source_sha256'])
         original = inherited_ci.sha256
         with patch.object(inherited_ci, 'sha256', side_effect=lambda p: '0'*64 if p.name=='03_test_script.sh' else original(p)):
-            with self.assertRaisesRegex(ValueError, 'changed without review'): inherited_ci.verify_recipe()
+            with self.assertRaisesRegex(ValueError, 'changed without review'):
+                inherited_ci.verify_recipe()
 
     def test_actual_tracing_recipes_match_host_header_provisioning(self):
         workflow = (ROOT/'.github/workflows/ci.yml').read_text()
@@ -146,7 +152,8 @@ class InheritedTest(unittest.TestCase):
         profiles = json.loads(re.search(r"fromJSON\('([^']+)'\)", step).group(1))
         self.assertEqual(len(profiles), len(set(profiles)))
         spec = importlib.util.spec_from_file_location('tracing_entry', ROOT/'ci/test/02_run_container.py')
-        module = importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
         seen = set()
         for recipe in sorted((ROOT/'ci/test').glob('00_setup_env*.sh')):
             if recipe.name == '00_setup_env.sh':
@@ -170,22 +177,27 @@ class InheritedTest(unittest.TestCase):
                 called.append(kwargs['env']['BITCOIN_CONFIG'])
                 return subprocess.CompletedProcess(command, codes[len(called)-1])
             path = Path(directory)/'execution'
-            try: inherited_ci.execute(inherited_ci.plan(self.env()), path, run=recipe)
-            except ValueError: pass
+            try:
+                inherited_ci.execute(inherited_ci.plan(self.env()), path, run=recipe)
+            except ValueError:
+                pass
             return json.loads((path/'results.json').read_text()), called
 
     def test_original_failure_never_launches_native(self):
         report, calls = self.execute_fixture([7])
-        self.assertEqual(report['status'], 'failed');self.assertEqual(len(calls), 1)
+        self.assertEqual(report['status'], 'failed')
+        self.assertEqual(len(calls), 1)
         self.assertEqual(report['native_execution'], 'deferred')
 
     def include_edit_fixture(self, *, iwyu=True, returncode=0, other_source=False):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
-            cpp = root / 'src/example.cpp'; cpp.parent.mkdir()
+            cpp = root / 'src/example.cpp'
+            cpp.parent.mkdir()
             original = b'#include <vector>\nint main(){return 0;}\n'
             cpp.write_bytes(original)
-            helper = root / 'test/pocx/helper.py'; helper.parent.mkdir(parents=True)
+            helper = root / 'test/pocx/helper.py'
+            helper.parent.mkdir(parents=True)
             helper.write_text('original\n')
             def snapshot(directory):
                 return {str(p.relative_to(root)): hashlib.sha256(p.read_bytes()).hexdigest()
@@ -259,17 +271,28 @@ class InheritedTest(unittest.TestCase):
 
     def test_evidence_retention_is_new_bounded_and_avoids_symlinks(self):
         with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory);build = root/'build';build.mkdir()
-            old = build/'bitcoin-unit-old';old.mkdir();(old/'results.json').write_text('old')
+            root = Path(directory)
+            build = root/'build'
+            build.mkdir()
+            old = build/'bitcoin-unit-old'
+            old.mkdir()
+            (old/'results.json').write_text('old')
             before = inherited_ci.evidence_directories(build)
-            current = build/'pocx-inherited-functional-new';current.mkdir()
+            current = build/'pocx-inherited-functional-new'
+            current.mkdir()
             (current/'results.json').write_text('new')
-            nested = current/'functional';nested.mkdir();(nested/'cases.csv').write_text('cases')
-            deep = nested/'node-data';deep.mkdir();(deep/'debug.log').write_text('not a report')
+            nested = current/'functional'
+            nested.mkdir()
+            (nested/'cases.csv').write_text('cases')
+            deep = nested/'node-data'
+            deep.mkdir()
+            (deep/'debug.log').write_text('not a report')
             (current/'binary.dat').write_text('not a report')
             (current/'linked.log').symlink_to(old/'results.json')
             (current/'linked-directory').symlink_to(old, target_is_directory=True)
-            ignored = build/'other-tests';ignored.mkdir();(ignored/'results.json').write_text('other')
+            ignored = build/'other-tests'
+            ignored.mkdir()
+            (ignored/'results.json').write_text('other')
             destination = root/'output'
             retained = inherited_ci.retain_evidence(build, before, destination)
             self.assertEqual(set(retained), {'pocx-inherited-functional-new/results.json',
@@ -278,10 +301,13 @@ class InheritedTest(unittest.TestCase):
 
     def test_both_transport_raw_rpc_coverage_is_retained_without_node_data(self):
         with tempfile.TemporaryDirectory() as temporary:
-            root = Path(temporary); build = root / 'build'
-            report = build / 'pocx-results-fixture'; report.mkdir(parents=True)
+            root = Path(temporary)
+            build = root / 'build'
+            report = build / 'pocx-results-fixture'
+            report.mkdir(parents=True)
             for prefix in ('rpc-coverage', 'v2/rpc-coverage'):
-                directory = report / prefix; directory.mkdir(parents=True)
+                directory = report / prefix
+                directory.mkdir(parents=True)
                 (directory / 'rpc_interface.txt').write_text('getblockcount\n')
                 (directory / 'coverage.123.node0').write_text('getblockcount\n')
                 (directory / 'node-data.dat').write_text('not coverage')
@@ -294,14 +320,19 @@ class InheritedTest(unittest.TestCase):
 
     def test_failed_recipe_reports_are_copied_and_publishable(self):
         with tempfile.TemporaryDirectory() as directory:
-            root=Path(directory);env=self.env();env['BASE_BUILD_DIR']=str(root/'build')
-            pair=inherited_ci.plan(self.env());pair[0]['environment']=env
+            root=Path(directory)
+            env=self.env()
+            env['BASE_BUILD_DIR']=str(root/'build')
+            pair=inherited_ci.plan(self.env())
+            pair[0]['environment']=env
             def recipe(command, **kwargs):
-                evidence=Path(env['BASE_BUILD_DIR'])/'bitcoin-unit-failed';evidence.mkdir(parents=True)
+                evidence=Path(env['BASE_BUILD_DIR'])/'bitcoin-unit-failed'
+                evidence.mkdir(parents=True)
                 (evidence/'results.json').write_text('{"status":"failed"}')
                 return subprocess.CompletedProcess(command,9)
             output=root/'pocx-inherited-fixture/execution'
-            with self.assertRaises(ValueError):inherited_ci.execute(pair,output,run=recipe)
+            with self.assertRaises(ValueError):
+                inherited_ci.execute(pair,output,run=recipe)
             report=json.loads((output/'results.json').read_text())
             self.assertEqual(set(report['steps'][0]['retained_evidence']), {'bitcoin-unit-failed/results.json'})
             destination=inherited_ci.publish(output,root)
@@ -315,15 +346,21 @@ class InheritedTest(unittest.TestCase):
                 inherited_ci.execute(inherited_ci.plan(self.env()),output,
                     run=lambda *a,**kw: (_ for _ in ()).throw(OSError('launch failed')))
             report=json.loads((output/'results.json').read_text())
-            self.assertEqual(report['status'],'failed');self.assertEqual(report['steps'][0]['status'],'failed')
+            self.assertEqual(report['status'],'failed')
+            self.assertEqual(report['steps'][0]['status'],'failed')
             self.assertEqual(report['native_execution'],'deferred')
 
     @unittest.skipUnless(sys.platform != 'win32', 'POSIX artifact permission proof')
     def test_published_root_step_reports_are_readable_by_artifact_uploader(self):
         with tempfile.TemporaryDirectory() as directory:
-            root=Path(directory);output=root/'pocx-inherited-fixture/execution';output.mkdir(parents=True,mode=0o700)
-            log=output/'bitcoin.log';log.write_text('report');log.chmod(0o600)
-            nested=output/'bitcoin-evidence';nested.mkdir(mode=0o700)
+            root=Path(directory)
+            output=root/'pocx-inherited-fixture/execution'
+            output.mkdir(parents=True,mode=0o700)
+            log=output/'bitcoin.log'
+            log.write_text('report')
+            log.chmod(0o600)
+            nested=output/'bitcoin-evidence'
+            nested.mkdir(mode=0o700)
             (nested/'results.json').write_text('{"status":"failed"}')
             (root/'artifacts/pocx-inherited').mkdir(parents=True,mode=0o700)
             (root/'artifacts').chmod(0o700)
@@ -335,40 +372,50 @@ class InheritedTest(unittest.TestCase):
 
     def test_container_evidence_copy_is_structured_and_failure_is_fatal(self):
         spec=importlib.util.spec_from_file_location('container_capture',ROOT/'ci/test/02_run_container.py')
-        module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+        module=importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
         with tempfile.TemporaryDirectory() as directory:
-            env={'BASE_READ_ONLY_DIR':directory,'BASE_ROOT_DIR':'/guest/source tree'};calls=[]
+            env={'BASE_READ_ONLY_DIR':directory,'BASE_ROOT_DIR':'/guest/source tree'}
+            calls=[]
             def invoke(command,**kwargs):
-                calls.append((command,kwargs));return subprocess.CompletedProcess(command,0)
+                calls.append((command,kwargs))
+                return subprocess.CompletedProcess(command,0)
             module.capture_evidence('container-id',env,invoke=invoke)
             self.assertEqual(calls,[(['docker','cp','container-id:/guest/source tree/artifacts/pocx-inherited',
                                      str(Path(directory)/'artifacts')],{'check':False})])
-            with self.assertRaises(RuntimeError):module.capture_evidence('container-id',env,
+            with self.assertRaises(RuntimeError):
+                module.capture_evidence('container-id',env,
                 invoke=lambda command,**kwargs:subprocess.CompletedProcess(command,1))
 
     def test_native_failure_does_not_hide_original_result(self):
         report, calls = self.execute_fixture([0,8])
         self.assertEqual([s['status'] for s in report['steps']], ['passed','failed'])
-        self.assertEqual(report['status'], 'failed');self.assertEqual(len(calls),2)
+        self.assertEqual(report['status'], 'failed')
+        self.assertEqual(len(calls),2)
 
     def test_success_requires_both_recipes(self):
         report, calls = self.execute_fixture([0,0])
-        self.assertEqual(report['status'], 'passed');self.assertEqual(len(calls),2)
+        self.assertEqual(report['status'], 'passed')
+        self.assertEqual(len(calls),2)
         with tempfile.TemporaryDirectory() as directory:
             for pairs in ([], list(reversed(inherited_ci.plan(self.env())))):
-                with self.assertRaises(ValueError): inherited_ci.execute(pairs, Path(directory)/'unused')
+                with self.assertRaises(ValueError):
+                    inherited_ci.execute(pairs, Path(directory)/'unused')
 
     def test_cli_and_multiprocess_settings_preserved(self):
         profile = functional.inherited_options({'TEST_RUNNER_EXTRA':'--v2transport --usecli --extended', 'BITCOIN_CMD':'bitcoin -m'})
-        self.assertTrue(profile['use_cli']);self.assertTrue(profile['multiprocess'])
+        self.assertTrue(profile['use_cli'])
+        self.assertTrue(profile['multiprocess'])
         self.assertEqual(profile['transports'], ['v1','v2'])
         for env in ({'TEST_RUNNER_EXTRA':'--exclude=wallet_basic'}, {'BITCOIN_CMD':'other-command'}):
-            with self.subTest(env=env), self.assertRaises(ValueError): functional.inherited_options(env)
+            with self.subTest(env=env), self.assertRaises(ValueError):
+                functional.inherited_options(env)
 
     def test_inherited_timeout_factor_is_explicit_finite_and_unambiguous(self):
         for text in ('--timeout-factor=40','--timeout-factor 40'):
             profile=functional.inherited_options({'TEST_RUNNER_EXTRA':text+' --usecli'})
-            self.assertEqual(profile['timeout_factor'],40);self.assertTrue(profile['use_cli'])
+            self.assertEqual(profile['timeout_factor'],40)
+            self.assertTrue(profile['use_cli'])
         for text in ('--timeout-factor','--timeout-factor=','--timeout-factor=0',
                      '--timeout-factor=-1','--timeout-factor=nan','--timeout-factor=inf',
                      '--timeout-factor=1 --timeout-factor=2','--timeout-factor=40 --exclude=wallet_basic'):
@@ -384,11 +431,14 @@ class InheritedTest(unittest.TestCase):
         profile = functional.inherited_options({})
         for case, flag in [('wallet_basic.py','ENABLE_WALLET'),('interface_ipc.py','ENABLE_IPC')]:
             state,reason = functional.classify(case,'Skipped',{flag:'OFF'},profile)
-            self.assertEqual(state,'configuration-disabled');self.assertIn(flag+'=OFF',reason)
+            self.assertEqual(state,'configuration-disabled')
+            self.assertIn(flag+'=OFF',reason)
 
     def test_only_unconditional_guards_allow_feature_omissions(self):
         with tempfile.TemporaryDirectory() as directory:
-            root=Path(directory);path=root/'test/functional/feature_probe.py';path.parent.mkdir(parents=True)
+            root=Path(directory)
+            path=root/'test/functional/feature_probe.py'
+            path.parent.mkdir(parents=True)
             path.write_text('class Probe:\n def skip_test_if_missing_module(self):\n  if condition:\n   self.skip_if_no_wallet()\n')
             self.assertIsNone(functional.disabled_reason(path.name, {'ENABLE_WALLET':'OFF'}, functional.inherited_options({}), root=root))
 
@@ -458,15 +508,19 @@ class InheritedTest(unittest.TestCase):
         for xml in ('<testsuite/>',valid.replace('/>','><skipped/></testcase>'),
                     valid.replace('/>','><failure/></testcase>'),
                     valid.replace('</testsuite>','<testcase name="library"/></testsuite>')):
-            with self.subTest(xml=xml), self.assertRaises(ValueError): tests.verify_auxiliary(xml,['library'])
+            with self.subTest(xml=xml), self.assertRaises(ValueError):
+                tests.verify_auxiliary(xml,['library'])
 
     def test_framework_dispatch_requires_native_full_unit_and_original_kernel(self):
         options={'ENABLE_POCX':'ON','BUILD_GUI':'ON','BUILD_GUI_TESTS':'ON','BUILD_KERNEL_LIB':'ON','BUILD_KERNEL_TEST':'ON'}
         commands,disabled=tests.framework_commands(ROOT/'build-probe',options,4,2400,ROOT/'build-output')
-        self.assertEqual([name for name,_ in commands], ['unit','qt','kernel']);self.assertFalse(disabled)
-        self.assertIn('--all',commands[0][1]);self.assertNotIn('--bitcoin',commands[-1][1])
+        self.assertEqual([name for name,_ in commands], ['unit','qt','kernel'])
+        self.assertFalse(disabled)
+        self.assertIn('--all',commands[0][1])
+        self.assertNotIn('--bitcoin',commands[-1][1])
         commands,_=tests.framework_commands(ROOT/'build-probe',{**options,'ENABLE_POCX':'OFF'},4,2400,ROOT/'build-output')
-        self.assertIn('--bitcoin',commands[-1][1]);self.assertIn('run_bitcoin_unit.py',commands[0][1][1])
+        self.assertIn('--bitcoin',commands[-1][1])
+        self.assertIn('run_bitcoin_unit.py',commands[0][1][1])
         configured,_=tests.framework_commands(ROOT/'build-probe',options,4,2400,ROOT/'build-output',selected_config='Release')
         self.assertTrue(all(command[-2:]==['--config','Release'] for _,command in configured))
 
@@ -483,7 +537,8 @@ class InheritedTest(unittest.TestCase):
         (root/'CMakeCache.txt').write_text(
             'CMAKE_CONFIGURATION_TYPES:STRING=Debug;Release\n' if multi else '')
         directory=root/'bin'
-        if multi:directory/='Release'
+        if multi:
+            directory/='Release'
         directory.mkdir(parents=True)
         if multiprocess:
             for name in ('bitcoin','bitcoin-node'):
@@ -493,15 +548,20 @@ class InheritedTest(unittest.TestCase):
                 path.write_bytes(b'never executed fixture binary')
 
     def test_jobs_and_disabled_frameworks_are_explicit(self):
-        for value in ('4','-j4','-j 4'):self.assertEqual(tests.jobs(value),4)
+        for value in ('4','-j4','-j 4'):
+            self.assertEqual(tests.jobs(value),4)
         for value in ('0','-j0','-1','-j4 --other'):
-            with self.subTest(value=value),self.assertRaises(Exception):tests.jobs(value)
+            with self.subTest(value=value),self.assertRaises(Exception):
+                tests.jobs(value)
         commands,disabled=tests.framework_commands(ROOT/'build-probe',{'ENABLE_POCX':'OFF','BUILD_GUI':'OFF','BUILD_KERNEL_LIB':'OFF'},4,2400,ROOT/'build-output')
-        self.assertEqual([name for name,_ in commands],['unit']);self.assertEqual(set(disabled),{'qt','kernel'})
+        self.assertEqual([name for name,_ in commands],['unit'])
+        self.assertEqual(set(disabled),{'qt','kernel'})
 
     def original_functional_fixture(self, status, *, multi=False, extra='', raw_exit=0, aggregate='Passed'):
         with tempfile.TemporaryDirectory() as directory:
-            root=Path(directory);output=root/'output';self.functional_build_fixture(root,multi=multi)
+            root=Path(directory)
+            output=root/'output'
+            self.functional_build_fixture(root,multi=multi)
             def original_runner(command, **kwargs):
                 import functional_execution
                 paths=functional_execution.binary_paths(root,(root/'CMakeCache.txt').read_text(),'Release' if multi else None)
@@ -514,9 +574,11 @@ class InheritedTest(unittest.TestCase):
                     patch.object(functional,'expected_cases',return_value=['p2p_ping.py']), \
                     patch.object(functional.subprocess,'check_output',return_value='FixtureBenchmark\n'), \
                     patch.object(functional.subprocess,'run',side_effect=original_runner):
-                try:functional.run(root,output,{'ENABLE_POCX':'OFF','BUILD_BENCH':'ON'},4,40,
+                try:
+                    functional.run(root,output,{'ENABLE_POCX':'OFF','BUILD_BENCH':'ON'},4,40,
                     environment={'TEST_RUNNER_EXTRA':extra},selected_config='Release' if multi else None)
-                except ValueError:pass
+                except ValueError:
+                    pass
             self.assertTrue((output/'cases.csv').is_file())
             return json.loads((output/'results.json').read_text())
 
@@ -557,9 +619,13 @@ class InheritedTest(unittest.TestCase):
         from functional_cases import case_spec,selection_digest
         import functional_execution
         with tempfile.TemporaryDirectory() as directory:
-            root=Path(directory);output=root/'output';proof=root/'native-proof';proof.mkdir()
+            root=Path(directory)
+            output=root/'output'
+            proof=root/'native-proof'
+            proof.mkdir()
             self.functional_build_fixture(root,multiprocess=True)
-            spec=case_spec('p2p_ping.py',[]);execution=functional_execution.settings(True,True)
+            spec=case_spec('p2p_ping.py',[])
+            execution=functional_execution.settings(True,True)
             rows=[]
             for mode in ('v1','v2'):
                 flags=['--usecli','--timeout-factor=40','--'+mode+'transport']
@@ -580,18 +646,24 @@ class InheritedTest(unittest.TestCase):
                     patch.object(functional.subprocess,'run',side_effect=native_runner):
                 report=functional.run(root,output,{'ENABLE_POCX':'ON','ENABLE_IPC':'ON'},4,40,
                     environment={'TEST_RUNNER_EXTRA':'--usecli','BITCOIN_CMD':'bitcoin -m'})
-            self.assertEqual(report['status'],'passed');self.assertEqual(report['counts'],{'passed':2})
-            self.assertIn('--usecli',report['runs'][0]['command']);self.assertIn('--multiprocess',report['runs'][0]['command'])
+            self.assertEqual(report['status'],'passed')
+            self.assertEqual(report['counts'],{'passed':2})
+            self.assertIn('--usecli',report['runs'][0]['command'])
+            self.assertIn('--multiprocess',report['runs'][0]['command'])
             self.assertEqual(len((output/'cases.csv').read_text().splitlines()),3)
 
     def native_feature_fixture(self, feature, status, raw_exit=1, *, multi=False, extra='', fallback_factor=40):
         from functional_cases import case_spec,selection_digest
         import functional_execution
         with tempfile.TemporaryDirectory() as directory:
-            root=Path(directory);output=root/'output';proof=root/'native-proof';proof.mkdir()
+            root=Path(directory)
+            output=root/'output'
+            proof=root/'native-proof'
+            proof.mkdir()
             self.functional_build_fixture(root,multi=multi)
             specs=[case_spec(name,[]) for name in ('p2p_ping.py','interface_ipc.py')]
-            execution=functional_execution.settings();rows=[]
+            execution=functional_execution.settings()
+            rows=[]
             for spec in specs:
                 for mode in ('v1','v2'):
                     case_status='passed' if spec['test']=='p2p_ping.py' else status
@@ -601,7 +673,8 @@ class InheritedTest(unittest.TestCase):
                         'command':['python3',spec['test'],*flags],
                         'returncode':0 if case_status=='passed' else 77 if case_status=='skipped' else 1,
                         'timed_out':False,'status':case_status,'seconds':0.1}
-                    if case_status=='skipped':row['skip_reason']='IPC not configured'
+                    if case_status=='skipped':
+                        row['skip_reason']='IPC not configured'
                     rows.append(row)
             data={'provenance':{'format_version':7,'execution_options':execution,'timeout_factor':40,
                 'build_configuration':'Release' if multi else None,
@@ -616,9 +689,11 @@ class InheritedTest(unittest.TestCase):
                     patch.object(functional,'verify_current_inputs',return_value={}), \
                     patch.object(functional,'selected_cases',return_value=specs), \
                     patch.object(functional.subprocess,'run',side_effect=native_runner):
-                try:functional.run(root,output,{'ENABLE_POCX':'ON','ENABLE_IPC':feature},4,fallback_factor,
+                try:
+                    functional.run(root,output,{'ENABLE_POCX':'ON','ENABLE_IPC':feature},4,fallback_factor,
                     environment={'TEST_RUNNER_EXTRA':extra},selected_config='Release' if multi else None)
-                except ValueError:pass
+                except ValueError:
+                    pass
             return json.loads((output/'results.json').read_text())
 
     def test_native_disabled_feature_keeps_skips_explicit_without_rejecting_the_profile(self):

@@ -65,15 +65,18 @@ def single_process_leaves(xml, expected, disabled):
     leaves, seen_suites = {}, set()
     def walk(node, path):
         name = node.get('name')
-        if not name: raise ValueError('Unnamed Boost suite or case')
+        if not name:
+            raise ValueError('Unnamed Boost suite or case')
         case = '/'.join([*path, name])
         if node.tag == 'TestSuite':
             if case in seen_suites or node.get('result') not in ('passed', 'skipped'):
                 raise ValueError('Duplicate or failed single-process Boost suite')
             seen_suites.add(case)
-            for child in node: walk(child, [*path, name])
+            for child in node:
+                walk(child, [*path, name])
         elif node.tag == 'TestCase':
-            if node.get('result') == 'skipped' and case in disabled: return
+            if node.get('result') == 'skipped' and case in disabled:
+                return
             if (case in leaves or case not in expected or node.get('result') != 'passed' or
                     node.get('assertions_failed') != '0'):
                 raise ValueError('Unexpected, duplicate, failed or skipped unit case: ' + case)
@@ -81,19 +84,24 @@ def single_process_leaves(xml, expected, disabled):
             if assertions < 0 or case in unit_matrix.AVX2_CASES | unit_matrix.SSE2_CASES and assertions == 0:
                 raise ValueError('Missing executed unit assertions: ' + case)
             leaves[case] = assertions
-        else: raise ValueError('Unexpected Boost report node')
-    for child in module: walk(child, [])
-    if set(leaves) != set(expected): raise ValueError('Missing executed single-process unit leaf cases')
+        else:
+            raise ValueError('Unexpected Boost report node')
+    for child in module:
+        walk(child, [])
+    if set(leaves) != set(expected):
+        raise ValueError('Missing executed single-process unit leaf cases')
     return leaves
 
 
 def run_phase(payload, row, output, assets, *, environment=None, timeout=2400, execute=process_tree.execute):
-    if type(timeout) is not int or timeout < 1: raise ValueError('Expected a positive whole-process unit timeout')
+    if type(timeout) is not int or timeout < 1:
+        raise ValueError('Expected a positive whole-process unit timeout')
     payload, output = payload.resolve(), output.resolve()
     output.mkdir(parents=True, exist_ok=False)
     binary = payload / row['unit_binary']
     expected = set(row['expected_unit']['expected'])
-    if sha256(binary) != row['files'][row['unit_binary']]: raise ValueError('Stale artifact unit executable')
+    if sha256(binary) != row['files'][row['unit_binary']]:
+        raise ValueError('Stale artifact unit executable')
     env = {key: value for key, value in (os.environ if environment is None else environment).items()
            if not key.startswith('BOOST_TEST_')}
     temp = short_tmpdir(output)
@@ -112,13 +120,16 @@ def run_phase(payload, row, output, assets, *, environment=None, timeout=2400, e
             result = execute(command, cwd=payload, env=env, log=stream, timeout=timeout)
         step = {'name': name, 'command': command, 'seconds': time.monotonic() - started,
                 'log_sha256': sha256(log), **result}
-        report['steps'].append(step); save()
+        report['steps'].append(step)
+        save()
         process_tree.validate_control(controller, result['process_control'], command)
-        if result['returncode'] or result['timed_out']: raise ValueError('Artifact unit process failed or timed out')
+        if result['returncode'] or result['timed_out']:
+            raise ValueError('Artifact unit process failed or timed out')
         return log.read_text()
     save()
     try:
-        if 'script_assets_tests/script_assets_test' in expected: validate_assets(assets)
+        if 'script_assets_tests/script_assets_test' in expected:
+            validate_assets(assets)
         listing = invoke('listing', [str(binary), '--list_content'])
         disabled = runtime_cases(listing, expected)
         report['default_disabled_subprocess_helpers'] = sorted(disabled)
@@ -131,16 +142,21 @@ def run_phase(payload, row, output, assets, *, environment=None, timeout=2400, e
         if re.search('skipping script_assets_test|skipping total_ram', log):
             raise ValueError('Required unit prerequisite was skipped')
         leaves = single_process_leaves(xml.read_text(), expected, disabled)
-        if 'script_assets_tests/script_assets_test' in expected: validate_assets(assets)
-        if sha256(binary) != report['binary_sha256']: raise ValueError('Artifact unit binary changed during execution')
+        if 'script_assets_tests/script_assets_test' in expected:
+            validate_assets(assets)
+        if sha256(binary) != report['binary_sha256']:
+            raise ValueError('Artifact unit binary changed during execution')
         report.update(status='passed', xml_sha256=sha256(xml), cases=[
             {'case': case, 'status': 'passed', 'origin': 'original' if case in row['expected_unit']['original'] else 'native',
              'assertions_passed': assertions} for case, assertions in sorted(leaves.items())])
         with (output / 'cases.csv').open('w', newline='') as stream:
             writer = csv.DictWriter(stream, fieldnames=['case', 'status', 'origin', 'assertions_passed'])
-            writer.writeheader(); writer.writerows(report['cases'])
+            writer.writeheader()
+            writer.writerows(report['cases'])
     except BaseException as error:
-        report.update(status='failed', error=str(error)); save(); raise
+        report.update(status='failed', error=str(error))
+        save()
+        raise
     save()
     return report
 
@@ -157,7 +173,8 @@ def run_pair(bundle, output, assets, *, root=ROOT, timeout=2400, execute=process
     save()
     try:
         for row in pair['phases']:
-            if row['consensus'] == 'pocx': report['native_execution'] = 'started'
+            if row['consensus'] == 'pocx':
+                report['native_execution'] = 'started'
             phase = {'consensus': row['consensus'], 'status': 'running'}
             report['phases'].append(phase)
             save()
@@ -168,15 +185,19 @@ def run_pair(bundle, output, assets, *, root=ROOT, timeout=2400, execute=process
             phase.update(status=child['status'], report_sha256=sha256(output / row['consensus'] / 'results.json'))
             save()
             windows_artifacts.verify_pair(bundle, root=root, revision=revision)
-            if report['pair_sha256'] != sha256(bundle / 'pair.json'): raise ValueError('Artifact manifest changed during unit execution')
+            if report['pair_sha256'] != sha256(bundle / 'pair.json'):
+                raise ValueError('Artifact manifest changed during unit execution')
         report['status'] = 'passed'
     except BaseException as error:
         if report['phases'] and report['phases'][-1]['status'] == 'running':
             phase = report['phases'][-1]
             phase['status'] = 'failed'
             child = output / phase['consensus'] / 'results.json'
-            if child.is_file(): phase['report_sha256'] = sha256(child)
-        report.update(status='failed', error=str(error)); save(); raise
+            if child.is_file():
+                phase['report_sha256'] = sha256(child)
+        report.update(status='failed', error=str(error))
+        save()
+        raise
     save()
     return report
 
@@ -188,8 +209,10 @@ def main():
     parser.add_argument('--timeout', type=int, default=2400)
     parser.add_argument('--plan', action='store_true')
     args = parser.parse_args()
-    if args.timeout < 1: parser.error('Expected positive --timeout')
-    if not args.plan and os.name != 'nt': parser.error('Actual cross-artifact unit execution requires Windows')
+    if args.timeout < 1:
+        parser.error('Expected positive --timeout')
+    if not args.plan and os.name != 'nt':
+        parser.error('Actual cross-artifact unit execution requires Windows')
     windows_artifacts.verify_recipe()
     pair = windows_artifacts.verify_pair(args.artifacts)
     if args.plan:
@@ -197,7 +220,8 @@ def main():
             'phases': [{'consensus': row['consensus'], 'expected_cases': len(row['expected_unit']['expected'])}
                        for row in pair['phases']]}, indent=2))
         return 0
-    if args.output is None: parser.error('Actual execution requires a new --output directory')
+    if args.output is None:
+        parser.error('Actual execution requires a new --output directory')
     assets = unit_assets.provision(ROOT / 'unit_test_data')
     run_pair(args.artifacts.resolve(), args.output.resolve(), assets, timeout=args.timeout)
     return 0

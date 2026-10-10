@@ -78,7 +78,8 @@ def verify_child(report, directory, view, options, jobs, factor, environment, *,
         expected = [spec['id'] for spec in expected]
     else:
         enabled = options.get('BUILD_BENCH') == 'ON'
-        if options.get('BUILD_BENCH') not in ('ON', 'OFF'): raise ValueError('Missing explicit benchmark feature')
+        if options.get('BUILD_BENCH') not in ('ON', 'OFF'):
+            raise ValueError('Missing explicit benchmark feature')
         benchmarks = []
         if enabled:
             log = directory / 'benchmarks.log'
@@ -88,27 +89,33 @@ def verify_child(report, directory, view, options, jobs, factor, environment, *,
             benchmarks = log.read_text().splitlines()
         elif 'benchmark_discovery' in report:
             raise ValueError('Disabled benchmarks have unexpected discovery evidence')
-        if report.get('benchmarks') != benchmarks: raise ValueError('Benchmark inventory differs from executed listing')
+        if report.get('benchmarks') != benchmarks:
+            raise ValueError('Benchmark inventory differs from executed listing')
         expected = functional.original_inventory(root / 'test/functional/test_runner.py', benchmarks, enabled)
         for mode in ('v1', 'v2'):
             for group in functional.original_groups(expected, options):
                 command = functional.original_command(view, directory, group, mode, jobs, factor, profile, windows=True)
                 if group[2]:
                     runs = [run for run in report['runs'] if run['name'] == mode + '-legacy-utxo']
-                    if len(runs) != 1: raise ValueError('Missing or duplicate old-release UTXO execution')
+                    if len(runs) != 1:
+                        raise ValueError('Missing or duplicate old-release UTXO execution')
                     code = runs[0]['returncode']
-                    if type(code) is not int or code not in (0, 77): raise ValueError('Old-release UTXO execution failed')
+                    if type(code) is not int or code not in (0, 77):
+                        raise ValueError('Old-release UTXO execution failed')
                     status = 'Passed' if code == 0 else 'Skipped'
                     raw.append((functional.LEGACY_UTXO, mode, mode, status, runs[0]['seconds']))
                     expected_runs.append((mode + '-legacy-utxo', command, code))
                 else:
                     rows, summary = functional.read_cases(directory / (mode + '.csv'), group[1])
-                    if summary[1] != 'Passed': raise ValueError('Original functional aggregate failed')
+                    if summary[1] != 'Passed':
+                        raise ValueError('Original functional aggregate failed')
                     for case, status, duration in rows:
                         raw.append((case, mode, functional.effective_transport(case, mode), status, float(duration)))
                     expected_runs.append((mode, command, 0))
-    if report.get('expected_cases') != expected: raise ValueError('Functional expected inventory changed')
-    if len(report.get('runs', [])) != len(expected_runs): raise ValueError('Missing or additional functional runner execution')
+    if report.get('expected_cases') != expected:
+        raise ValueError('Functional expected inventory changed')
+    if len(report.get('runs', [])) != len(expected_runs):
+        raise ValueError('Missing or additional functional runner execution')
     for run, (name, command, code) in zip(report['runs'], expected_runs):
         if (run['name'] != name or run['command'] != command or run['returncode'] != code or
                 type(run.get('seconds')) not in (int, float) or not math.isfinite(run['seconds']) or run['seconds'] < 0 or
@@ -126,7 +133,8 @@ def verify_child(report, directory, view, options, jobs, factor, environment, *,
                         'reason': reason, 'execution_status': status, 'seconds': seconds})
     if report.get('cases') != checked or report.get('counts') != dict(Counter(row['status'] for row in checked)):
         raise ValueError('Functional reported cases differ from raw terminal results')
-    if not any(row['status'] == 'passed' for row in checked): raise ValueError('No applicable functional passes')
+    if not any(row['status'] == 'passed' for row in checked):
+        raise ValueError('No applicable functional passes')
     return checked
 
 
@@ -135,9 +143,11 @@ def run_phase(bundle, row, output, jobs, factor, *, environment=None, timeout=86
     if type(jobs) is not int or jobs < 1 or type(timeout) is not int or timeout < 1:
         raise ValueError('Expected positive functional jobs and process timeout')
     output = output.resolve()
-    if output.is_relative_to(bundle.resolve()): raise ValueError('Reports must be outside immutable artifact payload')
+    if output.is_relative_to(bundle.resolve()):
+        raise ValueError('Reports must be outside immutable artifact payload')
     options = row['build_options']
-    if options.get('target_system') != 'Windows': raise ValueError('Functional artifacts require a Windows target')
+    if options.get('target_system') != 'Windows':
+        raise ValueError('Functional artifacts require a Windows target')
     env = {key: value for key, value in (os.environ if environment is None else environment).items() if key != 'PYTHONPATH'}
     env['PYTHONDONTWRITEBYTECODE'] = '1'
     profile = execution_profile(env, factor)
@@ -145,7 +155,8 @@ def run_phase(bundle, row, output, jobs, factor, *, environment=None, timeout=86
     releases = functional_environment.release_binaries(env['PREVIOUS_RELEASES_DIR']) if profile['previous_releases'] else {}
     release_inputs = {name: {'path': str(path), 'sha256': sha256(path)} for name, path in releases.items()}
     pair = windows_artifacts.verify_pair(bundle, root=root, revision=revision)
-    if row not in pair['phases']: raise ValueError('Functional phase differs from immutable artifact manifest')
+    if row not in pair['phases']:
+        raise ValueError('Functional phase differs from immutable artifact manifest')
     output.mkdir(parents=True, exist_ok=False)
     view = output / 'runtime'
     report = {'status': 'running', 'scope': 'Complete applicable artifact functional selection in both transports; full hosted pipeline incomplete',
@@ -161,14 +172,17 @@ def run_phase(bundle, row, output, jobs, factor, *, environment=None, timeout=86
         child = output / 'execution'
         command = [sys.executable, '-B', str(root / 'test/pocx/inherited_functional.py'),
             '--build-dir', str(view), '--output', str(child), '--jobs', str(jobs), '--timeout-factor', str(factor)]
-        report['command'] = command; save()
+        report['command'] = command
+        save()
         log = output / 'functional.log'
         start = time.monotonic()
         with log.open('w') as stream:
             execution = execute(command, cwd=root, env=env, log=stream, timeout=timeout)
-        report.update(**execution, seconds=time.monotonic() - start, log_sha256=sha256(log)); save()
+        report.update(**execution, seconds=time.monotonic() - start, log_sha256=sha256(log))
+        save()
         process_tree.validate_control(report['process_controller'], execution['process_control'], command)
-        if execution['returncode'] or execution['timed_out']: raise ValueError('Artifact functional process failed or timed out')
+        if execution['returncode'] or execution['timed_out']:
+            raise ValueError('Artifact functional process failed or timed out')
         proof_path = child / 'results.json'
         proof = json.loads(proof_path.read_text())
         report['child_report_sha256'] = sha256(proof_path)
@@ -179,14 +193,18 @@ def run_phase(bundle, row, output, jobs, factor, *, environment=None, timeout=86
             raise ValueError('Artifact or previous-release input changed during functional execution')
         report['counts'] = dict(Counter(row['status'] for row in report['cases']))
         with (output / 'cases.csv').open('w', newline='') as stream:
-            writer = csv.DictWriter(stream, fieldnames=list(report['cases'][0])); writer.writeheader(); writer.writerows(report['cases'])
+            writer = csv.DictWriter(stream, fieldnames=list(report['cases'][0]))
+            writer.writeheader()
+            writer.writerows(report['cases'])
         report['status'] = 'passed'
     except BaseException as error:
         proof_path = output / 'execution/results.json'
         if proof_path.is_file():
             report['child_report_sha256'] = sha256(proof_path)
             report['failed_child_report'] = str(proof_path)
-        report.update(status='failed', error=str(error)); save(); raise
+        report.update(status='failed', error=str(error))
+        save()
+        raise
     save()
     return report
 
@@ -200,7 +218,8 @@ def main():
     parser.add_argument('--timeout-factor', type=float, default=40)
     parser.add_argument('--timeout', type=int, default=86400)
     args = parser.parse_args()
-    if os.name != 'nt': parser.error('Actual artifact functional execution requires Windows')
+    if os.name != 'nt':
+        parser.error('Actual artifact functional execution requires Windows')
     windows_artifacts.verify_recipe()
     pair = windows_artifacts.verify_pair(args.artifacts)
     row = next(row for row in pair['phases'] if row['consensus'] == args.consensus)

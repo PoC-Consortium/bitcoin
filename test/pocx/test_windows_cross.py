@@ -23,7 +23,8 @@ class WindowsCrossTest(unittest.TestCase):
     def setUp(self):
         self.helper = test_windows_artifacts.WindowsArtifactsTest()
         inventory = patch.object(windows_artifacts.unit_matrix, 'inventory', side_effect=self.helper.inventory)
-        inventory.start(); self.addCleanup(inventory.stop)
+        inventory.start()
+        self.addCleanup(inventory.stop)
 
     def fixture(self, directory):
         root, builds, _ = self.helper.fixture(directory)
@@ -49,8 +50,10 @@ class WindowsCrossTest(unittest.TestCase):
                 self.assertIn('-DENABLE_POCX=' + enabled, row['environment']['BITCOIN_CONFIG'])
                 for key in ('HOST', 'GOAL', 'RUN_UNIT_TESTS', 'RUN_FUNCTIONAL_TESTS'):
                     self.assertEqual(row['environment'][key], env[key])
-            mismatched = deepcopy(pairs); mismatched[1]['environment']['HOST'] = 'x86_64-w64-mingw32-unknown'
-            with self.assertRaises(ValueError): cross.is_cross_pair(mismatched)
+            mismatched = deepcopy(pairs)
+            mismatched[1]['environment']['HOST'] = 'x86_64-w64-mingw32-unknown'
+            with self.assertRaises(ValueError):
+                cross.is_cross_pair(mismatched)
 
     def test_real_export_and_publication_preserve_exact_paired_payload(self):
         with tempfile.TemporaryDirectory() as directory, self.recipe_context():
@@ -64,17 +67,21 @@ class WindowsCrossTest(unittest.TestCase):
             self.assertEqual(windows_artifacts.verify_pair(source, root=root, revision='a' * 40),
                              windows_artifacts.verify_pair(target, root=root, revision='a' * 40))
             self.assertEqual(report['pair_sha256'], sha256(target / 'pair.json'))
-            with self.assertRaises(ValueError): cross.publish(source, target, root=root, revision='a' * 40)
+            with self.assertRaises(ValueError):
+                cross.publish(source, target, root=root, revision='a' * 40)
 
     def test_inherited_controller_exports_before_container_cleanup_and_publishes_one_payload_copy(self):
         with tempfile.TemporaryDirectory() as directory, self.recipe_context(), \
                 patch.object(windows_artifacts, 'revision_id', return_value='a' * 40):
-            root, _, pairs, output = self.fixture(directory); calls = []
+            root, _, pairs, output = self.fixture(directory)
+            calls = []
             def recipe(command, **kwargs):
-                calls.append(command); kwargs['stdout'].write('Synthetic cross compiler callback\n')
+                calls.append(command)
+                kwargs['stdout'].write('Synthetic cross compiler callback\n')
                 return subprocess.CompletedProcess(command, 0)
             report = inherited_ci.execute(pairs, output, root=root, run=recipe)
-            self.assertEqual(report['status'], 'passed'); self.assertEqual(len(calls), 2)
+            self.assertEqual(report['status'], 'passed')
+            self.assertEqual(len(calls), 2)
             self.assertIn('target-host baseline still required', report['native_execution'])
             self.assertEqual(report['windows_artifacts']['actual_windows_cases_executed'], 0)
             destination = inherited_ci.publish(output, root)
@@ -88,31 +95,39 @@ class WindowsCrossTest(unittest.TestCase):
     def test_failed_original_or_native_build_never_exports_a_pair(self):
         for codes in ((9,), (0, 9)):
             with self.subTest(codes=codes), tempfile.TemporaryDirectory() as directory, self.recipe_context():
-                root, _, pairs, output = self.fixture(directory); statuses = iter(codes); calls = []
+                root, _, pairs, output = self.fixture(directory)
+                statuses = iter(codes)
+                calls = []
                 def recipe(command, **kwargs):
-                    calls.append(command); return subprocess.CompletedProcess(command, next(statuses))
-                with self.assertRaises(ValueError): inherited_ci.execute(pairs, output, root=root, run=recipe)
+                    calls.append(command)
+                    return subprocess.CompletedProcess(command, next(statuses))
+                with self.assertRaises(ValueError):
+                    inherited_ci.execute(pairs, output, root=root, run=recipe)
                 self.assertEqual(len(calls), len(codes))
                 self.assertFalse((output / cross.BUNDLE_DIRECTORY).exists())
                 report = json.loads((output / 'results.json').read_text())
                 self.assertEqual(report['status'], 'failed')
-                if len(codes) == 1: self.assertEqual(report['native_execution'], 'deferred')
+                if len(codes) == 1:
+                    self.assertEqual(report['native_execution'], 'deferred')
 
     def test_incomplete_export_and_target_execution_flags_fail_the_producer(self):
         with tempfile.TemporaryDirectory() as directory, self.recipe_context(), \
                 patch.object(windows_artifacts, 'revision_id', return_value='a' * 40):
             root, builds, pairs, output = self.fixture(directory)
             (builds[1] / 'bin/test_pocx.exe').unlink()
-            with self.assertRaises(ValueError): inherited_ci.execute(pairs, output, root=root,
+            with self.assertRaises(ValueError):
+                inherited_ci.execute(pairs, output, root=root,
                 run=lambda command, **kwargs: subprocess.CompletedProcess(command, 0))
             self.assertFalse((output / cross.BUNDLE_DIRECTORY).exists())
             self.assertEqual(json.loads((output / 'results.json').read_text())['status'], 'failed')
             pairs[0]['environment']['RUN_UNIT_TESTS'] = 'true'
-            with self.assertRaisesRegex(ValueError, 'defer'): cross.export(pairs, root / 'other', root=root)
+            with self.assertRaisesRegex(ValueError, 'defer'):
+                cross.export(pairs, root / 'other', root=root)
 
     def test_runtime_collection_retains_failure_proofs_without_binaries_caches_or_node_data(self):
         with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory); source = root / 'runtime'
+            root = Path(directory)
+            source = root / 'runtime'
             retained = ['results.json', 'cases.csv', 'bitcoin/version.log', 'bitcoin/bitcoind.manifest',
                 'bitcoin/frameworks/results.json', 'bitcoin/frameworks/unit/boost.xml',
                 'bitcoin/functional/execution/v1.csv', 'bitcoin/functional/execution/v1-legacy-utxo.log',
@@ -126,8 +141,11 @@ class WindowsCrossTest(unittest.TestCase):
                 'pocx/functional/runtime/pocx-results-fixture/p2p_ping/node0/regtest/state.json',
                 'pocx/functional/runtime/pocx-results-fixture/cache/state.json']
             for name in retained + ignored:
-                path = source / name; path.parent.mkdir(parents=True, exist_ok=True); path.write_text('Retained failure fixture\n')
-            output = root / 'evidence'; report = cross.collect_runtime(source, output)
+                path = source / name
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text('Retained failure fixture\n')
+            output = root / 'evidence'
+            report = cross.collect_runtime(source, output)
             self.assertTrue(report['runtime_started'])
             self.assertEqual(set(report['files']), set(retained))
             self.assertEqual(set(path.relative_to(output).as_posix() for path in output.rglob('*') if path.is_file()),
@@ -138,14 +156,20 @@ class WindowsCrossTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             report = cross.collect_runtime(root / 'missing', root / 'empty-evidence')
-            self.assertFalse(report['runtime_started']); self.assertEqual(report['files'], {})
-            source = root / 'runtime'; source.mkdir(); (source / 'results.json').symlink_to(root / 'empty-evidence/collection.json')
-            with self.assertRaises(ValueError): cross.collect_runtime(source, root / 'bad-evidence')
-            with self.assertRaises(ValueError): cross.collect_runtime(source, root / 'empty-evidence')
+            self.assertFalse(report['runtime_started'])
+            self.assertEqual(report['files'], {})
+            source = root / 'runtime'
+            source.mkdir()
+            (source / 'results.json').symlink_to(root / 'empty-evidence/collection.json')
+            with self.assertRaises(ValueError):
+                cross.collect_runtime(source, root / 'bad-evidence')
+            with self.assertRaises(ValueError):
+                cross.collect_runtime(source, root / 'empty-evidence')
 
     def test_workflow_pairs_frozen_crt_artifacts_and_runs_owned_complete_consumer(self):
         document = yaml.safe_load((ROOT / '.github/workflows/ci.yml').read_text())
-        producer = document['jobs']['windows-cross']; consumer = document['jobs']['windows-native-test']
+        producer = document['jobs']['windows-cross']
+        consumer = document['jobs']['windows-native-test']
         self.assertEqual(producer['strategy']['matrix']['crt'], ['msvcrt', 'ucrt'])
         self.assertEqual(producer['strategy']['matrix'], {'crt': ['msvcrt', 'ucrt'], 'include': [
             {'crt': 'msvcrt', 'file-env': './ci/test/00_setup_env_win64_msvcrt.sh', 'artifact-name': 'x86_64-w64-mingw32-bitcoin-pocx-tests'},
@@ -170,12 +194,14 @@ class WindowsCrossTest(unittest.TestCase):
         self.assertIn('get_previous_releases.py --target-dir', commands)
         self.assertEqual(consumer['env']['PREVIOUS_RELEASES_DIR'], '${{ github.workspace }}/prev_releases')
         for step in consumer['steps']:
-            if '$env:' in step.get('run', ''): self.assertEqual(step.get('shell'), 'pwsh')
+            if '$env:' in step.get('run', ''):
+                self.assertEqual(step.get('shell'), 'pwsh')
         runtime = next(step for step in consumer['steps'] if 'windows_artifact_ci.py' in step.get('run', ''))
         self.assertIn('--extended', runtime['env']['TEST_RUNNER_EXTRA'])
         collector = next(step for step in consumer['steps'] if 'windows_cross.py --collect-runtime' in step.get('run', ''))
         evidence = next(step for step in consumer['steps'] if step.get('uses', '').startswith('actions/upload-artifact@'))
-        self.assertEqual(collector['if'], 'always()'); self.assertEqual(evidence['if'], 'always()')
+        self.assertEqual(collector['if'], 'always()')
+        self.assertEqual(evidence['if'], 'always()')
         self.assertEqual(evidence['with']['path'], 'artifacts/windows-cross-evidence')
 
 

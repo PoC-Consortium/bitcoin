@@ -29,7 +29,8 @@ SCOPE = 'Cross-artifact Qt, single-process unit, five auxiliary executables and 
 
 def qt_disabled_reason(options):
     disabled = [key + '=OFF' for key in ('BUILD_GUI', 'BUILD_GUI_TESTS') if options.get(key) == 'OFF']
-    if disabled: return ', '.join(disabled)
+    if disabled:
+        return ', '.join(disabled)
     if any(options.get(key) != 'ON' for key in ('BUILD_GUI', 'BUILD_GUI_TESTS')):
         raise ValueError('Ambiguous Qt build feature configuration')
     return None
@@ -37,7 +38,8 @@ def qt_disabled_reason(options):
 
 def kernel_disabled_reason(options):
     disabled = [key + '=OFF' for key in ('BUILD_KERNEL_LIB', 'BUILD_KERNEL_TEST') if options.get(key) == 'OFF']
-    if disabled: return ', '.join(disabled)
+    if disabled:
+        return ', '.join(disabled)
     if any(options.get(key) != 'ON' for key in ('BUILD_KERNEL_LIB', 'BUILD_KERNEL_TEST')):
         raise ValueError('Ambiguous kernel build feature configuration')
     return None
@@ -87,9 +89,11 @@ def expected_rows(row):
 
 
 def run_phase(payload, row, output, assets, *, environment=None, timeout=2400, execute=process_tree.execute):
-    if type(timeout) is not int or timeout < 1: raise ValueError('Expected positive process timeout')
+    if type(timeout) is not int or timeout < 1:
+        raise ValueError('Expected positive process timeout')
     payload, output = payload.resolve(), output.resolve()
-    if output.is_relative_to(payload): raise ValueError('Reports must be outside immutable artifact payload')
+    if output.is_relative_to(payload):
+        raise ValueError('Reports must be outside immutable artifact payload')
     output.mkdir(parents=True, exist_ok=False)
     options = row['build_options']
     native = row['consensus'] == 'pocx'
@@ -102,13 +106,15 @@ def run_phase(payload, row, output, assets, *, environment=None, timeout=2400, e
     cases = {(case['framework'], case['case']): case for case in report['cases']}
     def passed(framework, case, *, assertions=''):
         record = cases[(framework, case)]
-        if record['status'] != 'unverified': raise ValueError('Duplicate or disabled artifact case executed: ' + case)
+        if record['status'] != 'unverified':
+            raise ValueError('Duplicate or disabled artifact case executed: ' + case)
         record.update(status='passed', reason='', assertions_passed=assertions)
     def save():
         (output / 'results.json').write_text(json.dumps(report, indent=2) + '\n')
         with (output / 'cases.csv').open('w', newline='') as stream:
             writer = csv.DictWriter(stream, fieldnames=['framework', 'case', 'counting_unit', 'status', 'origin', 'adaptation', 'reason', 'assertions_passed'])
-            writer.writeheader(); writer.writerows(report['cases'])
+            writer.writeheader()
+            writer.writerows(report['cases'])
     env = {key: value for key, value in (os.environ if environment is None else environment).items()
            if not key.startswith(('BOOST_TEST_', 'QTEST_')) and key != 'SECP256K1_TEST_ITERS'}
     temp = short_tmpdir(output)
@@ -124,16 +130,19 @@ def run_phase(payload, row, output, assets, *, environment=None, timeout=2400, e
         command = [str(path), *arguments]
         log = output / (name + '.log')
         step = {'name': name, 'status': 'running', 'command': command, 'binary_sha256': sha256(path)}
-        report['steps'].append(step); save()
+        report['steps'].append(step)
+        save()
         start = time.monotonic()
         with log.open('w') as stream:
             result = execute(command, cwd=payload, env=env, log=stream, timeout=timeout)
         step.update(**result, seconds=time.monotonic() - start, log_sha256=sha256(log))
         save()
         process_tree.validate_control(controller, result['process_control'], command)
-        if result['returncode'] or result['timed_out']: raise ValueError('Artifact process failed or timed out: ' + name)
+        if result['returncode'] or result['timed_out']:
+            raise ValueError('Artifact process failed or timed out: ' + name)
         check_binary(binary)
-        step['status'] = 'passed'; save()
+        step['status'] = 'passed'
+        save()
         return log.read_text()
     save()
     try:
@@ -145,20 +154,24 @@ def run_phase(payload, row, output, assets, *, environment=None, timeout=2400, e
             save()
         else:
             issues = qt_parity.check(ROOT)
-            if issues: raise ValueError('Qt source review failed: ' + str(issues))
+            if issues:
+                raise ValueError('Qt source review failed: ' + str(issues))
             log = invoke('qt', 'bin/test_bitcoin-qt.exe')
             proof = run_qt.verify_methods(log, native, options.get('ENABLE_WALLET') == 'ON')
             report['qt'] = {'status': 'passed', **proof}
-            for method in proof['methods']: passed('qt', method)
+            for method in proof['methods']:
+                passed('qt', method)
             save()
         # Preserve unchanged upstream order: Qt, one whole unit process, then
         # exhaustive/noverify/verify secp256k1 and the two univalue executables.
         step = {'name': 'unit', 'status': 'running'}
-        report['steps'].append(step); save()
+        report['steps'].append(step)
+        save()
         unit_output = output / 'unit'
         child = units.run_phase(payload, row, unit_output, assets, environment=env, timeout=timeout, execute=execute)
         step.update(status=child['status'], report_sha256=sha256(unit_output / 'results.json'))
-        for case in child['cases']: passed('unit', case['case'], assertions=case['assertions_passed'])
+        for case in child['cases']:
+            passed('unit', case['case'], assertions=case['assertions_passed'])
         save()
         for index, binary in enumerate(windows_artifacts.AUXILIARY):
             invoke('auxiliary-' + str(index), binary)
@@ -170,38 +183,50 @@ def run_phase(payload, row, output, assets, *, environment=None, timeout=2400, e
                                 'scope': 'Still required when kernel tests are enabled'}
         else:
             issues = kernel_parity.check(ROOT)
-            if issues: raise ValueError('Kernel source review failed: ' + str(issues))
+            if issues:
+                raise ValueError('Kernel source review failed: ' + str(issues))
             expected = set(json.loads((ROOT / 'test/pocx/kernel-baseline.json').read_text())['cases'])
             listing = invoke('kernel-listing', 'bin/test_kernel.exe', ['--list_content'])
-            if units.runtime_cases(listing, expected): raise ValueError('Unexpected disabled kernel registrations')
+            if units.runtime_cases(listing, expected):
+                raise ValueError('Unexpected disabled kernel registrations')
             xml = output / 'kernel-boost.xml'
             invoke('kernel', 'bin/test_kernel.exe', ['-l', 'test_suite', '--report_format=XML',
                 '--report_level=detailed', '--report_sink=' + str(xml)])
             proof = kernel_parity.verify_boost_report(xml.read_text(), expected)
             report['kernel'] = {'status': 'passed', 'original_green': len(expected), 'native_only_green': 0,
                 'xml_sha256': sha256(xml), 'assertions_passed': proof['assertions_passed']}
-            for case, assertions in proof['cases'].items(): passed('kernel', case, assertions=assertions)
+            for case, assertions in proof['cases'].items():
+                passed('kernel', case, assertions=assertions)
         save()
         units.validate_assets(assets)
         for name in row['files']:
-            if sha256(payload / name) != row['files'][name]: raise ValueError('Artifact changed during test phase: ' + name)
-        if qt_parity.check(ROOT): raise ValueError('Qt source inputs changed during artifact execution')
-        if kernel_parity.check(ROOT): raise ValueError('Kernel source inputs changed during artifact execution')
-        if any(case['status'] == 'unverified' for case in report['cases']): raise ValueError('Artifact profile has unverified required cases')
+            if sha256(payload / name) != row['files'][name]:
+                raise ValueError('Artifact changed during test phase: ' + name)
+        if qt_parity.check(ROOT):
+            raise ValueError('Qt source inputs changed during artifact execution')
+        if kernel_parity.check(ROOT):
+            raise ValueError('Kernel source inputs changed during artifact execution')
+        if any(case['status'] == 'unverified' for case in report['cases']):
+            raise ValueError('Artifact profile has unverified required cases')
         report['status'] = 'passed'
     except BaseException as error:
         for step in report['steps']:
-            if step['status'] == 'running': step['status'] = 'failed'
+            if step['status'] == 'running':
+                step['status'] = 'failed'
         unit_report = output / 'unit/results.json'
-        if unit_report.is_file(): report['unit_report_sha256'] = sha256(unit_report)
-        report.update(status='failed', error=str(error)); save(); raise
+        if unit_report.is_file():
+            report['unit_report_sha256'] = sha256(unit_report)
+        report.update(status='failed', error=str(error))
+        save()
+        raise
     save()
     return report
 
 
 def run_pair(bundle, output, assets, *, root=ROOT, timeout=2400, execute=process_tree.execute, revision=None):
     bundle, output = bundle.resolve(), output.resolve()
-    if output.is_relative_to(bundle): raise ValueError('Reports must be outside immutable artifact bundle')
+    if output.is_relative_to(bundle):
+        raise ValueError('Reports must be outside immutable artifact bundle')
     pair = windows_artifacts.verify_pair(bundle, root=root, revision=revision)
     output.mkdir(parents=True, exist_ok=False)
     report = {'status': 'running', 'scope': SCOPE, 'full_windows_ci_pass': False,
@@ -210,22 +235,29 @@ def run_pair(bundle, output, assets, *, root=ROOT, timeout=2400, execute=process
     save()
     try:
         for row in pair['phases']:
-            if row['consensus'] == 'pocx': report['native_execution'] = 'started after original Qt/unit/auxiliary/kernel profile passed'
+            if row['consensus'] == 'pocx':
+                report['native_execution'] = 'started after original Qt/unit/auxiliary/kernel profile passed'
             phase = {'consensus': row['consensus'], 'status': 'running'}
-            report['phases'].append(phase); save()
+            report['phases'].append(phase)
+            save()
             child = run_phase(bundle / row['consensus'], row, output / row['consensus'], assets,
                               timeout=timeout, execute=execute)
             phase.update(status=child['status'], report_sha256=sha256(output / row['consensus'] / 'results.json'))
             save()
             windows_artifacts.verify_pair(bundle, root=root, revision=revision)
-            if sha256(bundle / 'pair.json') != report['pair_sha256']: raise ValueError('Artifact manifest changed during test execution')
+            if sha256(bundle / 'pair.json') != report['pair_sha256']:
+                raise ValueError('Artifact manifest changed during test execution')
         report['status'] = 'passed'
     except BaseException as error:
         if report['phases'] and report['phases'][-1]['status'] == 'running':
-            phase = report['phases'][-1]; phase['status'] = 'failed'
+            phase = report['phases'][-1]
+            phase['status'] = 'failed'
             child = output / phase['consensus'] / 'results.json'
-            if child.is_file(): phase['report_sha256'] = sha256(child)
-        report.update(status='failed', error=str(error)); save(); raise
+            if child.is_file():
+                phase['report_sha256'] = sha256(child)
+        report.update(status='failed', error=str(error))
+        save()
+        raise
     save()
     return report
 
@@ -237,8 +269,10 @@ def main():
     parser.add_argument('--timeout', type=int, default=2400)
     parser.add_argument('--plan', action='store_true')
     args = parser.parse_args()
-    if args.timeout < 1: parser.error('Expected positive --timeout')
-    if not args.plan and os.name != 'nt': parser.error('Actual artifact Qt/unit/auxiliary/kernel execution requires Windows')
+    if args.timeout < 1:
+        parser.error('Expected positive --timeout')
+    if not args.plan and os.name != 'nt':
+        parser.error('Actual artifact Qt/unit/auxiliary/kernel execution requires Windows')
     windows_artifacts.verify_recipe()
     pair = windows_artifacts.verify_pair(args.artifacts)
     if args.plan:
@@ -249,7 +283,8 @@ def main():
                 'expected_unit_cases': len(row['expected_unit']['expected']), 'auxiliary_executables': list(windows_artifacts.AUXILIARY)}
                 for row in pair['phases']]}, indent=2))
         return 0
-    if args.output is None: parser.error('Actual execution requires a new --output directory')
+    if args.output is None:
+        parser.error('Actual execution requires a new --output directory')
     assets = unit_assets.provision(ROOT / 'unit_test_data')
     run_pair(args.artifacts, args.output, assets, timeout=args.timeout)
     return 0

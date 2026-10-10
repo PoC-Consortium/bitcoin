@@ -16,9 +16,11 @@ from common import ROOT, sha256
 class CrossKernelTest(unittest.TestCase):
     def fixture(self, directory):
         source = Path(directory) / 'source'
-        kernel = source / 'src/pocx/test/kernel'; kernel.mkdir(parents=True)
+        kernel = source / 'src/pocx/test/kernel'
+        kernel.mkdir(parents=True)
         shutil.copyfile(ROOT / 'src/pocx/test/kernel/CMakeLists.txt', kernel / 'CMakeLists.txt')
-        data = source / 'test/pocx/kernel'; data.mkdir(parents=True)
+        data = source / 'test/pocx/kernel'
+        data.mkdir(parents=True)
         for name in ('render_fixtures.py', 'provenance.json', 'fixtures.json'):
             shutil.copyfile(ROOT / 'test/pocx/kernel' / name, data / name)
         (source / 'CMakeLists.txt').write_text('''cmake_minimum_required(VERSION 3.22)
@@ -70,10 +72,12 @@ int main() { return MAINNET_VERSION == 0x20000000 && REGTEST_BLOCK_DATA.size() =
     @unittest.skipUnless(shutil.which('c++') and shutil.which('x86_64-w64-mingw32-g++'), 'Native and MinGW compiler probes unavailable')
     def test_native_and_cross_paths_render_identical_independently_verified_fixture_bytes(self):
         with tempfile.TemporaryDirectory(prefix='kernel-build-probe-') as directory:
-            root = Path(directory); source = self.fixture(root)
+            root = Path(directory)
+            source = self.fixture(root)
             native, cross = root / 'native', root / 'cross'
             for build, is_cross in ((native, False), (cross, True)):
-                self.configure(source, build, cross=is_cross); self.build(build)
+                self.configure(source, build, cross=is_cross)
+                self.build(build)
             native_data = native / 'src/pocx/test/kernel'
             cross_data = cross / 'src/pocx/test/kernel'
             review = json.loads((ROOT / 'test/pocx/kernel/provenance.json').read_text())
@@ -93,7 +97,9 @@ int main() { return MAINNET_VERSION == 0x20000000 && REGTEST_BLOCK_DATA.size() =
     @unittest.skipUnless(shutil.which('x86_64-w64-mingw32-g++'), 'MinGW compiler probe unavailable')
     def test_corrupt_cross_snapshot_cannot_generate_a_kernel_header(self):
         with tempfile.TemporaryDirectory(prefix='kernel-build-corrupt-') as directory:
-            root = Path(directory); source = self.fixture(root); build = root / 'build'
+            root = Path(directory)
+            source = self.fixture(root)
+            build = root / 'build'
             (source / 'test/pocx/kernel/fixtures.json').write_text('{}\n')
             self.configure(source, build, cross=True)
             log = self.build(build, success=False)
@@ -103,9 +109,13 @@ int main() { return MAINNET_VERSION == 0x20000000 && REGTEST_BLOCK_DATA.size() =
     @unittest.skipUnless(shutil.which('x86_64-w64-mingw32-g++'), 'MinGW compiler probe unavailable')
     def test_snapshot_change_invalidates_incremental_cross_build(self):
         with tempfile.TemporaryDirectory(prefix='kernel-build-incremental-') as directory:
-            root = Path(directory); source = self.fixture(root); build = root / 'build'
-            self.configure(source, build, cross=True); self.build(build)
-            with (source / 'test/pocx/kernel/fixtures.json').open('a') as stream: stream.write('\n')
+            root = Path(directory)
+            source = self.fixture(root)
+            build = root / 'build'
+            self.configure(source, build, cross=True)
+            self.build(build)
+            with (source / 'test/pocx/kernel/fixtures.json').open('a') as stream:
+                stream.write('\n')
             self.assertIn('differ from the independently verified snapshot', self.build(build, success=False))
 
 

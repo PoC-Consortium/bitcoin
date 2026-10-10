@@ -39,8 +39,10 @@ def framework_commands(build, options, count, timeout, output, *, selected_confi
     native = options['ENABLE_POCX'] == 'ON'
     unit = [sys.executable, str(ROOT / 'test/pocx' / ('run_unit.py' if native else 'run_bitcoin_unit.py')),
             '--build-dir', str(build), '--jobs', str(count), '--timeout', str(timeout)]
-    if native: unit.append('--all')
-    if selected_config is not None: unit += ['--config', selected_config]
+    if native:
+        unit.append('--all')
+    if selected_config is not None:
+        unit += ['--config', selected_config]
     commands = [('unit', unit)]
     disabled = {}
     for framework, switch, test_switch in (('qt', 'BUILD_GUI', 'BUILD_GUI_TESTS'),
@@ -55,8 +57,10 @@ def framework_commands(build, options, count, timeout, output, *, selected_confi
         command = [sys.executable, str(ROOT / 'test/pocx' / ('run_' + framework + '.py')),
                    '--build-dir', str(build), '--output-dir', str(output / framework),
                    '--jobs', str(count), '--timeout', str(timeout)]
-        if framework == 'kernel' and not native: command.append('--bitcoin')
-        if selected_config is not None: command += ['--config', selected_config]
+        if framework == 'kernel' and not native:
+            command.append('--bitcoin')
+        if selected_config is not None:
+            command += ['--config', selected_config]
         commands.append((framework, command))
     return commands, disabled
 
@@ -120,7 +124,8 @@ def run(build, phase, count, timeout, factor, *, environment=None, selected_conf
             if options.get('BUILD_GUI') == 'ON' and options.get('ENABLE_WALLET') == 'OFF':
                 report['disabled_cases'].setdefault('qt', {}).update({case: 'ENABLE_WALLET=OFF' for case in
                     ('AddressBookTests::addressBookTests', 'WalletTests::walletTests')})
-            for name, command in commands: execute(name, command)
+            for name, command in commands:
+                execute(name, command)
             unit_name = 'test_pocx' if options['ENABLE_POCX'] == 'ON' else 'test_bitcoin'
             binary = build_configuration.executable(build, unit_name, cache, selected_config)
             # CTest metadata inspection also writes LastTest.log. Use the same

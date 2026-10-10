@@ -28,7 +28,8 @@ class RetentionTest(unittest.TestCase):
 
     def test_passed_case_only_removes_direct_regtest_node_databases(self):
         with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory);self.populate(root)
+            root = Path(directory)
+            self.populate(root)
             before = {path.relative_to(root): path.read_bytes() for path in root.rglob('*') if path.is_file()}
             self.assertEqual(self.prune(root), ['node0/regtest/blocks', 'node0/regtest/chainstate',
                                                 'node0/regtest/indexes'])
@@ -41,7 +42,8 @@ class RetentionTest(unittest.TestCase):
 
     def test_failed_skipped_or_incompletely_stopped_cases_keep_every_file(self):
         with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory);self.populate(root)
+            root = Path(directory)
+            self.populate(root)
             before = {path.relative_to(root): path.read_bytes() for path in root.rglob('*') if path.is_file()}
             for status in ('failed', 'skipped'):
                 self.assertEqual(self.prune(root, status, complete=False), [])
@@ -52,14 +54,19 @@ class RetentionTest(unittest.TestCase):
 
     def test_directory_links_at_each_boundary_do_not_remove_external_data(self):
         with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory);outside = root / 'outside';outside.mkdir()
-            sentinel = outside / 'retained';sentinel.write_text('external fixture')
-            case = root / 'case';case.mkdir()
+            root = Path(directory)
+            outside = root / 'outside'
+            outside.mkdir()
+            sentinel = outside / 'retained'
+            sentinel.write_text('external fixture')
+            case = root / 'case'
+            case.mkdir()
             (root / 'linked-case').symlink_to(case, target_is_directory=True)
             (case / 'node0').symlink_to(outside, target_is_directory=True)
             (case / 'node1').mkdir()
             (case / 'node1/regtest').symlink_to(outside, target_is_directory=True)
-            chain = case / 'node2/regtest';chain.mkdir(parents=True)
+            chain = case / 'node2/regtest'
+            chain.mkdir(parents=True)
             (chain / 'blocks').symlink_to(outside, target_is_directory=True)
             self.assertEqual(self.prune(root / 'linked-case'), [])
             self.assertEqual(self.prune(case), [])

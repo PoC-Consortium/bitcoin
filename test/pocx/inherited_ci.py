@@ -143,7 +143,8 @@ def publish(output, root=ROOT):
     # Root is required by original BPF tests. Let the ordinary hosted artifact
     # uploader read the published reports after that elevated CI step finishes.
     paths = [root / 'artifacts', destination.parent, destination, *destination.rglob('*')]
-    if published_pair is not None: paths.extend([published_pair, *published_pair.rglob('*')])
+    if published_pair is not None:
+        paths.extend([published_pair, *published_pair.rglob('*')])
     for path in paths:
         path.chmod(0o755 if path.is_dir() else 0o644)
     print('Published inherited CI results:', destination, flush=True)

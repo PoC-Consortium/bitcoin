@@ -153,12 +153,18 @@ class InstrumentedInfrastructureTest(unittest.TestCase):
                 self.assertEqual(gate.verify_dependencies(kind, self.directory)['status'], 'passed')
                 for variant in ('failed_build', 'missing_archive', 'wrong_kind', 'wrong_builder', 'changed_inputs', 'wrong_flags'):
                     changed = deepcopy(report)
-                    if variant == 'failed_build': changed['steps']['depends-build']['returncode'] = 1
-                    elif variant == 'missing_archive': changed['archive_instrumentation'].pop('libcapnp.a')
-                    elif variant == 'wrong_kind': changed['sanitizer'] = 'other'
-                    elif variant == 'wrong_builder': changed['builder_sha256'] = 'other'
-                    elif variant == 'changed_inputs': changed['installed_inputs'] = {}
-                    else: changed['depends_options'] = ['NO_QT=1']
+                    if variant == 'failed_build':
+                        changed['steps']['depends-build']['returncode'] = 1
+                    elif variant == 'missing_archive':
+                        changed['archive_instrumentation'].pop('libcapnp.a')
+                    elif variant == 'wrong_kind':
+                        changed['sanitizer'] = 'other'
+                    elif variant == 'wrong_builder':
+                        changed['builder_sha256'] = 'other'
+                    elif variant == 'changed_inputs':
+                        changed['installed_inputs'] = {}
+                    else:
+                        changed['depends_options'] = ['NO_QT=1']
                     (self.directory / 'preparation.json').write_text(json.dumps(changed))
                     with self.subTest(kind=kind, variant=variant), self.assertRaises(ValueError):
                         gate.verify_dependencies(kind, self.directory)
@@ -252,9 +258,12 @@ class InstrumentedInfrastructureTest(unittest.TestCase):
                 self.assertEqual(verify_instrumented_execution(ROOT, report, output)['canaries'], 2)
                 for variant in ('missing', 'duplicate', 'nonfatal', 'environment_failure'):
                     changed = deepcopy(child)
-                    if variant == 'missing': changed['canaries'].pop()
-                    elif variant == 'duplicate': changed['canaries'].append(changed['canaries'][0])
-                    elif variant == 'nonfatal': changed['canaries'][1]['returncode'] = 0
+                    if variant == 'missing':
+                        changed['canaries'].pop()
+                    elif variant == 'duplicate':
+                        changed['canaries'].append(changed['canaries'][0])
+                    elif variant == 'nonfatal':
+                        changed['canaries'][1]['returncode'] = 0
                     else:
                         path = Path(changed['canaries'][1]['log'])
                         path.write_text('FATAL: unexpected memory mapping')
@@ -269,11 +278,16 @@ class InstrumentedInfrastructureTest(unittest.TestCase):
             with patch('instrumented_ci.verify_dependencies', return_value={'synthetic': 'verified'}):
                 for variant in ('environment', 'stack', 'missing_binary', 'wrong_binary', 'timeout'):
                     changed, outer = deepcopy(child), deepcopy(report)
-                    if variant == 'environment': outer['sanitizer_environment'] = {}
-                    elif variant == 'stack': outer['sanitizer_stack_limit'] = 8388608
-                    elif variant == 'missing_binary': changed['instrumentation']['binaries'].pop('bitcoin-cli')
-                    elif variant == 'wrong_binary': changed['instrumentation']['binaries']['bitcoin-cli']['sha256'] = 'other'
-                    else: outer['steps'][1]['command'][-1] = '180'
+                    if variant == 'environment':
+                        outer['sanitizer_environment'] = {}
+                    elif variant == 'stack':
+                        outer['sanitizer_stack_limit'] = 8388608
+                    elif variant == 'missing_binary':
+                        changed['instrumentation']['binaries'].pop('bitcoin-cli')
+                    elif variant == 'wrong_binary':
+                        changed['instrumentation']['binaries']['bitcoin-cli']['sha256'] = 'other'
+                    else:
+                        outer['steps'][1]['command'][-1] = '180'
                     self.save(output, outer, changed)
                     with self.subTest(kind=kind, variant=variant), self.assertRaises(ValueError):
                         verify_instrumented_execution(ROOT, outer, output)

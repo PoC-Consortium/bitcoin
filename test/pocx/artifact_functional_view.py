@@ -40,10 +40,12 @@ def relocate_cache(text, root, destination):
         matches = [i for i, line in enumerate(lines) if line.startswith(prefix)]
         if len(matches) > 1 or (required and len(matches) != 1):
             raise ValueError('Missing or ambiguous producer cache path: ' + key)
-        if not matches: continue
+        if not matches:
+            continue
         index = matches[0]
         old = lines[index][len(prefix):].rstrip('\r\n')
-        if not old: raise ValueError('Empty producer cache path: ' + key)
+        if not old:
+            raise ValueError('Empty producer cache path: ' + key)
         new = value.as_posix()
         relocations.append({'key': key, 'producer_value': old, 'runtime_value': new})
         lines[index] = prefix + new + '\n'
@@ -71,20 +73,25 @@ def relocated_config(text, options, root, destination):
     relocations = []
     for key, value in (('SRCDIR', root), ('BUILDDIR', destination),
                         ('RPCAUTH', root / 'share/rpcauth/rpcauth.py')):
-        if not environment.get(key): raise ValueError('Missing producer functional path: ' + key)
+        if not environment.get(key):
+            raise ValueError('Missing producer functional path: ' + key)
         new = value.as_posix()
         relocations.append({'key': key, 'producer_value': environment[key], 'runtime_value': new})
         environment[key] = new
-    stream = io.StringIO(); config.write(stream)
+    stream = io.StringIO()
+    config.write(stream)
     return stream.getvalue(), relocations
 
 
 def inputs(bundle, consensus, destination, *, root=ROOT, revision=None):
-    if consensus not in ('bitcoin', 'pocx'): raise ValueError('Unknown functional artifact consensus')
+    if consensus not in ('bitcoin', 'pocx'):
+        raise ValueError('Unknown functional artifact consensus')
     root = root.resolve()
-    if destination.is_symlink(): raise ValueError('Symlinked functional runtime view')
+    if destination.is_symlink():
+        raise ValueError('Symlinked functional runtime view')
     destination = destination.resolve()
-    if bundle.is_symlink(): raise ValueError('Symlinked Windows artifact bundle')
+    if bundle.is_symlink():
+        raise ValueError('Symlinked Windows artifact bundle')
     bundle = bundle.resolve()
     if (destination == root or not destination.is_relative_to(root) or
             destination.is_relative_to(bundle) or bundle.is_relative_to(destination)):
@@ -109,9 +116,12 @@ def inputs(bundle, consensus, destination, *, root=ROOT, revision=None):
             files[name[len('provenance/'):]] = payload / name
     directory = root / 'test/functional'
     for path in sorted(directory.rglob('*')):
-        if '__pycache__' in path.parts or path.suffix == '.pyc': continue
-        if path.is_symlink(): raise ValueError('Symlinked original functional source: ' + str(path))
-        if path.is_file(): files['test/functional/' + path.relative_to(directory).as_posix()] = path
+        if '__pycache__' in path.parts or path.suffix == '.pyc':
+            continue
+        if path.is_symlink():
+            raise ValueError('Symlinked original functional source: ' + str(path))
+        if path.is_file():
+            files['test/functional/' + path.relative_to(directory).as_posix()] = path
     if 'test/functional/test_runner.py' not in files:
         raise ValueError('Original functional runner missing')
     hashes = {name: hashlib.sha256(value).hexdigest() if isinstance(value, bytes) else sha256(value)
@@ -141,26 +151,33 @@ def verify_view(bundle, consensus, destination, *, root=ROOT, revision=None):
     for directory in ('bin', 'test/functional'):
         actual = set()
         for path in (destination / directory).rglob('*'):
-            if path.is_symlink(): raise ValueError('Symlink in functional runtime input tree')
+            if path.is_symlink():
+                raise ValueError('Symlink in functional runtime input tree')
             if '__pycache__' in path.parts or path.suffix == '.pyc':
                 raise ValueError('Unattested bytecode in functional runtime input tree; use PYTHONDONTWRITEBYTECODE=1')
-            if path.is_file(): actual.add(path.relative_to(destination).as_posix())
+            if path.is_file():
+                actual.add(path.relative_to(destination).as_posix())
         if actual != {name for name in files if name.startswith(directory + '/')}:
             raise ValueError('Functional runtime input inventory changed: ' + directory)
     return expected
 
 
 def create_view(bundle, consensus, destination, *, root=ROOT, revision=None):
-    if destination.exists() or destination.is_symlink(): raise ValueError('Runtime view destination already exists')
+    if destination.exists() or destination.is_symlink():
+        raise ValueError('Runtime view destination already exists')
     files, manifest = inputs(bundle, consensus, destination, root=root, revision=revision)
     destination.parent.mkdir(parents=True, exist_ok=True)
     temporary = Path(tempfile.mkdtemp(prefix='pocx-functional-view-', dir=destination.parent))
     try:
         for name, value in files.items():
-            path = temporary / name; path.parent.mkdir(parents=True, exist_ok=True)
-            if isinstance(value, bytes): path.write_bytes(value)
-            else: shutil.copyfile(value, path)
-            if sha256(path) != manifest['files'][name]: raise ValueError('Functional input changed during copying')
+            path = temporary / name
+            path.parent.mkdir(parents=True, exist_ok=True)
+            if isinstance(value, bytes):
+                path.write_bytes(value)
+            else:
+                shutil.copyfile(value, path)
+            if sha256(path) != manifest['files'][name]:
+                raise ValueError('Functional input changed during copying')
         (temporary / MANIFEST).write_text(json.dumps(manifest, indent=2) + '\n')
         # Recheck the producer/source inputs immediately before publication.
         if inputs(bundle, consensus, destination, root=root, revision=revision)[1] != manifest:
@@ -168,7 +185,8 @@ def create_view(bundle, consensus, destination, *, root=ROOT, revision=None):
         temporary.rename(destination)
         return verify_view(bundle, consensus, destination, root=root, revision=revision)
     finally:
-        if temporary.exists(): shutil.rmtree(temporary)
+        if temporary.exists():
+            shutil.rmtree(temporary)
 
 
 def main():

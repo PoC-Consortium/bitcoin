@@ -7,12 +7,12 @@
     ".github/workflows/ci.yml": "0faba4651593cda133121fbfc2d31edc32084be95872812dac72dbf1e20bb3dd",
     "test/pocx/build_configuration.py": "c9df217b325f1e3dfd8cd14e002f542bd78aa084b410e8f3b18d18a261a36456",
     "test/pocx/ci_evidence.py": "8f0c10ed4d1f455a940e8787c655b5fc20c35622d7ff1bbb744f79afb2dc1243",
-    "test/pocx/inherited_ci.py": "960d8a89bb82d651d4d2d5c497f1c680f3753cda727743a917f717027a167832",
-    "test/pocx/inherited_functional.py": "08113b32aec0f04c83b1ae466590aaf1117db1fa4f8d9ce958be994bf99a4130",
-    "test/pocx/inherited_tests.py": "c9171243d26768994f0c7d171ad3270344bf87ad018ece2ab7e436829853f511",
+    "test/pocx/inherited_ci.py": "237ac870e7fe5c67f626a0a65d5fc315a0154044de09839368e55950e71c7f72",
+    "test/pocx/inherited_functional.py": "516ca111810bb927e3a54ddcf44d799d5d6e46cd68249bcec4f00d1ffddd9167",
+    "test/pocx/inherited_tests.py": "b1fb1313f9c510735ecbf42cf7d092201031d8516051e463351b233125af3a74",
     "test/pocx/process_tree.py": "12639a920fa4a656eec4f14ea02c4aaf1fe997cfc18c7df2566e82a1d3ab3f29",
-    "test/pocx/test_process_tree.py": "d7ec0a6aee84f007f87b6fe651ccb6863739245d6336cb57e41e3a5dd9a1d516",
-    "test/pocx/test_windows_ci.py": "774645df9d5c62ec7e6b63bd99096f7943feda7474db759c8d7cb25fadf378cd",
+    "test/pocx/test_process_tree.py": "c2b1bc492945a007e023614d6e2529e231a3e94cdf41696ae4588bb6d2a9a64c",
+    "test/pocx/test_windows_ci.py": "13a91129fb07c1faa40412488372899923a798b8bfa73e21ee88d61d86f39750",
     "test/pocx/unit_assets.py": "1c34c321789b13246532e2d702b2212a5812cdd88bd4f6289945aa7f5680f992",
     "test/pocx/windows_ci.py": "afdf67bd94635fd2e3e75aa0b1f522f687672913ecafb1ca926e6bd0484a3d80"
   },
@@ -53,13 +53,13 @@
     "test/pocx/inherited_ci.py": {
       "previous_reviewed_revision": "a175541176185ded6cb1736287532a913ed2db54",
       "previous_sha256": "b468e0dd9a93706bb7afdbffc17877222a4fed5c168effdbd358bf1eeaa13f6b",
-      "sha256": "960d8a89bb82d651d4d2d5c497f1c680f3753cda727743a917f717027a167832",
+      "sha256": "237ac870e7fe5c67f626a0a65d5fc315a0154044de09839368e55950e71c7f72",
       "review": "Extends recipe dependency inventory to cover owned tracing/image helpers; execution order and Windows pair gating unchanged."
     },
     "test/pocx/inherited_functional.py": {
       "previous_reviewed_revision": "e46a1e4ecb8e3c61a1712a055ca70faf5cd42349",
       "previous_sha256": "cadc51ab9d186e1de4b9388ae207a7f9ac69458074386e7d5ce0890b8d564b86",
-      "sha256": "08113b32aec0f04c83b1ae466590aaf1117db1fa4f8d9ce958be994bf99a4130",
+      "sha256": "516ca111810bb927e3a54ddcf44d799d5d6e46cd68249bcec4f00d1ffddd9167",
       "review": "Recognize unconditional feature guards inherited by a single test class through an unambiguous single-base chain in sibling source modules, without importing or executing those modules. Record the actual declaration source; child overrides, conditional guards, ambiguous classes/bases and cycles remain unverified. Missing enabled prerequisites and failed cases remain failures or unverified. Three existing native wallet-dependent scripts inherit their original skip guard; no test is newly disabled. Existing run commands, original-first ordering, selections, assertions and builds are unchanged."
     }
   },

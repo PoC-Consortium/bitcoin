@@ -113,14 +113,16 @@ def validate_configuration(options, system):
 
 
 def required_files(options, consensus):
-    if consensus not in ('bitcoin', 'pocx'): raise ValueError('Unknown Windows artifact consensus')
+    if consensus not in ('bitcoin', 'pocx'):
+        raise ValueError('Unknown Windows artifact consensus')
     unit = 'test_bitcoin.exe' if consensus == 'bitcoin' else 'test_pocx.exe'
     required = {'bin/bitcoind.exe', 'bin/' + unit, *AUXILIARY}
     switches = {'BUILD_CLI': 'bitcoin-cli.exe', 'BUILD_TX': 'bitcoin-tx.exe', 'BUILD_UTIL': 'bitcoin-util.exe',
                 'BUILD_WALLET_TOOL': 'bitcoin-wallet.exe', 'BUILD_UTIL_CHAINSTATE': 'bitcoin-chainstate.exe',
                 'BUILD_BENCH': 'bench_bitcoin.exe', 'BUILD_KERNEL_TEST': 'test_kernel.exe'}
     for switch, binary in switches.items():
-        if options.get(switch) == 'ON': required.add('bin/' + binary)
+        if options.get(switch) == 'ON':
+            required.add('bin/' + binary)
     if options.get('BUILD_GUI') == 'ON' and options.get('BUILD_GUI_TESTS') == 'ON':
         required.add('bin/test_bitcoin-qt.exe')
     return required, 'bin/' + unit
@@ -137,7 +139,8 @@ def matching_configurations(phases):
                 'CMAKE_CONFIGURATION_TYPES', 'target_system', 'target_processor', 'avx2_compiled')}
     keys.discard('ENABLE_POCX')
     differences = sorted(key for key in keys if original.get(key) != native.get(key))
-    if differences: raise ValueError('Original/native artifact configurations differ: ' + ', '.join(differences))
+    if differences:
+        raise ValueError('Original/native artifact configurations differ: ' + ', '.join(differences))
 
 
 def export_phase(build, destination, consensus, root):
@@ -149,7 +152,8 @@ def export_phase(build, destination, consensus, root):
     expected = portable_inventory(unit_matrix.inventory(root, options, bitcoin=consensus == 'bitcoin'))
     required, unit = required_files(options, consensus)
     for name in required:
-        if not (build / name).is_file(): raise ValueError('Missing required Windows artifact: ' + name)
+        if not (build / name).is_file():
+            raise ValueError('Missing required Windows artifact: ' + name)
     selected = {path for path in (build / 'bin').iterdir() if path.suffix.lower() in ('.exe', '.dll')}
     selected.update(build / name for name in AUXILIARY)
     files = {}
@@ -161,9 +165,11 @@ def export_phase(build, destination, consensus, root):
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(path, target)
         files[name] = sha256(target)
-        if files[name] != sha256(path): raise ValueError('Windows artifact changed during export')
+        if files[name] != sha256(path):
+            raise ValueError('Windows artifact changed during export')
     for path in sorted(selected):
-        if pe_machine(path) != 0x8664: raise ValueError('Windows artifact machine differs from x86_64 target')
+        if pe_machine(path) != 0x8664:
+            raise ValueError('Windows artifact machine differs from x86_64 target')
         copy(path, path.relative_to(build).as_posix())
     copy(cache, 'provenance/CMakeCache.txt')
     copy(system, 'provenance/' + system.relative_to(build).as_posix())
@@ -182,7 +188,8 @@ def export_phase(build, destination, consensus, root):
                 unit_sources[name[len('source/'):]] = digest
             elif name.startswith('build/'):
                 copy(build / name[len('build/'):], 'provenance/generated/' + name[len('build/'):])
-            else: raise ValueError('Unknown cross-unit input namespace')
+            else:
+                raise ValueError('Unknown cross-unit input namespace')
     if len({name.casefold() for name in files}) != len(files):
         raise ValueError('Case-colliding Windows artifact paths')
     return {'consensus': consensus, 'build_options': options, 'unit_binary': unit,
@@ -226,7 +233,8 @@ def export_pair(bitcoin_build, pocx_build, output, *, root=ROOT, revision=None):
 
 
 def verify_pair(bundle, *, root=ROOT, revision=None):
-    if bundle.is_symlink(): raise ValueError('Symlinked Windows artifact bundle')
+    if bundle.is_symlink():
+        raise ValueError('Symlinked Windows artifact bundle')
     report = json.loads((bundle / 'pair.json').read_text())
     revision = revision_id(root) if revision is None else revision
     if (report.get('format') != 1 or report.get('kind') != 'pocx-windows-cross-pair' or
@@ -260,7 +268,8 @@ def verify_pair(bundle, *, root=ROOT, revision=None):
             raise ValueError('Windows artifact unit inventory differs from current reviewed configuration')
         for name, digest in row['unit_source_sha256'].items():
             relative_name(name)
-            if sha256(root / name) != digest: raise ValueError('Stale cross-unit source: ' + name)
+            if sha256(root / name) != digest:
+                raise ValueError('Stale cross-unit source: ' + name)
         if row['consensus'] == 'pocx':
             native = json.loads((phase / 'provenance/cross-unit.json').read_text())
             if (native.get('format') != 1 or native.get('kind') != 'windows-cross-unit-inputs' or
@@ -279,7 +288,8 @@ def verify_pair(bundle, *, root=ROOT, revision=None):
                 elif name.startswith('build/'):
                     if row['files'].get('provenance/generated/' + name[len('build/'):]) != digest:
                         raise ValueError('Missing cross-unit generated input proof')
-                else: raise ValueError('Unknown cross-unit input namespace')
+                else:
+                    raise ValueError('Unknown cross-unit input namespace')
     paths = list(bundle.rglob('*'))
     if (len({name.casefold() for name in all_files}) != len(all_files) or any(path.is_symlink() for path in paths) or
             {path.relative_to(bundle).as_posix() for path in paths if path.is_file()} != all_files):
@@ -296,10 +306,12 @@ def main():
     args = parser.parse_args()
     verify_recipe()
     if args.verify:
-        if any((args.bitcoin_build, args.pocx_build, args.output)): parser.error('Choose export or verification')
+        if any((args.bitcoin_build, args.pocx_build, args.output)):
+            parser.error('Choose export or verification')
         report = verify_pair(args.verify)
     else:
-        if not all((args.bitcoin_build, args.pocx_build, args.output)): parser.error('Export requires both builds and output')
+        if not all((args.bitcoin_build, args.pocx_build, args.output)):
+            parser.error('Export requires both builds and output')
         report = export_pair(args.bitcoin_build, args.pocx_build, args.output)
     print(json.dumps({'status': 'artifact inputs verified; tests not executed', 'revision': report['revision']}))
 

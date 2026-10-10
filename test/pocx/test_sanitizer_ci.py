@@ -73,12 +73,18 @@ class SanitizerInfrastructureTest(unittest.TestCase):
                 tokens.remove('-fsanitize=' + sanitizer_ci.specification()['sanitizers'])
             elif variant == 'partial':
                 tokens[tokens.index('-fsanitize=' + sanitizer_ci.specification()['sanitizers'])] = '-fsanitize=address'
-            elif variant == 'disabled': tokens.append('-fno-sanitize=undefined')
-            elif variant == 'recover': tokens.append('-fsanitize-recover=all')
-            elif variant == 'wrong_standard': tokens.append('-std=c++20')
-            elif variant == 'missing_debug': tokens.remove('-DDEBUG_LOCKORDER')
-            elif variant == 'missing_pattern': tokens.remove('-ftrivial-auto-var-init=pattern')
-            else: tokens[0] = 'clang++-19'
+            elif variant == 'disabled':
+                tokens.append('-fno-sanitize=undefined')
+            elif variant == 'recover':
+                tokens.append('-fsanitize-recover=all')
+            elif variant == 'wrong_standard':
+                tokens.append('-std=c++20')
+            elif variant == 'missing_debug':
+                tokens.remove('-DDEBUG_LOCKORDER')
+            elif variant == 'missing_pattern':
+                tokens.remove('-ftrivial-auto-var-init=pattern')
+            else:
+                tokens[0] = 'clang++-19'
             with self.subTest(variant=variant), self.assertRaisesRegex(ValueError, 'compile flags'):
                 sanitizer_ci.verify_compile_commands(shlex.join(tokens))
 
@@ -173,11 +179,16 @@ class SanitizerInfrastructureTest(unittest.TestCase):
         self.assertEqual(verify_sanitizer_execution(ROOT, report, self.output)['canaries'], 6)
         for variant in ('missing', 'duplicate', 'failed', 'nonfatal', 'no_instrumentation'):
             changed = deepcopy(child)
-            if variant == 'missing': changed['canaries'].pop()
-            elif variant == 'duplicate': changed['canaries'].append(changed['canaries'][0])
-            elif variant == 'failed': changed['canaries'][1]['status'] = 'failed'
-            elif variant == 'nonfatal': changed['canaries'][1]['returncode'] = 0
-            else: changed['instrumentation'] = {}
+            if variant == 'missing':
+                changed['canaries'].pop()
+            elif variant == 'duplicate':
+                changed['canaries'].append(changed['canaries'][0])
+            elif variant == 'failed':
+                changed['canaries'][1]['status'] = 'failed'
+            elif variant == 'nonfatal':
+                changed['canaries'][1]['returncode'] = 0
+            else:
+                changed['instrumentation'] = {}
             self.save_proof(path, report, changed)
             with self.subTest(variant=variant), self.assertRaises(ValueError):
                 verify_sanitizer_execution(ROOT, report, self.output)
