@@ -84,4 +84,8 @@ if(ENABLE_WALLET)
   target_link_libraries(bench_bitcoin bitcoin_wallet)
 endif()
 
+if(ENABLE_POCX)
+  include(${PROJECT_SOURCE_DIR}/src/pocx/bench/sources.cmake)
+endif()
+
 install_binary_component(bench_bitcoin INTERNAL)

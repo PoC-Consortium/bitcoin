@@ -36,8 +36,7 @@ private:
         block.hashPrevBlock.SetNull();
         block.hashMerkleRoot.SetNull();
         block.nTime = 1231006505;
-        block.nBits = 0x1d00ffff;
-        block.nNonce = 2083236893;
+        block.nBaseTarget = 18325193796;
         block.fChecked = false;
         CMutableTransaction tx;
         tx.vin.resize(1);

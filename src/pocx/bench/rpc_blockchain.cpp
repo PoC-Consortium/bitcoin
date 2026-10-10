@@ -3,10 +3,10 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #include <bench/bench.h>
-#include <bench/data/block413567.raw.h>
 #include <chain.h>
 #include <core_io.h>
 #include <primitives/block.h>
+#include <pocx/bench/block_fixture.h>
 #include <primitives/transaction.h>
 #include <rpc/blockchain.h>
 #include <serialize.h>
@@ -24,22 +24,20 @@
 namespace {
 
 struct TestBlockAndIndex {
-    const std::unique_ptr<const TestingSetup> testing_setup{MakeNoLogFileContext<const TestingSetup>(ChainType::MAIN)};
+    const std::unique_ptr<const TestingSetup> testing_setup{MakeNoLogFileContext<const TestingSetup>()};
     CBlock block{};
     uint256 blockHash{};
     CBlockIndex blockindex{};
 
     TestBlockAndIndex()
     {
-        DataStream stream{benchmark::data::block413567};
-        std::byte a{0};
-        stream.write({&a, 1}); // Prevent compaction
-
-        stream >> TX_WITH_WITNESS(block);
+        block = pocx::bench::MakeHistoricalTransactionBlock(*testing_setup);
 
         blockHash = block.GetHash();
         blockindex.phashBlock = &blockHash;
-        blockindex.nBits = 403014710;
+        blockindex.nBaseTarget = block.nBaseTarget;
+        blockindex.nHeight = block.nHeight;
+        blockindex.nTime = block.nTime;
     }
 };
 
