@@ -82,6 +82,18 @@ without replaying compilation or tests. Original functional execution remains
 incomplete and must pass before the matching PoCX profile starts. This checkpoint
 does not establish a full i686 pair or hosted result.
 
+The ongoing i686 original functional baseline has five confirmed USDT failures
+(coin selection, mempool, networking, UTXO cache and validation). All five test
+files are byte-identical to upstream. Actual probe metadata reports four-byte
+pointer/size arguments; the host BPF code requests eight-byte destinations.
+BCC rejects those reads and leaves zero values. An isolated32-bit USDT canary
+reproduced the rejection and read the correct string/count with four-byte
+destinations, without attaching to a Bitcoin process or replaying a test.
+Evidence and the five retained failure logs are under
+`artifacts/ci-parity-20261010/inherited-i686-usdt-argument-width-observation/`.
+The compatibility fix remains required; native execution stays behind the
+original baseline gate, and no tracing assertion is waived.
+
 The previous-release profile runs RPC coverage separately for each transport.
 Bitcoin uses its unchanged runner; PoCX retains raw coverage files and invokes
 the unchanged upstream coverage evaluator. Missing references or uncovered RPC
