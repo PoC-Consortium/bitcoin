@@ -210,8 +210,11 @@ case "$CI_CONTAINER_CAP" in *--privileged*) ;; *) exit 23 ;; esac
         root = self.files(paths)
         (root / 'CMakeCache.txt').write_text('CMAKE_GENERATOR:INTERNAL=Unix Makefiles\n')
         recorded = build_snapshot(root)
-        self.assertEqual(set(recorded), set(paths))
-        for name in paths:
+        cache = 'src/CMakeFiles/node.dir/compiler_depend.make'
+        self.assertEqual(set(recorded), set(paths) - {cache})
+        (root / cache).write_text('consolidated compiler-discovered dependency cache')
+        require_unchanged('Build inputs', recorded, build_snapshot(root))
+        for name in set(paths) - {cache}:
             path = root / name;before = path.read_bytes()
             with self.subTest(name=name):
                 path.write_text('changed target input')

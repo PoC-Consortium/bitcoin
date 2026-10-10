@@ -82,7 +82,10 @@ def build_snapshot(build):
             raise ValueError('Missing Unix Makefiles build graph')
         paths.update(required)
         for pattern in ('Makefile', '*.make', 'link.txt'):
-            paths.update(build.rglob(pattern))
+            # Like Ninja's .ninja_deps, this compiler-discovered dependency
+            # cache is consolidated by a no-op build after compilation. Bind
+            # declared rules/flags/links, not a regenerated cache of them.
+            paths.update(path for path in build.rglob(pattern) if path.name != 'compiler_depend.make')
     elif generator and generator.startswith('Visual Studio '):
         projects = set(build.rglob('*.vcxproj'))
         solutions = set(build.glob('*.sln')) | set(build.glob('*.slnx'))
