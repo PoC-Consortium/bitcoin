@@ -4,10 +4,10 @@
   "unchanged_upstream_recipe": ".github/ci-windows-cross.py",
   "source_sha256": {
     ".github/ci-windows-cross.py": "3d67e51113cb3edd9c24a6714d8393510c7b5d8d6a7bb8fed43a6911efd3fcc3",
-    ".github/workflows/ci.yml": "43e7258aab16605c98d91fa5a1100adb6b3c47d00c52851be79245fb42e2a52f",
+    ".github/workflows/ci.yml": "3baa49659590322fede674c0b1f12a7b4346b8fc1affcdcc18ebbe6f92176e33",
     "ci/test/00_setup_env_win64.sh": "1354e7e29c227f8a5255022b93377c0477ba233d0fe78cbc0f6ba9fcfb4d44d0",
     "ci/test/00_setup_env_win64_msvcrt.sh": "5870e8ebc1618952d45794038e7dc9eadd593f0a23c878ee2463349f521936fa",
-    "ci/test/02_run_container.py": "f202b4fc207da95776e1a3bd883375494ce0af16faff9a5c6957ee1cfacd026e",
+    "ci/test/02_run_container.py": "e7d2b69b43a98542de3042393bcb1d80ceaf293fbbb0a33cf016be14f279a2d6",
     "src/CMakeLists.txt": "9838b770ffdfc39dd194291915e07ebfaa91799a31e02d3619bcfa19d0f45031",
     "src/pocx/test/CMakeLists.txt": "58ed755e49ffe3ac6351ac1e89d8276f209716a2e020e2a4368b1105dbfa0601",
     "src/pocx/test/kernel/CMakeLists.txt": "be88d68df30ffa911eb34faa18cb001b93dcc3da0d58d0c2e5ff9af8e389df40",
@@ -15,29 +15,29 @@
     "test/get_previous_releases.py": "31f38a771099df6b3b4280c4ee56d9b40eb6dd0aac6642f3595d4cea738df5b4",
     "test/pocx/artifact_functional_view.py": "9937604004c1a223fddf1a8640a4ef2a0901355cb63deaec65652bf19de86d9e",
     "test/pocx/build_configuration.py": "c9df217b325f1e3dfd8cd14e002f542bd78aa084b410e8f3b18d18a261a36456",
-    "test/pocx/ci_evidence.py": "d5584b065776634fde0399e3ebbc20b23bf83cc0d5a849c26944a7aa1f9bb478",
+    "test/pocx/ci_evidence.py": "8f0c10ed4d1f455a940e8787c655b5fc20c35622d7ff1bbb744f79afb2dc1243",
     "test/pocx/functional_cases.py": "903124835dc4e3d902036a6789a72727f82ff334a2c0c236cc2ee2a49ef4b68f",
     "test/pocx/functional_environment.py": "0b9a8336bc866a3f7d145fc32933f00172113b24cc50563f54121a6d9256c10e",
     "test/pocx/functional_results.py": "4355a7bd0f08ada20a7d82587160a10c0493041205d92b3ab7fb4335459e4613",
-    "test/pocx/inherited-ci.json": "1370de47db596f80628572be90e091815e0ca194ceabdb4d8bc9b6200ef0471e",
-    "test/pocx/inherited_ci.py": "b468e0dd9a93706bb7afdbffc17877222a4fed5c168effdbd358bf1eeaa13f6b",
+    "test/pocx/inherited-ci.json": "66405664d7c46b486bb9456b6c76706587fef2d8fa54c81230f5d0a350146312",
+    "test/pocx/inherited_ci.py": "960d8a89bb82d651d4d2d5c497f1c680f3753cda727743a917f717027a167832",
     "test/pocx/inherited_functional.py": "8fde271730c1dd3a1c7aca239f65aac2a3ace9c6d5fb66c880f7192b937f8f25",
-    "test/pocx/kernel-parity.json": "820c48334050d1c9150fe6e4f15d8fde3703c0370935ec73a0710e6a1a67fd16",
+    "test/pocx/kernel-parity.json": "6b1186406c49640b390e9d90464b94f41450207a7657fada6148e344d74886fe",
     "test/pocx/kernel/fixtures.json": "0069f80997408a2a13739afe46775c4a5e2cc799a8b963006fdd30c299a7d35f",
     "test/pocx/kernel/provenance.json": "1701fd2568d6ad4bcb7b58bb8e7c5f6c19bd9f0a7f32a549b6387e803f8126fc",
-    "test/pocx/kernel_parity.py": "4279ef1c48e4762de248b596756681b6854632531795a5158c6820f4e656a931",
+    "test/pocx/kernel_parity.py": "2fe6a18a37298316ed03e1d8ef892accfdf2933fc0fcc14dfe56108391c73979",
     "test/pocx/manifest.json": "ed725f742d6f48682c397e3a64046ea7ba516cb391c941494e9a077777583576",
     "test/pocx/process_tree.py": "12639a920fa4a656eec4f14ea02c4aaf1fe997cfc18c7df2566e82a1d3ab3f29",
     "test/pocx/qt_parity.py": "ad4d9087e2058b42d33291b71f324677c32ffdf6276687519d3c8078e8187ace",
     "test/pocx/record_cross_unit.py": "b6fd82f31216e35ca534c5290eea1b2d44bf5fbbbbdddc1e0e68e8350bb0a28e",
     "test/pocx/rpc_coverage.py": "3d6afe81054a7acc05c634a54967d167eb4223205b421c7db2f3ce4406da6723",
     "test/pocx/run_bitcoin_functional.py": "bdd1a0d312532f48ea1a784a5e6517f2f3bf245d6ebeb3c1aa439a6377c34933",
-    "test/pocx/run_qt.py": "cd657dd006cb9ed18fbd52b4dceb32d86d3dc8a75c2a51f0696212c6d3ef54ed",
+    "test/pocx/run_qt.py": "7f2634e51b9b625a85b645f90c86db0e58d4b97cf0e6937b695744b25621b9fc",
     "test/pocx/stage.py": "909ddffa0e235afad2a40ceb300c52a4b28513132308499dc404f31d37e10f0e",
     "test/pocx/test_artifact_functional_view.py": "e8e9b697547cc53897e8bb34349d7ab4b388e7eac47c59ac842e5fa262a3ed76",
     "test/pocx/test_cross_kernel.py": "ee0e05522f27143d00dcb40c306cefaa3f0e9a202e292cb9492b85ce95a6d51d",
     "test/pocx/test_cross_unit.py": "660a91fe0aac7519b7a4c5bc344bc2a8197cac5429ac76379353d8c7b68cebe1",
-    "test/pocx/test_inherited_ci.py": "a2c9b41d46bf209519cafa745d9f732e37e2a004ed0751c3256802bcd7fb30cd",
+    "test/pocx/test_inherited_ci.py": "aac54b13149ba9214a110cd1baf36e536e73c95ecc246f1e0a646a96ef379b76",
     "test/pocx/test_processor_configuration.py": "c1fe1235977991aeddae5d458fd4a031d86e94318475e7569bf6ba9ed5a840b6",
     "test/pocx/test_qt_infrastructure.py": "0deaf023534f7c643e1cce79e494b46c077c62fc7c04628d447756df2f20c24f",
     "test/pocx/test_rpc_coverage.py": "c632fc4ca500715b69f76a7ee61a5ce0165d107a857a9fa0baf66704d3389e83",
@@ -49,10 +49,10 @@
     "test/pocx/test_windows_cross.py": "835669be83f461be2faa58ef2fe28fb1f7b67cd70e08d774c27224d051a8f0e8",
     "test/pocx/unit_assets.py": "1c34c321789b13246532e2d702b2212a5812cdd88bd4f6289945aa7f5680f992",
     "test/pocx/unit_build.py": "e53b2493f8f3a9cc7dc14aa53e21ac5c0b2599a1dd9ce87c4d09187f48b44420",
-    "test/pocx/unit_matrix.py": "a20e61095f053f0b8d59b3031cdba148029e18924254be5d3941c4c195f97978",
-    "test/pocx/unit_parity.py": "82784f6c84bde3d827b57562ff5c13f53c64fb894ab4c78e7f3d9ccc4d86b6ad",
-    "test/pocx/upstream-functional-parity.json": "c804e497fd2852f08bb1bf087ef77aa716eecd279622f88f9ae4232263add7a1",
-    "test/pocx/verify_functional.py": "34f79a7a346866dea93d611300117d483b3b4e9003dd97c0b6c3889b672da679",
+    "test/pocx/unit_matrix.py": "4e44fcdb6f98afd8ad26c38d74dd60bb6457f07c8636aa460f8a1df0691ea6d1",
+    "test/pocx/unit_parity.py": "4360deeb6a074fd1fb7c7c19d77930c296e4a874de9239976b720771295b6651",
+    "test/pocx/upstream-functional-parity.json": "f4497c9de65844ee0264409e1e86078a07eb0ed8fb4b13b0a18cb3b7c4fa982b",
+    "test/pocx/verify_functional.py": "e0f7c98199360247a458956528f7967080ae34326c23a5531ec014322a2db8dc",
     "test/pocx/windows_artifact_ci.py": "107bf73fbd0a5b4865e53a8348605317148520e6a6e63f1b063e9f21bba952f3",
     "test/pocx/windows_artifact_functional.py": "fb9a33e84d5c750123a3110d08a00968477d0c2a623496d5c3ebb0f69fea1b97",
     "test/pocx/windows_artifact_tests.py": "1dc4106f0f3832f6e86a04434f45980a133d3c79e9c778afb8771547964e7611",
@@ -71,5 +71,87 @@
     "Complete paired runtime consumer performs host lifecycle/version/manifest checks, then all Qt/unit/library/kernel and functional v1/v2 execution for Bitcoin before any PoCX executable. Exact original cross manifest exemptions retained. Functional verifier independently checks raw case matrices, commands, logs, terminal results and current native process-controlled proof. All previous releases required; old-release UTXO test runs separately with ASCII paths. Enabled benchmark listings and disabled source-guarded benchmark cases are distinguished. Producer/workflow and actual target-host execution remain unverified.",
     "Both inherited MSVCRT/UCRT producers export immutable original/native pairs before guest cleanup; publication retains one payload copy and separate bounded reports. Frozen-commit LF checkouts and matching CRT-specific artifacts feed the complete Windows consumer; previous-release/ZMQ prerequisites are required. Runtime collection preserves raw proofs/logs and omits payloads, caches and node data. Actual hosted build/runtime execution remains unverified; compiler or fixture success never counts as domain passes."
   ],
-  "actual_windows_cases_executed": 0
+  "actual_windows_cases_executed": 0,
+  "unix_makefiles_evidence_review": "The shared build evidence collector now supports the unmodified inherited Unix Makefiles configuration, binding root and recursive make rules, target flags/dependencies/link commands, CTest registrations and built binaries. Missing root graphs and changed inputs fail. Existing Ninja and Visual Studio branches are unchanged; this is evidence-infrastructure support, not target-platform runtime verification.",
+  "shared_workflow_review": "Compared against the previously reviewed a175541176185ded6cb1736287532a913ed2db54 workflow: adds manual dispatch, replaces the Linux ASAN environment mutation with an owned tracing wrapper, and installs matching headers for eight Linux USDT recipes. Windows producer/consumer jobs, matrices, commands, runtime assertions and artifact identities are unchanged. Actual hosted and Windows runtime remains unverified.",
+  "shared_helper_updates_review": {
+    ".github/workflows/ci.yml": {
+      "previous_reviewed_revision": "a175541176185ded6cb1736287532a913ed2db54",
+      "previous_sha256": "43e7258aab16605c98d91fa5a1100adb6b3c47d00c52851be79245fb42e2a52f",
+      "sha256": "3baa49659590322fede674c0b1f12a7b4346b8fc1affcdcc18ebbe6f92176e33",
+      "review": "Compared to a175541: manual dispatch and Linux tracing/header provisioning only. Windows job matrices, commands and artifact identities are unchanged."
+    },
+    "ci/test/02_run_container.py": {
+      "previous_reviewed_revision": "a175541176185ded6cb1736287532a913ed2db54",
+      "previous_sha256": "f202b4fc207da95776e1a3bd883375494ce0af16faff9a5c6957ee1cfacd026e",
+      "sha256": "e7d2b69b43a98542de3042393bcb1d80ceaf293fbbb0a33cf016be14f279a2d6",
+      "review": "Owned non-fuzz image selection and idempotent Linux tracing prerequisites; Windows recipe compiler/features unchanged."
+    },
+    "test/pocx/ci_evidence.py": {
+      "previous_reviewed_revision": "a175541176185ded6cb1736287532a913ed2db54",
+      "previous_sha256": "d5584b065776634fde0399e3ebbc20b23bf83cc0d5a849c26944a7aa1f9bb478",
+      "sha256": "8f0c10ed4d1f455a940e8787c655b5fc20c35622d7ff1bbb744f79afb2dc1243",
+      "review": "Supports declared Unix Makefiles rules/flags/links and ignores regenerated compiler_depend.make caches, while Ninja and Visual Studio behavior stays unchanged."
+    },
+    "test/pocx/inherited-ci.json": {
+      "previous_reviewed_revision": "a175541176185ded6cb1736287532a913ed2db54",
+      "previous_sha256": "1370de47db596f80628572be90e091815e0ca194ceabdb4d8bc9b6200ef0471e",
+      "sha256": "66405664d7c46b486bb9456b6c76706587fef2d8fa54c81230f5d0a350146312",
+      "review": "Pins the already reviewed Linux tracing/image and isolated build-stack helpers; original upstream recipe checksum unchanged."
+    },
+    "test/pocx/inherited_ci.py": {
+      "previous_reviewed_revision": "a175541176185ded6cb1736287532a913ed2db54",
+      "previous_sha256": "b468e0dd9a93706bb7afdbffc17877222a4fed5c168effdbd358bf1eeaa13f6b",
+      "sha256": "960d8a89bb82d651d4d2d5c497f1c680f3753cda727743a917f717027a167832",
+      "review": "Extends recipe dependency inventory to cover owned tracing/image helpers; execution order and Windows pair gating unchanged."
+    },
+    "test/pocx/kernel-parity.json": {
+      "previous_reviewed_revision": "f8bdd9b2110ec6a1d78700801cafb7947598ac99",
+      "previous_sha256": "820c48334050d1c9150fe6e4f15d8fde3703c0370935ec73a0710e6a1a67fd16",
+      "sha256": "6b1186406c49640b390e9d90464b94f41450207a7657fada6148e344d74886fe",
+      "review": "Adds reviewed build-environment helper dependencies for subprocess stack isolation; fixed kernel case inventory unchanged."
+    },
+    "test/pocx/kernel_parity.py": {
+      "previous_reviewed_revision": "c0510e79c28ab64bad8463324f362d90454385a3",
+      "previous_sha256": "4279ef1c48e4762de248b596756681b6854632531795a5158c6820f4e656a931",
+      "sha256": "2fe6a18a37298316ed03e1d8ef892accfdf2933fc0fcc14dfe56108391c73979",
+      "review": "Binds the isolated build-environment helper in original/native provenance; assertions and exact kernel runtime case matching unchanged."
+    },
+    "test/pocx/run_qt.py": {
+      "previous_reviewed_revision": "1169b863b962c4abd90912e878160672a67fc930",
+      "previous_sha256": "cd657dd006cb9ed18fbd52b4dceb32d86d3dc8a75c2a51f0696212c6d3ef54ed",
+      "sha256": "7f2634e51b9b625a85b645f90c86db0e58d4b97cf0e6937b695744b25621b9fc",
+      "review": "Uses reviewed build subprocess stack isolation; runtime stack, Qt assertions and method inventory unchanged."
+    },
+    "test/pocx/test_inherited_ci.py": {
+      "previous_reviewed_revision": "a175541176185ded6cb1736287532a913ed2db54",
+      "previous_sha256": "a2c9b41d46bf209519cafa745d9f732e37e2a004ed0751c3256802bcd7fb30cd",
+      "sha256": "aac54b13149ba9214a110cd1baf36e536e73c95ecc246f1e0a646a96ef379b76",
+      "review": "Adds tracing/image prerequisite and preservation checks; no domain case or original assertion is disabled."
+    },
+    "test/pocx/unit_matrix.py": {
+      "previous_reviewed_revision": "a13d944910456e149704b6450d1c74cfd8b8d3a8",
+      "previous_sha256": "a20e61095f053f0b8d59b3031cdba148029e18924254be5d3941c4c195f97978",
+      "sha256": "4e44fcdb6f98afd8ad26c38d74dd60bb6457f07c8636aa460f8a1df0691ea6d1",
+      "review": "Includes both original DEBUG_LOCKORDER cases when enabled, with explicit inactive reasons otherwise; Windows flags and required socket omissions still checked."
+    },
+    "test/pocx/unit_parity.py": {
+      "previous_reviewed_revision": "a13d944910456e149704b6450d1c74cfd8b8d3a8",
+      "previous_sha256": "82784f6c84bde3d827b57562ff5c13f53c64fb894ab4c78e7f3d9ccc4d86b6ad",
+      "sha256": "4360deeb6a074fd1fb7c7c19d77930c296e4a874de9239976b720771295b6651",
+      "review": "Pins the two original conditional debug cases alongside the unchanged 737-case baseline and ten individually reviewed PoW exclusions."
+    },
+    "test/pocx/upstream-functional-parity.json": {
+      "previous_reviewed_revision": "f8bdd9b2110ec6a1d78700801cafb7947598ac99",
+      "previous_sha256": "c804e497fd2852f08bb1bf087ef77aa716eecd279622f88f9ae4232263add7a1",
+      "sha256": "f4497c9de65844ee0264409e1e86078a07eb0ed8fb4b13b0a18cb3b7c4fa982b",
+      "review": "References already reviewed optional historical wallet/mempool adaptations and fixture provenance, plus passed-case database retention. Original sources, case selection and exclusions unchanged; actual optional Linux execution remains separate from Windows runtime."
+    },
+    "test/pocx/verify_functional.py": {
+      "previous_reviewed_revision": "f8bdd9b2110ec6a1d78700801cafb7947598ac99",
+      "previous_sha256": "34f79a7a346866dea93d611300117d483b3b4e9003dd97c0b6c3889b672da679",
+      "sha256": "e0f7c98199360247a458956528f7967080ae34326c23a5531ec014322a2db8dc",
+      "review": "Rejects storage-retention errors without changing raw terminal test outcomes; no weakening of functional assertions or skip policy."
+    }
+  }
 }

@@ -4,10 +4,10 @@
   "unchanged_upstream_recipe": ".github/ci-windows.py",
   "source_sha256": {
     ".github/ci-windows.py": "9cec268ddaf98292b2067ae07ff99e8290a6e1a2e3a97aac9814c6642542e27b",
-    ".github/workflows/ci.yml": "43e7258aab16605c98d91fa5a1100adb6b3c47d00c52851be79245fb42e2a52f",
+    ".github/workflows/ci.yml": "3baa49659590322fede674c0b1f12a7b4346b8fc1affcdcc18ebbe6f92176e33",
     "test/pocx/build_configuration.py": "c9df217b325f1e3dfd8cd14e002f542bd78aa084b410e8f3b18d18a261a36456",
-    "test/pocx/ci_evidence.py": "d5584b065776634fde0399e3ebbc20b23bf83cc0d5a849c26944a7aa1f9bb478",
-    "test/pocx/inherited_ci.py": "b468e0dd9a93706bb7afdbffc17877222a4fed5c168effdbd358bf1eeaa13f6b",
+    "test/pocx/ci_evidence.py": "8f0c10ed4d1f455a940e8787c655b5fc20c35622d7ff1bbb744f79afb2dc1243",
+    "test/pocx/inherited_ci.py": "960d8a89bb82d651d4d2d5c497f1c680f3753cda727743a917f717027a167832",
     "test/pocx/inherited_functional.py": "8fde271730c1dd3a1c7aca239f65aac2a3ace9c6d5fb66c880f7192b937f8f25",
     "test/pocx/inherited_tests.py": "c9171243d26768994f0c7d171ad3270344bf87ad018ece2ab7e436829853f511",
     "test/pocx/process_tree.py": "12639a920fa4a656eec4f14ea02c4aaf1fe997cfc18c7df2566e82a1d3ab3f29",
@@ -34,5 +34,27 @@
   ],
   "execution_status": "unverified; no actual native Windows execution recorded",
   "cross_artifact_consumers": "pending; this driver requires a native Visual Studio build tree",
-  "windows_functional_dispatch_review": "Keep the unchanged upstream runner for all original variants; separately execute the ancient-release UTXO case in an ASCII-only directory in both transports on Windows. Wallet multiwallet variants remain required. Disabled benchmark builds preserve the source-guarded unexpanded case; enabled builds require actual listing. Pin bytecode and previous-release environment behavior; retain elapsed time and full raw logs. Callback verification is infrastructure only, not hosted or Windows execution."
+  "windows_functional_dispatch_review": "Keep the unchanged upstream runner for all original variants; separately execute the ancient-release UTXO case in an ASCII-only directory in both transports on Windows. Wallet multiwallet variants remain required. Disabled benchmark builds preserve the source-guarded unexpanded case; enabled builds require actual listing. Pin bytecode and previous-release environment behavior; retain elapsed time and full raw logs. Callback verification is infrastructure only, not hosted or Windows execution.",
+  "unix_makefiles_evidence_review": "The shared build evidence collector now supports the unmodified inherited Unix Makefiles configuration, binding root and recursive make rules, target flags/dependencies/link commands, CTest registrations and built binaries. Missing root graphs and changed inputs fail. Existing Ninja and Visual Studio branches are unchanged; this is evidence-infrastructure support, not target-platform runtime verification.",
+  "shared_workflow_review": "Compared against the previously reviewed a175541176185ded6cb1736287532a913ed2db54 workflow: adds manual dispatch, replaces the Linux ASAN environment mutation with an owned tracing wrapper, and installs matching headers for eight Linux USDT recipes. Windows producer/consumer jobs, matrices, commands, runtime assertions and artifact identities are unchanged. Actual hosted and Windows runtime remains unverified.",
+  "shared_helper_updates_review": {
+    ".github/workflows/ci.yml": {
+      "previous_reviewed_revision": "a175541176185ded6cb1736287532a913ed2db54",
+      "previous_sha256": "43e7258aab16605c98d91fa5a1100adb6b3c47d00c52851be79245fb42e2a52f",
+      "sha256": "3baa49659590322fede674c0b1f12a7b4346b8fc1affcdcc18ebbe6f92176e33",
+      "review": "Compared to a175541: manual dispatch and Linux tracing/header provisioning only. Windows job matrices, commands and artifact identities are unchanged."
+    },
+    "test/pocx/ci_evidence.py": {
+      "previous_reviewed_revision": "a175541176185ded6cb1736287532a913ed2db54",
+      "previous_sha256": "d5584b065776634fde0399e3ebbc20b23bf83cc0d5a849c26944a7aa1f9bb478",
+      "sha256": "8f0c10ed4d1f455a940e8787c655b5fc20c35622d7ff1bbb744f79afb2dc1243",
+      "review": "Supports declared Unix Makefiles rules/flags/links and ignores regenerated compiler_depend.make caches, while Ninja and Visual Studio behavior stays unchanged."
+    },
+    "test/pocx/inherited_ci.py": {
+      "previous_reviewed_revision": "a175541176185ded6cb1736287532a913ed2db54",
+      "previous_sha256": "b468e0dd9a93706bb7afdbffc17877222a4fed5c168effdbd358bf1eeaa13f6b",
+      "sha256": "960d8a89bb82d651d4d2d5c497f1c680f3753cda727743a917f717027a167832",
+      "review": "Extends recipe dependency inventory to cover owned tracing/image helpers; execution order and Windows pair gating unchanged."
+    }
+  }
 }
