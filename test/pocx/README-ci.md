@@ -374,14 +374,18 @@ external-vector case that initially skipped because its artifact driver omitted
 `DIR_UNIT_TEST_DATA`. The earlier failed/incomplete reports remain preserved.
 Qt/kernel corrections execute the already verified build at the inherited512KiB
 test stack limit. Build tools receive8MiB in their own subprocess; callers and
-tests retain the restricted stack. The complete ASan functional baseline is
-still running, so this is not a passing whole ASan profile or native ASan result.
-Its first transport now passes all 459 original functional cases without skips;
-the second transport remains incomplete. The scoped framework report is retained
-under `asan-original-framework-checkpoint/`; the partial functional report under
-`asan-original-functional-progress/` explicitly marks the 459 remaining rows
-unverified. Neither upgrades the raw legacy wrapper failures to a whole-profile
-pass.
+tests retain the restricted stack. The complete applicable original ASan
+baseline now passes strict verification: both functional transports pass all
+459 original cases each, with zero skips. The independent native-start gate
+revalidates all corrected framework cases, full functional outputs, sanitizer
+controls and unchanged source/build inputs. No completed tests or builds are
+replayed. Its immutable `asan-original-complete-checkpoint/` combines 739 unit,
+nine Qt, 16 kernel, six auxiliary and 918 functional case/transport rows, with
+no failed, skipped or unverified applicable cases. The raw legacy wrapper
+envelope remains failed and unchanged; the complete checkpoint explicitly binds
+those raw bytes and the successful corrected evidence. Matching PoCX ASan is
+queued behind compilation capacity after this original gate passes; native and
+hosted sanitizer results remain unverified.
 
 TSan compilation and instrumented dependency verification pass. Its post-build
 profile check originally rejected valid hidden headless CMake cache options;
@@ -440,9 +444,9 @@ executed flag. Ordinary profiles retain their existing timeout defaults and
 format5 evidence. Fuzz remains explicitly disabled in this package.
 
 The local Clang 22 environment passes all six ASAN/UBSAN/LSAN runtime canaries
-and a live BPF tracing prerequisite check. The original full ASAN build and
-framework execution remain in progress; hosted sanitizer execution remains
-unverified.
+and a live BPF tracing prerequisite check. The complete applicable original ASan
+baseline is verified as described above; matching native execution is pending
+and hosted sanitizer execution remains unverified.
 Toolchain provisioning follows the [LLVM package repository](https://apt.llvm.org/);
 runtime controls follow the inherited recipes and the official
 [ASan](https://clang.llvm.org/docs/AddressSanitizer.html) and
