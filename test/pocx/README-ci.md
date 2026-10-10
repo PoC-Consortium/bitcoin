@@ -6,6 +6,17 @@ matching PoCX jobs. The scheduled/manual feature jobs include both sides of the
 Qt, kernel, wallet-disabled and IPC-disabled configurations. A configured job is
 not passing evidence until it has actually executed successfully.
 
+The owned Ubuntu24/GCC13 optional Bitcoin-OFF functional profile is now locally
+verified:459 cases per transport,918 passes and zero skips. This includes the
+prerequisites and173 expanded benchmark entries per transport. Its actual CI
+report, source/build inputs, original argument variants and retained artifacts
+were independently checked without replaying execution. Evidence is under
+`artifacts/ci-parity-20261010/ubuntu-functional-optional-bitcoin-checkpoint/`.
+The original checkpoint watcher's host permission error is retained; its unchanged
+exporter succeeded with the raw artifacts read inside the live container.
+The matching PoCX profile has passed the original-first gate and is waiting for
+compiler capacity. Its execution and hosted optional parity remain unverified.
+
 Lint is also required by the inherited workflow. It checks the shared source
 tree regardless of the PoCX build switch. The local 2026-10-10 comparison used
 the unchanged upstream `ci/lint/06_script.sh` and installer-pinned tools:
