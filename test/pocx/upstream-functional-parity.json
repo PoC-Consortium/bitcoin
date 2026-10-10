@@ -18476,7 +18476,7 @@
       "dependencies": {
         "src/bitcoin-chainstate.cpp": "2362bfb2fa203ee3946dd4428b56a8537afd45795b4e8757eb66b59d9cbab4a6",
         "src/pocx/test/tools/chainstate_test_clock.cpp": "dd5e91d0c439161e214c28b464e6217c7c1bfb7a61ec4de00ccc2fc647b3995c",
-        "src/pocx/test/tools/CMakeLists.txt": "615c53a808161e824c00a8458ecdc9b9cec9b07b9c93e88db5b026c2893052c1",
+        "src/pocx/test/tools/CMakeLists.txt": "4cd27482044d49a7c5672c2e20d2f3cb67ba2c1c2e89ddecb47e97021a812048",
         "src/pocx/consensus/regtest_functional_assumeutxo.inc": "9e1abbae3942cc638f94b7c9ad4733dc156e24430873ae099e7d9df08ff34262"
       },
       "adapted_assertion_and_method_accounting": {
@@ -18493,7 +18493,8 @@
           "run_test"
         ]
       },
-      "clock_linkage_review": "Compile the unchanged original main as a separate CMake source beside the test-only fixture clock. Preserve implicit main success return, input/assertions and existing kernel library selection. Actual GCC14 changed target built using the unchanged verified native archive; affected full chainstate scenario passed in both transports, including future-time rejection, duplicate/malformed blocks and assumeutxo extension. No baseline replay."
+      "clock_linkage_review": "Compile the unchanged original main as a separate CMake source beside the test-only fixture clock. Preserve implicit main success return, input/assertions and existing kernel library selection. Actual GCC14 changed target built using the unchanged verified native archive; affected full chainstate scenario passed in both transports, including future-time rejection, duplicate/malformed blocks and assumeutxo extension. No baseline replay.",
+      "private_kernel_dependency_review": "Register the private static kernel copy link dependencies using target_link_libraries instead of assigning LINK_LIBRARIES directly. CMake then propagates its private dependencies as static link requirements, including bcrypt on Windows, while retaining the original kernel source selection, compilation settings, fixture clock and tool entry point. The Windows reproducer fails on BCryptGenRandom with the previous helper and links with this change; Linux fixture clock and invalid input execute unchanged. Full MSVCRT build/deploy and actual Windows runtime remain separately required."
     },
     "tool_rpcauth.py": {
       "source": "test/functional/tool_rpcauth.py",

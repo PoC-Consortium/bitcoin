@@ -51,7 +51,7 @@
     "test/pocx/unit_build.py": "e53b2493f8f3a9cc7dc14aa53e21ac5c0b2599a1dd9ce87c4d09187f48b44420",
     "test/pocx/unit_matrix.py": "cebaf2bd9cd71436e579c29682275a3b76d11ea5a544f6d97c0643401e3a2e0c",
     "test/pocx/unit_parity.py": "4360deeb6a074fd1fb7c7c19d77930c296e4a874de9239976b720771295b6651",
-    "test/pocx/upstream-functional-parity.json": "378afb4ef6367e2e64c6c4599f2f346fc19ccff947891254f49fa42da2705eaf",
+    "test/pocx/upstream-functional-parity.json": "3043b7c8b5f8364a80cc37c90e7cdb657487f2169d7261bf54e14d6083f08b3b",
     "test/pocx/verify_functional.py": "f15b101b3c535ae7330c015a905b2dcefde106194ea04f7f7a6e56ef3c825eae",
     "test/pocx/windows_artifact_ci.py": "71b0b4970ec735c3cd381854ffb5533d5125d1e3b405e785591e4f3050b71f56",
     "test/pocx/windows_artifact_functional.py": "531f68a41395ecc75208d552a43f106a7d2f336971bc57b358560ed4910f02a4",
@@ -195,5 +195,11 @@
         "review": "Carry the already reviewed a0fb62aaed BCC/kernel-header compatibility dependency into the Windows artifact source gate. Original CMake/Windows recipe, target selections, test IDs, compiled source and assertions unchanged. No runtime success inferred."
       }
     }
+  },
+  "private_kernel_dependency_metadata_review": {
+    "source": "test/pocx/upstream-functional-parity.json",
+    "previous_sha256": "378afb4ef6367e2e64c6c4599f2f346fc19ccff947891254f49fa42da2705eaf",
+    "sha256": "3043b7c8b5f8364a80cc37c90e7cdb657487f2169d7261bf54e14d6083f08b3b",
+    "review": "Carry the reviewed tool_bitcoin_chainstate helper dependency pin after repairing static private-link propagation. Original Windows recipes, unit/framework inventories, assertions and runtime requirements remain unchanged."
   }
 }
