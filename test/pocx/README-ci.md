@@ -512,6 +512,19 @@ the debug configuration and fortify controls. Native code generators remain host
 build tools. Reusing system C++ libraries or an uninstrumented dependency prefix
 cannot satisfy these profiles.
 
+The 2026-10-10 local dependency reuse check confirms 14,752 checked runtime,
+libc++, ABI, unwind, CMake and LLVM-header source files and their modes match
+the original installer's `llvmorg-22.1.0` tag in both retained preparations.
+The strict dependency checker also revalidates 6,430 installed inputs per profile,
+the build logs, compiler identities, required sanitizer symbols and original
+explicit libc++ configuration. A separate image adds only the original LLVM 22
+compiler/symbolizer aliases; each resolves to the unchanged versioned binary.
+No dependency build or original test baseline was replayed. The source and
+installed-input proofs are retained under `artifacts/ci-parity-20261010/` in
+`libcxx-upstream-tag-source-audit/` and
+`sanitizer-inherited-dependency-input-checkpoint.json`. These prove prerequisites
+for reuse; complete inherited sanitizer entrypoint execution remains unverified.
+
 For example, after installing Clang22 and all runtime prerequisites:
 
 ```sh
