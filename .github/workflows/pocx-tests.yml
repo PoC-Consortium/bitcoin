@@ -184,6 +184,10 @@ jobs:
           sudo env GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=safe.directory GIT_CONFIG_VALUE_0="$GITHUB_WORKSPACE" \
             unshare --net /bin/bash -euo pipefail <<'SH'
           ip link set lo up
+          # rpc_bind.py requires a non-loopback address distinct from 1.1.1.1.
+          ip link add pocx-private type dummy
+          ip address add 192.168.254.1/32 dev pocx-private
+          ip link set pocx-private up
           ip link add pocx-test type dummy
           ip address add 1.1.1.1/32 dev pocx-test
           ip address add 2.2.2.2/32 dev pocx-test
@@ -241,6 +245,10 @@ jobs:
           sudo env GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=safe.directory GIT_CONFIG_VALUE_0="$GITHUB_WORKSPACE" \
             unshare --net /bin/bash -euo pipefail <<'SH'
           ip link set lo up
+          # rpc_bind.py requires a non-loopback address distinct from 1.1.1.1.
+          ip link add pocx-private type dummy
+          ip address add 192.168.254.1/32 dev pocx-private
+          ip link set pocx-private up
           ip link add pocx-test type dummy
           ip address add 1.1.1.1/32 dev pocx-test
           ip address add 2.2.2.2/32 dev pocx-test
@@ -313,6 +321,10 @@ jobs:
           sudo env SANITIZER_KIND="$SANITIZER_KIND" GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=safe.directory GIT_CONFIG_VALUE_0="$GITHUB_WORKSPACE" \
             unshare --net /bin/bash -euo pipefail <<'SH'
           ip link set lo up
+          # rpc_bind.py requires a non-loopback address distinct from 1.1.1.1.
+          ip link add pocx-private type dummy
+          ip address add 192.168.254.1/32 dev pocx-private
+          ip link set pocx-private up
           ip link add pocx-test type dummy
           ip address add 1.1.1.1/32 dev pocx-test
           ip address add 2.2.2.2/32 dev pocx-test
