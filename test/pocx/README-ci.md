@@ -215,12 +215,27 @@ The case-level checkpoint is recorded in
 `artifacts/ci-parity-20261010/optional-functional-cases.csv`, with scoped input
 reuse checks in `optional-native-current-inputs.json` in that directory.
 
-These focused local results do not establish complete optional-profile or hosted
-CI success. The complete original v1 selection reuses unchanged passing cases
+The complete original v1 selection reuses unchanged passing cases
 and focused corrections for environment failures. The previously missing full
 v2 selection now passes, including all 40 database-crash iterations and both
 special-address cases: 459 original cases per transport. The complete native
-optional CI entry point remains in progress.
+optional CI entry point now passes its 295 selected cases per transport without
+skips: 104 unchanged original scripts/argument cases, 167 separately adapted
+original cases and 24 PoCX-only cases. The original `mining_mainnet.py` PoW-only
+exclusion remains individually justified. Original fixed-transport duplicates
+and the expanded benchmark selection map to the corresponding native executions;
+the different raw counts do not imply missing conversions. The mapping and
+case categories are retained in `functional-categorized-cases.csv` under
+`artifacts/ci-parity-20261010/`.
+
+The final outer retention check initially failed after completed tests' generated
+block/index databases were removed to avoid exhausting disk space. Preserve that
+failed check. `full-optional-retained-proof/results.json` independently rechecks
+the unchanged sources, builds, exact case inventories, successful entrypoint,
+process cleanup, logs and child reports under the corrected retention policy.
+Future CI collection prunes only `node*/regtest/{blocks,chainstate,indexes}`;
+reports, framework/node logs, configurations and wallet files remain retained.
+These complete local optional results do not establish hosted or sanitizer passes.
 Required optional profiles reject skips with `--require-no-skips`; normal
 functional profiles retain their explicitly documented limited-checkpoint policy.
 
@@ -273,6 +288,32 @@ The local GCC14 result does not establish the inherited Clang/libc++ no-wallet
 configuration. Local Qt/kernel proof likewise does not establish the complete
 platform matrix. Dated artifacts retain exact executed configurations; the goal
 remains active.
+
+The original LLVM22 ASan build has a scoped passing checkpoint for all739
+applicable original unit cases, all9 Qt methods, all16 kernel cases and all6
+auxiliary CTest executables. The two additional original unit cases are compiled
+only with `DEBUG_LOCKORDER`; the immutable737-case Release baseline is unchanged.
+The corrected unit checkpoint reuses738 passing leaves and reruns only the
+external-vector case that initially skipped because its artifact driver omitted
+`DIR_UNIT_TEST_DATA`. The earlier failed/incomplete reports remain preserved.
+Qt/kernel corrections execute the already verified build at the inherited512KiB
+test stack limit. Build tools receive8MiB in their own subprocess; callers and
+tests retain the restricted stack. The complete ASan functional baseline is
+still running, so this is not a passing whole ASan profile or native ASan result.
+
+TSan compilation and instrumented dependency verification pass. Its post-build
+profile check originally rejected valid hidden headless CMake cache options;
+the reviewed correction revalidates those binaries without compilation replay.
+The actual original TSan runtime entrypoint is now running. MSan dependencies,
+including all three selected libevent component archives, and instrumented C++
+controls pass; the original MSan framework build remains in progress. Controls
+are prerequisite checks and never count as passing framework cases.
+
+Hosted execution remains unverified: GitHub rejects manual dispatch with
+`Actions has been disabled for this repository`, despite the repository's
+permissions endpoint reporting Actions enabled. The account/organization cause
+is unresolved. Current review-branch commits and local evidence do not replace
+the missing hosted and target-platform results.
 
 The scheduled/manual `asan` job uses the inherited Clang 22 configuration:
 `address,float-divide-by-zero,integer,undefined`, shared libraries, C++23,
