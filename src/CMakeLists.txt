@@ -92,7 +92,7 @@ if(ENABLE_POCX AND HAVE_AVX2)
   target_compile_definitions(bitcoin_consensus PRIVATE ENABLE_AVX2)
 endif()
 # SSE2 is baseline on x86-64, no special compiler flags needed
-if(ENABLE_POCX AND CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|amd64")
+if(ENABLE_POCX AND CMAKE_SYSTEM_PROCESSOR MATCHES "[xX]86_64|[aA][mM][dD]64")
   target_compile_definitions(bitcoin_consensus PRIVATE ENABLE_SSE2)
 endif()
 

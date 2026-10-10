@@ -1134,8 +1134,8 @@
       "review": "Only mock BatchWrite signature accepts the two native assignment arguments required by the PoCX interface. All 15 original cases and every assertion retained unchanged; original file restored byte-for-byte to upstream."
     },
     "src/CMakeLists.txt": {
-      "sha256": "fad235f69e7bc821e095ec589dbaf27972986193c0eb0963227054385bff629b",
-      "review": "Reviewed regtest kernel-context build selection. Architecture spelling and owned chainstate tool selection are separate review packages.",
+      "sha256": "dbba197be1097dc1bab814af63d7122f48ca0edeecefea8d1291e6629cb3b647",
+      "review": "PoCX consensus SSE2 selection accepts AMD64 and X86_64 processor spelling while preserving Bitcoin-OFF and non-x86 gating.",
       "evidence": "artifacts/ci-parity-20261009/chainstate-clock/"
     },
     "src/consensus/params.h": {
@@ -1172,6 +1172,14 @@
       "sha256": "470b7ff274c07c0a619ecdeec9e58d7a7dee65ed1d7dbae8614fdeb58b902e54",
       "review": "Extract unchanged synthetic quality calculation into wallet/global-free regtest proof.cpp; an explicit default-false consensus permission is enabled only in CRegTestParams. CheckBlockHeader and header batching use passed context parameters in daemon and kernel. Real-proof validation, signatures, compression and future-time checks remain required; production networks retain synthetic rejection. Original Bitcoin preprocessing and kernel baseline are checked separately.",
       "evidence": "artifacts/ci-parity-20261009/chainstate-clock/"
+    },
+    "src/pocx/test/CMakeLists.txt": {
+      "sha256": "2309a149ce2496ae939d711bd01fafa9f46e5fdac16a7787a08a4164f07e5ef3",
+      "review": "The unit SSE2 gate accepts the same x86-64 processor spelling as consensus. Test bodies, assertions and exclusions are unchanged."
+    },
+    "test/pocx/test_processor_configuration.py": {
+      "sha256": "c1fe1235977991aeddae5d458fd4a031d86e94318475e7569bf6ba9ed5a840b6",
+      "review": "Compile exact production consensus and test processor gates with the real Shabal SSE2 source. Check x86 spelling variants, Bitcoin-OFF and non-x86 cases; link a real MinGW AMD64 PE without executing it. Configuration probes are infrastructure evidence, not Bitcoin/PoCX or Windows suite passes."
     }
   },
   "review_limit": "Review covers selected adaptations and shared fixture transformations, not every production branch. Exact Bitcoin-only exclusions do not waive native proof/retarget coverage.",
