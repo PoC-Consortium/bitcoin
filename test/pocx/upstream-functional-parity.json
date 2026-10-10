@@ -11277,6 +11277,7 @@
       "assertion_and_method_accounting": {
         "assert_statements": 7,
         "assertion_calls": 0,
+        "assertion_method_calls": 0,
         "function_names": [
           "set_test_params",
           "skip_test_if_missing_module",
@@ -11284,7 +11285,7 @@
           "run_test"
         ]
       },
-      "review": "Retain every original assertion and both actual mempool.dat transfers, including unbroadcast persistence. Mine the exact same coinbase transaction in native and genuine Bitcoin PoW headers on independent chains; Bitcoin underclaims its subsidy. Mature both identical outpoints and compare their value, script, confirmation count and coinbase status. No cross-consensus block synchronization or UTXO acceptance bypass. Full corrected case passes both transports in the separately recorded Linux optional configuration. Runtime fixture correction: first v0.20.1 Bitcoin header is constructed from its actual regtest genesis because peerless getblocktemplate is unavailable; wallet fixtures use five mature native rewards to retain the original 50 BTC funding budget. Original compatibility/migration assertions retained. Corrected case verified in both transports; broader CI configurations remain outstanding. Retain the old-node fixture epoch on restart before mempool expiry is evaluated.",
+      "review": "Retain all seven original assertions and both genuine mempool.dat transfers, including unbroadcast persistence and expiry behavior. Mine identical coinbase transactions in independently validated PoCX and Bitcoin chains; the first v0.20.1 Bitcoin header uses its actual regtest genesis because peerless getblocktemplate is unavailable. Mature and compare identical outpoints, values, scripts, confirmations and coinbase status. Preserve the old-node fixture epoch on restart before expiry is evaluated. Original source and production consensus remain unchanged. Corrected local Linux optional case passes in both transports; broader CI execution remains required.",
       "evidence": {
         "report": "artifacts/ci-parity-20261010/optional-native-current-inputs.json",
         "scope": "Corrected optional case in both transports on Linux GCC release with genuine previous-release binaries; not sanitizer or hosted coverage."
@@ -11304,7 +11305,8 @@
       },
       "adapted_assertion_and_method_accounting": {
         "assert_statements": 8,
-        "assertion_calls": 6,
+        "assertion_calls": 7,
+        "assertion_method_calls": 0,
         "function_names": [
           "set_test_params",
           "skip_test_if_missing_module",
@@ -11381,7 +11383,8 @@
           "report": "/home/johnny/Code/bitcoin-pocx/bitcoin-tests-m0-m1-20261007/build-pocx-optional/pocx-results-8egqk06u/results.json",
           "report_sha256": "c3800919b0c85c39b9f5bc48667416b7743c83cb5a6576ebc55bf66ec810b418"
         }
-      ]
+      ],
+      "assertion_accounting_scope": "Static AST inventory: assert statements, direct assert* helper calls and bound assert* method calls; function names follow ast.walk order. These are source call sites, not runtime test-case counts or a substitute for assertion-preservation review."
     },
     "mining_basic.py": {
       "source": "test/functional/mining_basic.py",
@@ -19544,6 +19547,7 @@
       "assertion_and_method_accounting": {
         "assert_statements": 22,
         "assertion_calls": 25,
+        "assertion_method_calls": 0,
         "function_names": [
           "set_test_params",
           "skip_test_if_missing_module",
@@ -19560,7 +19564,7 @@
           "check_upgraded_records"
         ]
       },
-      "review": "Retain all 47 original assertions and every original wallet scenario. Keep the two native nodes and six genuine previous Bitcoin releases on independent P2P chains. Mirror full transaction/witness bytes and positions into genuine Bitcoin PoW blocks; validate both chains normally. Explicitly rebase detached wallet fixtures only at encoded address-book destinations, block locators and serialized transaction confirmation hashes, preserving all other records and verifying reversibility. Genuine v28.2 wallet tools retain Berkeley DB record format. Native/Bitcoin copies and backups retain keys, descriptors, transactions, balances, conflicts, abandonment and metadata. No production wallet or consensus code is changed. Full corrected case passes both transports in the separately recorded Linux optional configuration. Relay the native P2P group current mempool before collecting old snapshots, so a real accepted replacement removes stale conflicts before the reverse relay. Policy/consensus rejection remains fatal. The v28.2 wallet-tool filename follows the configured executable suffix; fixture conversions and all original/adapted assertions remain unchanged. Runtime fixture correction: first v0.20.1 Bitcoin header is constructed from its actual regtest genesis because peerless getblocktemplate is unavailable; wallet fixtures use five mature native rewards to retain the original 50 BTC funding budget. Original compatibility/migration assertions retained. Corrected case verified in both transports; broader CI configurations remain outstanding. Initialize every node at the coordinated epoch before peer relay timers are created. Mirror and synchronize each generated block before advancing the next native proof clock, retaining live peers in both consensus groups. Encode the v22 dump destinations for native RPC calls, preserving their witness programs and derivation-path assertions.",
+      "review": "Retain all 47 original assertions, with explicitly reviewed funding-height and address-encoding fixture adaptations, and every original wallet scenario. Two PoCX nodes and six genuine previous Bitcoin releases validate independent chains with identical transaction/witness bytes and positions. Initialize all node clocks before connections; mirror and synchronize each block before advancing the next proof clock. Generate five mature native rewards to retain the original 50 BTC funding budget. Detached wallet fixtures translate only address-book destinations, block locators and transaction confirmation hashes, with inverse conversion checks preserving other records. Relay accepted mempool producers/replacements before snapshots. Reencode v22 dump destinations for native RPC while preserving witness programs and derivation assertions. Genuine v28.2 wallet tools preserve BDB record format and use the configured executable suffix. Original source and production wallet/consensus remain unchanged. Corrected local Linux optional case passes in both transports; broader CI execution remains required.",
       "evidence": {
         "report": "artifacts/ci-parity-20261010/optional-native-current-inputs.json",
         "scope": "Corrected optional case in both transports on Linux GCC release with genuine previous-release binaries; not sanitizer or hosted coverage."
@@ -19581,7 +19585,8 @@
       },
       "adapted_assertion_and_method_accounting": {
         "assert_statements": 25,
-        "assertion_calls": 33,
+        "assertion_calls": 34,
+        "assertion_method_calls": 0,
         "function_names": [
           "set_test_params",
           "skip_test_if_missing_module",
@@ -19594,14 +19599,15 @@
           "generatetoaddress",
           "sync_blocks",
           "sync_mempools",
+          "relay_wallet_transactions",
           "split_version",
           "major_version_equals",
           "major_version_less_than",
           "major_version_at_least",
           "test_v22_inactivehdchain_path",
-          "check_keymeta",
           "test_ignore_legacy_during_startup",
           "run_test",
+          "check_keymeta",
           "get_flags",
           "check_upgraded_records"
         ]
@@ -19671,7 +19677,8 @@
           "report": "/home/johnny/Code/bitcoin-pocx/bitcoin-tests-m0-m1-20261007/build-pocx-optional/pocx-results-yopaxam5/results.json",
           "report_sha256": "be9122bf5b0d9afb580695d2bb5638e9f138935baac80193d163dc2a0a2c37ce"
         }
-      ]
+      ],
+      "assertion_accounting_scope": "Static AST inventory: assert statements, direct assert* helper calls and bound assert* method calls; function names follow ast.walk order. These are source call sites, not runtime test-case counts or a substitute for assertion-preservation review."
     },
     "wallet_blank.py": {
       "source": "test/functional/wallet_blank.py",
@@ -21725,6 +21732,7 @@
       "assertion_and_method_accounting": {
         "assert_statements": 49,
         "assertion_calls": 223,
+        "assertion_method_calls": 17,
         "function_names": [
           "set_test_params",
           "skip_test_if_missing_module",
@@ -21776,7 +21784,7 @@
           "check_comments"
         ]
       },
-      "review": "Retain all289original assertions, all original methods and the identical run_test scenario sequence, including parameterized paths/failures, genuine BDB-to-descriptor migration, balances, keys, address-book labels, metadata, conflicts, backup restoration, no-rescan, conflicting-file hashes, pruned-data failure and deliberate wrong-signet-chain rollback. Real Bitcoin v28.2 and PoCX nodes validate independent chains sharing every transaction/witness byte and position. Explicit unloaded fixture rebasing only changes encoded destinations, block locators and confirmation block identities; inverse copies preserve backups. Schema-specific old-wallet RPC conversion never rewrites opaque values. Mining underclaims the smaller regtest subsidy across both halving schedules; normal transaction acceptance relays successful producers first to retain RBF semantics. No original test, production wallet or consensus code is changed. Full corrected case passes both transports in the separately recorded Linux optional configuration. Runtime fixture correction: first v0.20.1 Bitcoin header is constructed from its actual regtest genesis because peerless getblocktemplate is unavailable; wallet fixtures use five mature native rewards to retain the original 50 BTC funding budget. Original compatibility/migration assertions retained. Corrected case verified in both transports; broader CI configurations remain outstanding. Request the maximum safe manual prune height because native header sizes change fast-prune file boundaries; retain the original unavailable-next-block assertion, migration failure, BDB preservation and backup checks.",
+      "review": "Retain all 289 original assertion statements/helper call sites, all original methods and the original scenario sequence, including backup, rollback, no-rescan, balances, keys, labels, metadata, conflicts, conflicting files, pruned-data failure and wrong-signet-chain rollback. Real v28.2 Bitcoin and PoCX nodes independently validate identical transaction/witness bytes and positions. Explicit detached fixture rebasing translates only encoded destinations, block locators and confirmation identities; schema-specific RPC conversion preserves opaque values. Shared blocks underclaim the smaller applicable regtest subsidy. Initial native funding uses 105 blocks and an additional 50 BTC balance assertion. Coordinated clocks retain wallet birthdays and VerifyDB time bounds; validation-interface barriers preserve wallet synchronization. Manual pruning requests the maximum safe height because native headers change fast-prune file boundaries, retaining the unavailable-next-block assertion, migration failure, BDB preservation and backup checks. Original source and production wallet/consensus remain unchanged. Corrected local Linux optional case passes in both transports; broader CI execution remains required.",
       "evidence": {
         "report": "artifacts/ci-parity-20261010/optional-native-current-inputs.json",
         "scope": "Corrected optional case in both transports on Linux GCC release with genuine previous-release binaries; not sanitizer or hosted coverage."
@@ -21860,7 +21868,63 @@
           "report": "/home/johnny/Code/bitcoin-pocx/bitcoin-tests-m0-m1-20261007/build-pocx-optional/pocx-results-h_bg6nmb/results.json",
           "report_sha256": "ca118743f9a16b41a1e43ce4dec3b8234a27b8263c7e4acf2d13b26a34ed1aaa"
         }
-      ]
+      ],
+      "adapted_assertion_and_method_accounting": {
+        "assert_statements": 49,
+        "assertion_calls": 224,
+        "assertion_method_calls": 17,
+        "function_names": [
+          "set_test_params",
+          "skip_test_if_missing_module",
+          "setup_nodes",
+          "assert_is_sqlite",
+          "assert_is_bdb",
+          "create_legacy_wallet",
+          "assert_addr_info_equal",
+          "assert_list_txs_equal",
+          "check_address",
+          "migrate_and_get_rpc",
+          "test_basic",
+          "test_multisig",
+          "test_other_watchonly",
+          "test_no_privkeys",
+          "test_pk_coinbases",
+          "test_encrypted",
+          "test_nonexistent",
+          "test_unloaded_by_path",
+          "test_wallet_with_relative_path",
+          "test_wallet_with_path",
+          "clear_default_wallet",
+          "test_default_wallet",
+          "test_default_wallet_watch_only",
+          "test_migration_failure",
+          "test_direct_file",
+          "test_addressbook",
+          "test_migrate_raw_p2sh",
+          "test_conflict_txs",
+          "test_hybrid_pubkey",
+          "test_failed_migration_cleanup",
+          "test_failed_migration_cleanup_relative_path",
+          "test_blank",
+          "test_avoidreuse",
+          "test_preserve_tx_extra_info",
+          "test_migrate_simple_watch_only",
+          "test_manual_keys_import",
+          "test_p2wsh",
+          "test_disallowed_p2wsh",
+          "test_miniscript",
+          "test_taproot",
+          "test_solvable_no_privs",
+          "test_loading_failure_after_migration",
+          "unsynced_wallet_on_pruned_node_fails",
+          "run_test",
+          "check_last_hardened",
+          "check",
+          "send_to_script",
+          "check_comments"
+        ]
+      },
+      "assertion_accounting_scope": "Static AST inventory: assert statements, direct assert* helper calls and bound assert* method calls; function names follow ast.walk order. These are source call sites, not runtime test-case counts or a substitute for assertion-preservation review."
     },
     "wallet_miniscript.py": {
       "source": "test/functional/wallet_miniscript.py",
