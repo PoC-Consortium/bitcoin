@@ -167,11 +167,13 @@
     "test/pocx/kernel/reference.rs": "af1cb2d2abd1b353f508a4891acbeab8b2e85e1b777ffe973cd091a0df89b5b7",
     "test/pocx/kernel/render_fixtures.py": "7f88dc854ac1002b18ca2f6412b01d66b8c220f312db00a2dc3d4b7d3b63ba48",
     "test/pocx/kernel/verify_fixtures.py": "f93ed8f7fbd1e60f4aa837a8f9d20b4bc68bee5977a5c674b026f2df00245b55",
-    "test/pocx/kernel_parity.py": "4279ef1c48e4762de248b596756681b6854632531795a5158c6820f4e656a931",
-    "test/pocx/run_kernel.py": "c702deae6209e22c91c24f2c005239ed345748460614ddcad1308b03a3c6e7c9",
+    "test/pocx/kernel_parity.py": "2fe6a18a37298316ed03e1d8ef892accfdf2933fc0fcc14dfe56108391c73979",
+    "test/pocx/run_kernel.py": "758604cbf06f51456a352fb8af60caf5659ee777ecc0a23593347f0add329edb",
     "test/pocx/test_cross_kernel.py": "ee0e05522f27143d00dcb40c306cefaa3f0e9a202e292cb9492b85ce95a6d51d",
     "test/pocx/test_kernel_infrastructure.py": "521d85392898fbaefcf531ba84943c56900838560910a4c7591692b8bcb32323",
-    "test/pocx/vectors/Cargo.lock": "2a959ccaa2c4c3fbddef9b0328e9c21a111ec13739bfc1beb441a194760e3786"
+    "test/pocx/vectors/Cargo.lock": "2a959ccaa2c4c3fbddef9b0328e9c21a111ec13739bfc1beb441a194760e3786",
+    "test/pocx/build_environment.py": "8cffde16fefe5b9b9505108abfe447a878625fb9bdedd7356919af10bbd22be3",
+    "test/pocx/test_build_environment.py": "6e5949349f37b33bc072b9778b2b3bca6e898868ba2ce35ba610ae573dcf682f"
   },
   "execution_inputs": {
     "src/CMakeLists.txt": "9838b770ffdfc39dd194291915e07ebfaa91799a31e02d3619bcfa19d0f45031",
@@ -211,11 +213,13 @@
     "test/pocx/kernel/reference.rs": "af1cb2d2abd1b353f508a4891acbeab8b2e85e1b777ffe973cd091a0df89b5b7",
     "test/pocx/kernel/render_fixtures.py": "7f88dc854ac1002b18ca2f6412b01d66b8c220f312db00a2dc3d4b7d3b63ba48",
     "test/pocx/kernel/verify_fixtures.py": "f93ed8f7fbd1e60f4aa837a8f9d20b4bc68bee5977a5c674b026f2df00245b55",
-    "test/pocx/kernel_parity.py": "4279ef1c48e4762de248b596756681b6854632531795a5158c6820f4e656a931",
-    "test/pocx/run_kernel.py": "c702deae6209e22c91c24f2c005239ed345748460614ddcad1308b03a3c6e7c9",
+    "test/pocx/kernel_parity.py": "2fe6a18a37298316ed03e1d8ef892accfdf2933fc0fcc14dfe56108391c73979",
+    "test/pocx/run_kernel.py": "758604cbf06f51456a352fb8af60caf5659ee777ecc0a23593347f0add329edb",
     "test/pocx/test_cross_kernel.py": "ee0e05522f27143d00dcb40c306cefaa3f0e9a202e292cb9492b85ce95a6d51d",
     "test/pocx/test_kernel_infrastructure.py": "521d85392898fbaefcf531ba84943c56900838560910a4c7591692b8bcb32323",
-    "test/pocx/vectors/Cargo.lock": "2a959ccaa2c4c3fbddef9b0328e9c21a111ec13739bfc1beb441a194760e3786"
+    "test/pocx/vectors/Cargo.lock": "2a959ccaa2c4c3fbddef9b0328e9c21a111ec13739bfc1beb441a194760e3786",
+    "test/pocx/build_environment.py": "8cffde16fefe5b9b9505108abfe447a878625fb9bdedd7356919af10bbd22be3",
+    "test/pocx/test_build_environment.py": "6e5949349f37b33bc072b9778b2b3bca6e898868ba2ce35ba610ae573dcf682f"
   },
   "review_notes": {
     "checks": "All original check sites retained, with native expected fixture values and explicit zero legacy PoW accessor contract. Four additional check sites strengthen truncation, ProcessBlock acceptance and lookup-read validity.",

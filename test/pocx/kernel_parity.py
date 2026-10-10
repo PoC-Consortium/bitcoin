@@ -21,6 +21,7 @@ BITCOIN_INPUTS = {
     'src/CMakeLists.txt', 'src/kernel/CMakeLists.txt',
     'src/kernel/bitcoinkernel.h', 'src/kernel/bitcoinkernel_wrapper.h',
     'test/pocx/run_kernel.py', 'test/pocx/kernel_parity.py', 'test/pocx/build_configuration.py',
+    'test/pocx/build_environment.py',
 }
 
 
@@ -50,6 +51,7 @@ def check(root, review=None):
         'test/pocx/kernel/parity.json', 'test/pocx/kernel/provenance.json',
         'test/pocx/kernel_parity.py', 'test/pocx/run_kernel.py',
         'test/pocx/build_configuration.py',
+        'test/pocx/build_environment.py', 'test/pocx/test_build_environment.py',
         'test/pocx/test_kernel_infrastructure.py', 'test/pocx/test_cross_kernel.py'}
     reviewed = review.get('reviewed_sources', {})
     if set(reviewed) != required:

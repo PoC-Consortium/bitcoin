@@ -13,6 +13,7 @@ import time
 
 import kernel_parity
 from build_configuration import configuration, executable, build_arguments, ctest_arguments, require_source
+from build_environment import run_build
 
 ROOT = kernel_parity.ROOT
 
@@ -47,7 +48,7 @@ def main():
     build_command = ['cmake', '--build', str(build), '--target', 'test_kernel', '-j', str(args.jobs)]
     build_command += build_arguments(selected)
     with (output / 'build.log').open('w') as log:
-        subprocess.run(build_command, stdout=log, stderr=subprocess.STDOUT, check=True)
+        run_build(build_command, stdout=log, stderr=subprocess.STDOUT, check=True)
     issues = kernel_parity.check(ROOT)
     if issues:
         raise ValueError(issues)

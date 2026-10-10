@@ -15,6 +15,7 @@ import xml.etree.ElementTree as ET
 
 from common import ROOT, build_options, sha256
 from build_configuration import configuration, executable, build_arguments, ctest_arguments, require_source
+from build_environment import run_build
 import qt_parity
 
 
@@ -85,7 +86,7 @@ def main():
     command = ['cmake', '--build', str(build), '--target', 'test_bitcoin-qt', '-j', str(args.jobs)]
     command += build_arguments(selected)
     with (output / 'build.log').open('w') as log:
-        subprocess.run(command, stdout=log, stderr=subprocess.STDOUT, check=True)
+        run_build(command, stdout=log, stderr=subprocess.STDOUT, check=True)
     review = json.loads((ROOT / 'test/pocx/qt-parity.json').read_text())
     baseline = json.loads((ROOT / 'test/pocx/qt-baseline.json').read_text())
     inputs = set(baseline['upstream_files_sha256']) | set(review['reviewed_build_sources'])

@@ -15,7 +15,10 @@
     "src/pocx/test/qt/wallettests.cpp": "92e76293cf6ee3f50f549b7b12d9ba8102e7f08948632bbd9897c4f667b20ddb"
   },
   "reviewed_build_sources": {
-    "src/qt/test/CMakeLists.txt": "0a5db589fc2346d33c896783161ad6d69c07e3af2c892301e513ae8b7bdd315a"
+    "src/qt/test/CMakeLists.txt": "0a5db589fc2346d33c896783161ad6d69c07e3af2c892301e513ae8b7bdd315a",
+    "test/pocx/build_environment.py": "8cffde16fefe5b9b9505108abfe447a878625fb9bdedd7356919af10bbd22be3",
+    "test/pocx/test_build_environment.py": "6e5949349f37b33bc072b9778b2b3bca6e898868ba2ce35ba610ae573dcf682f",
+    "test/pocx/run_qt.py": "7f2634e51b9b625a85b645f90c86db0e58d4b97cf0e6937b695744b25621b9fc"
   },
   "reviews": {
     "src/pocx/test/qt/rpcnestedtests.cpp": "One fixed expected mainnet genesis transaction ID changes; every other line and assertion matches upstream.",
