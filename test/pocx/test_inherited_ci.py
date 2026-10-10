@@ -89,13 +89,14 @@ class InheritedTest(unittest.TestCase):
                     PACKAGES='compiler python3', CI_CONTAINER_CAP='--security-opt seccomp=unconfined',
                     BITCOIN_CONFIG='--preset=dev-mode -DENABLE_WALLET=OFF', DEP_OPTS='NO_WALLET=1 CC=clang-17')
                 result = module.configure_runtime_environment(ROOT, original)
-                expected = ('py3-bcc', 'bcc-tools') if 'alpine' in name else ('python3-bpfcc', 'bpfcc-tools')
+                expected = ('py3-bcc', 'bcc-tools') if 'alpine' in name else ('python3-bpfcc', 'bpfcc-tools','python3-zmq')
                 for package in expected:self.assertEqual(result['PACKAGES'].split().count(package), 1)
                 for flag in ('--security-opt seccomp=unconfined', '--privileged',
                              '/usr/src:/usr/src:ro', '/lib/modules:/lib/modules:ro'):
                     self.assertIn(flag, result['CI_CONTAINER_CAP'])
-                self.assertEqual({k:v for k,v in original.items() if k not in ('PACKAGES','CI_CONTAINER_CAP')},
-                                 {k:v for k,v in result.items() if k not in ('PACKAGES','CI_CONTAINER_CAP')})
+                permitted = ('PACKAGES','PIP_PACKAGES','CI_CONTAINER_CAP')
+                self.assertEqual({k:v for k,v in original.items() if k not in permitted},
+                                 {k:v for k,v in result.items() if k not in permitted})
                 self.assertEqual(module.configure_runtime_environment(ROOT, result), result)
                 self.assertEqual(original['PACKAGES'], 'compiler python3')
         for flags in ({'RUN_FUZZ_TESTS':'true'}, {'RUN_FUNCTIONAL_TESTS':'false'},
@@ -104,6 +105,33 @@ class InheritedTest(unittest.TestCase):
                             RUN_FUNCTIONAL_TESTS='true', PACKAGES='compiler', CI_CONTAINER_CAP='existing')
             original.update(flags)
             self.assertEqual(module.configure_runtime_environment(ROOT, original), original)
+
+    def test_actual_recipes_have_python_bindings_for_enabled_functional_features(self):
+        spec = importlib.util.spec_from_file_location('python_runtime', ROOT/'ci/test/02_run_container.py')
+        module = importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+        for name in ('arm','i686_no_ipc','native_asan','native_tsan','native_msan',
+                     'native_nowallet','native_previous_releases','native_alpine_musl'):
+            command=['bash','-ec','source ./ci/test/00_setup_env.sh >/dev/null 2>&1; python3 -c "import json,os; print(json.dumps(dict(os.environ)))"']
+            original=json.loads(subprocess.check_output(command,cwd=ROOT,text=True,
+                env={'PATH':os.environ['PATH'],'FILE_ENV':'./ci/test/00_setup_env_'+name+'.sh','MAKEJOBS':'-j1'}))
+            result=module.configure_runtime_environment(ROOT,original)
+            packages=result.get('PACKAGES','').split()
+            pip=result.get('PIP_PACKAGES','').split()
+            with self.subTest(recipe=name):
+                self.assertTrue('python3-zmq' in packages or any(p in ('pyzmq','zmq') for p in pip))
+                if name=='i686_no_ipc':
+                    self.assertEqual(result.get('PIP_PACKAGES'),original.get('PIP_PACKAGES'))
+                else:
+                    self.assertTrue(any(p=='pycapnp' or p.startswith('pycapnp==') for p in pip))
+                if name=='native_previous_releases':
+                    self.assertNotIn('--break-system-packages',pip)
+                    self.assertIn('python3-pip',packages)
+                if name=='arm':
+                    self.assertIn('--break-system-packages',pip)
+                    self.assertIn('python3-pip',packages)
+                self.assertEqual(result['BITCOIN_CONFIG'],original['BITCOIN_CONFIG'])
+                self.assertEqual(result.get('DEP_OPTS'),original.get('DEP_OPTS'))
+                self.assertEqual(module.configure_runtime_environment(ROOT,result),result)
 
     def test_review_rejects_recipe_drift(self):
         self.assertTrue(inherited_ci.verify_recipe()['source_sha256'])

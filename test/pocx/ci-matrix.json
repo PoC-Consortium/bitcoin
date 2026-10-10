@@ -696,7 +696,7 @@
   },
   "owned_inherited_tracing_prerequisites": {
     "helper": "test/pocx/ci/inherited_runtime_env.sh",
-    "sha256": "dfab25ce5b6e915f661062ec1326a0dc92928c8e13a5e8c2373cb230ec263de0",
+    "sha256": "7381cff8ba3819b83b2ac438fc3a6ff7deb547b9211a6db94ef0e04b1cb2d1b1",
     "required_profiles": [
       "native_asan",
       "native_tsan",
@@ -707,6 +707,7 @@
       "i686_no_ipc",
       "arm"
     ],
-    "scope": "Provision enabled Linux USDT dependencies/capabilities and actual-host matching headers without disabling tests or changing compiler/features. Hosted/platform execution remains unverified."
+    "scope": "Provision enabled Linux USDT dependencies/capabilities and actual-host matching headers without disabling tests or changing compiler/features. Hosted/platform execution remains unverified.",
+    "python_prerequisites_review": "Provision Python ZeroMQ for the reviewed Debian/Ubuntu functional recipes and add pinned pycapnp only where IPC is enabled and the original environment omitted it. Preserve existing pip requirements; Ubuntu22.04 does not receive the unsupported --break-system-packages option. Export added PIP_PACKAGES through host/container setup. Original compiler, dependency build flags, features, test selections and assertions remain unchanged. Actual-recipe regression checks all eight environments, disabled/fuzz routing and idempotence; package/runtime execution remains separately required."
   }
 }

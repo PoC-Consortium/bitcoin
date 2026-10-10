@@ -480,6 +480,16 @@ retain their environments. Docker input-stage checks verify copying and sourcing
 for all eight recipes; they do not establish package installation, BPF execution
 or framework/hosted success.
 
+The same helper supplies Python ZeroMQ where Debian/Ubuntu recipes omitted it.
+For ARM and previous-release recipes with IPC enabled, it also installs pip and
+requests `pycapnp==2.2.4` when the original pip requirements contain no pycapnp.
+The i686 recipe keeps IPC disabled and needs no Cap'n Proto binding. Existing
+Python requirements are preserved; Ubuntu22.04's older pip does not receive the
+unsupported `--break-system-packages` option. Added pip requirements are exported
+through host/container setup as well as sourced inside image construction.
+These prerequisites enable required tests; they do not themselves establish a
+passing framework configuration.
+
 Inherited functional execution preserves CLI and multiprocess settings and runs
 the extended inventory with both transports. Tests guarded by features explicitly
 disabled in that build are recorded as configuration-disabled and remain required

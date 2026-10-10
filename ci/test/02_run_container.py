@@ -36,12 +36,12 @@ def configure_runtime_environment(root, environment):
     updated = dict(environment)
     if updated.get('RUN_FUZZ_TESTS') == 'true':
         return updated
-    command = ['bash', '-ec', r'source "$1"; printf "%s\0%s\0" "${PACKAGES:-}" "${CI_CONTAINER_CAP:-}"',
+    command = ['bash', '-ec', r'source "$1"; printf "%s\0%s\0%s\0" "${PACKAGES:-}" "${PIP_PACKAGES:-}" "${CI_CONTAINER_CAP:-}"',
                'bash', f'{root}/test/pocx/ci/inherited_runtime_env.sh']
     values = subprocess.check_output(command, env=updated).decode().split('\0')
-    if len(values) != 3 or values[-1] != '':
+    if len(values) != 4 or values[-1] != '':
         raise ValueError('Incomplete inherited runtime environment')
-    for key, value in zip(('PACKAGES', 'CI_CONTAINER_CAP'), values[:2]):
+    for key, value in zip(('PACKAGES', 'PIP_PACKAGES', 'CI_CONTAINER_CAP'), values[:3]):
         if key in updated or value:
             updated[key] = value
     return updated
