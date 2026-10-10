@@ -6,9 +6,12 @@ matching PoCX jobs. The scheduled/manual feature jobs include both sides of the
 Qt, kernel, wallet-disabled and IPC-disabled configurations. A configured job is
 not passing evidence until it has actually executed successfully.
 
-The inherited unit/kernel checkpoints described below initially stripped
-`BOOST_TEST_RANDOM=1`. They retain their green nonrandomized evidence, but their
-randomized CI condition remains unverified until the repaired wrappers execute.
+## Current local checkpoints
+
+Some inherited unit/kernel checkpoints initially stripped `BOOST_TEST_RANDOM=1`.
+Their original nonrandomized evidence remains valid within that scope. The
+no-wallet pair and original i686/previous-release checkpoints now also have
+verified randomized runs; other randomized CI conditions require their own proof.
 The repair preserves this setting, records the actual chosen seeds and keeps
 filters and report overrides out of the environment. The current case report
 under `artifacts/ci-parity-20261010/required-ci-coverage/` distinguishes this gap
@@ -22,16 +25,36 @@ or Qt/functional/auxiliary replay. Case reports and actual Boost seeds are under
 `artifacts/ci-parity-20261010/randomized-nowallet-checkpoints/`. Other inherited
 randomized configurations remain separate requirements.
 
-The owned Ubuntu24/GCC13 optional Bitcoin-OFF functional profile is now locally
-verified:459 cases per transport,918 passes and zero skips. This includes the
-prerequisites and173 expanded benchmark entries per transport. Its actual CI
-report, source/build inputs, original argument variants and retained artifacts
-were independently checked without replaying execution. Evidence is under
-`artifacts/ci-parity-20261010/ubuntu-functional-optional-bitcoin-checkpoint/`.
+The retained original i686 and previous-release builds also passed the missing
+randomized unit/kernel conditions with the upstream 512 KiB stack and 2400 second
+deadlines. The i686 run passed 737 unit cases, with two IPC cases inactive because
+`ENABLE_IPC=OFF`, plus all 16 kernel cases. Both lock-order cases ran and passed.
+The previous-release run passed 739 unit cases and all 16 kernel cases.
+Independent verification checks actual seeds, every case, original sources,
+build identities, loaded libraries and QA data. Compilation,
+Qt, auxiliary and functional execution were not replayed. Reports are under
+`artifacts/ci-parity-20261010/randomized-{i686,previous-releases}-original-checkpoint/`.
+The matching native profiles remain queued and require their own execution proof.
+
+The owned Ubuntu24/GCC13 prerequisite-complete optional functional pair is now
+locally verified with both transports and zero skips: Bitcoin passed 918 rows
+(459 per transport), and PoCX passed 590 rows (295 per transport). The PoCX rows
+comprise 208 unchanged, 334 adapted and 48 PoCX-only passes. Bitcoin expands 173
+benchmark entries per transport; PoCX uses an independently verified aggregate
+covering every registered benchmark. These different counting representations
+do not indicate missing tests or a conversion percentage. Actual CI reports,
+source/build inputs, argument variants and retained artifacts were independently
+checked without replaying execution. Evidence is under
+`artifacts/ci-parity-20261010/ubuntu-functional-optional-{bitcoin,pocx}-checkpoint/`.
 The original checkpoint watcher's host permission error is retained; its unchanged
 exporter succeeded with the raw artifacts read inside the live container.
-The matching PoCX profile has passed the original-first gate and is waiting for
-compiler capacity. Its execution and hosted optional parity remain unverified.
+This local pair does not establish hosted, sanitizer or other platform passes.
+
+## Retained verification notes
+
+The following notes preserve intermediate failures, fixes and checkpoints.
+Statements about queued or incomplete phases describe those observations; the
+current case report identifies subsequently verified conditions.
 
 Lint is also required by the inherited workflow. It checks the shared source
 tree regardless of the PoCX build switch. The local 2026-10-10 comparison used
@@ -90,8 +113,9 @@ The 2026-10-10 local i686 Bitcoin-OFF build completed with the inherited
 Debian trixie/Clang19 environment, 32-bit dependencies, Debug configuration,
 Boost safe mode, IPC disabled and the upstream512KiB test stack. Its actual
 CTest entrypoint passed737 original unit cases,9 Qt methods,16 kernel cases
-and5 auxiliary executables. Two unit cases require `DEBUG_LOCKORDER` and are
-inactive in this configuration. The independent checkpoint in
+and5 auxiliary executables. The two IPC unit cases are inactive because IPC is
+disabled in this configuration; both lock-order cases ran and passed. The
+independent checkpoint in
 `artifacts/ci-parity-20261010/inherited-i686-original-ctest-checkpoint/`
 revalidates source/build identities, commands, raw reports and individual cases
 without replaying compilation or tests. Original functional execution remains
