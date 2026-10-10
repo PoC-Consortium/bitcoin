@@ -14,7 +14,7 @@ import tempfile
 import threading
 import unittest
 from unittest.mock import patch
-sys.dont_write_bytecode = True
+import pocx_bootstrap as pocx_bootstrap
 from stage import stage, ROOT, OWNED, sha256
 import check_drift
 import common

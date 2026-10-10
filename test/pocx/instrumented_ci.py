@@ -13,7 +13,7 @@ import shutil
 import subprocess
 import sys
 
-sys.dont_write_bytecode = True
+import pocx_bootstrap as pocx_bootstrap
 from common import ROOT, build_options, sha256
 from sanitizer_ci import required_binaries, VENDORED
 

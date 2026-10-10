@@ -17,7 +17,7 @@ import unittest
 from unittest.mock import patch
 import xml.etree.ElementTree as ET
 
-sys.dont_write_bytecode = True
+import pocx_bootstrap as pocx_bootstrap
 import kernel_parity
 
 ROOT = kernel_parity.ROOT

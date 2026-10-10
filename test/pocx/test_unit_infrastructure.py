@@ -15,7 +15,7 @@ import sys
 import tempfile
 import unittest
 from unittest.mock import patch
-sys.dont_write_bytecode = True
+import pocx_bootstrap as pocx_bootstrap
 from common import ROOT, OWNED
 import unit_build
 import unit_parity

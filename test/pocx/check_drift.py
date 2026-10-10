@@ -111,7 +111,7 @@ def check(root):
         path = root / source
         if not path.is_file() or digest(path) != expected:
             issues.append({'source': source, 'reason': 'native forging clock changed since review'})
-    execution_sources = {'test/pocx/test_runner.py', 'test/pocx/functional_results.py',
+    execution_sources = {'test/pocx/pocx_bootstrap.py', 'test/pocx/test_runner.py', 'test/pocx/functional_results.py',
                          'test/pocx/update_inventory.py', 'test/pocx/functional_cases.py',
                          'test/pocx/functional_environment.py',
                          'test/pocx/functional_execution.py',

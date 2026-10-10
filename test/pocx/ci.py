@@ -21,7 +21,7 @@ import sys
 import tempfile
 import time
 
-sys.dont_write_bytecode = True
+import pocx_bootstrap as pocx_bootstrap
 from stage import ROOT, build_options, sha256, short_tmpdir
 from ci_evidence import artifact_paths, build_snapshot, require_unchanged, source_snapshot, verify_report
 

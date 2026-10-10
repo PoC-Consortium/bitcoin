@@ -16,7 +16,7 @@ import subprocess
 import sys
 import tempfile
 import time
-sys.dont_write_bytecode = True
+import pocx_bootstrap as pocx_bootstrap
 from stage import stage, sha256
 from common import exclusive_lock
 import functional_environment

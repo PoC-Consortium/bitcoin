@@ -30,7 +30,7 @@ class UnitMatrixTests(unittest.TestCase):
             source.mkdir(parents=True)
             scripts = root / 'test/pocx'
             scripts.mkdir(parents=True)
-            for name in ('register_unit.py', 'unit_build.py'):
+            for name in ('pocx_bootstrap.py', 'register_unit.py', 'unit_build.py'):
                 (scripts / name).write_bytes((ROOT / 'test/pocx' / name).read_bytes())
             (root / 'CMakeLists.txt').write_text('''cmake_minimum_required(VERSION 3.22)
 project(unit_config_probe LANGUAGES CXX)
@@ -60,6 +60,7 @@ int main(int argc, char** argv) {
 add_executable(test_pocx "${CMAKE_CURRENT_SOURCE_DIR}/fixture.cpp")
 target_compile_definitions(test_pocx PRIVATE $<$<CONFIG:Debug>:WRONG_CONFIGURATION>)
 set(POCX_UNIT_INPUTS "${CMAKE_CURRENT_SOURCE_DIR}/fixture.cpp")
+list(APPEND POCX_UNIT_INPUTS "${PROJECT_SOURCE_DIR}/test/pocx/pocx_bootstrap.py")
 ''' + discovery)
             def run(command, check=True):
                 return subprocess.run(command, capture_output=True, text=True, check=check)

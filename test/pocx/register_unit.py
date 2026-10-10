@@ -7,8 +7,7 @@ import json
 from pathlib import Path
 import re
 import subprocess
-import sys
-sys.dont_write_bytecode = True
+import pocx_bootstrap as pocx_bootstrap
 from unit_build import snapshot
 
 parser = argparse.ArgumentParser()

@@ -12,7 +12,7 @@ import subprocess
 import sys
 import tempfile
 
-sys.dont_write_bytecode = True
+import pocx_bootstrap as pocx_bootstrap
 from common import ROOT, sha256, short_tmpdir, exclusive_lock
 import unit_matrix
 import build_configuration

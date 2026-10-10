@@ -11,7 +11,7 @@ import sys
 import tarfile
 import urllib.request
 
-sys.dont_write_bytecode = True
+import pocx_bootstrap as pocx_bootstrap
 from common import ROOT, sha256
 from instrumented_ci import dependency_options, installed_inputs, required_archives, specification, tools, verify_dependencies
 

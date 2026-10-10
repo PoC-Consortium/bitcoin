@@ -35,7 +35,7 @@ RECIPE_SOURCES = {'ci/test/03_test_script.sh', 'ci/test/02_run_container.py',
                   'test/pocx/inherited_tests.py', 'test/pocx/inherited_functional.py',
                   '.github/ci-test-each-commit-exec.py', 'test/pocx/revision_ci.py',
                   'test/pocx/windows_cross.py', 'test/pocx/test_windows_cross.py'}
-RECIPE_SOURCES.update({'test/pocx/original_usdt.py', 'test/pocx/framework/bpf_abi.py',
+RECIPE_SOURCES.update({'test/pocx/pocx_bootstrap.py', 'test/pocx/original_usdt.py', 'test/pocx/framework/bpf_abi.py',
                        'test/pocx/test_bpf_abi.py', 'test/pocx/bitcoin_baseline/usdt/review.json'})
 RECIPE_SOURCES.update('test/pocx/bitcoin_baseline/usdt/interface_usdt_' + name + '.py' for name in
                       ('coinselection', 'mempool', 'net', 'utxocache', 'validation'))

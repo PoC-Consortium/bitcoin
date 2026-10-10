@@ -18,7 +18,7 @@
     "ci/test/02_run_container.py": "84e4a1adb04972ec0d3c74a598f0995fde6465592c62f84139db41fcab6a7b65",
     "ci/test/03_test_script.sh": "cfd9e9583398dee9527a2fb7ea099104a8cab53f7bf5ccdceb3f4e84425ebb8b",
     "test/pocx/ci/inherited_test_script.sh": "25b6f367bed45e7c7d040ae2a82bba21b278790d83c536ade4d7b7a835273930",
-    "test/pocx/inherited_ci.py": "4ff3fd5b452a8bc99cd6113d504638aaf8ecace172254c96b0845cc6b795e441",
+    "test/pocx/inherited_ci.py": "f4159b0177030cd881e55a9ce876e864f694cf5bdce4cda6d9fdf96af59cd42f",
     "test/pocx/inherited_functional.py": "1a6b54bf4c50a2188d6834e269cab43aabc012625e0cfaf5d7d2e8d89ee88b85",
     "test/pocx/inherited_tests.py": "b1fb1313f9c510735ecbf42cf7d092201031d8516051e463351b233125af3a74",
     "test/pocx/revision_ci.py": "4ae8bac50834eb3d9bb3a883b6d8897c51730f6989e981bcd589c14fbd7e0998",
@@ -36,7 +36,8 @@
     "test/pocx/bitcoin_baseline/usdt/interface_usdt_validation.py": "d4a7dfc3fda13e7b0ca0609dd97fd25195d6a3939a4bcea7efd85b808a910bca",
     "test/pocx/bitcoin_baseline/usdt/interface_usdt_coinselection.py": "937ed589df1a6bf42d62ae4b20d4a9a11b00f8b68f712be21d708bfc25e7e2e5",
     "test/pocx/bitcoin_baseline/usdt/interface_usdt_net.py": "113bc1b4208988dc906187b5c4baebde9af438dc5684a5009f0cf49c0dadeb55",
-    "test/pocx/bitcoin_baseline/usdt/interface_usdt_mempool.py": "73336cf4489b45fc87729287814236d5f5e20ca528427500a18aaa00885d173a"
+    "test/pocx/bitcoin_baseline/usdt/interface_usdt_mempool.py": "73336cf4489b45fc87729287814236d5f5e20ca528427500a18aaa00885d173a",
+    "test/pocx/pocx_bootstrap.py": "72e0a27abe139a6079220174cc1c103c173a0f632c1aa6034ddcc2075d58322d"
   },
   "evidence_retention": "Copy newly created bounded framework report trees into artifacts/pocx-inherited on success and failure; export container reports before cleanup; upload in inherited POSIX jobs",
   "unchanged_upstream_revision_recipe": ".github/ci-test-each-commit-exec.py",

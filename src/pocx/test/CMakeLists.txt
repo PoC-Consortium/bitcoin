@@ -32,6 +32,7 @@ set(POCX_UNIT_INPUTS
   "${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt"
   "${CMAKE_CURRENT_SOURCE_DIR}/sources.cmake"
   "${CMAKE_CURRENT_SOURCE_DIR}/util/CMakeLists.txt"
+  "${PROJECT_SOURCE_DIR}/test/pocx/pocx_bootstrap.py"
   "${PROJECT_SOURCE_DIR}/test/pocx/register_unit.py"
   "${PROJECT_SOURCE_DIR}/test/pocx/unit_build.py")
 # Reuse data without maintaining copies; headers live only in the build tree.

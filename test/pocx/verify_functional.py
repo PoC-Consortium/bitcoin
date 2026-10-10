@@ -15,7 +15,7 @@ from pathlib import Path
 import subprocess
 import sys
 
-sys.dont_write_bytecode = True
+import pocx_bootstrap as pocx_bootstrap
 from common import ROOT, OWNED, build_options
 from functional_cases import selected_cases, upstream_cases
 from functional_results import transport_results

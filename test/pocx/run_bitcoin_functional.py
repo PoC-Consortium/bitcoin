@@ -19,7 +19,7 @@ import shlex
 import subprocess
 import sys
 
-sys.dont_write_bytecode = True
+import pocx_bootstrap as pocx_bootstrap
 from common import ROOT, sha256
 from functional_cases import TRANSPORT_FLAGS, upstream_cases
 from functional_environment import arguments, release_binaries, verify_network_addresses
