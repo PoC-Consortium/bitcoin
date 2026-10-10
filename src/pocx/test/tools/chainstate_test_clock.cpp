@@ -27,6 +27,5 @@ struct FixtureClock {
 const FixtureClock fixture_clock;
 } // namespace
 
-// Preserve the original entry point, including C++ main's implicit success
-// return. Renaming main would remove that language guarantee.
-#include <bitcoin-chainstate.cpp>
+// The unchanged original main is a separate source of this test executable.
+// This translation unit initializes its fixture clock before main executes.

@@ -33,7 +33,12 @@ if(NOT kernel_type STREQUAL "STATIC_LIBRARY")
   set(clock_kernel pocx_chainstate_test_kernel)
 endif()
 
-add_executable(pocx_chainstate_test_clock chainstate_test_clock.cpp)
+# Compile the original entry point directly, preserving main's implicit success
+# return and keeping implementation files out of preprocessor includes.
+add_executable(pocx_chainstate_test_clock
+  chainstate_test_clock.cpp
+  ${PROJECT_SOURCE_DIR}/src/bitcoin-chainstate.cpp
+)
 target_link_libraries(pocx_chainstate_test_clock PRIVATE core_interface ${clock_kernel})
 add_windows_application_manifest(pocx_chainstate_test_clock)
 
