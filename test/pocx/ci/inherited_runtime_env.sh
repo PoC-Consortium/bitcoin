@@ -2,6 +2,8 @@
 # Copyright (c) 2026 The Bitcoin PoCX developers
 # Distributed under the MIT software license; see COPYING.
 
+export LC_ALL=C.UTF-8
+
 # Sourced after the original environment, on the host and in the image build.
 # These reviewed Linux recipes enable USDT and execute functional tests.
 pocx_prepare_tracing_runtime() {
