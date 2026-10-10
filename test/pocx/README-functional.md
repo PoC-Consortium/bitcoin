@@ -50,6 +50,17 @@ are retained for each case. They are separate from the reviewed PoW exclusion:
 `mining_mainnet.py` consists entirely of Bitcoin nonce/nBits retarget vectors.
 Mixed mining, block validation, Signet and P2P cases remain selected.
 
+The later Ubuntu24/GCC13 standard CI checkpoint is separately scoped under
+`artifacts/ci-parity-20261010/ubuntu-functional-{bitcoin,pocx}-checkpoint/`.
+Original base execution has 269 passes and 15 reviewed optional skips. Native
+execution has 280 passes and 15 optional skips per transport, including all 24
+native-only cases passing in each mode. Only 11 network-sensitive native cases
+per transport were rerun after supplying the missing local CI network interface;
+568 unaffected case/transport results were retained. Every row points to its raw
+execution report, and the first failed envelope remains preserved. The remaining
+optional skips require the separate GCC13 enabled profile, currently queued;
+these results do not establish other compilers or platforms.
+
 ## Coverage preserved
 
 Adapters retain original assertions and meaningful preconditions while replacing

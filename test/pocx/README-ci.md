@@ -307,10 +307,36 @@ and are not additional unique passes.
 Kernel case-logic reuse is distinct from direct source reuse: all 16 cases are
 selected from the separately owned monolithic adaptation. These results do not
 establish other compilers, platforms or sanitizer configurations. The standard
-functional pair is still running and reuses the verified unit builds.
+functional pair is now verified and reuses the verified unit builds.
 Per-case reports and strict source/build/retained-artifact checks are under
 `artifacts/ci-parity-20261010/ubuntu-{unit,wallet-disabled,ipc-disabled,qt,kernel}-{bitcoin,pocx}-checkpoint/`.
 Exporting these reports does not rebuild or replay their completed tests.
+
+The standard original functional checkpoint has 269 passes and 15 reviewed
+optional skips from its 284 base entries, using the upstream default transport.
+The native standard matrix has 280 passes and 15 reviewed optional skips per
+transport: 560 passes and 30 skips across 590 case/transport rows. Its passing
+rows comprise 200 unchanged original, 312 adapted original and 48 PoCX-only
+executions. Original declared entries and native normalized argument cases use
+different counting units; these totals are not a one-to-one inventory comparison.
+
+The first native invocation had no failed assertions but unexpectedly skipped
+`rpc_bind --nonloopback` in both transports because the local container lacked a
+nonloopback interface. With the CI IPv4/IPv6 network restored, all 11 selected
+network-sensitive cases pass in each transport except the reviewed compiled-out
+ZMQ case. Only those 22 case/transport rows were rerun; the other 568 were reused.
+An independent metadata-only check verifies complete case coverage, terminal
+process cleanup, skip policy, unchanged sources/build inputs and all retained
+artifacts. The immutable `ubuntu-functional-pocx-checkpoint/` binds each row to
+its actual full or targeted execution. The original failed envelope and raw
+skips remain unchanged. No source, assertion or skip policy was weakened.
+
+The remaining 15 optional skips per transport remain required in the separately
+enabled GCC13 optional profile. That original-first pair is now queued behind
+shared compilation capacity, using the CI IPv4/IPv6 network, special-address
+fixtures, matching-kernel BPF prerequisites and verified previous releases.
+Neither this standard checkpoint nor the complete older GCC14 optional proof
+establishes the GCC13 optional condition. No additional Actions run was started.
 
 The inherited Clang17/libc++ no-wallet original ctest checkpoint separately
 passes 680 unit cases, seven Qt methods, 16 kernel cases and six auxiliary
