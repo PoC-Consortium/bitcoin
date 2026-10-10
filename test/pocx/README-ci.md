@@ -393,7 +393,13 @@ The original MSan build and runtime unit entrypoint pass all 739 original cases
 across 149 suites, with no failures, skips or exclusions. MSan dependencies,
 including all three selected libevent component archives, and instrumented C++
 controls pass. Its six auxiliary executables and 16 kernel cases also pass;
-the full functional matrix is still running. Case-level unit
+the full functional matrix is still running. Both TSan and MSan independently
+pass all 459 original functional cases in their first transport without skips;
+each second transport remains incomplete. Their retained
+`{tsan,msan}-original-functional-progress/` reports bind completed group logs,
+case inventories and source/build inputs, with the remaining 459 rows per
+configuration explicitly unverified. No completed test or build is replayed
+when exporting these checkpoints. Case-level unit
 checkpoints are retained under
 `artifacts/ci-parity-20261010/{tsan,msan}-original-unit-checkpoint/`.
 Their revalidation checks recorded source/build inputs and retained execution
@@ -403,11 +409,10 @@ Auxiliary/kernel case reports are retained in the corresponding
 `{tsan,msan}-original-aux-kernel-checkpoint/` directories.
 Controls are prerequisite checks and never count as passing framework cases.
 
-Hosted execution remains unverified: GitHub rejects manual dispatch with
-`Actions has been disabled for this repository`, despite the repository's
-permissions endpoint reporting Actions enabled. The account/organization cause
-is unresolved. Current review-branch commits and local evidence do not replace
-the missing hosted and target-platform results.
+Actions dispatch now succeeds, resolving the earlier repository-disabled
+response. The single authorized original unit baseline passed and is documented
+below. Other hosted and target-platform conditions remain unverified; neither
+that limited run nor local evidence establishes them.
 
 The scheduled/manual `asan` job uses the inherited Clang 22 configuration:
 `address,float-divide-by-zero,integer,undefined`, shared libraries, C++23,
@@ -436,7 +441,8 @@ format5 evidence. Fuzz remains explicitly disabled in this package.
 
 The local Clang 22 environment passes all six ASAN/UBSAN/LSAN runtime canaries
 and a live BPF tracing prerequisite check. The original full ASAN build and
-framework execution remain in progress; hosted execution remains unverified.
+framework execution remain in progress; hosted sanitizer execution remains
+unverified.
 Toolchain provisioning follows the [LLVM package repository](https://apt.llvm.org/);
 runtime controls follow the inherited recipes and the official
 [ASan](https://clang.llvm.org/docs/AddressSanitizer.html) and
