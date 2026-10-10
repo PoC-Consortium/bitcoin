@@ -413,28 +413,34 @@ those raw bytes and the successful corrected evidence. Matching PoCX ASan is
 queued behind compilation capacity after this original gate passes; native and
 hosted sanitizer results remain unverified.
 
-TSan compilation and instrumented dependency verification pass. Its post-build
-profile check originally rejected valid hidden headless CMake cache options;
-the reviewed correction revalidates those binaries without compilation replay.
-The actual original TSan runtime entrypoint passes all 737 applicable original
-unit cases, six auxiliary CTests and 16 kernel cases; functional execution is
-running. Its two original DEBUG_LOCKORDER cases are configuration-disabled.
+The complete original TSan baseline now passes strict verification. Its 737
+active original unit cases, six auxiliary CTests, 16 kernel cases and all 459
+functional cases in each transport pass with zero skips. Two original
+`DEBUG_LOCKORDER` unit cases are configuration-inactive; Qt is explicitly disabled
+by this upstream sanitizer recipe. The original raw CI envelope also passes.
+The independent `tsan-original-complete-checkpoint/` binds every case, both full
+functional inventories, actual instrumentation controls, unchanged source/build
+inputs and retained artifacts. Exporting it neither reruns tests/builds nor
+reexecutes the already passed native-start gate. Matching PoCX TSan started only
+after that complete original gate passed and is queued behind shared compilation
+capacity. Its runtime and hosted coverage remain unverified.
+
 The original MSan build and runtime unit entrypoint pass all 739 original cases
 across 149 suites, with no failures, skips or exclusions. MSan dependencies,
 including all three selected libevent component archives, and instrumented C++
 controls pass. Its six auxiliary executables and 16 kernel cases also pass;
-the full functional matrix is still running. Both TSan and MSan independently
-pass all 459 original functional cases in their first transport without skips;
-each second transport remains incomplete. Their retained
-`{tsan,msan}-original-functional-progress/` reports bind completed group logs,
-case inventories and source/build inputs, with the remaining 459 rows per
-configuration explicitly unverified. No completed test or build is replayed
-when exporting these checkpoints. Case-level unit
+the full functional matrix is still running. The first transport independently
+passes all 459 original functional cases without skips; the second remains
+incomplete. Its retained `msan-original-functional-progress/` binds completed
+group logs, case inventories and source/build inputs, with the remaining 459 rows
+explicitly unverified. No completed test or build is replayed when exporting
+these checkpoints. Case-level unit
 checkpoints are retained under
 `artifacts/ci-parity-20261010/{tsan,msan}-original-unit-checkpoint/`.
 Their revalidation checks recorded source/build inputs and retained execution
-artifacts without replaying tests. These are scoped original unit checkpoints;
-neither complete sanitizer profiles nor PoCX sanitizer execution are established.
+artifacts without replaying tests. Unit-only reports retain their original scope;
+the separate complete ASan/TSan checkpoints establish their applicable original
+profiles. PoCX sanitizer execution is not established by original-only evidence.
 Auxiliary/kernel case reports are retained in the corresponding
 `{tsan,msan}-original-aux-kernel-checkpoint/` directories.
 Controls are prerequisite checks and never count as passing framework cases.
