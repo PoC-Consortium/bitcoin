@@ -6,6 +6,19 @@ matching PoCX jobs. The scheduled/manual feature jobs include both sides of the
 Qt, kernel, wallet-disabled and IPC-disabled configurations. A configured job is
 not passing evidence until it has actually executed successfully.
 
+Lint is also required by the inherited workflow. It checks the shared source
+tree regardless of the PoCX build switch. The local 2026-10-10 comparison used
+the unchanged upstream `ci/lint/06_script.sh` and installer-pinned tools:
+all15 upstream groups passed; the fork passed12 and failed3 (`py_lint`,
+`trailing_whitespace` and `all_python_linters`). The latter includes12 Python
+scripts; these are nested checks rather than additional top-level groups.
+Executable permissions have since been corrected for253 owned scripts, with
+unchanged source bytes, and the unchanged `lint-files.py` now passes. The other
+lint findings remain required. This local comparison does not establish the
+original `ci/lint.py` Docker build, a pull-request merge range or hosted lint.
+The retained comparison is under
+`artifacts/ci-parity-20261010/lint-execution-checkpoint/`.
+
 The inherited workflow also includes the original 32-bit x86 without IPC and
 previous-release compatibility profiles. Both retain their upstream environment
 scripts and run through the Bitcoin-first PoCX controller. The previous-release
