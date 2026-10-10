@@ -28,7 +28,9 @@ evidence = snapshot(Path(args.binary), args.inputs, args.cache, suites)
 lines = []
 for suite in suites:
     lines.append(f'add_test([=[{suite}]=] [=[{args.binary}]=] --run_test={suite} --catch_system_error=no --log_level=test_suite -- DEBUG_LOG_OUT)')
-    lines.append(f'set_tests_properties([=[{suite}]=] PROPERTIES FAIL_REGULAR_EXPRESSION "no test cases matching filter" TIMEOUT 180 SKIP_REGULAR_EXPRESSION "skipping script_assets_test;skipping total_ram")')
+    # A per-test TIMEOUT overrides CTest's --timeout. Keep timing with the
+    # runner: ordinary unit runs request180seconds, inherited sanitizer CI2400.
+    lines.append(f'set_tests_properties([=[{suite}]=] PROPERTIES FAIL_REGULAR_EXPRESSION "no test cases matching filter" SKIP_REGULAR_EXPRESSION "skipping script_assets_test;skipping total_ram")')
 Path(args.output).write_text("\n".join(lines) + "\n")
 Path(args.output).with_suffix('.boost.txt').write_text(output)
 Path(args.output).with_suffix('.build.json').write_text(json.dumps(evidence, indent=2) + '\n')

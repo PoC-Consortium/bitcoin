@@ -10,6 +10,30 @@ ROOT = Path(__file__).resolve().parents[2]
 OWNED = ROOT / "test/pocx"
 
 
+def exclusive_lock(path):
+    """Hold a nonblocking build lock until the returned file is closed.
+
+    Windows CRT locks start at the current position and can extend beyond EOF.
+    Use byte zero of the same non-truncated file for every invocation. Unix
+    keeps flock compatibility with existing runners.
+    """
+    stream = path.open('a+b')
+    try:
+        if os.name == 'nt':
+            import msvcrt
+            stream.seek(0)
+            msvcrt.locking(stream.fileno(), msvcrt.LK_NBLCK, 1)
+        elif os.name == 'posix':
+            import fcntl
+            fcntl.flock(stream, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        else:
+            raise ValueError('Unsupported build-lock platform: ' + os.name)
+    except BaseException:
+        stream.close()
+        raise
+    return stream
+
+
 def sha256(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
 

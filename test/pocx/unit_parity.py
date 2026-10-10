@@ -17,22 +17,19 @@ EXCLUDED = {'pow_tests/' + name for name in (
     'CheckProofOfWork_test_biger_hash_than_target', 'CheckProofOfWork_test_zero_target',
     'ChainParams_TESTNET4_sanity')}
 SHARED_REVIEWS = {
-    'src/CMakeLists.txt',
-    'src/consensus/params.h',
-    'src/kernel/CMakeLists.txt',
-    'src/kernel/chainparams.cpp',
-    'src/validation.cpp',
-    'src/pocx/regtest/forging.cpp',
-    'src/pocx/regtest/forging.h',
-    'src/pocx/regtest/proof.cpp',
-    'src/pocx/regtest/proof.h',
-
     'src/pocx/test/util/mining.cpp',
     'src/pocx/test/util/setup_common.cpp', 'src/pocx/test/util/forging.h',
     'src/pocx/test/util/bitcoin_block_fixture.h', 'src/node/blockstorage.cpp',
     'src/validation.cpp', 'src/validation.h', 'test/pocx/unit_parity.py',
     'test/pocx/common.py', 'test/pocx/run_unit.py', 'test/pocx/register_unit.py',
     'test/pocx/unit_build.py', 'test/pocx/test_unit_infrastructure.py',
+    'test/pocx/unit_matrix.py', 'test/pocx/run_bitcoin_unit.py', 'test/pocx/test_unit_matrix.py',
+    'test/pocx/test_file_lock.py',
+    'test/pocx/build_configuration.py', 'test/pocx/test_build_configuration.py',
+    'src/pocx/test/CMakeLists.txt',
+    'src/consensus/params.h', 'src/kernel/chainparams.cpp', 'src/kernel/CMakeLists.txt',
+    'src/CMakeLists.txt', 'src/pocx/regtest/proof.cpp', 'src/pocx/regtest/forging.cpp',
+    'src/pocx/regtest/forging.h', 'src/pocx/regtest/proof.h',
     *(f'src/pocx/test/{name}.cpp' for name in ('pocx_tests', 'pocx_simd_tests',
        'pocx_wire_tests', 'pocx_real_proof_tests', 'pocx_block_builder_tests'))}
 
@@ -109,7 +106,10 @@ def check(root, record=None):
 
 def verify_execution(root, build, result_path, record):
     report = json.loads(result_path.read_text())
-    binary = build / 'bin/test_pocx'
+    import build_configuration
+    cache = (build / 'CMakeCache.txt').read_text()
+    selected_config = build_configuration.configuration(cache, report.get('build_configuration'))
+    binary = build_configuration.executable(build, 'test_pocx', cache, selected_config)
     if Path(report['binary']) != binary or report['binary_sha256'] != digest(binary):
         raise ValueError('Wrong or stale PoCX unit binary')
     if report['returncode'] != 0 or report['cache_sha256'] != digest(build / 'CMakeCache.txt'):

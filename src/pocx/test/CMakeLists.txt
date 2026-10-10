@@ -75,16 +75,45 @@ file(GLOB_RECURSE POCX_UNIT_HEADERS CONFIGURE_DEPENDS
   "${PROJECT_SOURCE_DIR}/src/test/*.h"
   "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
 list(APPEND POCX_UNIT_INPUTS ${POCX_UNIT_HEADERS})
-set(unit_inputs "${CMAKE_CURRENT_BINARY_DIR}/unit-inputs.txt")
+set(unit_discovery_dir "${CMAKE_CURRENT_BINARY_DIR}")
+if(CMAKE_CONFIGURATION_TYPES)
+  # Each executable needs its own source/binary evidence and registrations.
+  # Building Debug must never overwrite the discovery record for Release.
+  string(APPEND unit_discovery_dir "/$<CONFIG>")
+  file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/discovery-config.cmake" [=[
+if(NOT CTEST_CONFIGURATION_TYPE)
+  message(FATAL_ERROR "PoCX unit discovery requires an explicit CTest build configuration")
+endif()
+include("${CMAKE_CURRENT_LIST_DIR}/${CTEST_CONFIGURATION_TYPE}/discovered.cmake")
+]=])
+  set(unit_test_include "${CMAKE_CURRENT_BINARY_DIR}/discovery-config.cmake")
+else()
+  set(unit_test_include "${CMAKE_CURRENT_BINARY_DIR}/discovered.cmake")
+endif()
+set(unit_inputs "${unit_discovery_dir}/unit-inputs.txt")
+if(CMAKE_CROSSCOMPILING AND CMAKE_SYSTEM_NAME STREQUAL "Windows")
+  # The Windows artifact consumer discovers and runs all cases on Windows.
+  # Executing this foreign PE binary on the Linux builder is invalid.
+  list(APPEND POCX_UNIT_INPUTS "${PROJECT_SOURCE_DIR}/test/pocx/record_cross_unit.py")
+endif()
 file(GENERATE OUTPUT "${unit_inputs}"
   # CMake appends virtual .rule entries for generated headers; these are not files.
   CONTENT "$<JOIN:$<FILTER:$<TARGET_PROPERTY:test_pocx,SOURCES>,EXCLUDE,[.]rule$>,\n>\n$<JOIN:${POCX_UNIT_INPUTS},\n>\n")
 set_property(TARGET test_pocx APPEND PROPERTY LINK_DEPENDS "${unit_inputs}"
   "${PROJECT_BINARY_DIR}/CMakeCache.txt" ${POCX_UNIT_INPUTS})
-add_custom_command(TARGET test_pocx POST_BUILD
-  COMMAND ${Python3_EXECUTABLE} ${PROJECT_SOURCE_DIR}/test/pocx/register_unit.py
-    --binary $<TARGET_FILE:test_pocx> --output ${CMAKE_CURRENT_BINARY_DIR}/discovered.cmake
-    --inputs "${unit_inputs}" --cache "${PROJECT_BINARY_DIR}/CMakeCache.txt"
-  VERBATIM)
-set_property(DIRECTORY APPEND PROPERTY TEST_INCLUDE_FILES "${CMAKE_CURRENT_BINARY_DIR}/discovered.cmake")
+if(CMAKE_CROSSCOMPILING AND CMAKE_SYSTEM_NAME STREQUAL "Windows")
+  add_custom_command(TARGET test_pocx POST_BUILD
+    COMMAND ${Python3_EXECUTABLE} ${PROJECT_SOURCE_DIR}/test/pocx/record_cross_unit.py
+      --binary $<TARGET_FILE:test_pocx> --output "${unit_discovery_dir}/cross-build.json"
+      --inputs "${unit_inputs}" --cache "${PROJECT_BINARY_DIR}/CMakeCache.txt"
+      --source "${PROJECT_SOURCE_DIR}"
+    VERBATIM)
+else()
+  add_custom_command(TARGET test_pocx POST_BUILD
+    COMMAND ${Python3_EXECUTABLE} ${PROJECT_SOURCE_DIR}/test/pocx/register_unit.py
+      --binary $<TARGET_FILE:test_pocx> --output "${unit_discovery_dir}/discovered.cmake"
+      --inputs "${unit_inputs}" --cache "${PROJECT_BINARY_DIR}/CMakeCache.txt"
+    VERBATIM)
+  set_property(DIRECTORY APPEND PROPERTY TEST_INCLUDE_FILES "${unit_test_include}")
+endif()
 install_binary_component(test_pocx INTERNAL)
