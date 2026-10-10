@@ -17,7 +17,7 @@
     ".github/ci-test-each-commit-exec.py": "7d6c921986188b726f82bb08a782be738f6dfc2460d1f64272ae8bd8715d040b",
     "ci/test/02_run_container.py": "f202b4fc207da95776e1a3bd883375494ce0af16faff9a5c6957ee1cfacd026e",
     "ci/test/03_test_script.sh": "cfd9e9583398dee9527a2fb7ea099104a8cab53f7bf5ccdceb3f4e84425ebb8b",
-    "test/pocx/ci/inherited_test_script.sh": "6a452fee58c15dfdb7659aa58e24957d1b01e9d90a8f141177474c1c09db9767",
+    "test/pocx/ci/inherited_test_script.sh": "25b6f367bed45e7c7d040ae2a82bba21b278790d83c536ade4d7b7a835273930",
     "test/pocx/inherited_ci.py": "b468e0dd9a93706bb7afdbffc17877222a4fed5c168effdbd358bf1eeaa13f6b",
     "test/pocx/inherited_functional.py": "8fde271730c1dd3a1c7aca239f65aac2a3ace9c6d5fb66c880f7192b937f8f25",
     "test/pocx/inherited_tests.py": "c9171243d26768994f0c7d171ad3270344bf87ad018ece2ab7e436829853f511",
@@ -39,5 +39,6 @@
       "ci/test/00_setup_env_native_previous_releases.sh"
     ],
     "coverage": "Preserve original and native RPC coverage gates per transport with unchanged upstream evaluator; run the historical slow dbcrash exclusion as a documented selection extension. No execution claim."
-  }
+  },
+  "runtime_stack_review": "Preserve the inherited512KiB soft stack limit for every test process. Apply it as a soft limit only so reviewed Qt/kernel build subprocesses can restore their normal8MiB stack without changing caller/test limits. Original upstream recipe and assertions remain byte-identical. Real execution of the actual owned shell block verifies enabled/disabled conditions, preserved hard limit and isolated build-child limits; full inherited target recipes remain separately required."
 }

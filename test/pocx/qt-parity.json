@@ -17,7 +17,7 @@
   "reviewed_build_sources": {
     "src/qt/test/CMakeLists.txt": "0a5db589fc2346d33c896783161ad6d69c07e3af2c892301e513ae8b7bdd315a",
     "test/pocx/build_environment.py": "8cffde16fefe5b9b9505108abfe447a878625fb9bdedd7356919af10bbd22be3",
-    "test/pocx/test_build_environment.py": "6e5949349f37b33bc072b9778b2b3bca6e898868ba2ce35ba610ae573dcf682f",
+    "test/pocx/test_build_environment.py": "eebf4597ae5fa2530f2b15934ec1d74c91e6acae0328b2e0d24d61167170e276",
     "test/pocx/run_qt.py": "7f2634e51b9b625a85b645f90c86db0e58d4b97cf0e6937b695744b25621b9fc"
   },
   "reviews": {
@@ -26,5 +26,6 @@
     "src/pocx/test/qt/test_main.cpp": "Only adds the native URI header and one qExec registration. All original class registrations and fixture/lifecycle handling retained.",
     "src/pocx/test/qt/pocxuritests.cpp": "Moves exactly the nine existing native URI assertions into one dedicated case, with their existing setup and expectations unchanged.",
     "src/pocx/test/qt/sources.cmake": "Select owned RPC/wallet/runner and additional native URI sources. Use default AUTOMOC include paths so reused and owned headers in different directories both resolve correctly; original Bitcoin configuration retains its upstream moc option."
-  }
+  },
+  "inherited_stack_review": "Actual owned CI shell block now applies512KiB to the soft limit only. A real shell/OS probe confirms enabled and disabled stack conditions, unchanged hard limit,8MiB isolated build-child stack, and preserved test stack afterward. Original upstream recipe, original/native case inventories, compiled sources and assertions unchanged. Full inherited platform execution remains separately required."
 }

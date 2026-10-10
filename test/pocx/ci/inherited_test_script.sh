@@ -125,7 +125,8 @@ du -sh "${DEPENDS_DIR}"/*/
 du -sh "${PREVIOUS_RELEASES_DIR}"
 
 if [ -n "${CI_LIMIT_STACK_SIZE}" ]; then
-  ulimit -s 512
+  # Restrict tests while allowing owned build subprocesses their normal stack.
+  ulimit -S -s 512
 fi
 
 if [ -n "$USE_VALGRIND" ]; then

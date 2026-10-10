@@ -173,7 +173,7 @@
     "test/pocx/test_kernel_infrastructure.py": "521d85392898fbaefcf531ba84943c56900838560910a4c7591692b8bcb32323",
     "test/pocx/vectors/Cargo.lock": "2a959ccaa2c4c3fbddef9b0328e9c21a111ec13739bfc1beb441a194760e3786",
     "test/pocx/build_environment.py": "8cffde16fefe5b9b9505108abfe447a878625fb9bdedd7356919af10bbd22be3",
-    "test/pocx/test_build_environment.py": "6e5949349f37b33bc072b9778b2b3bca6e898868ba2ce35ba610ae573dcf682f"
+    "test/pocx/test_build_environment.py": "eebf4597ae5fa2530f2b15934ec1d74c91e6acae0328b2e0d24d61167170e276"
   },
   "execution_inputs": {
     "src/CMakeLists.txt": "9838b770ffdfc39dd194291915e07ebfaa91799a31e02d3619bcfa19d0f45031",
@@ -219,7 +219,7 @@
     "test/pocx/test_kernel_infrastructure.py": "521d85392898fbaefcf531ba84943c56900838560910a4c7591692b8bcb32323",
     "test/pocx/vectors/Cargo.lock": "2a959ccaa2c4c3fbddef9b0328e9c21a111ec13739bfc1beb441a194760e3786",
     "test/pocx/build_environment.py": "8cffde16fefe5b9b9505108abfe447a878625fb9bdedd7356919af10bbd22be3",
-    "test/pocx/test_build_environment.py": "6e5949349f37b33bc072b9778b2b3bca6e898868ba2ce35ba610ae573dcf682f"
+    "test/pocx/test_build_environment.py": "eebf4597ae5fa2530f2b15934ec1d74c91e6acae0328b2e0d24d61167170e276"
   },
   "review_notes": {
     "checks": "All original check sites retained, with native expected fixture values and explicit zero legacy PoW accessor contract. Four additional check sites strengthen truncation, ProcessBlock acceptance and lookup-read validity.",
@@ -230,5 +230,6 @@
   "signet_calibration_initialization_review": "Native Signet initializes fPoCXLowCapacityCalibration=false, matching its existing normal-capacity genesis. Independently reproduced wrong regtest target before fix; Bitcoin preprocessed translation unit identical; every existing mainnet/regtest field and fixture byte unchanged. artifacts/functional-green-20261009/signet-calibration-preprocessing-review.json",
   "ci_baseline_review": "Add an explicit --bitcoin mode to the existing strict kernel runner/verifier. It requires ENABLE_POCX=OFF and snapshots original fixtures plus shared production sources. Both modes still rebuild, check current hashes, require all16 original runtime/Boost cases and exactly one successful non-skipped CTest wrapper. PoCX source, case, fixture, assertion and execution-input requirements remain unchanged. Binary names support native Windows .exe builds.",
   "regtest_kernel_permission_review": "Extract unchanged synthetic quality calculation into wallet/global-free regtest proof.cpp; an explicit default-false consensus permission is enabled only in CRegTestParams. CheckBlockHeader and header batching use passed context parameters in daemon and kernel. Real-proof validation, signatures, compression and future-time checks remain required; production networks retain synthetic rejection. Original Bitcoin preprocessing and kernel baseline are checked separately.",
-  "sanitizer_timeout_review": "Positive explicit CTest timeout; default900seconds retained, inherited ASan uses2400seconds. All16cases, assertion proof, source/build attestations and failure/skip rejection are unchanged."
+  "sanitizer_timeout_review": "Positive explicit CTest timeout; default900seconds retained, inherited ASan uses2400seconds. All16cases, assertion proof, source/build attestations and failure/skip rejection are unchanged.",
+  "inherited_stack_review": "Actual owned CI shell block now applies512KiB to the soft limit only. A real shell/OS probe confirms enabled and disabled stack conditions, unchanged hard limit,8MiB isolated build-child stack, and preserved test stack afterward. Original upstream recipe, original/native case inventories, compiled sources and assertions unchanged. Full inherited platform execution remains separately required."
 }
