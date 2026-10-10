@@ -5,7 +5,7 @@
   "original_outputs_verified": true,
   "sha256": {
     "src/test/bip324_tests.cpp": "1773fa553f209445e823f0b5f8614f238177b19638799e1c11f108dc785e30ff",
-    "test/pocx/adapt_bip324_vectors.py": "e53b7effab9d35a18fc0fd9317ed2c0591fd58e451106797e5a611f140804ac1",
+    "test/pocx/adapt_bip324_vectors.py": "ab5f568a6e2366c1d58c29cf9eecb891b5efe9c38b07d278278cb417af8180c2",
     "test/functional/test_framework/crypto/bip324_cipher.py": "11ebd09caf46d8a41156535597b1abb67cac1ffb8e50adbe0fcf61141c6412f1",
     "test/functional/test_framework/crypto/chacha20.py": "c0b383e8c1ee47cd3d0cb02630ad316cd8e915b857fa19193a7111d79cbe4878",
     "test/functional/test_framework/crypto/ellswift.py": "a65d5a4afa54b94c7223face55e8860187a2b6547ede1bff49c822e343fcea7b",
@@ -15,6 +15,7 @@
     "test/functional/test_framework/crypto/ripemd160.py": "99da6dafa9804d3ca5490a736354027b10ec3d517206caad6ea28c0e097f6b9a",
     "test/functional/test_framework/crypto/secp256k1.py": "cab75b7335f839b88eb8517b417715858e538aaf0071f6c01ec4eb3e1867f246",
     "test/functional/test_framework/crypto/siphash.py": "7af3111be53124afb78a607cb9bfe3fdd5a64717c95a279d5962cda9a0853ab1",
-    "test/functional/test_framework/v2_p2p.py": "d3cd3af20cc538025b0e7dcef5eb0e75a2c6d315c53f20fa98484d8a17465677"
+    "test/functional/test_framework/v2_p2p.py": "d3cd3af20cc538025b0e7dcef5eb0e75a2c6d315c53f20fa98484d8a17465677",
+    "test/pocx/pocx_bootstrap.py": "72e0a27abe139a6079220174cc1c103c173a0f632c1aa6034ddcc2075d58322d"
   }
 }

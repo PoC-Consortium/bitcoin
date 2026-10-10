@@ -10,13 +10,14 @@ from pathlib import Path
 import re
 import sys
 
-sys.dont_write_bytecode = True
-ROOT = Path(__file__).resolve().parents[2]
-sys.path.insert(0, str(ROOT / 'test/functional'))
+import pocx_bootstrap as pocx_bootstrap
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / 'test/functional'))
 from test_framework.crypto.chacha20 import FSChaCha20
 from test_framework.crypto.bip324_cipher import FSChaCha20Poly1305
 from test_framework.crypto.hkdf import hkdf_sha256
 from test_framework.v2_p2p import EncryptedP2PState
+
+ROOT = Path(__file__).resolve().parents[2]
 
 
 def outputs(row, magic):
@@ -55,7 +56,7 @@ def main():
     adapted = adapted.replace('// as that is what the test vectors are written for.', '// with independently regenerated PoCX outputs (test/pocx/adapt_bip324_vectors.py).')
     dest = ROOT / 'src/pocx/test/adapted/bip324_tests.cpp'
     dest.write_text(adapted)
-    deps = [source, Path(__file__), *sorted((ROOT / 'test/functional/test_framework/crypto').glob('*.py')), ROOT / 'test/functional/test_framework/v2_p2p.py']
+    deps = [source, Path(__file__), ROOT / 'test/pocx/pocx_bootstrap.py', *sorted((ROOT / 'test/functional/test_framework/crypto').glob('*.py')), ROOT / 'test/functional/test_framework/v2_p2p.py']
     provenance = {'vectors': count, 'bitcoin_magic': 'f9beb4d9', 'pocx_magic': 'a73c915e', 'original_outputs_verified': True, 'sha256': {str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest() for p in deps}}
     (ROOT / 'test/pocx/bip324-vector-provenance.json').write_text(json.dumps(provenance, indent=2) + '\n')
 

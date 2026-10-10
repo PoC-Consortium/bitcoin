@@ -6,11 +6,12 @@ import json
 from pathlib import Path
 import struct
 import sys
-sys.dont_write_bytecode = True
-ROOT = Path(__file__).resolve().parents[2]
-sys.path.insert(0, str(ROOT / 'test/functional'))
+import pocx_bootstrap as pocx_bootstrap
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / 'test/functional'))
 from test_framework.messages import CBlock, hash256, ser_compact_size
 from test_framework.blockfilter import bip158_basic_element_hash
+
+ROOT = Path(__file__).resolve().parents[2]
 
 
 def encode_filter(elements, block_hash):
@@ -58,7 +59,7 @@ def main():
         count += 1
     assert count > 0
     (ROOT / 'src/pocx/test/data/blockfilters.json').write_text(json.dumps(rows, indent=2) + '\n')
-    deps = [source, Path(__file__), ROOT / 'test/functional/test_framework/messages.py', ROOT / 'test/functional/test_framework/blockfilter.py', ROOT / 'test/functional/test_framework/crypto/siphash.py']
+    deps = [source, Path(__file__), ROOT / 'test/pocx/pocx_bootstrap.py', ROOT / 'test/functional/test_framework/messages.py', ROOT / 'test/functional/test_framework/blockfilter.py', ROOT / 'test/functional/test_framework/crypto/siphash.py']
     provenance = {'vectors': count, 'original_hash_filter_header_verified': True, 'sha256': {str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest() for p in deps}}
     (ROOT / 'test/pocx/blockfilter-vector-provenance.json').write_text(json.dumps(provenance, indent=2) + '\n')
     print(f'Verified and converted {count} blockfilter vectors')

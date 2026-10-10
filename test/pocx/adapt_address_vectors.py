@@ -12,12 +12,13 @@ import json
 from pathlib import Path
 import re
 import sys
-sys.dont_write_bytecode = True
-ROOT = Path(__file__).resolve().parents[2]
-sys.path.insert(0, str(ROOT / 'test/functional'))
+import pocx_bootstrap as pocx_bootstrap
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / 'test/functional'))
 from test_framework.address import base58_to_byte, byte_to_base58
 from test_framework.segwit_addr import decode_segwit_address, encode_segwit_address
 from test_framework.descriptors import descsum_check, descsum_create
+
+ROOT = Path(__file__).resolve().parents[2]
 
 MAPPING = {}
 
