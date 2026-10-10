@@ -9,7 +9,7 @@ import sys
 import tempfile
 import unittest
 from common import ROOT
-from ci_evidence import build_snapshot, require_unchanged, source_snapshot, verify_report, verify_steps
+from ci_evidence import artifact_paths, build_snapshot, require_unchanged, source_snapshot, verify_report, verify_steps
 
 BITCOIN = Path(sys.argv.pop(1)).resolve()
 
@@ -18,6 +18,25 @@ class CIInfrastructureTest(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)
+
+    def test_retention_keeps_case_proof_and_prunes_only_node_chain_databases(self):
+        import shutil
+        root = self.files(['results.json', 'case.py.log', 'v2/case/test_framework.log',
+                           'v2/case/node0/bitcoin.conf', 'v2/case/node0/regtest/debug.log',
+                           'v2/case/node0/regtest/wallets/wallet.dat',
+                           'v2/case/node0/regtest/blocks/blk00000.dat',
+                           'v2/case/node0/regtest/blocks/index/000003.log',
+                           'v2/case/node0/regtest/chainstate/000003.ldb',
+                           'v2/case/node0/regtest/indexes/coinstats/db/000003.log',
+                           'fixtures/blocks/expected.json', 'fixtures/chainstate/expected.json'])
+        expected = {'results.json', 'case.py.log', 'v2/case/test_framework.log',
+                    'v2/case/node0/bitcoin.conf', 'v2/case/node0/regtest/debug.log',
+                    'v2/case/node0/regtest/wallets/wallet.dat',
+                    'fixtures/blocks/expected.json', 'fixtures/chainstate/expected.json'}
+        self.assertEqual({str(path.relative_to(root)) for path in artifact_paths(root)}, expected)
+        for name in ('blocks', 'chainstate', 'indexes'):
+            shutil.rmtree(root / 'v2/case/node0/regtest' / name)
+        self.assertEqual({str(path.relative_to(root)) for path in artifact_paths(root)}, expected)
 
     def test_address_fixture_corrections_are_explicit_and_preserve_framework(self):
         from ci import stage_bitcoin_functional

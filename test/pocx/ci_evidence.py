@@ -9,6 +9,30 @@ compiler dependency graph nor proof that a hosted workflow has executed.
 from common import sha256
 
 
+def node_database(path):
+    """Generated chain databases are scratch data, not execution proof."""
+    import re
+    parts = path.parts
+    return any(re.fullmatch(r'node[0-9]+', parts[index]) and
+               parts[index + 1] == 'regtest' and
+               parts[index + 2] in ('blocks', 'chainstate', 'indexes')
+               for index in range(len(parts) - 2))
+
+
+def artifact_paths(directory):
+    """Keep reports, logs and fixtures without walking generated databases."""
+    import os
+    for current, directories, files in os.walk(directory):
+        from pathlib import Path
+        current = Path(current)
+        directories[:] = sorted(name for name in directories
+                                if not node_database((current / name).relative_to(directory)))
+        for name in sorted(files):
+            path = current / name
+            if path.is_file():
+                yield path
+
+
 def source_snapshot(root):
     import json
     paths = {root / '.github/workflows/pocx-tests.yml', root / 'CMakeLists.txt',

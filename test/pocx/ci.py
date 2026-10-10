@@ -23,7 +23,7 @@ import time
 
 sys.dont_write_bytecode = True
 from stage import ROOT, build_options, sha256, short_tmpdir
-from ci_evidence import build_snapshot, require_unchanged, source_snapshot, verify_report
+from ci_evidence import artifact_paths, build_snapshot, require_unchanged, source_snapshot, verify_report
 
 PROFILES = ('drift', 'bitcoin-unit', 'bitcoin-functional', 'bitcoin-qt', 'bitcoin-kernel',
             'bitcoin-functional-optional', 'pocx-functional-optional',
@@ -228,8 +228,8 @@ def main():
         # Freeze child proof and framework outputs immediately after each step.
         # Do not include the outer report itself, which is still being written.
         for directory in [output, *sorted(new_results)]:
-            for path in sorted(directory.rglob('*')):
-                if path.is_file() and path != output / 'results.json':
+            for path in artifact_paths(directory):
+                if path != output / 'results.json':
                     report['artifacts'].setdefault(str(path), sha256(path))
         save()
         print(f'{name}: {step["status"]} ({result.returncode})', flush=True)
