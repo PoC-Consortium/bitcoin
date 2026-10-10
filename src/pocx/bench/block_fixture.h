@@ -57,4 +57,4 @@ inline CBlock MakeHistoricalTransactionBlock(const TestingSetup& setup)
     return block;
 }
 } // namespace pocx::bench
-#endif
+#endif // BITCOIN_POCX_BENCH_BLOCK_FIXTURE_H
