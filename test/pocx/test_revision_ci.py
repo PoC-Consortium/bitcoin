@@ -137,7 +137,7 @@ class RevisionTest(unittest.TestCase):
                      patch.object(inherited_ci,'publish',side_effect=OSError('copy failed')), \
                      redirect_stderr(io.StringIO()), self.assertRaises(expected):
                     inherited_ci.execute_and_publish(revision_ci.plan(4,{},root), output, root=root,
-                        run=lambda command,**kw:subprocess.CompletedProcess(command,code))
+                        run=lambda command,**_kw:subprocess.CompletedProcess(command,code))
 
     def test_source_mutation_stops_native_phase(self):
         with tempfile.TemporaryDirectory() as directory:

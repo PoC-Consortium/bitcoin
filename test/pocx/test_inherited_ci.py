@@ -343,7 +343,7 @@ class InheritedTest(unittest.TestCase):
             output=Path(directory)/'execution'
             with self.assertRaises(OSError):
                 inherited_ci.execute(inherited_ci.plan(self.env()),output,
-                    run=lambda *a,**kw: (_ for _ in ()).throw(OSError('launch failed')))
+                    run=lambda *a,**_kw: (_ for _ in ()).throw(OSError('launch failed')))
             report=json.loads((output/'results.json').read_text())
             self.assertEqual(report['status'],'failed')
             self.assertEqual(report['steps'][0]['status'],'failed')
