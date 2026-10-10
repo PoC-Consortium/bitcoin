@@ -27,6 +27,7 @@ FUNCTIONAL_SUPPORT = ('test/config.ini.in', 'share/rpcauth/rpcauth.py',
                       'test/get_previous_releases.py', 'test/download_utils.py')
 UPSTREAM_RECIPE_SHA256 = '3d67e51113cb3edd9c24a6714d8393510c7b5d8d6a7bb8fed43a6911efd3fcc3'
 REVIEW_SOURCES = {'.github/ci-windows-cross.py', 'src/pocx/test/CMakeLists.txt',
+    'src/pocx/test/windows-deploy.cmake', 'test/pocx/test_windows_deploy.py',
     'test/pocx/rpc_coverage.py', 'test/pocx/test_rpc_coverage.py',
     'test/pocx/windows_artifacts.py', 'test/pocx/test_windows_artifacts.py',
     'test/pocx/record_cross_unit.py', 'test/pocx/test_cross_unit.py',

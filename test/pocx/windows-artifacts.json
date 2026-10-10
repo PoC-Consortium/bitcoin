@@ -9,7 +9,7 @@
     "ci/test/00_setup_env_win64_msvcrt.sh": "5870e8ebc1618952d45794038e7dc9eadd593f0a23c878ee2463349f521936fa",
     "ci/test/02_run_container.py": "84e4a1adb04972ec0d3c74a598f0995fde6465592c62f84139db41fcab6a7b65",
     "src/CMakeLists.txt": "9838b770ffdfc39dd194291915e07ebfaa91799a31e02d3619bcfa19d0f45031",
-    "src/pocx/test/CMakeLists.txt": "b442ec2b07c2f11c2aafa7c781af0222bc53201d140901f09722dcc16bc8aba0",
+    "src/pocx/test/CMakeLists.txt": "69d4088b8a67a02717f77299f2d5935beb4579a6c4a1cbd471a4375e1c7ca3b1",
     "src/pocx/test/kernel/CMakeLists.txt": "be88d68df30ffa911eb34faa18cb001b93dcc3da0d58d0c2e5ff9af8e389df40",
     "test/download_utils.py": "7ac35f3379c301f421b53ccb6d67cd3a8ab9e9869fd4032ee153e298a08013b2",
     "test/get_previous_releases.py": "31f38a771099df6b3b4280c4ee56d9b40eb6dd0aac6642f3595d4cea738df5b4",
@@ -57,8 +57,10 @@
     "test/pocx/windows_artifact_functional.py": "531f68a41395ecc75208d552a43f106a7d2f336971bc57b358560ed4910f02a4",
     "test/pocx/windows_artifact_tests.py": "658aea57c8c750d2acef35508405868785df6f2b278e4806abc8be97262b3e52",
     "test/pocx/windows_artifact_unit.py": "b0e19d4ac7efaae98e344741034cc664fc41b0d11e20f87a4d898c62d5714c7a",
-    "test/pocx/windows_artifacts.py": "4413b7342580c02eca3f6fa3636761d258325da1940fcf0fc9463c0f5150730c",
-    "test/pocx/windows_cross.py": "92e2796dc4101adb5bb0788b9e9407f075c0ee81ce5bf659c996ab710c54e35c"
+    "test/pocx/windows_artifacts.py": "853c3adabdc949874a6df4b0cd2f12bc51eaf3ad371cf5d2f94e790d9c24c43d",
+    "test/pocx/windows_cross.py": "92e2796dc4101adb5bb0788b9e9407f075c0ee81ce5bf659c996ab710c54e35c",
+    "src/pocx/test/windows-deploy.cmake": "65ae4f3244a3a4ef22bc9a1d111d865068104581050bd309dd74c8082b069d22",
+    "test/pocx/test_windows_deploy.py": "c1ace66244af695744f677a6cc56ddd539dfaed9108e755a9cfada2f69629094"
   },
   "execution_status": "unverified; target-host execution still required",
   "runtime_contract": [
@@ -201,5 +203,27 @@
     "previous_sha256": "378afb4ef6367e2e64c6c4599f2f346fc19ccff947891254f49fa42da2705eaf",
     "sha256": "3043b7c8b5f8364a80cc37c90e7cdb657487f2169d7261bf54e14d6083f08b3b",
     "review": "Carry the reviewed tool_bitcoin_chainstate helper dependency pin after repairing static private-link propagation. Original Windows recipes, unit/framework inventories, assertions and runtime requirements remain unchanged."
+  },
+  "native_windows_installer_review": {
+    "previous_reviewed_revision": "a61d7009a3f43c0858b083849beb91fcc52df68d",
+    "sources": {
+      "src/pocx/test/CMakeLists.txt": {
+        "previous_sha256": "b442ec2b07c2f11c2aafa7c781af0222bc53201d140901f09722dcc16bc8aba0",
+        "sha256": "69d4088b8a67a02717f77299f2d5935beb4579a6c4a1cbd471a4375e1c7ca3b1"
+      },
+      "src/pocx/test/windows-deploy.cmake": {
+        "previous_sha256": null,
+        "sha256": "65ae4f3244a3a4ef22bc9a1d111d865068104581050bd309dd74c8082b069d22"
+      },
+      "test/pocx/test_windows_deploy.py": {
+        "previous_sha256": null,
+        "sha256": "c1ace66244af695744f677a6cc56ddd539dfaed9108e755a9cfada2f69629094"
+      },
+      "test/pocx/windows_artifacts.py": {
+        "previous_sha256": "4413b7342580c02eca3f6fa3636761d258325da1940fcf0fc9463c0f5150730c",
+        "sha256": "853c3adabdc949874a6df4b0cd2f12bc51eaf3ad371cf5d2f94e790d9c24c43d"
+      }
+    },
+    "review": "Define a separate native Windows deploy target after the original maintenance rule. Reuse the unchanged NSIS template and all original packaged executable targets, replacing only test_bitcoin with test_pocx and retaining the existing PoCX installer name. No original source, unit inventory, assertion, exclusion or Windows runtime claim changes. Real MinGW/NSIS fixture builds and inspects an installer without executing PE files; original and non-applicable configurations are checked separately."
   }
 }

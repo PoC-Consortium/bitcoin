@@ -118,3 +118,7 @@ else()
   set_property(DIRECTORY APPEND PROPERTY TEST_INCLUDE_FILES "${unit_test_include}")
 endif()
 install_binary_component(test_pocx INTERNAL)
+
+if(MINGW)
+  include(windows-deploy.cmake)
+endif()
