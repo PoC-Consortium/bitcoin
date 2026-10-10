@@ -1,0 +1,334 @@
+# Copyright (c) 2026 The Bitcoin PoCX developers
+# Distributed under the MIT software license; see COPYING.
+name: PoCX tests
+on:
+  pull_request:
+  push:
+    branches: ['**']
+    tags-ignore: ['**']
+  workflow_dispatch:
+  schedule:
+    - cron: '19 2 * * 1'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pocx-tests-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  drift:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+      - run: python3 test/pocx/ci.py --profile drift
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: pocx-drift-results
+          path: build-ci-drift/ci-results-*/
+
+  bitcoin-core:
+    needs: drift
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    strategy:
+      fail-fast: false
+      matrix:
+        profile: [bitcoin-unit, bitcoin-functional]
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install Linux build and IPC test prerequisites
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential cmake ninja-build pkgconf libevent-dev libboost-dev libsqlite3-dev capnproto libcapnp-dev python3-venv
+          python3 -m venv .ci-venv
+          .ci-venv/bin/pip install pycapnp==2.2.4
+      - name: Build and run complete profile selection
+        run: .ci-venv/bin/python test/pocx/ci.py --profile '${{ matrix.profile }}' --jobs 4
+      - name: Retain test results and failure logs
+        uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: ${{ matrix.profile }}-results
+          path: |
+            build-ci-${{ matrix.profile }}/ci-results-*/
+            build-ci-${{ matrix.profile }}/pocx-unit-*/
+            build-ci-${{ matrix.profile }}/pocx-results-*/
+            build-ci-${{ matrix.profile }}/bitcoin-unit-*/
+            build-ci-${{ matrix.profile }}/Testing/
+
+  bitcoin-features:
+    needs: drift
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    strategy:
+      fail-fast: false
+      matrix:
+        profile: [bitcoin-qt, bitcoin-wallet-disabled, bitcoin-ipc-disabled, bitcoin-kernel]
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install Linux and Qt prerequisites
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential cmake ninja-build pkgconf libevent-dev libboost-dev libsqlite3-dev capnproto libcapnp-dev python3-venv qt6-base-dev qt6-tools-dev qt6-l10n-tools libqrencode-dev
+          python3 -m venv .ci-venv
+          .ci-venv/bin/pip install pycapnp==2.2.4
+      - run: .ci-venv/bin/python test/pocx/ci.py --profile '${{ matrix.profile }}' --jobs 4
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: ${{ matrix.profile }}-results
+          path: |
+            build-ci-${{ matrix.profile }}/ci-results-*/
+            build-ci-${{ matrix.profile }}/pocx-unit-*/
+            build-ci-${{ matrix.profile }}/bitcoin-unit-*/
+            build-ci-${{ matrix.profile }}/Testing/
+            build-ci-${{ matrix.profile }}/src/qt/test/Testing/
+
+  pocx-core:
+    needs: bitcoin-core
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    strategy:
+      fail-fast: false
+      matrix:
+        profile: [pocx-unit, pocx-functional, pocx-real-proof]
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install Linux build and IPC test prerequisites
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential cmake ninja-build pkgconf libevent-dev libboost-dev libsqlite3-dev capnproto libcapnp-dev python3-venv
+          python3 -m venv .ci-venv
+          .ci-venv/bin/pip install pycapnp==2.2.4
+      - name: Build and run complete profile selection
+        run: .ci-venv/bin/python test/pocx/ci.py --profile '${{ matrix.profile }}' --jobs 4
+      - name: Retain test results and failure logs
+        uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: ${{ matrix.profile }}-results
+          path: |
+            build-ci-${{ matrix.profile }}/ci-results-*/
+            build-ci-${{ matrix.profile }}/pocx-unit-*/
+            build-ci-${{ matrix.profile }}/pocx-results-*/
+            build-ci-${{ matrix.profile }}/bitcoin-unit-*/
+            build-ci-${{ matrix.profile }}/Testing/
+
+  pocx-features:
+    needs: bitcoin-features
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    strategy:
+      fail-fast: false
+      matrix:
+        profile: [pocx-qt, pocx-wallet-disabled, pocx-ipc-disabled, pocx-kernel]
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install Linux and Qt prerequisites
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential cmake ninja-build pkgconf libevent-dev libboost-dev libsqlite3-dev capnproto libcapnp-dev python3-venv qt6-base-dev qt6-tools-dev qt6-l10n-tools libqrencode-dev
+          python3 -m venv .ci-venv
+          .ci-venv/bin/pip install pycapnp==2.2.4
+      - run: .ci-venv/bin/python test/pocx/ci.py --profile '${{ matrix.profile }}' --jobs 4
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: ${{ matrix.profile }}-results
+          path: |
+            build-ci-${{ matrix.profile }}/ci-results-*/
+            build-ci-${{ matrix.profile }}/pocx-unit-*/
+            build-ci-${{ matrix.profile }}/bitcoin-unit-*/
+            build-ci-${{ matrix.profile }}/Testing/
+            build-ci-${{ matrix.profile }}/src/qt/test/Testing/
+
+  optional-functional:
+    needs: drift
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install complete optional functional prerequisites
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential cmake ninja-build pkgconf libevent-dev libboost-dev libsqlite3-dev capnproto libcapnp-dev libzmq3-dev systemtap-sdt-dev python3-venv python3-zmq python3-bpfcc bpfcc-tools iproute2 "linux-headers-$(uname -r)"
+          python3 -m venv --system-site-packages .ci-venv
+          .ci-venv/bin/pip install pycapnp==2.2.4
+      - name: Download fresh checksum-verified previous releases
+        run: .ci-venv/bin/python test/get_previous_releases.py --remove-dir --target-dir .ci-previous-releases v0.14.3 v0.20.1 v0.21.0 v22.0 v23.0 v24.0.1 v25.0 v28.2
+      - name: Build original and native optional configurations
+        run: |
+          for consensus in bitcoin pocx; do
+            if [ "$consensus" = bitcoin ]; then pocx=OFF; else pocx=ON; fi
+            cmake -S . -B "build-ci-$consensus-functional-optional" -G Ninja \
+              -DENABLE_POCX="$pocx" -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTS=ON \
+              -DBUILD_GUI=OFF -DBUILD_BENCH=ON -DBUILD_FUZZ_BINARY=OFF -DBUILD_FOR_FUZZING=OFF \
+              -DENABLE_WALLET=ON -DENABLE_IPC=ON -DBUILD_KERNEL_LIB=ON -DBUILD_UTIL_CHAINSTATE=ON \
+              -DWITH_ZMQ=ON -DWITH_USDT=ON -DSANITIZERS= \
+              -DBUILD_DAEMON=ON -DBUILD_CLI=ON -DBUILD_BITCOIN_BIN=ON \
+              -DBUILD_TX=ON -DBUILD_UTIL=ON -DBUILD_WALLET_TOOL=ON
+            cmake --build "build-ci-$consensus-functional-optional" -j 4
+          done
+      - name: Run strict baseline then PoCX in an isolated network
+        # Original USDT cases explicitly require root for BPF. Only this
+        # scheduled/manual hosted job elevates, after installing/downloading
+        # dependencies. Special public-address fixtures stay in a fresh netns.
+        run: |
+          sudo env GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=safe.directory GIT_CONFIG_VALUE_0="$GITHUB_WORKSPACE" \
+            unshare --net /bin/bash -euo pipefail <<'SH'
+          ip link set lo up
+          ip link add pocx-test type dummy
+          ip address add 1.1.1.1/32 dev pocx-test
+          ip address add 2.2.2.2/32 dev pocx-test
+          ip link set pocx-test up
+          .ci-venv/bin/python test/pocx/ci.py --profile bitcoin-functional-optional --skip-build --jobs 4 --previous-releases-dir .ci-previous-releases
+          .ci-venv/bin/python test/pocx/ci.py --profile pocx-functional-optional --skip-build --jobs 4 --previous-releases-dir .ci-previous-releases
+          SH
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: optional-functional-results
+          path: |
+            build-ci-*-functional-optional/ci-results-*/
+            build-ci-*-functional-optional/pocx-results-*/
+
+  asan:
+    needs: drift
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install inherited Clang 22 sanitizer toolchain and all test prerequisites
+        run: |
+          curl --fail --show-error --location https://apt.llvm.org/llvm-snapshot.gpg.key -o .ci-llvm-key.asc
+          sudo install -m 644 .ci-llvm-key.asc /usr/share/keyrings/pocx-llvm.asc
+          echo 'deb [signed-by=/usr/share/keyrings/pocx-llvm.asc] https://apt.llvm.org/noble/ llvm-toolchain-noble-22 main' | sudo tee /etc/apt/sources.list.d/pocx-llvm-22.list
+          sudo apt-get update
+          sudo apt-get install -y build-essential cmake ninja-build pkgconf clang-22 llvm-22 libclang-rt-22-dev mold libevent-dev libboost-dev libsqlite3-dev capnproto libcapnp-dev libzmq3-dev systemtap-sdt-dev python3-venv python3-zmq python3-bpfcc bpfcc-tools iproute2 qt6-base-dev qt6-tools-dev qt6-l10n-tools libqrencode-dev "linux-headers-$(uname -r)"
+          python3 -m venv --system-site-packages .ci-venv
+          .ci-venv/bin/pip install pycapnp==2.2.4
+      - name: Download fresh checksum-verified previous releases
+        run: .ci-venv/bin/python test/get_previous_releases.py --remove-dir --target-dir .ci-previous-releases v0.14.3 v0.20.1 v0.21.0 v22.0 v23.0 v24.0.1 v25.0 v28.2
+      - name: Build both complete sanitizer configurations
+        run: |
+          .ci-venv/bin/python - <<'PY'
+          from pathlib import Path
+          import subprocess
+          import sys
+          sys.path.insert(0, 'test/pocx')
+          from ci import options
+          from sanitizer_ci import tools
+          tools()
+          for profile in ('bitcoin-asan', 'pocx-asan'):
+              build = Path('build-ci-' + profile)
+              command = ['cmake', '-S', '.', '-B', str(build), '-G', 'Ninja', '-Werror=dev']
+              command += [f'-D{key}={value}' for key, value in options(profile).items()]
+              subprocess.run(command, check=True)
+              subprocess.run(['cmake', '--build', str(build), '-j', '4'], check=True)
+          PY
+      - name: Run all sanitized frameworks, original baseline before PoCX
+        # Root is required by unchanged BPF cases; fixture addresses stay in
+        # this fresh network namespace. Sanitizer errors remain fatal.
+        run: |
+          sudo env GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=safe.directory GIT_CONFIG_VALUE_0="$GITHUB_WORKSPACE" \
+            unshare --net /bin/bash -euo pipefail <<'SH'
+          ip link set lo up
+          ip link add pocx-test type dummy
+          ip address add 1.1.1.1/32 dev pocx-test
+          ip address add 2.2.2.2/32 dev pocx-test
+          ip link set pocx-test up
+          .ci-venv/bin/python test/pocx/ci.py --profile bitcoin-asan --skip-build --jobs 4 --previous-releases-dir .ci-previous-releases
+          .ci-venv/bin/python test/pocx/ci.py --profile pocx-asan --skip-build --jobs 4 --previous-releases-dir .ci-previous-releases
+          SH
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: asan-results
+          path: |
+            build-ci-*-asan/ci-results-*/
+            build-ci-*-asan/bitcoin-unit-*/
+            build-ci-*-asan/pocx-unit-*/
+            build-ci-*-asan/pocx-results-*/
+            build-ci-*-asan/Testing/
+
+  instrumented-sanitizers:
+    needs: drift
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 360
+    strategy:
+      fail-fast: false
+      matrix:
+        sanitizer: [tsan, msan]
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install Clang 22 and dependency build prerequisites
+        run: |
+          curl --fail --show-error --location https://apt.llvm.org/llvm-snapshot.gpg.key -o .ci-llvm-key.asc
+          sudo install -m 644 .ci-llvm-key.asc /usr/share/keyrings/pocx-llvm.asc
+          echo 'deb [signed-by=/usr/share/keyrings/pocx-llvm.asc] https://apt.llvm.org/noble/ llvm-toolchain-noble-22 main' | sudo tee /etc/apt/sources.list.d/pocx-llvm-22.list
+          sudo apt-get update
+          sudo apt-get install -y build-essential cmake ninja-build pkgconf autoconf automake libtool bison patch ccache clang-22 llvm-22 llvm-22-dev libclang-22-dev libclang-rt-22-dev python3-venv python3-zmq python3-bpfcc bpfcc-tools iproute2 "linux-headers-$(uname -r)"
+          python3 -m venv --system-site-packages .ci-venv
+          .ci-venv/bin/pip install pycapnp==2.2.4
+      - name: Build pinned instrumented libc++ and inherited dependencies
+        run: .ci-venv/bin/python test/pocx/prepare_instrumented_dependencies.py --sanitizer '${{ matrix.sanitizer }}' --directory '.ci-instrumented-${{ matrix.sanitizer }}' --jobs 4
+      - name: Download fresh checksum-verified previous releases
+        run: .ci-venv/bin/python test/get_previous_releases.py --remove-dir --target-dir .ci-previous-releases v0.14.3 v0.20.1 v0.21.0 v22.0 v23.0 v24.0.1 v25.0 v28.2
+      - name: Build both complete instrumented configurations
+        env:
+          SANITIZER_KIND: ${{ matrix.sanitizer }}
+        run: |
+          .ci-venv/bin/python - <<'PY'
+          import os
+          from pathlib import Path
+          import subprocess
+          import sys
+          sys.path.insert(0, 'test/pocx')
+          from ci import options
+          from instrumented_ci import verify_dependencies
+          kind = os.environ['SANITIZER_KIND']
+          directory = Path('.ci-instrumented-' + kind).resolve()
+          verify_dependencies(kind, directory)
+          for consensus in ('bitcoin', 'pocx'):
+              profile = consensus + '-' + kind
+              build = Path('build-ci-' + profile)
+              command = ['cmake', '-S', '.', '-B', str(build), '-G', 'Ninja', '-Werror=dev']
+              command += [f'-D{key}={value}' for key, value in options(profile, directory).items()]
+              subprocess.run(command, check=True)
+              subprocess.run(['cmake', '--build', str(build), '-j', '4'], check=True)
+          PY
+      - name: Run applicable frameworks, original baseline before PoCX
+        env:
+          SANITIZER_KIND: ${{ matrix.sanitizer }}
+        run: |
+          sudo env SANITIZER_KIND="$SANITIZER_KIND" GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=safe.directory GIT_CONFIG_VALUE_0="$GITHUB_WORKSPACE" \
+            unshare --net /bin/bash -euo pipefail <<'SH'
+          ip link set lo up
+          ip link add pocx-test type dummy
+          ip address add 1.1.1.1/32 dev pocx-test
+          ip address add 2.2.2.2/32 dev pocx-test
+          ip link set pocx-test up
+          .ci-venv/bin/python test/pocx/ci.py --profile "bitcoin-$SANITIZER_KIND" --skip-build --jobs 4 --previous-releases-dir .ci-previous-releases --instrumented-dependencies-dir ".ci-instrumented-$SANITIZER_KIND"
+          .ci-venv/bin/python test/pocx/ci.py --profile "pocx-$SANITIZER_KIND" --skip-build --jobs 4 --previous-releases-dir .ci-previous-releases --instrumented-dependencies-dir ".ci-instrumented-$SANITIZER_KIND"
+          SH
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: ${{ matrix.sanitizer }}-results
+          path: |
+            .ci-instrumented-${{ matrix.sanitizer }}/preparation.json
+            .ci-instrumented-${{ matrix.sanitizer }}/*.log
+            build-ci-*-${{ matrix.sanitizer }}/ci-results-*/
+            build-ci-*-${{ matrix.sanitizer }}/bitcoin-unit-*/
+            build-ci-*-${{ matrix.sanitizer }}/pocx-unit-*/
+            build-ci-*-${{ matrix.sanitizer }}/pocx-results-*/
+            build-ci-*-${{ matrix.sanitizer }}/Testing/

@@ -1,0 +1,57 @@
+{
+  "scope": "Required Linux native_asan C++ configuration from the pinned upstream environment; full unit, Qt, kernel and optional functional selections. This is not Rust sanitizer or TSAN/MSAN evidence.",
+  "source_sha256": {
+    "CMakePresets.json": "27d4b351db393201ff7a19fb612fd69d0312452dcec3a36f0f6d9e234d90272e",
+    "ci/test/00_setup_env_native_asan.sh": "e2848eef89042d5fd742e26d43188e680c97ff06a5ad20f1a3f9b3a8f098b84c",
+    "ci/test/03_test_script.sh": "cfd9e9583398dee9527a2fb7ea099104a8cab53f7bf5ccdceb3f4e84425ebb8b",
+    "test/sanitizer_suppressions/lsan": "089f734beca5f71375a9d100bf71c82b6c247f6c56130e2201f111d4acf32905",
+    "test/sanitizer_suppressions/ubsan": "29f493afa4ef5583f2ccbac11ed763a52891c382e0e9e6953e142a480f4763ca"
+  },
+  "compiler_major": 22,
+  "sanitizers": "address,float-divide-by-zero,integer,undefined",
+  "build_options": {
+    "CMAKE_BUILD_TYPE": "RelWithDebInfo",
+    "CMAKE_C_COMPILER": "clang-22",
+    "CMAKE_CXX_COMPILER": "clang++-22",
+    "CMAKE_C_FLAGS": "-ftrivial-auto-var-init=pattern",
+    "CMAKE_CXX_FLAGS": "-ftrivial-auto-var-init=pattern",
+    "CMAKE_EXE_LINKER_FLAGS": "-fuse-ld=mold",
+    "APPEND_CXXFLAGS": "-std=c++23",
+    "APPEND_CPPFLAGS": "-DARENA_DEBUG -DDEBUG_LOCKORDER",
+    "BUILD_GUI": "ON",
+    "BUILD_GUI_TESTS": "ON",
+    "BUILD_SHARED_LIBS": "ON",
+    "BUILD_KERNEL_LIB": "ON",
+    "BUILD_KERNEL_TEST": "ON",
+    "BUILD_BENCH": "ON",
+    "BUILD_UTIL_CHAINSTATE": "ON",
+    "BUILD_BITCOIN_BIN": "ON",
+    "BUILD_DAEMON": "ON",
+    "BUILD_CLI": "ON",
+    "BUILD_TX": "ON",
+    "BUILD_UTIL": "ON",
+    "BUILD_WALLET_TOOL": "ON",
+    "ENABLE_EXTERNAL_SIGNER": "ON",
+    "ENABLE_WALLET": "ON",
+    "ENABLE_IPC": "ON",
+    "WITH_QRENCODE": "ON",
+    "WITH_USDT": "ON",
+    "WITH_ZMQ": "ON",
+    "BUILD_TESTS": "ON",
+    "BUILD_FUZZ_BINARY": "OFF",
+    "BUILD_FOR_FUZZING": "OFF",
+    "CMAKE_COMPILE_WARNING_AS_ERROR": "ON"
+  },
+  "fuzz_boundary": "Upstream dev-mode enables a fuzz binary. This separately delivered CI package explicitly disables it and does not execute fuzz targets.",
+  "runtime_environment": {
+    "ASAN_OPTIONS": "detect_leaks=1:detect_stack_use_after_return=1:check_initialization_order=1:strict_init_order=1:halt_on_error=1:exitcode=1",
+    "LSAN_OPTIONS": "suppressions={root}/test/sanitizer_suppressions/lsan:exitcode=23",
+    "UBSAN_OPTIONS": "suppressions={root}/test/sanitizer_suppressions/ubsan:print_stacktrace=1:halt_on_error=1:report_error_type=1",
+    "ASAN_SYMBOLIZER_PATH": "/usr/bin/llvm-symbolizer-22"
+  },
+  "remaining_matrix_requirements": [
+    "Thread sanitizer with instrumented libc++ and dependencies",
+    "Memory sanitizer with origins, instrumented libc++ and dependencies",
+    "Other required platform and feature configurations"
+  ]
+}

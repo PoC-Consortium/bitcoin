@@ -1,0 +1,678 @@
+{
+  "scope": "Required coverage audit for unit, Qt, kernel and functional CI parity. Configuration records do not establish execution or passing status. Fuzz completion is a separate package.",
+  "upstream_revision": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
+  "inherited_workflow": {
+    "path": ".github/workflows/ci.yml",
+    "sha256": "43e7258aab16605c98d91fa5a1100adb6b3c47d00c52851be79245fb42e2a52f",
+    "matches_pinned_upstream": false,
+    "events": {
+      "pull_request": "",
+      "push": {
+        "branches": [
+          "**"
+        ],
+        "tags-ignore": [
+          "**"
+        ]
+      }
+    }
+  },
+  "latest_published_run": {
+    "conclusion": "failure",
+    "createdAt": "2026-10-07T08:29:32Z",
+    "databaseId": 37594104029,
+    "headSha": "5de2720ca47b3a753081e5ce545113cd3b616018",
+    "name": "CI",
+    "status": "completed",
+    "url": "https://github.com/PoC-Consortium/bitcoin/actions/runs/37594104029"
+  },
+  "published_run_covers_current_changes": false,
+  "inherited_profiles": [
+    {
+      "job": "macos-native-arm64",
+      "name": "macOS native",
+      "environment_file": "ci/test/00_setup_env_mac_native.sh",
+      "environment_sha256": "bc48cac2d6c63f3b49d7c7938159e08306f28460918ec202424a2214b8b0c503",
+      "runner": "macos-15",
+      "unit_and_ctest_configured": true,
+      "functional_configured": true,
+      "bitcoin_config_expression": "\"\\\n  --preset=dev-mode \\\n  -DWITH_USDT=OFF \\\n  -DREDUCE_EXPORTS=ON \\\n  -DCMAKE_EXE_LINKER_FLAGS='-Wl,-stack_size -Wl,0x80000' \\\n\"",
+      "functional_arguments_expression": null,
+      "packages_expression": null,
+      "python_packages_expression": "\"--break-system-packages pycapnp zmq\"",
+      "execution_status": "unverified for current package",
+      "baseline_first": true,
+      "baseline_first_field_meaning": "Requirement; does not establish implementation or execution",
+      "entry_point": "ci/test_run_all.sh -> ci/test/02_run_container.py -> test/pocx/inherited_ci.py",
+      "baseline_first_implementation": "implemented in source; original recipe and hosted execution unverified"
+    },
+    {
+      "job": "windows-cross",
+      "name": "win64_msvcrt",
+      "environment_file": "ci/test/00_setup_env_win64_msvcrt.sh",
+      "environment_sha256": "5870e8ebc1618952d45794038e7dc9eadd593f0a23c878ee2463349f521936fa",
+      "runner": "${{ needs.runners.outputs.provider == 'warp' && 'warp-ubuntu-latest-x64-4x' || 'ubuntu-latest' }}",
+      "unit_and_ctest_configured": false,
+      "functional_configured": false,
+      "bitcoin_config_expression": "\"\\\n  --preset=dev-mode \\\n  -DENABLE_IPC=OFF \\\n  -DWITH_USDT=OFF \\\n  -DREDUCE_EXPORTS=ON \\\n  -DCMAKE_CXX_FLAGS='-Wno-error=maybe-uninitialized' \\\n\"",
+      "functional_arguments_expression": null,
+      "packages_expression": "\"g++-mingw-w64-x86-64-posix nsis\"",
+      "python_packages_expression": null,
+      "execution_status": "unverified for current package",
+      "baseline_first": true,
+      "baseline_first_field_meaning": "Requirement; does not establish implementation or execution",
+      "entry_point": "ci/test_run_all.sh -> test/pocx/inherited_ci.py -> test/pocx/windows_cross.py (paired export before cleanup)",
+      "baseline_first_implementation": "Original cross-build before PoCX cross-build; target-host Bitcoin runtime baseline deferred to paired Windows consumer",
+      "artifact_export": "Source wired: immutable original/native pair, raw compiler configuration and source/binary provenance; no Windows execution claimed"
+    },
+    {
+      "job": "windows-cross",
+      "name": "win64",
+      "environment_file": "ci/test/00_setup_env_win64.sh",
+      "environment_sha256": "1354e7e29c227f8a5255022b93377c0477ba233d0fe78cbc0f6ba9fcfb4d44d0",
+      "runner": "${{ needs.runners.outputs.provider == 'warp' && 'warp-ubuntu-latest-x64-4x' || 'ubuntu-latest' }}",
+      "unit_and_ctest_configured": false,
+      "functional_configured": false,
+      "bitcoin_config_expression": "\"\\\n  --preset=dev-mode \\\n  -DENABLE_IPC=OFF \\\n  -DWITH_USDT=OFF \\\n  -DREDUCE_EXPORTS=ON \\\n  -DCMAKE_CXX_FLAGS='-Wno-error=maybe-uninitialized' \\\n\"",
+      "functional_arguments_expression": null,
+      "packages_expression": "\"g++-mingw-w64-ucrt64 nsis\"",
+      "python_packages_expression": null,
+      "execution_status": "unverified for current package",
+      "baseline_first": true,
+      "baseline_first_field_meaning": "Requirement; does not establish implementation or execution",
+      "entry_point": "ci/test_run_all.sh -> test/pocx/inherited_ci.py -> test/pocx/windows_cross.py (paired export before cleanup)",
+      "baseline_first_implementation": "Original cross-build before PoCX cross-build; target-host Bitcoin runtime baseline deferred to paired Windows consumer",
+      "artifact_export": "Source wired: immutable original/native pair, raw compiler configuration and source/binary provenance; no Windows execution claimed"
+    },
+    {
+      "job": "ci-matrix",
+      "name": "native_iwyu",
+      "environment_file": "ci/test/00_setup_env_native_iwyu.sh",
+      "environment_sha256": "61b5d26e218b48c6f87dc71cc08d01b507747f8440d5fa62b4ea5c644790815b",
+      "runner": "${{ needs.runners.outputs.provider == 'warp' && matrix.warp-runner || matrix.fallback-runner }}",
+      "unit_and_ctest_configured": false,
+      "functional_configured": false,
+      "bitcoin_config_expression": "\"\\\n --preset dev-mode -DBUILD_GUI=OFF \\\n -DCMAKE_C_COMPILER=clang-${TIDY_LLVM_V} \\\n -DCMAKE_CXX_COMPILER=clang++-${TIDY_LLVM_V} \\\n\"",
+      "functional_arguments_expression": null,
+      "packages_expression": "\"clang-${TIDY_LLVM_V} clang-format-${TIDY_LLVM_V} libclang-${TIDY_LLVM_V}-dev llvm-${TIDY_LLVM_V}-dev jq libevent-dev libboost-dev libzmq3-dev systemtap-sdt-dev qt6-base-dev qt6-tools-dev qt6-l10n-tools libqrencode-dev libsqlite3-dev libcapnp-dev capnproto\"",
+      "python_packages_expression": null,
+      "execution_status": "unverified for current package",
+      "baseline_first": true,
+      "baseline_first_field_meaning": "Requirement; does not establish implementation or execution",
+      "entry_point": "ci/test_run_all.sh -> ci/test/02_run_container.py -> test/pocx/inherited_ci.py",
+      "baseline_first_implementation": "implemented in source; original recipe and hosted execution unverified"
+    },
+    {
+      "job": "ci-matrix",
+      "name": "arm",
+      "environment_file": "ci/test/00_setup_env_arm.sh",
+      "environment_sha256": "1b686fe70c8d7fbbd25b2dc78b101bd58629c2445ece81b6f9fc6ed14fb76f85",
+      "runner": "${{ needs.runners.outputs.provider == 'warp' && matrix.warp-runner || matrix.fallback-runner }}",
+      "unit_and_ctest_configured": true,
+      "functional_configured": true,
+      "bitcoin_config_expression": "\" \\\n  --preset=dev-mode \\\n  -DREDUCE_EXPORTS=ON \\\n  -DCMAKE_CXX_FLAGS='-Wno-psabi -Wno-error=maybe-uninitialized' \\\n\"",
+      "functional_arguments_expression": null,
+      "packages_expression": "\"python3-zmq g++-arm-linux-gnueabihf libc6:armhf libstdc++6:armhf libfontconfig1:armhf libxcb1:armhf\"",
+      "python_packages_expression": null,
+      "execution_status": "unverified for current package",
+      "baseline_first": true,
+      "baseline_first_field_meaning": "Requirement; does not establish implementation or execution",
+      "entry_point": "ci/test_run_all.sh -> ci/test/02_run_container.py -> test/pocx/inherited_ci.py",
+      "baseline_first_implementation": "implemented in source; original recipe and hosted execution unverified"
+    },
+    {
+      "job": "ci-matrix",
+      "name": "native_asan",
+      "environment_file": "ci/test/00_setup_env_native_asan.sh",
+      "environment_sha256": "e2848eef89042d5fd742e26d43188e680c97ff06a5ad20f1a3f9b3a8f098b84c",
+      "runner": "${{ needs.runners.outputs.provider == 'warp' && matrix.warp-runner || matrix.fallback-runner }}",
+      "unit_and_ctest_configured": true,
+      "functional_configured": true,
+      "bitcoin_config_expression": "\"\\\n --preset=dev-mode \\\n -DSANITIZERS=address,float-divide-by-zero,integer,undefined \\\n -DCMAKE_C_COMPILER=clang \\\n -DCMAKE_CXX_COMPILER=clang++ \\\n -DCMAKE_C_FLAGS='-ftrivial-auto-var-init=pattern' \\\n -DCMAKE_CXX_FLAGS='-ftrivial-auto-var-init=pattern' \\\n -DCMAKE_EXE_LINKER_FLAGS='-fuse-ld=mold' \\\n -DAPPEND_CXXFLAGS='-std=c++23' \\\n -DAPPEND_CPPFLAGS='-DARENA_DEBUG -DDEBUG_LOCKORDER' \\\n\"",
+      "functional_arguments_expression": null,
+      "packages_expression": "\"systemtap-sdt-dev clang-${APT_LLVM_V} llvm-${APT_LLVM_V} libclang-rt-${APT_LLVM_V}-dev mold python3-zmq qt6-base-dev qt6-tools-dev qt6-l10n-tools libevent-dev libboost-dev libzmq3-dev libqrencode-dev libsqlite3-dev ${BPFCC_PACKAGE} libcapnp-dev capnproto python3-pip\"",
+      "python_packages_expression": "\"--break-system-packages pycapnp\"",
+      "execution_status": "unverified for current package",
+      "baseline_first": true,
+      "baseline_first_field_meaning": "Requirement; does not establish implementation or execution",
+      "entry_point": "ci/test_run_all.sh -> ci/test/02_run_container.py -> test/pocx/inherited_ci.py",
+      "baseline_first_implementation": "implemented in source; original recipe and hosted execution unverified"
+    },
+    {
+      "job": "ci-matrix",
+      "name": "mac_cross",
+      "environment_file": "ci/test/00_setup_env_mac_cross.sh",
+      "environment_sha256": "8f5e545fe5f81111c3a2fbd97ad93d45be437d7209ee18d1ca83e20d9be3a48d",
+      "runner": "${{ needs.runners.outputs.provider == 'warp' && matrix.warp-runner || matrix.fallback-runner }}",
+      "unit_and_ctest_configured": false,
+      "functional_configured": false,
+      "bitcoin_config_expression": "\"\\\n --preset=dev-mode \\\n -DWITH_USDT=OFF \\\n -DREDUCE_EXPORTS=ON \\\n\"",
+      "functional_arguments_expression": null,
+      "packages_expression": "\"clang lld llvm zip\"",
+      "python_packages_expression": null,
+      "execution_status": "unverified for current package",
+      "baseline_first": true,
+      "baseline_first_field_meaning": "Requirement; does not establish implementation or execution",
+      "entry_point": "ci/test_run_all.sh -> ci/test/02_run_container.py -> test/pocx/inherited_ci.py",
+      "baseline_first_implementation": "implemented in source; original recipe and hosted execution unverified"
+    },
+    {
+      "job": "ci-matrix",
+      "name": "mac_cross_intel",
+      "environment_file": "ci/test/00_setup_env_mac_cross_intel.sh",
+      "environment_sha256": "8b332eec69bd0790d637d5009dcc483044d06b6fa663bce0f32e0869831e9966",
+      "runner": "${{ needs.runners.outputs.provider == 'warp' && matrix.warp-runner || matrix.fallback-runner }}",
+      "unit_and_ctest_configured": false,
+      "functional_configured": false,
+      "bitcoin_config_expression": "\"\\\n --preset=dev-mode \\\n -DWITH_USDT=OFF \\\n -DREDUCE_EXPORTS=ON \\\n\"",
+      "functional_arguments_expression": null,
+      "packages_expression": "\"clang lld llvm zip\"",
+      "python_packages_expression": null,
+      "execution_status": "unverified for current package",
+      "baseline_first": true,
+      "baseline_first_field_meaning": "Requirement; does not establish implementation or execution",
+      "entry_point": "ci/test_run_all.sh -> ci/test/02_run_container.py -> test/pocx/inherited_ci.py",
+      "baseline_first_implementation": "implemented in source; original recipe and hosted execution unverified"
+    },
+    {
+      "job": "ci-matrix",
+      "name": "native_nowallet",
+      "environment_file": "ci/test/00_setup_env_native_nowallet.sh",
+      "environment_sha256": "310381daad847197755b1bc29405a47d166b7c54b749e932d850e9f5dac7e560",
+      "runner": "${{ needs.runners.outputs.provider == 'warp' && matrix.warp-runner || matrix.fallback-runner }}",
+      "unit_and_ctest_configured": true,
+      "functional_configured": true,
+      "bitcoin_config_expression": "\"\\\n  --preset=dev-mode \\\n  -DREDUCE_EXPORTS=ON \\\n  -DENABLE_WALLET=OFF \\\n  -DWITH_EMBEDDED_ASMAP=OFF \\\n\"",
+      "functional_arguments_expression": null,
+      "packages_expression": "\"python3-zmq python3-pip clang-17 llvm-17 libc++abi-17-dev libc++-17-dev\"",
+      "python_packages_expression": "\"--break-system-packages pycapnp\"",
+      "execution_status": "unverified for current package",
+      "baseline_first": true,
+      "baseline_first_field_meaning": "Requirement; does not establish implementation or execution",
+      "entry_point": "ci/test_run_all.sh -> ci/test/02_run_container.py -> test/pocx/inherited_ci.py",
+      "baseline_first_implementation": "implemented in source; original recipe and hosted execution unverified"
+    },
+    {
+      "job": "ci-matrix",
+      "name": "native_alpine_musl",
+      "environment_file": "ci/test/00_setup_env_native_alpine_musl.sh",
+      "environment_sha256": "5f429555374d1c579106938154f4b5a27ad85c9ce015b345311fc040ceaa6247",
+      "runner": "${{ needs.runners.outputs.provider == 'warp' && matrix.warp-runner || matrix.fallback-runner }}",
+      "unit_and_ctest_configured": true,
+      "functional_configured": true,
+      "bitcoin_config_expression": "\"\\\n --preset=dev-mode \\\n -DREDUCE_EXPORTS=ON \\\n -DCMAKE_BUILD_TYPE=Debug \\\n\"",
+      "functional_arguments_expression": "\"--v2transport --usecli --extended\"",
+      "packages_expression": null,
+      "python_packages_expression": "\"--break-system-packages pyzmq pycapnp\"",
+      "execution_status": "unverified for current package",
+      "baseline_first": true,
+      "baseline_first_field_meaning": "Requirement; does not establish implementation or execution",
+      "entry_point": "ci/test_run_all.sh -> ci/test/02_run_container.py -> test/pocx/inherited_ci.py",
+      "baseline_first_implementation": "implemented in source; original recipe and hosted execution unverified"
+    },
+    {
+      "job": "ci-matrix",
+      "name": "native_tidy",
+      "environment_file": "ci/test/00_setup_env_native_tidy.sh",
+      "environment_sha256": "85c30815b43f30984a0c141f8b8ca158864570d29681c9bd9a6551473a825441",
+      "runner": "${{ needs.runners.outputs.provider == 'warp' && matrix.warp-runner || matrix.fallback-runner }}",
+      "unit_and_ctest_configured": false,
+      "functional_configured": false,
+      "bitcoin_config_expression": "\"\\\n --preset dev-mode \\\n -DCMAKE_C_COMPILER=clang-${TIDY_LLVM_V} \\\n -DCMAKE_CXX_COMPILER=clang++-${TIDY_LLVM_V} \\\n -DCMAKE_C_FLAGS_RELWITHDEBINFO='-O0 -g0' \\\n -DCMAKE_CXX_FLAGS_RELWITHDEBINFO='-O0 -g0' \\\n\"",
+      "functional_arguments_expression": null,
+      "packages_expression": "\"clang-${TIDY_LLVM_V} libclang-${TIDY_LLVM_V}-dev llvm-${TIDY_LLVM_V}-dev libomp-${TIDY_LLVM_V}-dev clang-tidy-${TIDY_LLVM_V} jq libevent-dev libboost-dev libzmq3-dev systemtap-sdt-dev qt6-base-dev qt6-tools-dev qt6-l10n-tools libqrencode-dev libsqlite3-dev libcapnp-dev capnproto\"",
+      "python_packages_expression": null,
+      "execution_status": "unverified for current package",
+      "baseline_first": true,
+      "baseline_first_field_meaning": "Requirement; does not establish implementation or execution",
+      "entry_point": "ci/test_run_all.sh -> ci/test/02_run_container.py -> test/pocx/inherited_ci.py",
+      "baseline_first_implementation": "implemented in source; original recipe and hosted execution unverified"
+    },
+    {
+      "job": "ci-matrix",
+      "name": "native_tsan",
+      "environment_file": "ci/test/00_setup_env_native_tsan.sh",
+      "environment_sha256": "3a6c745649df764592b06c460a989ab4cd4b6005bb472519428fc7e6414a490f",
+      "runner": "${{ needs.runners.outputs.provider == 'warp' && matrix.warp-runner || matrix.fallback-runner }}",
+      "unit_and_ctest_configured": true,
+      "functional_configured": true,
+      "bitcoin_config_expression": "\"\\\n  --preset=dev-mode \\\n  -DBUILD_GUI=OFF \\\n  -DSANITIZERS=thread \\\n  -DAPPEND_CPPFLAGS='-DARENA_DEBUG -DDEBUG_LOCKCONTENTION -D_LIBCPP_REMOVE_TRANSITIVE_INCLUDES' \\\n\"",
+      "functional_arguments_expression": null,
+      "packages_expression": "\"clang-${APT_LLVM_V} llvm-${APT_LLVM_V} llvm-${APT_LLVM_V}-dev libclang-${APT_LLVM_V}-dev libclang-rt-${APT_LLVM_V}-dev python3-zmq python3-pip\"",
+      "python_packages_expression": "\"--break-system-packages pycapnp\"",
+      "execution_status": "unverified for current package",
+      "baseline_first": true,
+      "baseline_first_field_meaning": "Requirement; does not establish implementation or execution",
+      "entry_point": "ci/test_run_all.sh -> ci/test/02_run_container.py -> test/pocx/inherited_ci.py",
+      "baseline_first_implementation": "implemented in source; original recipe and hosted execution unverified"
+    },
+    {
+      "job": "ci-matrix",
+      "name": "native_msan",
+      "environment_file": "ci/test/00_setup_env_native_msan.sh",
+      "environment_sha256": "0affee5c6e63934f52afab75197afa71faefd28227a9b09f700c22017567aad0",
+      "runner": "${{ needs.runners.outputs.provider == 'warp' && matrix.warp-runner || matrix.fallback-runner }}",
+      "unit_and_ctest_configured": true,
+      "functional_configured": true,
+      "bitcoin_config_expression": "\"\\\n --preset=dev-mode \\\n -DBUILD_GUI=OFF \\\n -DCMAKE_BUILD_TYPE=Debug \\\n -DCMAKE_C_FLAGS_DEBUG='' \\\n -DCMAKE_CXX_FLAGS_DEBUG='' \\\n -DSANITIZERS=memory \\\n -DAPPEND_CPPFLAGS='-U_FORTIFY_SOURCE' \\\n\"",
+      "functional_arguments_expression": null,
+      "packages_expression": "\"clang-${APT_LLVM_V} llvm-${APT_LLVM_V} llvm-${APT_LLVM_V}-dev libclang-${APT_LLVM_V}-dev libclang-rt-${APT_LLVM_V}-dev python3-pip\"",
+      "python_packages_expression": "\"--break-system-packages pycapnp\"",
+      "execution_status": "unverified for current package",
+      "baseline_first": true,
+      "baseline_first_field_meaning": "Requirement; does not establish implementation or execution",
+      "entry_point": "ci/test_run_all.sh -> ci/test/02_run_container.py -> test/pocx/inherited_ci.py",
+      "baseline_first_implementation": "implemented in source; original recipe and hosted execution unverified"
+    },
+    {
+      "job": "windows-native-dll",
+      "runner": "windows-2025-vs2026",
+      "matrix": {
+        "job-type": [
+          "standard"
+        ],
+        "include": [
+          {
+            "job-type": "standard",
+            "job-name": "Windows native, VS"
+          }
+        ]
+      },
+      "entry_point": ".github/workflows/ci.yml -> test/pocx/windows_ci.py -> test/pocx/inherited_tests.py",
+      "unit_and_ctest_configured": true,
+      "functional_configured": true,
+      "execution_status": "unverified for current package",
+      "baseline_first": true,
+      "baseline_first_field_meaning": "Requirement; does not establish implementation or execution",
+      "baseline_first_implementation": "implemented in source for native VS Release; both CRT artifact consumers source-wired separately; actual Windows and hosted execution unverified"
+    },
+    {
+      "job": "windows-native-test",
+      "runner": "windows-2022",
+      "matrix": {
+        "crt": [
+          "msvcrt",
+          "ucrt"
+        ],
+        "include": [
+          {
+            "crt": "msvcrt",
+            "artifact-name": "x86_64-w64-mingw32-bitcoin-pocx-tests"
+          },
+          {
+            "crt": "ucrt",
+            "artifact-name": "x86_64-w64-mingw32ucrt-bitcoin-pocx-tests"
+          }
+        ]
+      },
+      "entry_point": "test/pocx/windows_artifact_ci.py",
+      "unit_and_ctest_configured": true,
+      "functional_configured": true,
+      "execution_status": "unverified for current package",
+      "baseline_first": true,
+      "baseline_first_field_meaning": "Requirement; does not establish implementation or execution",
+      "baseline_first_implementation": "Source wired: full original lifecycle/version/manifests/Qt/unit/libraries/kernel/functional v1/v2 phase before any PoCX executable; hosted execution unverified",
+      "previous_releases": "Required; unchanged checksum-verified downloader and owned platform-aware binary inventory",
+      "runtime_artifact": "Bounded reports/logs retained on success and failure; binaries, node data and caches omitted"
+    },
+    {
+      "job": "test-each-commit",
+      "name": "test ancestor commits",
+      "runner": "${{ needs.runners.outputs.provider == 'warp' && 'warp-ubuntu-latest-x64-8x' || 'ubuntu-latest' }}",
+      "entry_point": "test/pocx/revision_ci.py -> test/pocx/inherited_tests.py",
+      "unit_and_ctest_configured": true,
+      "functional_configured": true,
+      "baseline_first": true,
+      "baseline_first_implementation": "implemented in source; actual ancestor-commit recipe and hosted execution unverified",
+      "execution_status": "unverified for current package",
+      "baseline_first_field_meaning": "Requirement; does not establish implementation or execution"
+    },
+    {
+      "job": "ci-matrix",
+      "name": "i686_no_ipc",
+      "environment_file": "ci/test/00_setup_env_i686_no_ipc.sh",
+      "environment_sha256": "8713073def184459e62e8dc4b4484e5f4226aba6e1b4195a7c0a128f3306093b",
+      "runner": "${{ needs.runners.outputs.provider == 'warp' && matrix.warp-runner || matrix.fallback-runner }}",
+      "unit_and_ctest_configured": true,
+      "functional_configured": true,
+      "bitcoin_config_expression": "\"\\\n --preset=dev-mode \\\n -DENABLE_IPC=OFF \\\n -DCMAKE_BUILD_TYPE=Debug \\\n -DCMAKE_C_COMPILER='clang;-m32' \\\n -DCMAKE_CXX_COMPILER='clang++;-m32' \\\n -DAPPEND_CPPFLAGS='-DBOOST_MULTI_INDEX_ENABLE_SAFE_MODE' \\\n\"",
+      "functional_arguments_expression": null,
+      "packages_expression": "\"llvm clang g++-multilib\"",
+      "python_packages_expression": null,
+      "execution_status": "unverified for current package",
+      "baseline_first": true,
+      "baseline_first_field_meaning": "Requirement; does not establish implementation or execution",
+      "entry_point": "ci/test_run_all.sh -> ci/test/02_run_container.py -> test/pocx/inherited_ci.py",
+      "baseline_first_implementation": "implemented in source; original recipe and hosted execution unverified",
+      "restored_from_upstream": {
+        "name": "i686, no IPC",
+        "warp-runner": "warp-ubuntu-latest-x64-8x",
+        "fallback-runner": "ubuntu-latest",
+        "timeout-minutes": "120",
+        "file-env": "./ci/test/00_setup_env_i686_no_ipc.sh"
+      }
+    },
+    {
+      "job": "ci-matrix",
+      "name": "native_previous_releases",
+      "environment_file": "ci/test/00_setup_env_native_previous_releases.sh",
+      "environment_sha256": "36dd6b0682b1c5d56fb6a8ba3247928422da48e87460c1391cdb4a81ba5452d9",
+      "runner": "${{ needs.runners.outputs.provider == 'warp' && matrix.warp-runner || matrix.fallback-runner }}",
+      "unit_and_ctest_configured": true,
+      "functional_configured": true,
+      "bitcoin_config_expression": "\"\\\n --preset=dev-mode \\\n -DREDUCE_EXPORTS=ON \\\n -DCMAKE_BUILD_TYPE=Debug \\\n -DCMAKE_C_FLAGS='-funsigned-char -Werror' \\\n -DCMAKE_C_FLAGS_DEBUG='-g2 -O2' \\\n -DCMAKE_CXX_FLAGS='-funsigned-char -Werror' \\\n -DCMAKE_CXX_FLAGS_DEBUG='-g2 -O2' \\\n -DAPPEND_CPPFLAGS='-DBOOST_MULTI_INDEX_ENABLE_SAFE_MODE' \\\n\"",
+      "functional_arguments_expression": "\"--previous-releases --coverage --extended --exclude feature_dbcrash\"  # Run extended tests so that coverage does not fail, but exclude the very slow dbcrash",
+      "packages_expression": "\"gcc-12 g++-12 python3-zmq\"",
+      "python_packages_expression": null,
+      "execution_status": "unverified for current package",
+      "baseline_first": true,
+      "baseline_first_field_meaning": "Requirement; does not establish implementation or execution",
+      "entry_point": "ci/test_run_all.sh -> ci/test/02_run_container.py -> test/pocx/inherited_ci.py",
+      "baseline_first_implementation": "implemented in source; original recipe and hosted execution unverified",
+      "restored_from_upstream": {
+        "name": "previous releases",
+        "warp-runner": "warp-ubuntu-latest-x64-8x",
+        "fallback-runner": "ubuntu-latest",
+        "timeout-minutes": "120",
+        "file-env": "./ci/test/00_setup_env_native_previous_releases.sh"
+      },
+      "rpc_coverage": "Required independently for Bitcoin and PoCX, both transports; unchanged upstream evaluator and retained raw PoCX coverage inputs",
+      "selection_extensions": [
+        "feature_dbcrash.py: historical slow-case exclusion deliberately included to satisfy the complete functional selection"
+      ]
+    }
+  ],
+  "unwired_environment_scripts": [
+    "ci/test/00_setup_env_mac_native_fuzz.sh",
+    "ci/test/00_setup_env_native_chimera_lto.sh",
+    "ci/test/00_setup_env_native_fuzz.sh",
+    "ci/test/00_setup_env_native_fuzz_with_msan.sh",
+    "ci/test/00_setup_env_native_fuzz_with_valgrind.sh",
+    "ci/test/00_setup_env_native_valgrind.sh",
+    "ci/test/00_setup_env_s390x.sh"
+  ],
+  "optional_functional_requirements": {
+    "usdt": {
+      "cases": 5,
+      "requirements": [
+        "WITH_USDT=ON",
+        "Python BCC",
+        "BPF privileges",
+        "compatible kernel headers/tracing environment"
+      ],
+      "execution_status": "unverified"
+    },
+    "previous_releases": {
+      "cases": 5,
+      "requirements": [
+        "verified older-release binaries",
+        "--previous-releases",
+        "review Bitcoin/PoCX chain and database compatibility separately"
+      ],
+      "execution_status": "unverified"
+    },
+    "ipc": {
+      "cases": 2,
+      "requirements": [
+        "ENABLE_IPC=ON",
+        "pycapnp"
+      ],
+      "execution_status": "unverified"
+    },
+    "zmq": {
+      "cases": 1,
+      "requirements": [
+        "WITH_ZMQ=ON",
+        "pyzmq"
+      ],
+      "execution_status": "unverified"
+    },
+    "tools": {
+      "cases": 2,
+      "requirements": [
+        "BUILD_BENCH=ON",
+        "BUILD_UTIL_CHAINSTATE=ON"
+      ],
+      "execution_status": "unverified"
+    },
+    "special_addresses": {
+      "cases": 2,
+      "requirements": [
+        "isolated network namespace with 1.1.1.1 and 2.2.2.2",
+        "explicit upstream address flags"
+      ],
+      "execution_status": "unverified"
+    }
+  },
+  "completed_checkpoint_ci_gaps": {
+    "unit": [
+      "Provision pinned external script assets; enforce no skipped cases",
+      "Verify wallet/IPC alternatives and sanitizer/platform profiles"
+    ],
+    "qt": [
+      "Integrate exact original/native runtime case membership",
+      "Verify platforms and sanitizers"
+    ],
+    "kernel": [
+      "Add Bitcoin-disabled-PoCX baseline profile",
+      "Invoke dedicated strict kernel verifier",
+      "Verify platforms and sanitizers"
+    ]
+  },
+  "completion": "All required applicable case/profile combinations must have passing evidence; skips or missing hosted evidence remain unverified.",
+  "removed_upstream_environment_profiles": [
+    {
+      "job": "macos-native-arm64",
+      "environment_file": "ci/test/00_setup_env_mac_native_fuzz.sh",
+      "framework_scope": "separate fuzz package",
+      "upstream_configuration": {
+        "job-type": "fuzz",
+        "file-env": "./ci/test/00_setup_env_mac_native_fuzz.sh",
+        "job-name": "macOS native, fuzz"
+      },
+      "fork_status": "removed from active workflow",
+      "execution_status": "unverified"
+    },
+    {
+      "job": "ci-matrix",
+      "environment_file": "ci/test/00_setup_env_native_fuzz.sh",
+      "framework_scope": "separate fuzz package",
+      "upstream_configuration": {
+        "name": "fuzzer,address,undefined,integer",
+        "warp-runner": "warp-ubuntu-latest-x64-16x",
+        "fallback-runner": "ubuntu-latest",
+        "timeout-minutes": "240",
+        "file-env": "./ci/test/00_setup_env_native_fuzz.sh"
+      },
+      "fork_status": "removed from active workflow",
+      "execution_status": "unverified"
+    },
+    {
+      "job": "ci-matrix",
+      "environment_file": "ci/test/00_setup_env_native_fuzz_with_msan.sh",
+      "framework_scope": "separate fuzz package",
+      "upstream_configuration": {
+        "name": "MSan, fuzz",
+        "warp-runner": "warp-ubuntu-latest-x64-8x",
+        "fallback-runner": "ubuntu-latest",
+        "timeout-minutes": "150",
+        "file-env": "./ci/test/00_setup_env_native_fuzz_with_msan.sh"
+      },
+      "fork_status": "removed from active workflow",
+      "execution_status": "unverified"
+    }
+  ],
+  "removed_native_fuzz_job_variants": [
+    "macos-native-arm64:fuzz",
+    "windows-native-dll:fuzz"
+  ],
+  "owned_optional_functional_job": {
+    "workflow": ".github/workflows/pocx-tests.yml",
+    "job": "optional-functional",
+    "events": [
+      "schedule",
+      "workflow_dispatch"
+    ],
+    "runner": "ubuntu-24.04",
+    "profiles_in_execution_order": [
+      "bitcoin-functional-optional",
+      "pocx-functional-optional"
+    ],
+    "required_transports": [
+      "v1",
+      "v2"
+    ],
+    "original_selection": "Complete BASE_SCRIPTS and EXTENDED_SCRIPTS, with individual dynamic benchmark expansion; effective transport overrides retained and normalized case coverage verified.",
+    "pocx_selection": "Complete owned upstream/native/wrapper selection; aggregate benchmark wrapper retains all registered benchmarks.",
+    "missing_dependency_or_skip_result": "failure",
+    "execution_status": "configured; current local full execution and hosted execution unverified",
+    "privilege_scope": "Original BPF cases require root; scheduled/manual hosted runtime step only, in a fresh network namespace. No local privilege escalation authorized or performed.",
+    "previous_release_provisioning": "Fresh original checksum-verified downloader with --remove-dir and all eight explicitly required versions;17 runtime executables fingerprinted."
+  },
+  "owned_sanitizer_job": {
+    "workflow": ".github/workflows/pocx-tests.yml",
+    "job": "asan",
+    "runner": "ubuntu-24.04",
+    "events": [
+      "schedule",
+      "workflow_dispatch"
+    ],
+    "profiles_in_execution_order": [
+      "bitcoin-asan",
+      "pocx-asan"
+    ],
+    "upstream_environment": "ci/test/00_setup_env_native_asan.sh",
+    "specification": "test/pocx/sanitizer-ci.json",
+    "specification_sha256": "73f392d27152edaf6eec5ddfbef1988aeec1b8d28af35c2e1bc933f87936e0f0",
+    "required_frameworks": [
+      "unit",
+      "Qt",
+      "kernel",
+      "functional"
+    ],
+    "sanitizers": "address,float-divide-by-zero,integer,undefined",
+    "compiler_major": 22,
+    "execution_status": "configured; required full local and hosted executions unverified",
+    "timeout_policy": "Inherited2400second CTest and40x functional waits; optional6format attests actual scaling separately from case identities.",
+    "instrumentation_scope": "First-party C++ compile commands, executable runtime symbols and fatal runtime canaries; Rust and vendored dependency instrumentation not inferred.",
+    "fuzz_scope": "Separate unfinished package; fuzz binary/build flags explicitlyOFF.",
+    "still_missing": [
+      "Thread sanitizer and instrumented libc++/dependencies",
+      "Memory sanitizer and instrumented libc++/dependencies",
+      "Other required platform/configuration matrix executions"
+    ]
+  },
+  "owned_instrumented_sanitizer_job": {
+    "workflow": ".github/workflows/pocx-tests.yml",
+    "job": "instrumented-sanitizers",
+    "sanitizers": [
+      "tsan",
+      "msan"
+    ],
+    "profiles": {
+      "tsan": [
+        "bitcoin-tsan",
+        "pocx-tsan"
+      ],
+      "msan": [
+        "bitcoin-msan",
+        "pocx-msan"
+      ]
+    },
+    "ordering": "Full original baseline must pass before native runtime in each fail-fast job.",
+    "specification": "test/pocx/instrumented-ci.json",
+    "specification_sha256": "55108ea8d48bdf7b2cda4bf45d8dad37fc67efd0434fe8134dc4fa38a63c73ba",
+    "execution_status": "unverified",
+    "qt": "configuration-disabled by both inherited jobs; required separately in ASan/Qt profiles",
+    "rust_instrumentation": "not inferred from C++ coverage"
+  },
+  "owned_inherited_posix_bridge": {
+    "entrypoint": "ci/test/02_run_container.py",
+    "orchestrator": "test/pocx/inherited_ci.py",
+    "review": "test/pocx/inherited-ci.json",
+    "upstream_recipe_unchanged": "ci/test/03_test_script.sh",
+    "owned_recipe": "test/pocx/ci/inherited_test_script.sh",
+    "execution_order": [
+      "bitcoin ENABLE_POCX=OFF",
+      "pocx ENABLE_POCX=ON"
+    ],
+    "strict_framework_dispatch": "test/pocx/inherited_tests.py",
+    "functional_dispatch": "test/pocx/inherited_functional.py",
+    "profile_scope": "Retain inherited features/dependency/build/analysis settings; extend both sides to both functional transports and all extended cases",
+    "fuzz_boundary": "Both framework builds disable fuzz binaries; dedicated fuzz jobs retain their unchanged original driver",
+    "native_artifact_path": "unchanged; original build/install paths use the bitcoin-baseline suffix",
+    "hosted_execution": "unverified",
+    "remaining": [
+      "Required inherited recipe and platform execution proof, including restored i686/no-IPC and previous-release profiles",
+      "Actual native Windows and both CRT artifact producer/consumer execution proof"
+    ],
+    "evidence_retention": "Implemented bounded report publication, container export, and always-upload steps; actual hosted export/upload unverified",
+    "revision_entrypoint": "test/pocx/revision_ci.py; preserves unchanged upstream executor compiler configuration and verbose build fallback"
+  },
+  "owned_native_windows_bridge": {
+    "driver": "test/pocx/windows_ci.py",
+    "source_review": "test/pocx/windows-ci.json",
+    "original_driver": ".github/ci-windows.py",
+    "original_driver_sha256": "9cec268ddaf98292b2067ae07ff99e8290a6e1a2e3a97aac9814c6642542e27b",
+    "configured_frameworks": [
+      "unit",
+      "qt",
+      "kernel",
+      "auxiliary",
+      "functional-v1",
+      "functional-v2"
+    ],
+    "execution_status": "unverified; no actual native Windows execution recorded",
+    "prerequisite": "Passing complete Bitcoin-OFF phase before any PoCX-ON phase",
+    "cross_artifact_consumers": "Source wired for both CRTs; actual hosted build/runtime execution unverified"
+  },
+  "owned_windows_cross_artifact_foundation": {
+    "exporter": "test/pocx/windows_artifacts.py",
+    "source_review": "test/pocx/windows-artifacts.json",
+    "cross_unit_recorder": "test/pocx/record_cross_unit.py",
+    "source_status": "Implemented paired exporter/recorder and complete original-first target-host consumer; source wiring does not establish execution",
+    "hosted_producer_wiring": "Implemented: inherited cross controller exports both configurations before container cleanup; stable immutable pair is copied to host and uploaded per CRT",
+    "target_host_consumer": "Implemented and workflow-wired: manifests, Qt/unit/libraries/kernel and strict functional v1/v2 matrix; actual Windows execution unverified",
+    "actual_windows_test_cases_executed": 0,
+    "execution_status": "Unverified for actual hosted builds and Windows execution; source/fixture checks are infrastructure only",
+    "target_host_unit_profile": "test/pocx/windows_artifact_unit.py: original-first complete enabled unit inventory in one process; actual Windows execution unverified",
+    "amd64_sse2_status": "source gate corrected; exact production consensus/test blocks and real SSE2 source compile for AMD64; target-host comparison execution unverified",
+    "target_host_test_profile": "test/pocx/windows_artifact_tests.py: original-first Qt methods, single-process units, five auxiliary executables and complete enabled kernel suite; actual Windows execution unverified",
+    "configuration_parity": "Matching feature, target, compiler and sanitizer options required; only ENABLE_POCX differs",
+    "kernel_cross_fixture_status": "source fixed: cross builds render byte-identical independently verified207-block snapshot with host Python, native generation retained; actual target-host kernel execution unverified",
+    "producer": "test/pocx/windows_cross.py",
+    "target_host_complete_profile": "test/pocx/windows_artifact_ci.py",
+    "frozen_revision_and_source_bytes": "Both CRT producers and consumers check out record-frozen-commit with core.autocrlf=false",
+    "retained_evidence": "Bounded producer/runtime reports retained, including failure logs; payload binaries uploaded only in the dedicated immutable build-pair artifact"
+  },
+  "restored_upstream_environment_profiles": [
+    {
+      "job": "ci-matrix",
+      "environment_file": "ci/test/00_setup_env_i686_no_ipc.sh",
+      "framework_scope": "required in this goal",
+      "upstream_configuration": {
+        "name": "i686, no IPC",
+        "warp-runner": "warp-ubuntu-latest-x64-8x",
+        "fallback-runner": "ubuntu-latest",
+        "timeout-minutes": "120",
+        "file-env": "./ci/test/00_setup_env_i686_no_ipc.sh"
+      },
+      "fork_status": "restored to active workflow; execution unverified",
+      "execution_status": "unverified"
+    },
+    {
+      "job": "ci-matrix",
+      "environment_file": "ci/test/00_setup_env_native_previous_releases.sh",
+      "framework_scope": "required in this goal",
+      "upstream_configuration": {
+        "name": "previous releases",
+        "warp-runner": "warp-ubuntu-latest-x64-8x",
+        "fallback-runner": "ubuntu-latest",
+        "timeout-minutes": "120",
+        "file-env": "./ci/test/00_setup_env_native_previous_releases.sh"
+      },
+      "fork_status": "restored to active workflow; execution unverified",
+      "execution_status": "unverified"
+    }
+  ]
+}

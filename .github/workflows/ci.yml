@@ -115,12 +115,22 @@ jobs:
           git config user.name "CI"
       - run: |
           sudo apt-get update
-          sudo apt-get install clang mold ccache build-essential cmake ninja-build pkgconf python3-zmq libevent-dev libboost-dev libsqlite3-dev systemtap-sdt-dev libzmq3-dev qt6-base-dev qt6-tools-dev qt6-l10n-tools libqrencode-dev capnproto libcapnp-dev -y
-          sudo pip3 install --break-system-packages pycapnp
+          sudo apt-get install clang mold ccache build-essential cmake ninja-build pkgconf python3-zmq python3-venv python3-bpfcc bpfcc-tools "linux-headers-$(uname -r)" libevent-dev libboost-dev libsqlite3-dev systemtap-sdt-dev libzmq3-dev qt6-base-dev qt6-tools-dev qt6-l10n-tools libqrencode-dev capnproto libcapnp-dev -y
+          python3 -m venv --system-site-packages .ci-venv
+          .ci-venv/bin/pip install pycapnp==2.2.4
       - name: Compile and run tests
         run: |
           # Run tests on commits after the last merge commit and before the PR head commit
-          git rebase --exec "git merge --no-commit origin/${GITHUB_BASE_REF} && python3 ./.github/ci-test-each-commit-exec.py && git reset --hard" ${{ env.TEST_BASE }}
+          # Original USDT cases require root and the matching BPF prerequisites.
+          git rebase --exec "git merge --no-commit origin/${GITHUB_BASE_REF} && sudo env GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=safe.directory GIT_CONFIG_VALUE_0=\"${GITHUB_WORKSPACE}\" .ci-venv/bin/python ./test/pocx/revision_ci.py && git reset --hard" ${{ env.TEST_BASE }}
+
+      - name: Upload Bitcoin and PoCX test evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: inherited-tests-${{ github.job }}
+          path: artifacts/pocx-inherited
+          if-no-files-found: warn
 
   macos-native-arm64:
     name: ${{ matrix.job-name }}
@@ -201,6 +211,14 @@ jobs:
         env:
           FILE_ENV: ${{ matrix.file-env }}
 
+      - name: Upload Bitcoin and PoCX test evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: inherited-tests-${{ github.job }}-${{ strategy.job-index }}
+          path: repo_archive/artifacts/pocx-inherited
+          if-no-files-found: warn
+
       - name: Save Ccache cache
         uses: actions/cache/save@v5
         if: github.event_name != 'pull_request' && github.ref_name == github.event.repository.default_branch && steps.ccache-cache.outputs.cache-hit != 'true'
@@ -218,6 +236,10 @@ jobs:
     env:
       PYTHONUTF8: 1
       TEST_RUNNER_TIMEOUT_FACTOR: 40
+      # Source review hashes require the repository's LF bytes on Windows too.
+      GIT_CONFIG_COUNT: 1
+      GIT_CONFIG_KEY_0: core.autocrlf
+      GIT_CONFIG_VALUE_0: 'false'
 
     strategy:
       fail-fast: false
@@ -272,9 +294,10 @@ jobs:
           path: ~/AppData/Local/vcpkg/archives
           key: ${{ github.job }}-vcpkg-binary-${{ hashFiles('cmake_version', 'msbuild_version', 'toolset_version', 'vcpkg.json') }}
 
-      - name: Generate build system
-        run: |
-          py -3 .github/ci-windows.py ${{ matrix.job-type }} generate
+      - name: Verify Bitcoin baseline, then PoCX on native Windows
+        env:
+          TEST_RUNNER_EXTRA: "--timeout-factor=${{ env.TEST_RUNNER_TIMEOUT_FACTOR }} ${{ case(github.event_name == 'pull_request', '', '--extended') }}"
+        run: py -3 test/pocx/windows_ci.py
 
       - name: Save vcpkg binary cache
         uses: actions/cache/save@v5
@@ -291,23 +314,13 @@ jobs:
           path: C:/vcpkg/downloads/tools
           key: ${{ github.job }}-vcpkg-tools-${{ github.run_id }}
 
-      - name: Build
-        run: |
-          py -3 .github/ci-windows.py ${{ matrix.job-type }} build
-
-      - name: Check executable manifests
-        run: |
-          py -3 .github/ci-windows.py ${{ matrix.job-type }} check_manifests
-
-      - name: Prepare tests
-        run: |
-          py -3 .github/ci-windows.py ${{ matrix.job-type }} prepare_tests
-
-      - name: Run tests
-        env:
-          TEST_RUNNER_EXTRA: "--timeout-factor=${{ env.TEST_RUNNER_TIMEOUT_FACTOR }} ${{ case(github.event_name == 'pull_request', '', '--extended') }}"
-        run: |
-          py -3 .github/ci-windows.py ${{ matrix.job-type }} run_tests
+      - name: Retain original and PoCX native Windows test evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: pocx-native-windows-${{ matrix.job-type }}-${{ github.run_id }}
+          path: artifacts/pocx-inherited
+          if-no-files-found: warn
 
   record-frozen-commit:
     # Record frozen commit, so that the native tests on cross-builds can run on
@@ -336,14 +349,17 @@ jobs:
         include:
           - crt: msvcrt
             file-env: './ci/test/00_setup_env_win64_msvcrt.sh'
-            artifact-name: 'x86_64-w64-mingw32-executables'
+            artifact-name: 'x86_64-w64-mingw32-bitcoin-pocx-tests'
           - crt: ucrt
             file-env: './ci/test/00_setup_env_win64.sh'
-            artifact-name: 'x86_64-w64-mingw32ucrt-executables'
+            artifact-name: 'x86_64-w64-mingw32ucrt-bitcoin-pocx-tests'
 
     env:
       FILE_ENV: ${{ matrix.file-env }}
       DANGER_CI_ON_HOST_FOLDERS: 1
+      GIT_CONFIG_COUNT: 1
+      GIT_CONFIG_KEY_0: core.autocrlf
+      GIT_CONFIG_VALUE_0: 'false'
 
     steps:
       - *ANNOTATION_PR_NUMBER
@@ -370,21 +386,27 @@ jobs:
       - name: CI script
         run: ./ci/test_run_all.sh
 
+      - name: Upload Bitcoin and PoCX test evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: inherited-tests-${{ github.job }}-${{ strategy.job-index }}
+          path: |
+            artifacts/pocx-inherited
+            !artifacts/pocx-inherited/windows-cross-pair
+          if-no-files-found: warn
+
       - name: Save caches
         uses: ./.github/actions/cache/save
         with:
           provider: ${{ needs.runners.outputs.provider }}
 
-      - name: Upload built executables
+      - name: Upload verified Bitcoin and PoCX cross-build pair
         uses: actions/upload-artifact@v7
         with:
           name: ${{ matrix.artifact-name }}-${{ github.run_id }}
-          path: |
-            ${{ env.BASE_BUILD_DIR }}/bin/*.dll
-            ${{ env.BASE_BUILD_DIR }}/bin/*.exe
-            ${{ env.BASE_BUILD_DIR }}/src/secp256k1/bin/*.exe
-            ${{ env.BASE_BUILD_DIR }}/src/univalue/*.exe
-            ${{ env.BASE_BUILD_DIR }}/test/config.ini
+          path: artifacts/pocx-inherited/windows-cross-pair
+          if-no-files-found: error
 
   windows-native-test:
     name: 'Windows, ${{ matrix.crt }}, test cross-built'
@@ -397,13 +419,17 @@ jobs:
         crt: [msvcrt, ucrt]
         include:
           - crt: msvcrt
-            artifact-name: 'x86_64-w64-mingw32-executables'
+            artifact-name: 'x86_64-w64-mingw32-bitcoin-pocx-tests'
           - crt: ucrt
-            artifact-name: 'x86_64-w64-mingw32ucrt-executables'
+            artifact-name: 'x86_64-w64-mingw32ucrt-bitcoin-pocx-tests'
 
     env:
       PYTHONUTF8: 1
       TEST_RUNNER_TIMEOUT_FACTOR: 40
+      PREVIOUS_RELEASES_DIR: ${{ github.workspace }}/prev_releases
+      GIT_CONFIG_COUNT: 1
+      GIT_CONFIG_KEY_0: core.autocrlf
+      GIT_CONFIG_VALUE_0: 'false'
 
     steps:
       - *ANNOTATION_PR_NUMBER
@@ -413,30 +439,43 @@ jobs:
         with:
           ref: ${{ needs.record-frozen-commit.outputs.commit }}
 
-      - name: Download built executables
+      - name: Download verified Bitcoin and PoCX cross-build pair
         uses: actions/download-artifact@v8
         with:
           name: ${{ matrix.artifact-name }}-${{ github.run_id }}
+          path: artifacts/windows-cross-pair
 
-      - name: Run bitcoind.exe
-        run: py -3 .github/ci-windows-cross.py print_version
+      - name: Verify immutable cross-build inputs
+        run: py -3 test/pocx/windows_artifacts.py --verify artifacts/windows-cross-pair
 
       - *IMPORT_VS_ENV
 
-      - name: Check executable manifests
-        run: py -3 .github/ci-windows-cross.py check_manifests
+      - name: Install functional ZMQ prerequisite
+        shell: pwsh
+        run: py -3 -m pip install pyzmq
 
-      - name: Prepare Windows test environment
-        run: py -3 .github/ci-windows-cross.py prepare_tests
+      - name: Download checksum-verified previous releases
+        shell: pwsh
+        run: py -3 test/get_previous_releases.py --target-dir "$env:PREVIOUS_RELEASES_DIR"
 
-      - name: Run unit tests
-        run: py -3 .github/ci-windows-cross.py run_unit_tests
-
-      - name: Run functional tests
+      - name: Run complete Bitcoin baseline then PoCX artifact tests
+        shell: pwsh
         env:
-          TEST_RUNNER_EXTRA: "--timeout-factor=${{ env.TEST_RUNNER_TIMEOUT_FACTOR }} ${{ case(github.event_name == 'pull_request', '', '--extended') }}"
+          TEST_RUNNER_EXTRA: "--timeout-factor=${{ env.TEST_RUNNER_TIMEOUT_FACTOR }} --extended"
         run: |
-          py -3 .github/ci-windows-cross.py run_functional_tests
+          py -3 test/pocx/windows_artifact_ci.py --artifacts artifacts/windows-cross-pair --output artifacts/windows-cross-runtime --timeout-factor "$env:TEST_RUNNER_TIMEOUT_FACTOR"
+
+      - name: Retain bounded Bitcoin and PoCX runtime evidence
+        if: always()
+        run: py -3 test/pocx/windows_cross.py --collect-runtime artifacts/windows-cross-runtime --output artifacts/windows-cross-evidence
+
+      - name: Upload Bitcoin and PoCX cross-runtime test evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: windows-cross-runtime-${{ matrix.crt }}-${{ github.run_id }}
+          path: artifacts/windows-cross-evidence
+          if-no-files-found: warn
 
   ci-matrix:
     name: ${{ matrix.name }}
@@ -466,6 +505,12 @@ jobs:
             file-env: './ci/test/00_setup_env_arm.sh'
             provider: 'gha'
 
+          - name: 'i686, no IPC'
+            warp-runner: 'warp-ubuntu-latest-x64-8x'
+            fallback-runner: 'ubuntu-latest'
+            timeout-minutes: 120
+            file-env: './ci/test/00_setup_env_i686_no_ipc.sh'
+
           - name: 'ASan + LSan + UBSan + integer'
             warp-runner: 'warp-ubuntu-2404-x64-8x' # has to match container in ci/test/00_setup_env_native_asan.sh for tracing tools
             fallback-runner: 'ubuntu-24.04'
@@ -489,6 +534,12 @@ jobs:
             fallback-runner: 'ubuntu-latest'
             timeout-minutes: 120
             file-env: './ci/test/00_setup_env_native_nowallet.sh'
+
+          - name: 'previous releases'
+            warp-runner: 'warp-ubuntu-latest-x64-8x'
+            fallback-runner: 'ubuntu-latest'
+            timeout-minutes: 120
+            file-env: './ci/test/00_setup_env_native_previous_releases.sh'
 
           - name: 'Alpine (musl)'
             warp-runner: 'warp-ubuntu-latest-x64-8x'
@@ -550,6 +601,14 @@ jobs:
 
       - name: CI script
         run: ./ci/test_run_all.sh
+
+      - name: Upload Bitcoin and PoCX test evidence
+        if: always() && env.RUN_FUZZ_TESTS != 'true'
+        uses: actions/upload-artifact@v7
+        with:
+          name: inherited-tests-${{ github.job }}-${{ strategy.job-index }}
+          path: artifacts/pocx-inherited
+          if-no-files-found: warn
 
       - name: Save caches
         uses: ./.github/actions/cache/save

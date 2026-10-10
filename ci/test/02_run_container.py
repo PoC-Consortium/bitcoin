@@ -20,6 +20,22 @@ def run(cmd, **kwargs):
         sys.exit(str(e))
 
 
+def test_script(root, environment):
+    if environment.get('RUN_FUZZ_TESTS') == 'true':
+        return [f'{root}/ci/test/03_test_script.sh']
+    return ['python3', f'{root}/test/pocx/inherited_ci.py']
+
+
+def capture_evidence(container_id, environment, *, invoke=run):
+    destination = Path(environment['BASE_READ_ONLY_DIR']) / 'artifacts'
+    destination.mkdir(parents=True, exist_ok=True)
+    result = invoke(['docker', 'cp',
+        f"{container_id}:{environment['BASE_ROOT_DIR']}/artifacts/pocx-inherited",
+        str(destination)], check=False)
+    if result.returncode:
+        raise RuntimeError('Failed to retain inherited CI evidence from container')
+
+
 def main():
     print("Export only allowed settings:")
     settings = run(
@@ -173,7 +189,17 @@ def main():
         f"{os.environ['BASE_ROOT_DIR']}",
     ])
     ci_exec([f"{os.environ['BASE_ROOT_DIR']}/ci/test/01_base_install.sh"])
-    ci_exec([f"{os.environ['BASE_ROOT_DIR']}/ci/test/03_test_script.sh"])
+    try:
+        ci_exec(test_script(os.environ['BASE_ROOT_DIR'], os.environ))
+    finally:
+        if not os.getenv('DANGER_RUN_CI_ON_HOST') and os.getenv('RUN_FUZZ_TESTS') != 'true':
+            failed = sys.exc_info()[0] is not None
+            try:
+                capture_evidence(container_id, os.environ)
+            except Exception as error:
+                if not failed:
+                    raise
+                print(f'Evidence capture also failed: {error}', file=sys.stderr, flush=True)
 
     if not os.getenv("DANGER_RUN_CI_ON_HOST"):
         print("Stop and remove CI container by ID")

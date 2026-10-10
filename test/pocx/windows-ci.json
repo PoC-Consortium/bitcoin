@@ -1,0 +1,38 @@
+{
+  "scope": "Source-reviewed original-first native Windows standard recipe. Read-only plans and synthetic controller checks are infrastructure evidence only.",
+  "upstream_revision": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
+  "unchanged_upstream_recipe": ".github/ci-windows.py",
+  "source_sha256": {
+    ".github/ci-windows.py": "9cec268ddaf98292b2067ae07ff99e8290a6e1a2e3a97aac9814c6642542e27b",
+    ".github/workflows/ci.yml": "43e7258aab16605c98d91fa5a1100adb6b3c47d00c52851be79245fb42e2a52f",
+    "test/pocx/build_configuration.py": "c9df217b325f1e3dfd8cd14e002f542bd78aa084b410e8f3b18d18a261a36456",
+    "test/pocx/ci_evidence.py": "d5584b065776634fde0399e3ebbc20b23bf83cc0d5a849c26944a7aa1f9bb478",
+    "test/pocx/inherited_ci.py": "b468e0dd9a93706bb7afdbffc17877222a4fed5c168effdbd358bf1eeaa13f6b",
+    "test/pocx/inherited_functional.py": "8fde271730c1dd3a1c7aca239f65aac2a3ace9c6d5fb66c880f7192b937f8f25",
+    "test/pocx/inherited_tests.py": "c9171243d26768994f0c7d171ad3270344bf87ad018ece2ab7e436829853f511",
+    "test/pocx/process_tree.py": "12639a920fa4a656eec4f14ea02c4aaf1fe997cfc18c7df2566e82a1d3ab3f29",
+    "test/pocx/test_process_tree.py": "d7ec0a6aee84f007f87b6fe651ccb6863739245d6336cb57e41e3a5dd9a1d516",
+    "test/pocx/test_windows_ci.py": "774645df9d5c62ec7e6b63bd99096f7943feda7474db759c8d7cb25fadf378cd",
+    "test/pocx/unit_assets.py": "1c34c321789b13246532e2d702b2212a5812cdd88bd4f6289945aa7f5680f992",
+    "test/pocx/windows_ci.py": "afdf67bd94635fd2e3e75aa0b1f522f687672913ecafb1ca926e6bd0484a3d80"
+  },
+  "preserved_recipe": [
+    "Visual Studio 2026 preset and all original standard options",
+    "Single generation retry after 12 seconds",
+    "Parallel Release build with single-job verbose fallback",
+    "All original executable manifest checks and exact exemption set",
+    "pyzmq provisioning and original functional timeout/extended setting"
+  ],
+  "owned_changes": [
+    "Explicit isolated Bitcoin-OFF build and complete test phase before PoCX-ON",
+    "Checksum-verified immutable original unit assets",
+    "Real host process-controller lifecycle probes before framework execution",
+    "Strict configuration-specific unit, Qt, kernel and auxiliary verification",
+    "Both functional transports with inherited timeout-factor preserved",
+    "Bounded framework reports retained and uploaded on success and failure",
+    "LF checkout for byte-exact source verification"
+  ],
+  "execution_status": "unverified; no actual native Windows execution recorded",
+  "cross_artifact_consumers": "pending; this driver requires a native Visual Studio build tree",
+  "windows_functional_dispatch_review": "Keep the unchanged upstream runner for all original variants; separately execute the ancient-release UTXO case in an ASCII-only directory in both transports on Windows. Wallet multiwallet variants remain required. Disabled benchmark builds preserve the source-guarded unexpanded case; enabled builds require actual listing. Pin bytecode and previous-release environment behavior; retain elapsed time and full raw logs. Callback verification is infrastructure only, not hosted or Windows execution."
+}

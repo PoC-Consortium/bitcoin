@@ -1,0 +1,43 @@
+{
+  "scope": "Reviewed unchanged POSIX and ancestor-commit recipes with separate original-first orchestration and strict original/native runtime selection. Configured coverage is not executed coverage.",
+  "upstream_revision": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
+  "unchanged_upstream_recipe": "ci/test/03_test_script.sh",
+  "owned_recipe_changes": [
+    "Replace moving unit asset download with checksum-verified pinned asset provisioning",
+    "Replace raw CTest invocation with configuration-specific unit/Qt/kernel/auxiliary verification",
+    "Replace original-only functional invocation with both-transport original/native strict dispatch"
+  ],
+  "build_pair_changes": [
+    "Explicit ENABLE_POCX=OFF baseline in a separate build/install prefix before ON",
+    "BUILD_FUZZ_BINARY=OFF and BUILD_FOR_FUZZING=OFF on both sides; fuzz jobs retain the original driver",
+    "Keep native output paths for existing artifact consumers; original build/install artifacts use the bitcoin-baseline suffix"
+  ],
+  "execution_status": "unverified for actual inherited POSIX/hosted recipes",
+  "source_sha256": {
+    ".github/ci-test-each-commit-exec.py": "7d6c921986188b726f82bb08a782be738f6dfc2460d1f64272ae8bd8715d040b",
+    "ci/test/02_run_container.py": "f202b4fc207da95776e1a3bd883375494ce0af16faff9a5c6957ee1cfacd026e",
+    "ci/test/03_test_script.sh": "cfd9e9583398dee9527a2fb7ea099104a8cab53f7bf5ccdceb3f4e84425ebb8b",
+    "test/pocx/ci/inherited_test_script.sh": "6a452fee58c15dfdb7659aa58e24957d1b01e9d90a8f141177474c1c09db9767",
+    "test/pocx/inherited_ci.py": "b468e0dd9a93706bb7afdbffc17877222a4fed5c168effdbd358bf1eeaa13f6b",
+    "test/pocx/inherited_functional.py": "8fde271730c1dd3a1c7aca239f65aac2a3ace9c6d5fb66c880f7192b937f8f25",
+    "test/pocx/inherited_tests.py": "c9171243d26768994f0c7d171ad3270344bf87ad018ece2ab7e436829853f511",
+    "test/pocx/revision_ci.py": "4ae8bac50834eb3d9bb3a883b6d8897c51730f6989e981bcd589c14fbd7e0998",
+    "test/pocx/test_windows_cross.py": "835669be83f461be2faa58ef2fe28fb1f7b67cd70e08d774c27224d051a8f0e8",
+    "test/pocx/windows_cross.py": "e1495418b36684e7ed61fd77b8d2c1e5ac3f688e0bec9eda5d8761ce0a1a301f"
+  },
+  "evidence_retention": "Copy newly created bounded framework report trees into artifacts/pocx-inherited on success and failure; export container reports before cleanup; upload in inherited POSIX jobs",
+  "unchanged_upstream_revision_recipe": ".github/ci-test-each-commit-exec.py",
+  "owned_revision_recipe": "test/pocx/revision_ci.py",
+  "revision_runtime_prerequisites": "Hosted job provisions BCC, matching kernel headers and pinned pycapnp; original USDT cases require root; published report permissions allow ordinary artifact upload. Actual hosted execution unverified.",
+  "native_feature_skip_review": "Require the owned runner raw exit to agree exactly with terminal case statuses:0only for allpassed,1for any nonpass. Explicit source-guarded disabled features remain configuration-disabled even though the strict runner returns1. Case-level failures and skips for enabled or missing prerequisites still fail; inconsistent or abnormal exits fail. Controller fixtures verify both transports and preserve every skip row without relabeling it passed. No original test or feature inventory changed; actual inherited runtime remains unverified.",
+  "configuration_dispatch_review": "Shared strict dispatch selects explicit multi-configuration binaries and CTest configuration; inherited functional timeout-factor flags are validated and preserved. Auxiliary registration identity uses resolved executable paths. Native Windows runtime remains unverified.",
+  "windows_functional_dispatch_review": "Keep the unchanged upstream runner for all original variants; separately execute the ancient-release UTXO case in an ASCII-only directory in both transports on Windows. Wallet multiwallet variants remain required. Disabled benchmark builds preserve the source-guarded unexpanded case; enabled builds require actual listing. Pin bytecode and previous-release environment behavior; retain elapsed time and full raw logs. Callback verification is infrastructure only, not hosted or Windows execution.",
+  "windows_cross_export_review": "Both reviewed CRT profiles build OFF then ON with unchanged compiler/features, export their immutable pair inside the container before cleanup, and publish one stable payload plus bounded reports. Cross-build success explicitly does not establish a target-host test baseline. Export/source/publication failures fail CI. Fuzz routing and native/POSIX execution remain unchanged. Actual hosted compilation and Windows execution unverified.",
+  "restored_upstream_profiles": {
+    "profiles": [
+      "ci/test/00_setup_env_i686_no_ipc.sh",
+      "ci/test/00_setup_env_native_previous_releases.sh"
+    ],
+    "coverage": "Preserve original and native RPC coverage gates per transport with unchanged upstream evaluator; run the historical slow dbcrash exclusion as a documented selection extension. No execution claim."
+  }
+}
