@@ -18,7 +18,7 @@
     "ci/test/02_run_container.py": "84e4a1adb04972ec0d3c74a598f0995fde6465592c62f84139db41fcab6a7b65",
     "ci/test/03_test_script.sh": "cfd9e9583398dee9527a2fb7ea099104a8cab53f7bf5ccdceb3f4e84425ebb8b",
     "test/pocx/ci/inherited_test_script.sh": "25b6f367bed45e7c7d040ae2a82bba21b278790d83c536ade4d7b7a835273930",
-    "test/pocx/inherited_ci.py": "960d8a89bb82d651d4d2d5c497f1c680f3753cda727743a917f717027a167832",
+    "test/pocx/inherited_ci.py": "7d5c5e66e9ebd9b2c3d482777115aaecfec8dd7d77d816a65baf2b33f128db9c",
     "test/pocx/inherited_functional.py": "cadc51ab9d186e1de4b9388ae207a7f9ac69458074386e7d5ce0890b8d564b86",
     "test/pocx/inherited_tests.py": "c9171243d26768994f0c7d171ad3270344bf87ad018ece2ab7e436829853f511",
     "test/pocx/revision_ci.py": "4ae8bac50834eb3d9bb3a883b6d8897c51730f6989e981bcd589c14fbd7e0998",
@@ -48,5 +48,14 @@
   "asan_tracing_environment_review": "Select an owned FILE_ENV wrapper which exports INSTALL_BCC_TRACING_TOOLS=true before sourcing the unchanged upstream ASAN environment. Both host setup and Docker image build receive the intended BCC/header packages and capability flags. Remove workflow sed mutation which invalidated the original environment source checksum. Compiler/options, original source hashes and test selections unchanged. Actual hosted execution remains unverified. Non-fuzz container builds select a separate owned imagefile which copies original environment scripts and owned wrappers to their declared paths. The upstream imagefile/base-install command and dedicated fuzz image/driver remain unchanged. The runtime-inputs image stage permits testing actual Docker COPY and environment sourcing without reinstalling tools.",
   "enabled_linux_tracing_review": "Provision BCC Python bindings/tools for the eight reviewed Linux functional recipes that enable USDT. Source the same owned helper in host/container setup and image build; preserve all compiler, feature, dependency and test settings. Match running-host kernel headers in the workflow, mount headers/modules read-only, and allow the required original root/BPF tracing inside isolated containers. Build-only, non-Linux and dedicated fuzz jobs preserve their previous environment. Source-only environment and actual image-input checks are infrastructure evidence, never framework/hosted passes.",
   "original_failure_reporting_review": "Retain parsed original functional case results before rejecting a failed aggregate/exit, and explicitly record missing original case/transport evidence as unverified. Counts and CSV remain available on failure. Fail-fast original-before-native gating, assertions, selections and successful execution commands are unchanged. Infrastructure fixtures cover actual failed aggregates and abnormal exits; this is not new target-platform runtime evidence.",
-  "enabled_linux_python_prerequisites_review": "Provision Python ZeroMQ for the reviewed Debian/Ubuntu functional recipes and add pinned pycapnp only where IPC is enabled and the original environment omitted it. Preserve existing pip requirements; Ubuntu22.04 does not receive the unsupported --break-system-packages option. Export added PIP_PACKAGES through host/container setup. Original compiler, dependency build flags, features, test selections and assertions remain unchanged. Actual-recipe regression checks all eight environments, disabled/fuzz routing and idempotence; package/runtime execution remains separately required."
+  "enabled_linux_python_prerequisites_review": "Provision Python ZeroMQ for the reviewed Debian/Ubuntu functional recipes and add pinned pycapnp only where IPC is enabled and the original environment omitted it. Preserve existing pip requirements; Ubuntu22.04 does not receive the unsupported --break-system-packages option. Export added PIP_PACKAGES through host/container setup. Original compiler, dependency build flags, features, test selections and assertions remain unchanged. Actual-recipe regression checks all eight environments, disabled/fuzz routing and idempotence; package/runtime execution remains separately required.",
+  "iwyu_source_restoration": {
+    "scope": "The unchanged upstream recipe rejects enforced include edits but permits its subsequent warning phase to apply suggestions. The owned controller retains per-consensus suggestions and original/analysis hashes, then restores exact input C/C++ bytes/modes before the next consensus phase. Nonzero recipe exits still stop before native; unrelated source drift and changes in other recipes remain fatal.",
+    "sources": [
+      "test/pocx/inherited_ci.py",
+      "test/pocx/test_inherited_ci.py"
+    ],
+    "diagnostic": "artifacts/ci-parity-20261010/iwyu-source-guard-diagnostic/results.json",
+    "runtime_scope": "Infrastructure contract regression only; no full IWYU analysis or framework pass inferred."
+  }
 }

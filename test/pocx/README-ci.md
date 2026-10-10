@@ -600,3 +600,13 @@ upload. Binary and CMake-cache bytes were not uploaded, so the downloaded report
 do not provide an independent local inspection of those bytes. This checkpoint
 establishes only the selected original unit profile; every other hosted condition
 remains unverified. No additional Actions run was launched for this checkpoint.
+
+The inherited IWYU recipe retains its original fatal enforced analysis and later
+warning analysis. The warning phase applies include suggestions and prints a diff,
+which previously made the owned source guard reject an otherwise successful
+baseline. The controller now retains a per-consensus suggestions patch with
+original/analysis hashes, then restores the exact input C/C++ bytes and modes
+before the next consensus phase. A failed enforced analysis remains failed and
+never starts native analysis. Changes outside C/C++ inputs, and source edits in
+other recipes, still fail the ordinary source guard. These are verified controller
+contract checks; complete IWYU tool/source execution remains separately required.

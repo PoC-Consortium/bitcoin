@@ -8,6 +8,7 @@ hosted execution evidence. No container, installation or privileged recipe runs.
 """
 from copy import deepcopy
 import importlib.util
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -177,6 +178,84 @@ class InheritedTest(unittest.TestCase):
         report, calls = self.execute_fixture([7])
         self.assertEqual(report['status'], 'failed');self.assertEqual(len(calls), 1)
         self.assertEqual(report['native_execution'], 'deferred')
+
+    def include_edit_fixture(self, *, iwyu=True, returncode=0, other_source=False):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            cpp = root / 'src/example.cpp'; cpp.parent.mkdir()
+            original = b'#include <vector>\nint main(){return 0;}\n'
+            cpp.write_bytes(original)
+            helper = root / 'test/pocx/helper.py'; helper.parent.mkdir(parents=True)
+            helper.write_text('original\n')
+            def snapshot(directory):
+                return {str(p.relative_to(root)): hashlib.sha256(p.read_bytes()).hexdigest()
+                        for p in (cpp, helper)}
+            pair = [{'consensus': name, 'command': ['controlled-include-analysis'],
+                     'environment': {'HOST': 'x86_64-pc-linux-gnu',
+                         'RUN_IWYU': 'true' if iwyu else 'false',
+                         'BASE_BUILD_DIR': str(root / ('build-' + name)),
+                         'BASE_OUTDIR': str(root / ('out-' + name)),
+                         'BITCOIN_CONFIG': '-DENABLE_POCX=' + enabled}}
+                    for name, enabled in (('bitcoin', 'OFF'), ('pocx', 'ON'))]
+            calls = []
+            def recipe(command, **kwargs):
+                calls.append(kwargs['env']['BITCOIN_CONFIG'])
+                if len(calls) == 2:
+                    self.assertEqual(cpp.read_bytes(), original)
+                cpp.write_text('int main(){return 0;}\n')
+                if other_source:
+                    helper.write_text('unexpected source edit\n')
+                return subprocess.CompletedProcess(command, returncode)
+            output = root / 'execution'
+            with patch.object(inherited_ci, 'source_snapshot', side_effect=snapshot):
+                try:
+                    inherited_ci.execute(pair, output, root=root, run=recipe)
+                except ValueError:
+                    pass
+            report = json.loads((output / 'results.json').read_text())
+            suggestions = [(output / (name + '-iwyu-suggestions.patch')).read_text()
+                           for name in ('bitcoin', 'pocx')
+                           if (output / (name + '-iwyu-suggestions.patch')).is_file()]
+            return report, calls, cpp.read_bytes(), original, suggestions
+
+    def test_iwyu_warning_edits_retained_and_restored_before_native(self):
+        report, calls, actual, original, suggestions = self.include_edit_fixture()
+        self.assertEqual(report['status'], 'passed')
+        self.assertEqual(len(calls), 2)
+        self.assertEqual(actual, original)
+        self.assertEqual(len(suggestions), 2)
+        self.assertTrue(all('-#include <vector>' in suggestion for suggestion in suggestions))
+        for step in report['steps']:
+            proof = step['iwyu_source_restoration']
+            self.assertTrue(proof['inputs_restored'])
+            self.assertEqual([row['path'] for row in proof['changes']], ['src/example.cpp'])
+            self.assertNotEqual(proof['changes'][0]['before_sha256'], proof['changes'][0]['analysis_sha256'])
+
+    def test_iwyu_enforced_failure_stays_failed_and_native_deferred(self):
+        report, calls, actual, original, suggestions = self.include_edit_fixture(returncode=1)
+        self.assertEqual(report['status'], 'failed')
+        self.assertEqual(report['steps'][0]['returncode'], 1)
+        self.assertEqual(report['native_execution'], 'deferred')
+        self.assertEqual(len(calls), 1)
+        self.assertEqual(actual, original)
+        self.assertEqual(len(suggestions), 1)
+
+    def test_iwyu_does_not_accept_unrelated_source_changes(self):
+        report, calls, actual, original, _ = self.include_edit_fixture(other_source=True)
+        self.assertEqual(report['status'], 'failed')
+        self.assertIn('Source inputs changed', report['error'])
+        self.assertEqual(report['native_execution'], 'deferred')
+        self.assertEqual(len(calls), 1)
+        self.assertEqual(actual, original)
+
+    def test_other_recipes_still_reject_cpp_source_changes(self):
+        report, calls, actual, original, suggestions = self.include_edit_fixture(iwyu=False)
+        self.assertEqual(report['status'], 'failed')
+        self.assertIn('Source inputs changed', report['error'])
+        self.assertEqual(report['native_execution'], 'deferred')
+        self.assertEqual(len(calls), 1)
+        self.assertNotEqual(actual, original)
+        self.assertEqual(suggestions, [])
 
     def test_evidence_retention_is_new_bounded_and_avoids_symlinks(self):
         with tempfile.TemporaryDirectory() as directory:

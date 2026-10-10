@@ -7,6 +7,8 @@ Invoke after the existing container/dependency setup. --plan is read-only and
 does not establish execution coverage. Fuzz jobs retain their original driver.
 """
 import argparse
+import difflib
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -37,6 +39,56 @@ UPSTREAM_RECIPE_SHA256 = 'cfd9e9583398dee9527a2fb7ea099104a8cab53f7bf5ccdceb3f4e
 UPSTREAM_REVISION_RECIPE_SHA256 = '7d6c921986188b726f82bb08a782be738f6dfc2460d1f64272ae8bd8715d040b'
 EVIDENCE_PREFIXES = ('pocx-inherited-', 'bitcoin-unit-', 'pocx-unit-', 'pocx-results-')
 EVIDENCE_SUFFIXES = {'.json', '.xml', '.csv', '.log', '.txt'}
+
+
+def iwyu_inputs(root, snapshot):
+    """Keep exact inputs before the upstream include tool applies suggestions."""
+    result = {}
+    for name in snapshot:
+        path = root / name
+        if (Path(name).parts[:1] == ('src',) and
+                path.suffix in ('.c', '.cc', '.cpp', '.h', '.hpp')):
+            if path.is_symlink():
+                raise ValueError('IWYU source input must be a regular file: ' + name)
+            result[name] = (path.read_bytes(), path.stat().st_mode & 0o777)
+    return result
+
+
+def restore_iwyu_inputs(root, inputs, patch_path):
+    """Retain suggestions, then restore inputs for the next consensus phase.
+
+    The unchanged recipe rejects edits in its enforced phase. Its later warning
+    phase intentionally applies suggestions and allows a diff. Never carry
+    either phase's edits into the other consensus build or mask its exit code.
+    All other source changes remain subject to the ordinary source guard.
+    """
+    changes = []
+    differences = []
+    for name, (before, mode) in inputs.items():
+        path = root / name
+        if path.is_symlink():
+            raise ValueError('IWYU replaced a source input with a symlink: ' + name)
+        after = path.read_bytes() if path.is_file() else b''
+        if path.is_file() and before == after and path.stat().st_mode & 0o777 == mode:
+            continue
+        changes.append({'path': name, 'before_sha256': hashlib.sha256(before).hexdigest(),
+                        'analysis_sha256': sha256(path) if path.is_file() else None,
+                        'original_mode': mode})
+        differences.extend(difflib.unified_diff(
+            before.decode('utf-8').splitlines(keepends=True),
+            after.decode('utf-8').splitlines(keepends=True),
+            fromfile='a/' + name, tofile='b/' + name))
+    patch_path.write_text(''.join(differences))
+    for change in changes:
+        path = root / change['path']
+        before, mode = inputs[change['path']]
+        path.write_bytes(before)
+        path.chmod(mode)
+        if sha256(path) != change['before_sha256'] or path.stat().st_mode & 0o777 != mode:
+            raise ValueError('IWYU input restoration failed: ' + change['path'])
+    return {'scope': 'Upstream IWYU suggestions retained separately; exact source bytes/modes restored after analysis. Recipe exit status and enforced-phase failure remain authoritative.',
+            'changes': changes, 'patch': str(patch_path), 'patch_sha256': sha256(patch_path),
+            'inputs_restored': True}
 
 
 def evidence_directories(build):
@@ -166,11 +218,16 @@ def execute(pairs, output, *, root=ROOT, run=subprocess.run):
             log = output / (item['consensus'] + '.log')
             build = Path(env['BASE_BUILD_DIR'])
             before = evidence_directories(build)
+            include_inputs = (iwyu_inputs(root, report['source_snapshot'])
+                              if env.get('RUN_IWYU') == 'true' else None)
             start = time.monotonic()
             try:
                 with log.open('w') as stream:
                     result = run(item['command'], cwd=root, env=env, stdout=stream, stderr=subprocess.STDOUT)
             finally:
+                if include_inputs is not None:
+                    step['iwyu_source_restoration'] = restore_iwyu_inputs(
+                        root, include_inputs, output / (item['consensus'] + '-iwyu-suggestions.patch'))
                 step['retained_evidence'] = retain_evidence(build, before, output / (item['consensus'] + '-evidence'))
                 if log.is_file():
                     step['log_sha256'] = sha256(log)
