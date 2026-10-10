@@ -18,8 +18,8 @@
     "ci/test/02_run_container.py": "84e4a1adb04972ec0d3c74a598f0995fde6465592c62f84139db41fcab6a7b65",
     "ci/test/03_test_script.sh": "cfd9e9583398dee9527a2fb7ea099104a8cab53f7bf5ccdceb3f4e84425ebb8b",
     "test/pocx/ci/inherited_test_script.sh": "25b6f367bed45e7c7d040ae2a82bba21b278790d83c536ade4d7b7a835273930",
-    "test/pocx/inherited_ci.py": "237ac870e7fe5c67f626a0a65d5fc315a0154044de09839368e55950e71c7f72",
-    "test/pocx/inherited_functional.py": "516ca111810bb927e3a54ddcf44d799d5d6e46cd68249bcec4f00d1ffddd9167",
+    "test/pocx/inherited_ci.py": "4ff3fd5b452a8bc99cd6113d504638aaf8ecace172254c96b0845cc6b795e441",
+    "test/pocx/inherited_functional.py": "1a6b54bf4c50a2188d6834e269cab43aabc012625e0cfaf5d7d2e8d89ee88b85",
     "test/pocx/inherited_tests.py": "b1fb1313f9c510735ecbf42cf7d092201031d8516051e463351b233125af3a74",
     "test/pocx/revision_ci.py": "4ae8bac50834eb3d9bb3a883b6d8897c51730f6989e981bcd589c14fbd7e0998",
     "test/pocx/test_windows_cross.py": "fe09e5b453625b7c849f4c9177392f9b7c72931f530a21e353101d6b36ebbe57",
@@ -27,7 +27,16 @@
     "test/pocx/ci/00_setup_env_native_asan_tracing.sh": "30b254f14628cf682ddad55ecf2b0ceb4b74057b95a85733300c03141cdf1b27",
     "ci/test_imagefile": "1474ad98f223b4069eb297e201ea2148621c8a077d8706a34c45a761a23e45b5",
     "test/pocx/ci/test_imagefile": "8611a47495fdc3b331d403ef3ee90cd9a1a20b4e6dcae1795148ba5db7f64d55",
-    "test/pocx/ci/inherited_runtime_env.sh": "7381cff8ba3819b83b2ac438fc3a6ff7deb547b9211a6db94ef0e04b1cb2d1b1"
+    "test/pocx/ci/inherited_runtime_env.sh": "7381cff8ba3819b83b2ac438fc3a6ff7deb547b9211a6db94ef0e04b1cb2d1b1",
+    "test/pocx/original_usdt.py": "440092f7a1830099992c6ad16baf2a80d051956193303a9c193d79443643f051",
+    "test/pocx/framework/bpf_abi.py": "efe2cd2d7aa1cad2123a1ac00ff5a5e4723ebeb10c860f8a8f30e9976764acf9",
+    "test/pocx/test_bpf_abi.py": "2ee0e8e7e00736f4b0e573cf4acc08f52b6664218f2fbdf41727ea848a111777",
+    "test/pocx/bitcoin_baseline/usdt/review.json": "4f45af08f2808d9e0d6b5090954df2aad07d12e6317411f9d92062712a3c0fc2",
+    "test/pocx/bitcoin_baseline/usdt/interface_usdt_utxocache.py": "10059ade02b7eaf59ecd5df1e2a4df1ca3895da27aa0a533c4fee4d9a453e73c",
+    "test/pocx/bitcoin_baseline/usdt/interface_usdt_validation.py": "d4a7dfc3fda13e7b0ca0609dd97fd25195d6a3939a4bcea7efd85b808a910bca",
+    "test/pocx/bitcoin_baseline/usdt/interface_usdt_coinselection.py": "937ed589df1a6bf42d62ae4b20d4a9a11b00f8b68f712be21d708bfc25e7e2e5",
+    "test/pocx/bitcoin_baseline/usdt/interface_usdt_net.py": "113bc1b4208988dc906187b5c4baebde9af438dc5684a5009f0cf49c0dadeb55",
+    "test/pocx/bitcoin_baseline/usdt/interface_usdt_mempool.py": "73336cf4489b45fc87729287814236d5f5e20ca528427500a18aaa00885d173a"
   },
   "evidence_retention": "Copy newly created bounded framework report trees into artifacts/pocx-inherited on success and failure; export container reports before cleanup; upload in inherited POSIX jobs",
   "unchanged_upstream_revision_recipe": ".github/ci-test-each-commit-exec.py",
@@ -58,5 +67,6 @@
     "diagnostic": "artifacts/ci-parity-20261010/iwyu-source-guard-diagnostic/results.json",
     "runtime_scope": "Infrastructure contract regression only; no full IWYU analysis or framework pass inferred."
   },
-  "inherited_feature_guard_review": "Recognize unconditional feature guards inherited by a single test class through an unambiguous single-base chain in sibling source modules, without importing or executing those modules. Record the actual declaration source; child overrides, conditional guards, ambiguous classes/bases and cycles remain unverified. Missing enabled prerequisites and failed cases remain failures or unverified. Three existing native wallet-dependent scripts inherit their original skip guard; no test is newly disabled. Existing run commands, original-first ordering, selections, assertions and builds are unchanged."
+  "inherited_feature_guard_review": "Recognize unconditional feature guards inherited by a single test class through an unambiguous single-base chain in sibling source modules, without importing or executing those modules. Record the actual declaration source; child overrides, conditional guards, ambiguous classes/bases and cycles remain unverified. Missing enabled prerequisites and failed cases remain failures or unverified. Three existing native wallet-dependent scripts inherit their original skip guard; no test is newly disabled. Existing run commands, original-first ordering, selections, assertions and builds are unchanged.",
+  "original_i686_usdt_review": "Original32-bit ELF tracing requires destination widths matching the BCC-generated target argument type. Stage five separate original-script copies whose only AST change is an explicit owned BPF constructor import. Preserve original event fields, BPF programs, callbacks and assertions. The constructor introduces typed temporary reads for i686 only, preserving read return codes and untouched destination on failure; ELF64 programs pass through byte-identically. The private original view binds every original/adapted input and the unchanged binary build. Native still requires a complete original baseline; source gates and failures remain fatal."
 }

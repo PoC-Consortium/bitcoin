@@ -27,6 +27,7 @@ from run_bitcoin_functional import expected_cases, read_cases, effective_transpo
 import functional_execution
 import build_configuration
 import rpc_coverage
+import original_usdt
 from verify_functional import verify_current_inputs, dependency_hashes
 
 GUARDS = {
@@ -345,9 +346,12 @@ def run(build, output, options, jobs, factor, *, environment=None, selected_conf
             report['benchmarks'] = benchmarks
             expected = original_inventory(ROOT / 'test/functional/test_runner.py', benchmarks, options['BUILD_BENCH'] == 'ON')
             report['expected_cases'] = expected
+            runtime_build = build
+            if original_usdt.required(paths['bitcoind'], options):
+                runtime_build, report['original_usdt_staging'] = original_usdt.stage(build, output)
             for mode in profile['transports']:
                 for group in original_groups(expected, options):
-                    command = original_command(build, output, group, mode, jobs, factor, profile,
+                    command = original_command(runtime_build, output, group, mode, jobs, factor, profile,
                                                windows=options.get('target_system') == 'Windows')
                     result, _ = execute(mode if not group[2] else mode + '-legacy-utxo', command, env)
                     if group[2]:
@@ -366,6 +370,9 @@ def run(build, output, options, jobs, factor, *, environment=None, selected_conf
                     save()
                     if not group[2] and (result.returncode != 0 or summary[1] != 'Passed'):
                         raise ValueError('Original functional runner failed')
+            if runtime_build != build:
+                if original_usdt.verify(runtime_build, build) != report['original_usdt_staging']:
+                    raise ValueError('Original USDT staging changed during execution')
         counts = Counter(row['status'] for row in report['cases'])
         report['counts'] = dict(counts)
         if not counts['passed'] or counts['failed'] or counts['unverified']:

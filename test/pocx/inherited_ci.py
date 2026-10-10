@@ -35,6 +35,10 @@ RECIPE_SOURCES = {'ci/test/03_test_script.sh', 'ci/test/02_run_container.py',
                   'test/pocx/inherited_tests.py', 'test/pocx/inherited_functional.py',
                   '.github/ci-test-each-commit-exec.py', 'test/pocx/revision_ci.py',
                   'test/pocx/windows_cross.py', 'test/pocx/test_windows_cross.py'}
+RECIPE_SOURCES.update({'test/pocx/original_usdt.py', 'test/pocx/framework/bpf_abi.py',
+                       'test/pocx/test_bpf_abi.py', 'test/pocx/bitcoin_baseline/usdt/review.json'})
+RECIPE_SOURCES.update('test/pocx/bitcoin_baseline/usdt/interface_usdt_' + name + '.py' for name in
+                      ('coinselection', 'mempool', 'net', 'utxocache', 'validation'))
 UPSTREAM_RECIPE_SHA256 = 'cfd9e9583398dee9527a2fb7ea099104a8cab53f7bf5ccdceb3f4e84425ebb8b'
 UPSTREAM_REVISION_RECIPE_SHA256 = '7d6c921986188b726f82bb08a782be738f6dfc2460d1f64272ae8bd8715d040b'
 EVIDENCE_PREFIXES = ('pocx-inherited-', 'bitcoin-unit-', 'pocx-unit-', 'pocx-results-')

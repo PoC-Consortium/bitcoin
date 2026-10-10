@@ -10,7 +10,8 @@
 import ctypes
 # Test will be skipped if we don't have bcc installed
 try:
-    from bcc import BPF, USDT # type: ignore[import]
+    from bcc import USDT
+    from test_framework.bpf_abi import BPF # type: ignore[import]
 except ImportError:
     pass
 from test_framework.messages import COIN

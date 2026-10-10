@@ -704,3 +704,33 @@ before the next consensus phase. A failed enforced analysis remains failed and
 never starts native analysis. Changes outside C/C++ inputs, and source edits in
 other recipes, still fail the ordinary source guard. These are verified controller
 contract checks; complete IWYU tool/source execution remains separately required.
+
+Original i686 tracing uses a private, reviewed test view when USDT is enabled.
+BCC compiles BPF for the host ABI, but the 32-bit daemon supplies four-byte
+pointers and `size_t` arguments. Reading them directly into the original
+eight-byte event fields returns an error. The shared `framework/bpf_abi.py`
+adapter reads each argument using its actual BCC-declared type before assigning
+the original field. It preserves reader errors, event layouts and assertions;
+64-bit BPF programs pass through byte for byte. Unsupported or ambiguous input
+fails instead of silently bypassing tracing.
+
+Five separate original test copies change only the BPF constructor import.
+`original_usdt.py` verifies their original/replacement hashes and normalized AST,
+stages an isolated view, links the unchanged build, and verifies all inputs again
+after both transports. Original tracked tests and binaries remain unchanged.
+The same helper serves PoCX's two existing tracing adaptations and three shared
+original tracing copies. All 295 native case identities and argument variants
+remain selected; the three entries moving from reused to adapted change their
+manifest iteration order.
+
+On 2026-10-10, the five corrected original i686 tracing cases passed against the
+existing binary with the CI's 512 KiB stack limit. Independent reconciliation
+retained 445 prior passes and nine explicit configuration-disabled entries:
+450 first-transport passes, nine inactive entries, zero failures. No completed
+build, CTest phase or unaffected functional case was rerun. The raw failed recipe
+and failure logs remain retained. The missing second transport is running;
+complete i686 baseline and native execution remain unverified. Fourteen adapter
+checks, 47 inherited controller checks, nine Windows controller checks, the
+affected artifact/previous-release checks, source drift checks and focused pinned
+Python lint passed. Isolated real-BCC canaries additionally verify the 32-bit
+repair and unchanged 64-bit behavior; they do not substitute for domain tests.

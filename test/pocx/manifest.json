@@ -193,7 +193,10 @@
     "mempool_compatibility.py": "functional/mempool_compatibility.py",
     "feature_coinstatsindex_compatibility.py": "functional/feature_coinstatsindex_compatibility.py",
     "wallet_backwards_compatibility.py": "functional/wallet_backwards_compatibility.py",
-    "wallet_migration.py": "functional/wallet_migration.py"
+    "wallet_migration.py": "functional/wallet_migration.py",
+    "interface_usdt_mempool.py": "bitcoin_baseline/usdt/interface_usdt_mempool.py",
+    "interface_usdt_net.py": "bitcoin_baseline/usdt/interface_usdt_net.py",
+    "interface_usdt_validation.py": "bitcoin_baseline/usdt/interface_usdt_validation.py"
   },
   "reused_tests": [
     "feature_filelock.py",
@@ -242,9 +245,6 @@
     "feature_reindex_init.py",
     "feature_startupnotify.py",
     "interface_ipc.py",
-    "interface_usdt_mempool.py",
-    "interface_usdt_net.py",
-    "interface_usdt_validation.py",
     "p2p_add_connections.py",
     "p2p_dns_seeds.py",
     "p2p_feefilter.py",
@@ -407,6 +407,7 @@
   },
   "framework_additions": {
     "test_framework/wallet_compatibility.py": "framework/wallet_compatibility.py",
-    "test_framework/wallet_migration_fixtures.py": "framework/wallet_migration_fixtures.py"
+    "test_framework/wallet_migration_fixtures.py": "framework/wallet_migration_fixtures.py",
+    "test_framework/bpf_abi.py": "framework/bpf_abi.py"
   }
 }

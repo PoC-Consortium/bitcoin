@@ -556,7 +556,8 @@ class InheritedTest(unittest.TestCase):
         self.assertEqual([name for name,_ in commands],['unit'])
         self.assertEqual(set(disabled),{'qt','kernel'})
 
-    def original_functional_fixture(self, status, *, multi=False, extra='', raw_exit=0, aggregate='Passed'):
+    def original_functional_fixture(self, status, *, multi=False, extra='', raw_exit=0, aggregate='Passed',
+                                    abi_adapter=False, changed_view=False):
         with tempfile.TemporaryDirectory() as directory:
             root=Path(directory)
             output=root/'output'
@@ -572,12 +573,18 @@ class InheritedTest(unittest.TestCase):
             with patch.object(functional,'dependency_hashes',return_value={}), \
                     patch.object(functional,'expected_cases',return_value=['p2p_ping.py']), \
                     patch.object(functional.subprocess,'check_output',return_value='FixtureBenchmark\n'), \
+                    patch.object(functional.original_usdt,'required',return_value=abi_adapter), \
+                    patch.object(functional.original_usdt,'stage',return_value=(root/'private-view',{'fixture':True})) as stage_view, \
+                    patch.object(functional.original_usdt,'verify',return_value={'fixture':not changed_view}) as verify_view, \
                     patch.object(functional.subprocess,'run',side_effect=original_runner):
                 try:
                     functional.run(root,output,{'ENABLE_POCX':'OFF','BUILD_BENCH':'ON'},4,40,
                     environment={'TEST_RUNNER_EXTRA':extra},selected_config='Release' if multi else None)
                 except ValueError:
                     pass
+                if abi_adapter and raw_exit == 0 and status == 'Passed':
+                    stage_view.assert_called_once_with(root,output)
+                    verify_view.assert_called_once_with(root/'private-view',root)
             self.assertTrue((output/'cases.csv').is_file())
             return json.loads((output/'results.json').read_text())
 
@@ -586,6 +593,20 @@ class InheritedTest(unittest.TestCase):
         self.assertEqual(report['status'],'passed')
         self.assertEqual({row['transport'] for row in report['cases']},{'v1','v2'})
         self.assertEqual(report['counts'],{'passed':2})
+
+    def test_original_i686_dispatch_uses_verified_view_for_both_transports(self):
+        report=self.original_functional_fixture('Passed',abi_adapter=True)
+        self.assertEqual(report['status'],'passed')
+        self.assertEqual(report['original_usdt_staging'],{'fixture':True})
+        self.assertEqual({row['transport'] for row in report['cases']},{'v1','v2'})
+        self.assertTrue(all('private-view/test/functional/test_runner.py' in row['command'][1]
+                            for row in report['runs']))
+
+    def test_changed_original_i686_view_cannot_promote_completed_cases(self):
+        report=self.original_functional_fixture('Passed',abi_adapter=True,changed_view=True)
+        self.assertEqual(report['status'],'failed')
+        self.assertEqual(report['counts'],{'passed':2})
+        self.assertIn('staging changed',report['error'])
 
     def test_original_green_aggregate_cannot_hide_missing_enabled_case(self):
         report=self.original_functional_fixture('Skipped')

@@ -10810,7 +10810,7 @@
       "source": "test/functional/interface_usdt_coinselection.py",
       "replacement": "test/pocx/functional/interface_usdt_coinselection.py",
       "source_sha256": "83b8ca69d1326d6a09d364d1683f0cdd51c93321c16811f38cf09b2881d88598",
-      "replacement_sha256": "edbbf5fdfe8fbe97d6e9ab2c08785d03751ca2eebdea05f0ea2516e978076dbf",
+      "replacement_sha256": "3c88fa76d03314920d11677f9eae0807e3dca0246af0a55fbe75295c02e81843",
       "assertion_and_method_accounting": {
         "assert_statements": 2,
         "assertion_calls": 14,
@@ -10822,7 +10822,7 @@
           "run_test"
         ]
       },
-      "review": "Keep every tracepoint ordering, count, algorithm/success/APS/change-position assertion. Scale two10coin wallet payments to2coins and the insufficient-funds request from102*50to102*10 for the native10coin subsidy. Same success, failure, reuse and full-balance/no-change scenarios.",
+      "review": "Keep every tracepoint ordering, count, algorithm/success/APS/change-position assertion. Scale two10coin wallet payments to2coins and the insufficient-funds request from102*50to102*10 for the native10coin subsidy. Same success, failure, reuse and full-balance/no-change scenarios. Explicitly import the reviewed BPF argument-width adapter for i686; every existing native subsidy adaptation and original assertion remains unchanged. ELF64 BPF programs pass through byte-identically.",
       "evidence": null,
       "execution_by_transport": {
         "v1": "unverified; prerequisite helper and staging provenance changed",
@@ -10874,13 +10874,16 @@
             }
           ]
         }
-      ]
+      ],
+      "dependencies": {
+        "test/pocx/framework/bpf_abi.py": "efe2cd2d7aa1cad2123a1ac00ff5a5e4723ebeb10c860f8a8f30e9976764acf9"
+      }
     },
     "interface_usdt_mempool.py": {
       "source": "test/functional/interface_usdt_mempool.py",
-      "replacement": null,
+      "replacement": "test/pocx/bitcoin_baseline/usdt/interface_usdt_mempool.py",
       "source_sha256": "766cda2876efcf879773b02fd953e4af3c70c85371cbe4a0df343cad4836211c",
-      "replacement_sha256": "766cda2876efcf879773b02fd953e4af3c70c85371cbe4a0df343cad4836211c",
+      "replacement_sha256": "73336cf4489b45fc87729287814236d5f5e20ca528427500a18aaa00885d173a",
       "assertion_and_method_accounting": {
         "assert_statements": 0,
         "assertion_calls": 22,
@@ -10898,7 +10901,7 @@
           "handle_rejected_event"
         ]
       },
-      "review": "Byte-identical original script selected against the owned framework for initial execution; applicability and runtime outcome remain unverified. No assertions edited.",
+      "review": "All original scenarios, BPF program strings, event structures, callbacks and assertions are unchanged. The sole AST change explicitly imports the owned BPF argument-width constructor required by i686 targets. Native ELF64 programs pass through byte-identically; i686 arguments use BCC-declared types before widening into original host event fields.",
       "evidence": null,
       "execution_by_transport": {
         "v1": "unverified; prerequisite helper and staging provenance changed",
@@ -10950,13 +10953,16 @@
             }
           ]
         }
-      ]
+      ],
+      "dependencies": {
+        "test/pocx/framework/bpf_abi.py": "efe2cd2d7aa1cad2123a1ac00ff5a5e4723ebeb10c860f8a8f30e9976764acf9"
+      }
     },
     "interface_usdt_net.py": {
       "source": "test/functional/interface_usdt_net.py",
-      "replacement": null,
+      "replacement": "test/pocx/bitcoin_baseline/usdt/interface_usdt_net.py",
       "source_sha256": "00a45dbcf78eda4093310fd340c51fa44422d373e4205c69dcd52038c517c913",
-      "replacement_sha256": "00a45dbcf78eda4093310fd340c51fa44422d373e4205c69dcd52038c517c913",
+      "replacement_sha256": "113bc1b4208988dc906187b5c4baebde9af438dc5684a5009f0cf49c0dadeb55",
       "assertion_and_method_accounting": {
         "assert_statements": 0,
         "assertion_calls": 29,
@@ -10985,7 +10991,7 @@
           "__repr__"
         ]
       },
-      "review": "Byte-identical original script selected against the owned framework for initial execution; applicability and runtime outcome remain unverified. No assertions edited.",
+      "review": "All original scenarios, BPF program strings, event structures, callbacks and assertions are unchanged. The sole AST change explicitly imports the owned BPF argument-width constructor required by i686 targets. Native ELF64 programs pass through byte-identically; i686 arguments use BCC-declared types before widening into original host event fields.",
       "evidence": null,
       "execution_by_transport": {
         "v1": "unverified; prerequisite helper and staging provenance changed",
@@ -11037,13 +11043,16 @@
             }
           ]
         }
-      ]
+      ],
+      "dependencies": {
+        "test/pocx/framework/bpf_abi.py": "efe2cd2d7aa1cad2123a1ac00ff5a5e4723ebeb10c860f8a8f30e9976764acf9"
+      }
     },
     "interface_usdt_utxocache.py": {
       "source": "test/functional/interface_usdt_utxocache.py",
       "replacement": "test/pocx/functional/interface_usdt_utxocache.py",
       "source_sha256": "fbfdbb13c9778aff7550d7e373185cf56c420d07fb5429a22ae54312f42f1bf6",
-      "replacement_sha256": "722ad676fcc69c976cfaf104b54ad78e4cab5ad70eeb4d423f78a3decb610b02",
+      "replacement_sha256": "de85b23e8d4c3a28b8b54b4632bc3742a4863dc5dd5cac52930e3e8998f216db",
       "assertion_and_method_accounting": {
         "assert_statements": 2,
         "assertion_calls": 14,
@@ -11063,7 +11072,7 @@
           "handle_utxocache_flush"
         ]
       },
-      "review": "Retain all BPF programs, add/spend/uncache callback counts and exact txid, output index, height and coinbase/value assertions. Replace the early Bitcoin50coin subsidy expectation with native10coins. No callback failure is ignored or relabeled. Flush telemetry measures elapsed NodeClock time, so release the fixed forging clock only during shutdown/pruning, restoring deterministic startup/forging state afterward. Preserve all three positive-duration assertions and callback success counts.",
+      "review": "Retain all BPF programs, add/spend/uncache callback counts and exact txid, output index, height and coinbase/value assertions. Replace the early Bitcoin50coin subsidy expectation with native10coins. No callback failure is ignored or relabeled. Flush telemetry measures elapsed NodeClock time, so release the fixed forging clock only during shutdown/pruning, restoring deterministic startup/forging state afterward. Preserve all three positive-duration assertions and callback success counts. Explicitly import the reviewed BPF argument-width adapter for i686; every existing native subsidy adaptation and original assertion remains unchanged. ELF64 BPF programs pass through byte-identically.",
       "evidence": null,
       "execution_by_transport": {
         "v1": "unverified; prerequisite helper and staging provenance changed",
@@ -11115,13 +11124,16 @@
             }
           ]
         }
-      ]
+      ],
+      "dependencies": {
+        "test/pocx/framework/bpf_abi.py": "efe2cd2d7aa1cad2123a1ac00ff5a5e4723ebeb10c860f8a8f30e9976764acf9"
+      }
     },
     "interface_usdt_validation.py": {
       "source": "test/functional/interface_usdt_validation.py",
-      "replacement": null,
+      "replacement": "test/pocx/bitcoin_baseline/usdt/interface_usdt_validation.py",
       "source_sha256": "57410957024e40837095597ebd82fae07c2341917a6804911c062e439d685799",
-      "replacement_sha256": "57410957024e40837095597ebd82fae07c2341917a6804911c062e439d685799",
+      "replacement_sha256": "d4a7dfc3fda13e7b0ca0609dd97fd25195d6a3939a4bcea7efd85b808a910bca",
       "assertion_and_method_accounting": {
         "assert_statements": 2,
         "assertion_calls": 7,
@@ -11133,7 +11145,7 @@
           "__repr__"
         ]
       },
-      "review": "Byte-identical original script selected against the owned framework for initial execution; applicability and runtime outcome remain unverified. No assertions edited.",
+      "review": "All original scenarios, BPF program strings, event structures, callbacks and assertions are unchanged. The sole AST change explicitly imports the owned BPF argument-width constructor required by i686 targets. Native ELF64 programs pass through byte-identically; i686 arguments use BCC-declared types before widening into original host event fields.",
       "evidence": null,
       "execution_by_transport": {
         "v1": "unverified; prerequisite helper and staging provenance changed",
@@ -11185,7 +11197,10 @@
             }
           ]
         }
-      ]
+      ],
+      "dependencies": {
+        "test/pocx/framework/bpf_abi.py": "efe2cd2d7aa1cad2123a1ac00ff5a5e4723ebeb10c860f8a8f30e9976764acf9"
+      }
     },
     "interface_zmq.py": {
       "source": "test/functional/interface_zmq.py",
@@ -25507,6 +25522,21 @@
         "arguments": []
       },
       {
+        "id": "interface_usdt_mempool.py",
+        "test": "interface_usdt_mempool.py",
+        "arguments": []
+      },
+      {
+        "id": "interface_usdt_net.py",
+        "test": "interface_usdt_net.py",
+        "arguments": []
+      },
+      {
+        "id": "interface_usdt_validation.py",
+        "test": "interface_usdt_validation.py",
+        "arguments": []
+      },
+      {
         "id": "feature_filelock.py",
         "test": "feature_filelock.py",
         "arguments": []
@@ -25734,21 +25764,6 @@
       {
         "id": "interface_ipc.py",
         "test": "interface_ipc.py",
-        "arguments": []
-      },
-      {
-        "id": "interface_usdt_mempool.py",
-        "test": "interface_usdt_mempool.py",
-        "arguments": []
-      },
-      {
-        "id": "interface_usdt_net.py",
-        "test": "interface_usdt_net.py",
-        "arguments": []
-      },
-      {
-        "id": "interface_usdt_validation.py",
-        "test": "interface_usdt_validation.py",
         "arguments": []
       },
       {
@@ -26035,7 +26050,7 @@
         "arguments": []
       }
     ],
-    "selected_cases_sha256": "9a6ffba39e9013a48adda3dd242a75843ab29b2accb471646574d4db6dc16a25",
+    "selected_cases_sha256": "842ff5ced33fae9fd89459a951ab11639146c493ef7462d241645333f23e299e",
     "review": "Current selected filenames retain every declared upstream nontransport argument variant; outer matrix accounts for global transport. New/removed/reordered cases and changed upstream selections require review. Full applicable upstream migration remains unfinished. CLI multiwallet original assertions/scenario methods unchanged and complete execution passes in both modes.",
     "evidence": "build-pocx-clean/pocx-results-8zbnko7v/results.json",
     "status": "Reviewed selection; required profile remains failed"
@@ -26087,6 +26102,12 @@
         "src/rpc/mining.cpp": "43a0c08407392af60475990ed3fffd4dc5f384f83fc9ab9d613004284f83e80e"
       },
       "review": "Explicit mixed-consensus wallet fixture helpers. Exact schema-specific RPC encoding retains all non-context fields and opaque user data. Native/legacy node factories remain separate. Track successful producers; relay replacements before reverse mempool synchronization without masking errors. Full block bodies and witness/order preserved; signed native coinbases underclaim only subsidy after Bitcoin/PoCX halvings. Unknown block identities and unexpected coinbase amounts fail. Unloaded fixtures rebased explicitly; inverse detached backups; wrong-chain migration bypass retained. Infrastructure proof is separate from full functional evidence. The genuine v28.2 wallet-tool path now follows environment.EXEEXT, preserving every schema conversion and assertion. Native/configured Windows path selection is checked without starting a Windows process. getbalances.lastprocessedblock is an explicit block-context field and is rebased with the same checked bijection as getwalletinfo; all balances and other fields remain unchanged. Preserve upstream synchronization notification barriers on both nodes before inspecting wallet state. Construct each shared block at a monotonic epoch consistent with both node clocks and wallet birthdays, even after backup-filename mocktime changes. Retain the validated native chain epoch across backup-filename clock resets so restart VerifyDB keeps its real future-time checks."
+    },
+    "test_framework/bpf_abi.py": {
+      "source": "test/pocx/framework/bpf_abi.py",
+      "sha256": "efe2cd2d7aa1cad2123a1ac00ff5a5e4723ebeb10c860f8a8f30e9976764acf9",
+      "dependencies": {},
+      "review": "Separate typed i686 BPF argument reads using actual BCC reader declarations and ELF metadata. Preserve original event fields and read return codes, leave destinations untouched on reader failure, and reject ambiguous callbacks/types. Native64-bit programs pass through byte-identically. No original source edits, scenario changes or assertion waivers."
     }
   }
 }
