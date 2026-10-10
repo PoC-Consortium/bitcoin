@@ -19,9 +19,9 @@
     "test/pocx/functional_cases.py": "903124835dc4e3d902036a6789a72727f82ff334a2c0c236cc2ee2a49ef4b68f",
     "test/pocx/functional_environment.py": "0b9a8336bc866a3f7d145fc32933f00172113b24cc50563f54121a6d9256c10e",
     "test/pocx/functional_results.py": "4355a7bd0f08ada20a7d82587160a10c0493041205d92b3ab7fb4335459e4613",
-    "test/pocx/inherited-ci.json": "66405664d7c46b486bb9456b6c76706587fef2d8fa54c81230f5d0a350146312",
+    "test/pocx/inherited-ci.json": "d2a9c7a7b8ada967e83aaf538d760e6e28b1f9bfaa604c92a68ea9e043913eef",
     "test/pocx/inherited_ci.py": "960d8a89bb82d651d4d2d5c497f1c680f3753cda727743a917f717027a167832",
-    "test/pocx/inherited_functional.py": "8fde271730c1dd3a1c7aca239f65aac2a3ace9c6d5fb66c880f7192b937f8f25",
+    "test/pocx/inherited_functional.py": "cadc51ab9d186e1de4b9388ae207a7f9ac69458074386e7d5ce0890b8d564b86",
     "test/pocx/kernel-parity.json": "6b1186406c49640b390e9d90464b94f41450207a7657fada6148e344d74886fe",
     "test/pocx/kernel/fixtures.json": "0069f80997408a2a13739afe46775c4a5e2cc799a8b963006fdd30c299a7d35f",
     "test/pocx/kernel/provenance.json": "1701fd2568d6ad4bcb7b58bb8e7c5f6c19bd9f0a7f32a549b6387e803f8126fc",
@@ -37,7 +37,7 @@
     "test/pocx/test_artifact_functional_view.py": "e8e9b697547cc53897e8bb34349d7ab4b388e7eac47c59ac842e5fa262a3ed76",
     "test/pocx/test_cross_kernel.py": "ee0e05522f27143d00dcb40c306cefaa3f0e9a202e292cb9492b85ce95a6d51d",
     "test/pocx/test_cross_unit.py": "660a91fe0aac7519b7a4c5bc344bc2a8197cac5429ac76379353d8c7b68cebe1",
-    "test/pocx/test_inherited_ci.py": "aac54b13149ba9214a110cd1baf36e536e73c95ecc246f1e0a646a96ef379b76",
+    "test/pocx/test_inherited_ci.py": "f98d6295b4f20c9ba6aa60864bf66bc8430616dc1408fc13e82dd7b9fd4b886e",
     "test/pocx/test_processor_configuration.py": "c1fe1235977991aeddae5d458fd4a031d86e94318475e7569bf6ba9ed5a840b6",
     "test/pocx/test_qt_infrastructure.py": "0deaf023534f7c643e1cce79e494b46c077c62fc7c04628d447756df2f20c24f",
     "test/pocx/test_rpc_coverage.py": "c632fc4ca500715b69f76a7ee61a5ce0165d107a857a9fa0baf66704d3389e83",
@@ -94,10 +94,10 @@
       "review": "Supports declared Unix Makefiles rules/flags/links and ignores regenerated compiler_depend.make caches, while Ninja and Visual Studio behavior stays unchanged."
     },
     "test/pocx/inherited-ci.json": {
-      "previous_reviewed_revision": "a175541176185ded6cb1736287532a913ed2db54",
-      "previous_sha256": "1370de47db596f80628572be90e091815e0ca194ceabdb4d8bc9b6200ef0471e",
-      "sha256": "66405664d7c46b486bb9456b6c76706587fef2d8fa54c81230f5d0a350146312",
-      "review": "Pins the already reviewed Linux tracing/image and isolated build-stack helpers; original upstream recipe checksum unchanged."
+      "previous_reviewed_revision": "26f48080266cd77fa6d79973650aa0aa3a3275f8",
+      "previous_sha256": "66405664d7c46b486bb9456b6c76706587fef2d8fa54c81230f5d0a350146312",
+      "sha256": "d2a9c7a7b8ada967e83aaf538d760e6e28b1f9bfaa604c92a68ea9e043913eef",
+      "review": "Retain parsed original functional case results before rejecting a failed aggregate/exit, and explicitly record missing original case/transport evidence as unverified. Counts and CSV remain available on failure. Fail-fast original-before-native gating, assertions, selections and successful execution commands are unchanged. Infrastructure fixtures cover actual failed aggregates and abnormal exits; this is not new target-platform runtime evidence."
     },
     "test/pocx/inherited_ci.py": {
       "previous_reviewed_revision": "a175541176185ded6cb1736287532a913ed2db54",
@@ -124,10 +124,10 @@
       "review": "Uses reviewed build subprocess stack isolation; runtime stack, Qt assertions and method inventory unchanged."
     },
     "test/pocx/test_inherited_ci.py": {
-      "previous_reviewed_revision": "a175541176185ded6cb1736287532a913ed2db54",
-      "previous_sha256": "a2c9b41d46bf209519cafa745d9f732e37e2a004ed0751c3256802bcd7fb30cd",
-      "sha256": "aac54b13149ba9214a110cd1baf36e536e73c95ecc246f1e0a646a96ef379b76",
-      "review": "Adds tracing/image prerequisite and preservation checks; no domain case or original assertion is disabled."
+      "previous_reviewed_revision": "26f48080266cd77fa6d79973650aa0aa3a3275f8",
+      "previous_sha256": "aac54b13149ba9214a110cd1baf36e536e73c95ecc246f1e0a646a96ef379b76",
+      "sha256": "f98d6295b4f20c9ba6aa60864bf66bc8430616dc1408fc13e82dd7b9fd4b886e",
+      "review": "Retain parsed original functional case results before rejecting a failed aggregate/exit, and explicitly record missing original case/transport evidence as unverified. Counts and CSV remain available on failure. Fail-fast original-before-native gating, assertions, selections and successful execution commands are unchanged. Infrastructure fixtures cover actual failed aggregates and abnormal exits; this is not new target-platform runtime evidence."
     },
     "test/pocx/unit_matrix.py": {
       "previous_reviewed_revision": "a13d944910456e149704b6450d1c74cfd8b8d3a8",
@@ -152,6 +152,13 @@
       "previous_sha256": "34f79a7a346866dea93d611300117d483b3b4e9003dd97c0b6c3889b672da679",
       "sha256": "e0f7c98199360247a458956528f7967080ae34326c23a5531ec014322a2db8dc",
       "review": "Rejects storage-retention errors without changing raw terminal test outcomes; no weakening of functional assertions or skip policy."
+    },
+    "test/pocx/inherited_functional.py": {
+      "previous_reviewed_revision": "26f48080266cd77fa6d79973650aa0aa3a3275f8",
+      "previous_sha256": "8fde271730c1dd3a1c7aca239f65aac2a3ace9c6d5fb66c880f7192b937f8f25",
+      "sha256": "cadc51ab9d186e1de4b9388ae207a7f9ac69458074386e7d5ce0890b8d564b86",
+      "review": "Retain parsed original functional case results before rejecting a failed aggregate/exit, and explicitly record missing original case/transport evidence as unverified. Counts and CSV remain available on failure. Fail-fast original-before-native gating, assertions, selections and successful execution commands are unchanged. Infrastructure fixtures cover actual failed aggregates and abnormal exits; this is not new target-platform runtime evidence."
     }
-  }
+  },
+  "original_failure_reporting_review": "Retain parsed original functional case results before rejecting a failed aggregate/exit, and explicitly record missing original case/transport evidence as unverified. Counts and CSV remain available on failure. Fail-fast original-before-native gating, assertions, selections and successful execution commands are unchanged. Infrastructure fixtures cover actual failed aggregates and abnormal exits; this is not new target-platform runtime evidence."
 }

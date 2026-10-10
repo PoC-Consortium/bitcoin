@@ -208,6 +208,7 @@ def run(build, output, options, jobs, factor, *, environment=None, selected_conf
               'profile': profile, 'build_options': options, 'build_configuration': selected_config,
               'cases': [], 'runs': [], 'native': native}
     def save():
+        report['counts'] = dict(Counter(row['status'] for row in report['cases']))
         (output / 'results.json').write_text(json.dumps(report, indent=2) + '\n')
         with (output / 'cases.csv').open('w', newline='') as stream:
             writer = csv.DictWriter(stream, fieldnames=['case', 'transport', 'effective_transport', 'status',
@@ -289,13 +290,17 @@ def run(build, output, options, jobs, factor, *, environment=None, selected_conf
                         rows = [(LEGACY_UTXO, status, report['runs'][-1]['seconds'])]
                     else:
                         rows, summary = read_cases(output / (mode + '.csv'), group[1])
-                        if result.returncode != 0 or summary[1] != 'Passed':
-                            raise ValueError('Original functional runner failed')
                     for case, status, duration in rows:
                         state, reason = classify(case, status, options, profile)
                         report['cases'].append({'case': case, 'transport': mode,
                                                 'effective_transport': effective_transport(case, mode), 'status': state,
                                                 'reason': reason, 'execution_status': status, 'seconds': float(duration)})
+                    # Preserve actual case results before rejecting a failed
+                    # aggregate/exit. A red first transport must not erase its
+                    # passes, failures or explicitly disabled feature rows.
+                    save()
+                    if not group[2] and (result.returncode != 0 or summary[1] != 'Passed'):
+                        raise ValueError('Original functional runner failed')
         counts = Counter(row['status'] for row in report['cases'])
         report['counts'] = dict(counts)
         if not counts['passed'] or counts['failed'] or counts['unverified']:
@@ -305,6 +310,15 @@ def run(build, output, options, jobs, factor, *, environment=None, selected_conf
         report['external_dependencies'] = dependencies
         report['status'] = 'passed'
     except Exception as error:
+        if not native:
+            recorded = {(row['case'], row['transport']) for row in report['cases']}
+            for mode in profile['transports']:
+                for case in report.get('expected_cases', []):
+                    if (case, mode) not in recorded:
+                        report['cases'].append({'case': case, 'transport': mode,
+                            'effective_transport': effective_transport(case, mode), 'status': 'unverified',
+                            'reason': 'No valid execution evidence retained after original runner failure',
+                            'execution_status': 'unverified', 'seconds': 0.0})
         report.update(status='failed', error=str(error))
         save()
         raise

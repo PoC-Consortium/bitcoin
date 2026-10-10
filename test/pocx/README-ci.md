@@ -319,8 +319,24 @@ executables. Its 59 inactive unit cases include 57 wallet cases and two
 Makefiles evidence excludes only regenerated compiler dependency caches, while
 declared rules, flags, link commands and binaries remain pinned. Raw failed
 envelopes are retained, and the completed ctest cases are reused without replay.
-The original functional matrix is still running; native execution follows only
-after that full baseline passes.
+The first original functional transport completed with 362 passes, 80
+source-guarded feature omissions and two IPv6 failures (`interface_bitcoin_cli`
+and `rpc_bind --ipv6`). The local reproduction omitted the IPv6 Docker network
+already configured by `ci/test/02_run_container.py`. Both unchanged failing
+cases reproduce before, and pass after, adding a private IPv6 interface.
+Recovery uses the actual upstream `ci-ip6net`: all 12 IPv6/interface-sensitive
+entries pass, yielding 364 v1 passes and 80 configuration-disabled entries.
+The other 432 v1 entries and completed build/ctest are reused. The missing v2
+transport is running; native execution follows only after that complete
+applicable baseline passes. Raw failures and the environment diagnostic remain
+under `inherited-nowallet-ipv6-diagnostic/` and
+`inherited-nowallet-ci-network-recovery/` in the artifact directory above.
+
+Inherited functional failure reports retain parsed case rows before rejecting
+a failed aggregate or process exit. Original case/transport entries without
+valid evidence are explicitly unverified. A failed profile stays failed even
+when some cases pass; the original-first gate remains strict. This reporting
+correction changes no test assertions, selection or successful commands.
 
 `required-ci-coverage/results.json` and `frameworks.csv` in the same artifact
 directory inventory 22 owned profiles, 36 original/native inherited matrix

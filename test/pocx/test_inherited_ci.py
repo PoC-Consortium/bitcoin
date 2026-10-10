@@ -313,7 +313,7 @@ class InheritedTest(unittest.TestCase):
         commands,disabled=tests.framework_commands(ROOT/'build-probe',{'ENABLE_POCX':'OFF','BUILD_GUI':'OFF','BUILD_KERNEL_LIB':'OFF'},4,2400,ROOT/'build-output')
         self.assertEqual([name for name,_ in commands],['unit']);self.assertEqual(set(disabled),{'qt','kernel'})
 
-    def original_functional_fixture(self, status, *, multi=False, extra=''):
+    def original_functional_fixture(self, status, *, multi=False, extra='', raw_exit=0, aggregate='Passed'):
         with tempfile.TemporaryDirectory() as directory:
             root=Path(directory);output=root/'output';self.functional_build_fixture(root,multi=multi)
             def original_runner(command, **kwargs):
@@ -322,8 +322,8 @@ class InheritedTest(unittest.TestCase):
                 for name,variable in functional_execution.BINARY_ENVIRONMENT.items():
                     self.assertEqual(kwargs['env'][variable],str(paths[name]))
                 path=Path(next(arg.split('=',1)[1] for arg in command if arg.startswith('--resultsfile=')))
-                path.write_text('test,status,duration(seconds)\np2p_ping.py,'+status+',0.1\nALL,Passed,0.1\n')
-                return subprocess.CompletedProcess(command,0)
+                path.write_text('test,status,duration(seconds)\np2p_ping.py,'+status+',0.1\nALL,'+aggregate+',0.1\n')
+                return subprocess.CompletedProcess(command,raw_exit)
             with patch.object(functional,'dependency_hashes',return_value={}), \
                     patch.object(functional,'expected_cases',return_value=['p2p_ping.py']), \
                     patch.object(functional.subprocess,'check_output',return_value='FixtureBenchmark\n'), \
@@ -344,6 +344,21 @@ class InheritedTest(unittest.TestCase):
         report=self.original_functional_fixture('Skipped')
         self.assertEqual(report['status'],'failed')
         self.assertEqual(report['counts'],{'unverified':2})
+
+    def test_original_failure_preserves_red_cases_and_missing_transport(self):
+        report=self.original_functional_fixture('Failed',raw_exit=1,aggregate='Failed')
+        self.assertEqual(report['status'],'failed')
+        self.assertEqual(report['counts'],{'failed':1,'unverified':1})
+        self.assertEqual([(row['transport'],row['status']) for row in report['cases']],
+                         [('v1','failed'),('v2','unverified')])
+        self.assertEqual(len(report['runs']),1)
+        self.assertEqual(report['runs'][0]['returncode'],1)
+
+    def test_original_abnormal_exit_keeps_passed_rows_without_promoting_profile(self):
+        report=self.original_functional_fixture('Passed',raw_exit=2)
+        self.assertEqual(report['status'],'failed')
+        self.assertEqual(report['counts'],{'passed':1,'unverified':1})
+        self.assertEqual(len(report['runs']),1)
 
     def test_original_multi_configuration_preserves_inherited_timeout_and_binary_paths(self):
         report=self.original_functional_fixture('Passed',multi=True,extra='--timeout-factor=7.5')
