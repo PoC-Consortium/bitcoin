@@ -304,10 +304,19 @@ still running, so this is not a passing whole ASan profile or native ASan result
 TSan compilation and instrumented dependency verification pass. Its post-build
 profile check originally rejected valid hidden headless CMake cache options;
 the reviewed correction revalidates those binaries without compilation replay.
-The actual original TSan runtime entrypoint is now running. MSan dependencies,
+The actual original TSan runtime entrypoint passes all 737 applicable original
+unit cases, six auxiliary CTests and 16 kernel cases; functional execution is
+running. Its two original DEBUG_LOCKORDER cases are configuration-disabled.
+The original MSan build and runtime unit entrypoint pass all 739 original cases
+across 149 suites, with no failures, skips or exclusions. MSan dependencies,
 including all three selected libevent component archives, and instrumented C++
-controls pass; the original MSan framework build remains in progress. Controls
-are prerequisite checks and never count as passing framework cases.
+controls pass; the remaining framework phases are still running. Case-level unit
+checkpoints are retained under
+`artifacts/ci-parity-20261010/{tsan,msan}-original-unit-checkpoint/`.
+Their revalidation checks recorded source/build inputs and retained execution
+artifacts without replaying tests. These are scoped original unit checkpoints;
+neither complete sanitizer profiles nor PoCX sanitizer execution are established.
+Controls are prerequisite checks and never count as passing framework cases.
 
 Hosted execution remains unverified: GitHub rejects manual dispatch with
 `Actions has been disabled for this repository`, despite the repository's
