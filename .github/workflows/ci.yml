@@ -595,6 +595,14 @@ jobs:
         # checksum-reviewed original environment script unchanged.
         run: echo 'FILE_ENV=./test/pocx/ci/00_setup_env_native_asan_tracing.sh' >> "$GITHUB_ENV"
 
+      - name: Provision matching headers for enabled Linux USDT tests
+        if: >-
+          ${{ contains(fromJSON('["ci_native_asan", "ci_native_tsan", "ci_native_msan", "ci_native_nowallet", "ci_native_previous_releases", "ci_native_alpine_musl", "ci_i686_no_multiprocess", "ci_arm_linux"]'), env.CONTAINER_NAME) }}
+        run: |
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y "linux-headers-$(uname -r)"
+          test -d "/lib/modules/$(uname -r)/build"
+
       - name: Set mmap_rnd_bits
         if: ${{ env.CONTAINER_NAME == 'ci_native_tsan' || env.CONTAINER_NAME == 'ci_native_msan' }}
         # Prevents crashes due to high ASLR entropy

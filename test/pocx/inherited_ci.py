@@ -28,6 +28,7 @@ SETTINGS = ('HOST', 'MAKEJOBS', 'GOAL', 'BITCOIN_CONFIG', 'DEP_OPTS', 'NO_DEPEND
 RECIPE_SOURCES = {'ci/test/03_test_script.sh', 'ci/test/02_run_container.py',
                   'test/pocx/ci/00_setup_env_native_asan_tracing.sh',
                   'test/pocx/ci/test_imagefile', 'ci/test_imagefile',
+                  'test/pocx/ci/inherited_runtime_env.sh',
                   'test/pocx/ci/inherited_test_script.sh', 'test/pocx/inherited_ci.py',
                   'test/pocx/inherited_tests.py', 'test/pocx/inherited_functional.py',
                   '.github/ci-test-each-commit-exec.py', 'test/pocx/revision_ci.py',

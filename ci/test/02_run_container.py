@@ -32,6 +32,21 @@ def imagefile(root, environment):
     return f'{root}/test/pocx/ci/test_imagefile'
 
 
+def configure_runtime_environment(root, environment):
+    updated = dict(environment)
+    if updated.get('RUN_FUZZ_TESTS') == 'true':
+        return updated
+    command = ['bash', '-ec', r'source "$1"; printf "%s\0%s\0" "${PACKAGES:-}" "${CI_CONTAINER_CAP:-}"',
+               'bash', f'{root}/test/pocx/ci/inherited_runtime_env.sh']
+    values = subprocess.check_output(command, env=updated).decode().split('\0')
+    if len(values) != 3 or values[-1] != '':
+        raise ValueError('Incomplete inherited runtime environment')
+    for key, value in zip(('PACKAGES', 'CI_CONTAINER_CAP'), values[:2]):
+        if key in updated or value:
+            updated[key] = value
+    return updated
+
+
 def capture_evidence(container_id, environment, *, invoke=run):
     destination = Path(environment['BASE_READ_ONLY_DIR']) / 'artifacts'
     destination.mkdir(parents=True, exist_ok=True)
@@ -43,6 +58,7 @@ def capture_evidence(container_id, environment, *, invoke=run):
 
 
 def main():
+    os.environ.update(configure_runtime_environment(os.environ['BASE_READ_ONLY_DIR'], os.environ))
     print("Export only allowed settings:")
     settings = run(
         ["bash", "-c", "grep export ./ci/test/00_setup_env*.sh"],

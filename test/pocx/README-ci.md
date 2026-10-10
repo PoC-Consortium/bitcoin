@@ -395,6 +395,16 @@ dependency and analysis settings and selects strict framework verification.
 Dedicated fuzz jobs still use the original driver. Framework pairs explicitly
 disable fuzz binaries on both sides.
 
+An owned imagefile preserves the original environment scripts at their declared
+paths, including the ASAN tracing wrapper. The eight inherited Linux functional
+recipes with USDT receive BCC bindings/tools and isolated container kernel access
+through a shared environment helper. The workflow provisions matching host kernel
+headers; headers and modules are mounted read-only. Original compiler, dependency,
+feature and test settings remain unchanged. Build-only and dedicated fuzz jobs
+retain their environments. Docker input-stage checks verify copying and sourcing
+for all eight recipes; they do not establish package installation, BPF execution
+or framework/hosted success.
+
 Inherited functional execution preserves CLI and multiprocess settings and runs
 the extended inventory with both transports. Tests guarded by features explicitly
 disabled in that build are recorded as configuration-disabled and remain required

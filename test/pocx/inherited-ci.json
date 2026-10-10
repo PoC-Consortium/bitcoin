@@ -15,10 +15,10 @@
   "execution_status": "unverified for actual inherited POSIX/hosted recipes",
   "source_sha256": {
     ".github/ci-test-each-commit-exec.py": "7d6c921986188b726f82bb08a782be738f6dfc2460d1f64272ae8bd8715d040b",
-    "ci/test/02_run_container.py": "89550b9070794f3c5d40efb2bfba32748a7b6415df3f0154443a099963d5a5ac",
+    "ci/test/02_run_container.py": "e7d2b69b43a98542de3042393bcb1d80ceaf293fbbb0a33cf016be14f279a2d6",
     "ci/test/03_test_script.sh": "cfd9e9583398dee9527a2fb7ea099104a8cab53f7bf5ccdceb3f4e84425ebb8b",
     "test/pocx/ci/inherited_test_script.sh": "25b6f367bed45e7c7d040ae2a82bba21b278790d83c536ade4d7b7a835273930",
-    "test/pocx/inherited_ci.py": "fe8b7eeeb8eecaa3123af53c52ffe37913d7c35eab747d45d5d0e87f096e445a",
+    "test/pocx/inherited_ci.py": "960d8a89bb82d651d4d2d5c497f1c680f3753cda727743a917f717027a167832",
     "test/pocx/inherited_functional.py": "8fde271730c1dd3a1c7aca239f65aac2a3ace9c6d5fb66c880f7192b937f8f25",
     "test/pocx/inherited_tests.py": "c9171243d26768994f0c7d171ad3270344bf87ad018ece2ab7e436829853f511",
     "test/pocx/revision_ci.py": "4ae8bac50834eb3d9bb3a883b6d8897c51730f6989e981bcd589c14fbd7e0998",
@@ -26,7 +26,8 @@
     "test/pocx/windows_cross.py": "e1495418b36684e7ed61fd77b8d2c1e5ac3f688e0bec9eda5d8761ce0a1a301f",
     "test/pocx/ci/00_setup_env_native_asan_tracing.sh": "30b254f14628cf682ddad55ecf2b0ceb4b74057b95a85733300c03141cdf1b27",
     "ci/test_imagefile": "1474ad98f223b4069eb297e201ea2148621c8a077d8706a34c45a761a23e45b5",
-    "test/pocx/ci/test_imagefile": "293ea05599cdc364b713d7a74823683547f7db7c637f9b2d6482119a1f61c0ff"
+    "test/pocx/ci/test_imagefile": "8611a47495fdc3b331d403ef3ee90cd9a1a20b4e6dcae1795148ba5db7f64d55",
+    "test/pocx/ci/inherited_runtime_env.sh": "dfab25ce5b6e915f661062ec1326a0dc92928c8e13a5e8c2373cb230ec263de0"
   },
   "evidence_retention": "Copy newly created bounded framework report trees into artifacts/pocx-inherited on success and failure; export container reports before cleanup; upload in inherited POSIX jobs",
   "unchanged_upstream_revision_recipe": ".github/ci-test-each-commit-exec.py",
@@ -44,5 +45,6 @@
     "coverage": "Preserve original and native RPC coverage gates per transport with unchanged upstream evaluator; run the historical slow dbcrash exclusion as a documented selection extension. No execution claim."
   },
   "runtime_stack_review": "Preserve the inherited512KiB soft stack limit for every test process. Apply it as a soft limit only so reviewed Qt/kernel build subprocesses can restore their normal8MiB stack without changing caller/test limits. Original upstream recipe and assertions remain byte-identical. Real execution of the actual owned shell block verifies enabled/disabled conditions, preserved hard limit and isolated build-child limits; full inherited target recipes remain separately required.",
-  "asan_tracing_environment_review": "Select an owned FILE_ENV wrapper which exports INSTALL_BCC_TRACING_TOOLS=true before sourcing the unchanged upstream ASAN environment. Both host setup and Docker image build receive the intended BCC/header packages and capability flags. Remove workflow sed mutation which invalidated the original environment source checksum. Compiler/options, original source hashes and test selections unchanged. Actual hosted execution remains unverified. Non-fuzz container builds select a separate owned imagefile which copies original environment scripts and owned wrappers to their declared paths. The upstream imagefile/base-install command and dedicated fuzz image/driver remain unchanged. The runtime-inputs image stage permits testing actual Docker COPY and environment sourcing without reinstalling tools."
+  "asan_tracing_environment_review": "Select an owned FILE_ENV wrapper which exports INSTALL_BCC_TRACING_TOOLS=true before sourcing the unchanged upstream ASAN environment. Both host setup and Docker image build receive the intended BCC/header packages and capability flags. Remove workflow sed mutation which invalidated the original environment source checksum. Compiler/options, original source hashes and test selections unchanged. Actual hosted execution remains unverified. Non-fuzz container builds select a separate owned imagefile which copies original environment scripts and owned wrappers to their declared paths. The upstream imagefile/base-install command and dedicated fuzz image/driver remain unchanged. The runtime-inputs image stage permits testing actual Docker COPY and environment sourcing without reinstalling tools.",
+  "enabled_linux_tracing_review": "Provision BCC Python bindings/tools for the eight reviewed Linux functional recipes that enable USDT. Source the same owned helper in host/container setup and image build; preserve all compiler, feature, dependency and test settings. Match running-host kernel headers in the workflow, mount headers/modules read-only, and allow the required original root/BPF tracing inside isolated containers. Build-only, non-Linux and dedicated fuzz jobs preserve their previous environment. Source-only environment and actual image-input checks are infrastructure evidence, never framework/hosted passes."
 }

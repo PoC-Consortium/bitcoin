@@ -3,7 +3,7 @@
   "upstream_revision": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
   "inherited_workflow": {
     "path": ".github/workflows/ci.yml",
-    "sha256": "2f550bc7214a09a1cf24aaf16f220199d8e23382f9d63f5c1a9cea51ff9234a0",
+    "sha256": "3baa49659590322fede674c0b1f12a7b4346b8fc1affcdcc18ebbe6f92176e33",
     "matches_pinned_upstream": false,
     "events": {
       "pull_request": "",
@@ -683,6 +683,21 @@
     "unchanged_original": "ci/test/00_setup_env_native_asan.sh",
     "review": "Workflow selects the owned environment wrapper instead of editing the checksum-reviewed original file; packages/capabilities match original INSTALL_BCC_TRACING_TOOLS=true behavior. No hosted pass inferred.",
     "imagefile": "test/pocx/ci/test_imagefile",
-    "imagefile_sha256": "293ea05599cdc364b713d7a74823683547f7db7c637f9b2d6482119a1f61c0ff"
+    "imagefile_sha256": "8611a47495fdc3b331d403ef3ee90cd9a1a20b4e6dcae1795148ba5db7f64d55"
+  },
+  "owned_inherited_tracing_prerequisites": {
+    "helper": "test/pocx/ci/inherited_runtime_env.sh",
+    "sha256": "dfab25ce5b6e915f661062ec1326a0dc92928c8e13a5e8c2373cb230ec263de0",
+    "required_profiles": [
+      "native_asan",
+      "native_tsan",
+      "native_msan",
+      "native_nowallet",
+      "native_previous_releases",
+      "native_alpine_musl",
+      "i686_no_ipc",
+      "arm"
+    ],
+    "scope": "Provision enabled Linux USDT dependencies/capabilities and actual-host matching headers without disabling tests or changing compiler/features. Hosted/platform execution remains unverified."
   }
 }

@@ -18,4 +18,4 @@ COPY ./test/pocx/ci/ /ci_container_base/test/pocx/ci/
 
 FROM runtime-inputs
 RUN sh -c "bash -c 'true' || ( apk update && apk add --no-cache bash )"
-RUN ["bash", "-c", "cd /ci_container_base/ && set -o errexit && source ./ci/test/00_setup_env.sh && ./ci/test/01_base_install.sh"]
+RUN ["bash", "-c", "cd /ci_container_base/ && set -o errexit && source ./ci/test/00_setup_env.sh && source ./test/pocx/ci/inherited_runtime_env.sh && ./ci/test/01_base_install.sh"]

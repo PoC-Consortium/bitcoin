@@ -9,7 +9,9 @@ hosted execution evidence. No container, installation or privileged recipe runs.
 from copy import deepcopy
 import importlib.util
 import json
+import os
 from pathlib import Path
+import re
 import shlex
 import subprocess
 import sys
@@ -55,11 +57,63 @@ class InheritedTest(unittest.TestCase):
         self.assertEqual(module.imagefile('/source', {}), '/source/test/pocx/ci/test_imagefile')
         self.assertEqual(module.imagefile('/source', {'RUN_FUZZ_TESTS':'true'}), '/source/ci/test_imagefile')
 
+    def test_enabled_linux_tracing_prerequisites_preserve_compiler_and_feature_settings(self):
+        spec = importlib.util.spec_from_file_location('container_runtime', ROOT/'ci/test/02_run_container.py')
+        module = importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+        names = ('ci_native_asan', 'ci_native_tsan', 'ci_native_msan', 'ci_native_nowallet',
+                 'ci_native_previous_releases', 'ci_native_alpine_musl',
+                 'ci_i686_no_multiprocess', 'ci_arm_linux')
+        for name in names:
+            with self.subTest(name=name):
+                original = dict(os.environ, CONTAINER_NAME=name, RUN_FUNCTIONAL_TESTS='true',
+                    RUN_FUZZ_TESTS='false', CI_IMAGE_NAME_TAG='alpine:3.23' if 'alpine' in name else 'ubuntu:24.04',
+                    PACKAGES='compiler python3', CI_CONTAINER_CAP='--security-opt seccomp=unconfined',
+                    BITCOIN_CONFIG='--preset=dev-mode -DENABLE_WALLET=OFF', DEP_OPTS='NO_WALLET=1 CC=clang-17')
+                result = module.configure_runtime_environment(ROOT, original)
+                expected = ('py3-bcc', 'bcc-tools') if 'alpine' in name else ('python3-bpfcc', 'bpfcc-tools')
+                for package in expected:self.assertEqual(result['PACKAGES'].split().count(package), 1)
+                for flag in ('--security-opt seccomp=unconfined', '--privileged',
+                             '/usr/src:/usr/src:ro', '/lib/modules:/lib/modules:ro'):
+                    self.assertIn(flag, result['CI_CONTAINER_CAP'])
+                self.assertEqual({k:v for k,v in original.items() if k not in ('PACKAGES','CI_CONTAINER_CAP')},
+                                 {k:v for k,v in result.items() if k not in ('PACKAGES','CI_CONTAINER_CAP')})
+                self.assertEqual(module.configure_runtime_environment(ROOT, result), result)
+                self.assertEqual(original['PACKAGES'], 'compiler python3')
+        for flags in ({'RUN_FUZZ_TESTS':'true'}, {'RUN_FUNCTIONAL_TESTS':'false'},
+                      {'CONTAINER_NAME':'ci_native_tidy'}, {'CONTAINER_NAME':'ci_win64'}):
+            original = dict(os.environ, CONTAINER_NAME='ci_native_nowallet', RUN_FUZZ_TESTS='false',
+                            RUN_FUNCTIONAL_TESTS='true', PACKAGES='compiler', CI_CONTAINER_CAP='existing')
+            original.update(flags)
+            self.assertEqual(module.configure_runtime_environment(ROOT, original), original)
+
     def test_review_rejects_recipe_drift(self):
         self.assertTrue(inherited_ci.verify_recipe()['source_sha256'])
         original = inherited_ci.sha256
         with patch.object(inherited_ci, 'sha256', side_effect=lambda p: '0'*64 if p.name=='03_test_script.sh' else original(p)):
             with self.assertRaisesRegex(ValueError, 'changed without review'): inherited_ci.verify_recipe()
+
+    def test_actual_tracing_recipes_match_host_header_provisioning(self):
+        workflow = (ROOT/'.github/workflows/ci.yml').read_text()
+        step = workflow.split('- name: Provision matching headers for enabled Linux USDT tests', 1)[1].split('\n      - name:', 1)[0]
+        profiles = json.loads(re.search(r"fromJSON\('([^']+)'\)", step).group(1))
+        self.assertEqual(len(profiles), len(set(profiles)))
+        spec = importlib.util.spec_from_file_location('tracing_entry', ROOT/'ci/test/02_run_container.py')
+        module = importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+        seen = set()
+        for recipe in sorted((ROOT/'ci/test').glob('00_setup_env*.sh')):
+            if recipe.name == '00_setup_env.sh':
+                continue
+            command = ['bash', '-ec', 'source "$1"; python3 -c "import json,os; print(json.dumps(dict(os.environ)))"', 'bash', str(recipe)]
+            environment = json.loads(subprocess.check_output(command, cwd=ROOT,
+                env={'PATH':os.environ['PATH'], 'RUN_FUNCTIONAL_TESTS':'true', 'RUN_FUZZ_TESTS':'false'}))
+            result = module.configure_runtime_environment(ROOT, environment)
+            if result.get('CI_CONTAINER_CAP') != environment.get('CI_CONTAINER_CAP'):
+                seen.add(result['CONTAINER_NAME'])
+                self.assertIn(result['CONTAINER_NAME'], profiles)
+                self.assertEqual(result['BITCOIN_CONFIG'], environment['BITCOIN_CONFIG'])
+                self.assertEqual(result.get('DEP_OPTS'), environment.get('DEP_OPTS'))
+                self.assertEqual(result.get('CI_IMAGE_PLATFORM'), environment.get('CI_IMAGE_PLATFORM'))
+        self.assertEqual(seen, set(profiles))
 
     def execute_fixture(self, codes):
         with tempfile.TemporaryDirectory() as directory:
