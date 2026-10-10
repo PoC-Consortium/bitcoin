@@ -512,3 +512,20 @@ inherited matrices or PoCX jobs. The option defaults to false; ordinary pushes,
 pull requests and default manual dispatch preserve all existing CI coverage.
 A successful limited run proves only that original unit configuration, not
 Qt, kernel, functional, sanitizer or other-platform coverage.
+
+The limited [hosted baseline run38055605854](https://github.com/PoC-Consortium/bitcoin/actions/runs/38055605854)
+passed on2026-10-10 at commit `71b1fcd1bd5b80ae2245a45eab2fdcd2125b008e`.
+Its Ubuntu24/GCC13 Release build had PoCX disabled, wallet and IPC enabled,
+and two build/test jobs. Archived Boost and JUnit results independently confirm
+737 original unit cases in149 suites and all six auxiliary CTest executables
+passed, with zero failures or runtime skips. The remaining two cases in the739-case
+original catalog require `DEBUG_LOCKORDER` and are inactive in this Release build;
+they remain required in enabled configurations.
+
+The archive contains the raw reports and logs. All12 recorded profile artifacts
+and2822 recorded source hashes were rechecked against that revision. The successful
+hosted collector verified the runtime inventory, binary and configuration before
+upload. Binary and CMake-cache bytes were not uploaded, so the downloaded reports
+do not provide an independent local inspection of those bytes. This checkpoint
+establishes only the selected original unit profile; every other hosted condition
+remains unverified. No additional Actions run was launched for this checkpoint.
