@@ -29,6 +29,8 @@ as a selection extension: the complete suite runs that slow case on both sides.
 | `bitcoin-wallet-disabled` | `pocx-wallet-disabled` |
 | `bitcoin-ipc-disabled` | `pocx-ipc-disabled` |
 | `bitcoin-asan` (all four frameworks) | `pocx-asan` (all four frameworks) |
+| `bitcoin-tsan` (headless frameworks) | `pocx-tsan` (headless frameworks) |
+| `bitcoin-msan` (headless frameworks) | `pocx-msan` (headless frameworks) |
 
 Each profile configures and builds an isolated directory by default. For example:
 
@@ -235,7 +237,11 @@ the unchanged sources, builds, exact case inventories, successful entrypoint,
 process cleanup, logs and child reports under the corrected retention policy.
 Future CI collection prunes only `node*/regtest/{blocks,chainstate,indexes}`;
 reports, framework/node logs, configurations and wallet files remain retained.
-These complete local optional results do not establish hosted or sanitizer passes.
+This complete local optional checkpoint uses Linux GCC14. It does not establish
+the owned Ubuntu24/GCC13 optional CI configuration, hosted runs or sanitizer
+passes. The missing GCC13 optional pair is queued after the currently running
+Ubuntu feature/functional pair; it requires the same complete prerequisites and
+both transports, and starts the native configuration only after Bitcoin passes.
 Required optional profiles reject skips with `--require-no-skips`; normal
 functional profiles retain their explicitly documented limited-checkpoint policy.
 
@@ -278,16 +284,51 @@ checked. This requires the genuine v28.2 `bitcoin-wallet` tool in addition to th
 previous-release daemons and CLI tools; the runner fingerprints all 17 binaries.
 It does not claim that unmodified Bitcoin wallets are portable across chains.
 
-Required platform and sanitizer coverage remains broader than these local
-checkpoints. Local wallet-enabled and wallet-disabled unit baselines and their
-PoCX counterparts now pass with working socket/IPC prerequisites. The disabled
-wallet checkpoint has 680 original passes; PoCX has 670 original passes and 32
-native passes, with ten reviewed PoW exclusions. The 57 original wallet cases
-and one additional native wallet case are configuration-disabled in that profile.
-The local GCC14 result does not establish the inherited Clang/libc++ no-wallet
-configuration. Local Qt/kernel proof likewise does not establish the complete
-platform matrix. Dated artifacts retain exact executed configurations; the goal
-remains active.
+Required platform and sanitizer coverage remains broader than the completed local
+checkpoints. The actual owned Ubuntu24/GCC13 CI entrypoints now pass these pairs:
+
+| Configuration | Original Bitcoin passes | Original cases passing under PoCX | PoCX-only passes |
+| --- | ---: | ---: | ---: |
+| Standard unit | 737 | 727 (522 unchanged, 205 adapted) | 33 |
+| Wallet-disabled unit | 680 | 670 (481 unchanged, 189 adapted) | 32 |
+| IPC-disabled unit | 735 | 725 (520 unchanged, 205 adapted) | 33 |
+| Qt | 9 | 9 (7 unchanged, 2 adapted) | 1 |
+| Kernel | 16 | 16 (10 unchanged logic, 6 adapted fixtures/checks) | 0 |
+
+The original unit catalog contains 739 cases. Two `DEBUG_LOCKORDER` cases are
+inactive in these Release builds; wallet-disabled additionally omits 57 original
+wallet cases and one native wallet case, while IPC-disabled additionally omits
+two original IPC cases. The ten PoW-only unit exclusions remain individually
+reviewed. All auxiliary CTest executables pass: six for standard/wallet-disabled
+and five for IPC-disabled. The dedicated native real-proof entrypoint passes
+using the already built unit binary; its cases overlap the33 native unit cases
+and are not additional unique passes.
+
+Kernel case-logic reuse is distinct from direct source reuse: all 16 cases are
+selected from the separately owned monolithic adaptation. These results do not
+establish other compilers, platforms or sanitizer configurations. The standard
+functional pair is still running and reuses the verified unit builds.
+Per-case reports and strict source/build/retained-artifact checks are under
+`artifacts/ci-parity-20261010/ubuntu-{unit,wallet-disabled,ipc-disabled,qt,kernel}-{bitcoin,pocx}-checkpoint/`.
+Exporting these reports does not rebuild or replay their completed tests.
+
+The inherited Clang17/libc++ no-wallet original ctest checkpoint separately
+passes 680 unit cases, seven Qt methods, 16 kernel cases and six auxiliary
+executables. Its 59 inactive unit cases include 57 wallet cases and two
+`DEBUG_LOCKORDER` cases; two wallet Qt methods are inactive. The corrected
+Makefiles evidence excludes only regenerated compiler dependency caches, while
+declared rules, flags, link commands and binaries remain pinned. Raw failed
+envelopes are retained, and the completed ctest cases are reused without replay.
+The original functional matrix is still running; native execution follows only
+after that full baseline passes.
+
+`required-ci-coverage/results.json` and `frameworks.csv` in the same artifact
+directory inventory 22 owned profiles, 36 original/native inherited matrix
+conditions and the runtime-expanded ancestor-commit job. They distinguish
+configured coverage, scoped completed frameworks and complete profiles. Missing
+runtime counts remain unknown; case catalogs are referenced rather than inventing
+passes or combining benchmark/transport counting units. All hosted conditions
+remain unverified. The goal remains active.
 
 The original LLVM22 ASan build has a scoped passing checkpoint for all739
 applicable original unit cases, all9 Qt methods, all16 kernel cases and all6
@@ -300,6 +341,12 @@ Qt/kernel corrections execute the already verified build at the inherited512KiB
 test stack limit. Build tools receive8MiB in their own subprocess; callers and
 tests retain the restricted stack. The complete ASan functional baseline is
 still running, so this is not a passing whole ASan profile or native ASan result.
+Its first transport now passes all 459 original functional cases without skips;
+the second transport remains incomplete. The scoped framework report is retained
+under `asan-original-framework-checkpoint/`; the partial functional report under
+`asan-original-functional-progress/` explicitly marks the 459 remaining rows
+unverified. Neither upgrades the raw legacy wrapper failures to a whole-profile
+pass.
 
 TSan compilation and instrumented dependency verification pass. Its post-build
 profile check originally rejected valid hidden headless CMake cache options;
@@ -310,12 +357,15 @@ running. Its two original DEBUG_LOCKORDER cases are configuration-disabled.
 The original MSan build and runtime unit entrypoint pass all 739 original cases
 across 149 suites, with no failures, skips or exclusions. MSan dependencies,
 including all three selected libevent component archives, and instrumented C++
-controls pass; the remaining framework phases are still running. Case-level unit
+controls pass. Its six auxiliary executables and 16 kernel cases also pass;
+the full functional matrix is still running. Case-level unit
 checkpoints are retained under
 `artifacts/ci-parity-20261010/{tsan,msan}-original-unit-checkpoint/`.
 Their revalidation checks recorded source/build inputs and retained execution
 artifacts without replaying tests. These are scoped original unit checkpoints;
 neither complete sanitizer profiles nor PoCX sanitizer execution are established.
+Auxiliary/kernel case reports are retained in the corresponding
+`{tsan,msan}-original-aux-kernel-checkpoint/` directories.
 Controls are prerequisite checks and never count as passing framework cases.
 
 Hosted execution remains unverified: GitHub rejects manual dispatch with
