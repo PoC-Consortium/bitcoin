@@ -318,7 +318,7 @@ list(APPEND POCX_UNIT_INPUTS "${PROJECT_SOURCE_DIR}/test/pocx/pocx_bootstrap.py"
             helpers = {source: sha256(ROOT / source) for source in (
                 'test/pocx/run_unit.py', 'test/pocx/unit_matrix.py',
                 'test/pocx/unit_parity.py', 'test/pocx/common.py', 'test/pocx/unit_build.py',
-                'test/pocx/build_configuration.py')}
+                'test/pocx/build_configuration.py', 'test/pocx/boost_runtime.py')}
             for source in helpers:
                 path = root / source
                 path.parent.mkdir(parents=True, exist_ok=True)
@@ -338,6 +338,7 @@ list(APPEND POCX_UNIT_INPUTS "${PROJECT_SOURCE_DIR}/test/pocx/pocx_bootstrap.py"
                       'build_configuration': None,
                       'cache_sha256': sha256(cache), 'target_system_sha256': sha256(system),
                       'test_sources': {}, 'execution_helpers': helpers,
+                      'boost_runtime': {'random_seed': 0, 'observed_seeds': []},
                       'unit_build_provenance': str(provenance), 'unit_build_provenance_sha256': sha256(provenance), 'selected': ['suite'], 'registered': ['suite'],
                       'boost.log_sha256': sha256(boost), 'junit.xml_sha256': sha256(junit)}
             path = build / 'results.json'
@@ -383,7 +384,7 @@ list(APPEND POCX_UNIT_INPUTS "${PROJECT_SOURCE_DIR}/test/pocx/pocx_bootstrap.py"
                     with self.subTest(command=command), self.assertRaisesRegex(ValueError, 'build configuration'):
                         unit_matrix.verify_execution(root, build, path)
                 cache.write_text('fixture config')
-                for field in ('binary_sha256', 'cache_sha256', 'target_system_sha256', 'boost.log_sha256', 'junit.xml_sha256', 'unit_build_provenance_sha256', 'suite_timeouts'):
+                for field in ('binary_sha256', 'cache_sha256', 'target_system_sha256', 'boost.log_sha256', 'junit.xml_sha256', 'unit_build_provenance_sha256', 'suite_timeouts', 'boost_runtime'):
                     broken = deepcopy(record)
                     broken[field] = '0' * 64
                     path.write_text(json.dumps(broken))

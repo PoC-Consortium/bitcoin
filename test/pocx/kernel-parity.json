@@ -167,13 +167,15 @@
     "test/pocx/kernel/reference.rs": "af1cb2d2abd1b353f508a4891acbeab8b2e85e1b777ffe973cd091a0df89b5b7",
     "test/pocx/kernel/render_fixtures.py": "fc4034af16dc364d5c18143dd8e9e8fe7b2392f5e50325498d9b099b3d00ce03",
     "test/pocx/kernel/verify_fixtures.py": "f93ed8f7fbd1e60f4aa837a8f9d20b4bc68bee5977a5c674b026f2df00245b55",
-    "test/pocx/kernel_parity.py": "2fe6a18a37298316ed03e1d8ef892accfdf2933fc0fcc14dfe56108391c73979",
-    "test/pocx/run_kernel.py": "758604cbf06f51456a352fb8af60caf5659ee777ecc0a23593347f0add329edb",
+    "test/pocx/kernel_parity.py": "56345a332de96ed52218b5220fce286e2d97f4e9e540b3d2adf72223d795ed34",
+    "test/pocx/run_kernel.py": "2cef397f0f2053f4625e53ff2c9d330c6f69850ab7282d9a16cc8be1e8b33b95",
     "test/pocx/test_cross_kernel.py": "6e4b82a58d7f248c4bebe35d3df39d92dfee31b42b17b56fc46ede613a36b477",
-    "test/pocx/test_kernel_infrastructure.py": "0fd97414ab9f32202983657767c654984e4853604454530610669f1693c4ba98",
+    "test/pocx/test_kernel_infrastructure.py": "e0fe81ec8b27fcc04a423e558eca1395bc77d05e5ed5157b6b2c777e611c837e",
     "test/pocx/vectors/Cargo.lock": "2a959ccaa2c4c3fbddef9b0328e9c21a111ec13739bfc1beb441a194760e3786",
     "test/pocx/build_environment.py": "8cffde16fefe5b9b9505108abfe447a878625fb9bdedd7356919af10bbd22be3",
-    "test/pocx/test_build_environment.py": "eebf4597ae5fa2530f2b15934ec1d74c91e6acae0328b2e0d24d61167170e276"
+    "test/pocx/test_build_environment.py": "eebf4597ae5fa2530f2b15934ec1d74c91e6acae0328b2e0d24d61167170e276",
+    "test/pocx/boost_runtime.py": "f33c4b65c9065f1c34cb2671ff2e8fe3c5012a513adc74d8591dd949842b7764",
+    "test/pocx/test_boost_runtime.py": "17cd6a99197dcfb5d05ad8ab375734a6079826819833999a29580d7d9a185d68"
   },
   "execution_inputs": {
     "src/CMakeLists.txt": "9838b770ffdfc39dd194291915e07ebfaa91799a31e02d3619bcfa19d0f45031",
@@ -213,13 +215,15 @@
     "test/pocx/kernel/reference.rs": "af1cb2d2abd1b353f508a4891acbeab8b2e85e1b777ffe973cd091a0df89b5b7",
     "test/pocx/kernel/render_fixtures.py": "fc4034af16dc364d5c18143dd8e9e8fe7b2392f5e50325498d9b099b3d00ce03",
     "test/pocx/kernel/verify_fixtures.py": "f93ed8f7fbd1e60f4aa837a8f9d20b4bc68bee5977a5c674b026f2df00245b55",
-    "test/pocx/kernel_parity.py": "2fe6a18a37298316ed03e1d8ef892accfdf2933fc0fcc14dfe56108391c73979",
-    "test/pocx/run_kernel.py": "758604cbf06f51456a352fb8af60caf5659ee777ecc0a23593347f0add329edb",
+    "test/pocx/kernel_parity.py": "56345a332de96ed52218b5220fce286e2d97f4e9e540b3d2adf72223d795ed34",
+    "test/pocx/run_kernel.py": "2cef397f0f2053f4625e53ff2c9d330c6f69850ab7282d9a16cc8be1e8b33b95",
     "test/pocx/test_cross_kernel.py": "6e4b82a58d7f248c4bebe35d3df39d92dfee31b42b17b56fc46ede613a36b477",
-    "test/pocx/test_kernel_infrastructure.py": "0fd97414ab9f32202983657767c654984e4853604454530610669f1693c4ba98",
+    "test/pocx/test_kernel_infrastructure.py": "e0fe81ec8b27fcc04a423e558eca1395bc77d05e5ed5157b6b2c777e611c837e",
     "test/pocx/vectors/Cargo.lock": "2a959ccaa2c4c3fbddef9b0328e9c21a111ec13739bfc1beb441a194760e3786",
     "test/pocx/build_environment.py": "8cffde16fefe5b9b9505108abfe447a878625fb9bdedd7356919af10bbd22be3",
-    "test/pocx/test_build_environment.py": "eebf4597ae5fa2530f2b15934ec1d74c91e6acae0328b2e0d24d61167170e276"
+    "test/pocx/test_build_environment.py": "eebf4597ae5fa2530f2b15934ec1d74c91e6acae0328b2e0d24d61167170e276",
+    "test/pocx/boost_runtime.py": "f33c4b65c9065f1c34cb2671ff2e8fe3c5012a513adc74d8591dd949842b7764",
+    "test/pocx/test_boost_runtime.py": "17cd6a99197dcfb5d05ad8ab375734a6079826819833999a29580d7d9a185d68"
   },
   "review_notes": {
     "checks": "All original check sites retained, with native expected fixture values and explicit zero legacy PoW accessor contract. Four additional check sites strengthen truncation, ProcessBlock acceptance and lookup-read validity.",

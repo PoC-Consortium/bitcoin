@@ -16,6 +16,7 @@ import pocx_bootstrap as pocx_bootstrap
 from common import ROOT, sha256, short_tmpdir, exclusive_lock
 import unit_matrix
 import build_configuration
+import boost_runtime
 
 
 def main():
@@ -45,7 +46,7 @@ def main():
     timing = unit_matrix.registered_timeouts(build, suites, args.timeout, registrations=tests)
     output = Path(tempfile.mkdtemp(prefix='bitcoin-unit-', dir=build))
     temp = short_tmpdir(build)
-    env = {key: value for key, value in os.environ.items() if not key.startswith('BOOST_TEST_')}
+    env = boost_runtime.environment(os.environ)
     env.update(TMPDIR=str(temp), BOOST_TEST_REPORT_FORMAT='XML', BOOST_TEST_REPORT_LEVEL='detailed')
     review = json.loads((ROOT / 'test/pocx/unit-parity.json').read_text())
     report = {'binary': str(binary), 'binary_sha256': sha256(binary), 'suite_timeouts': timing,
@@ -55,7 +56,8 @@ def main():
               'test_sources': review['bitcoin_sources'], 'tmpdir': str(temp),
               'execution_helpers': {source: sha256(ROOT / source) for source in (
                   'test/pocx/run_bitcoin_unit.py', 'test/pocx/unit_matrix.py',
-                  'test/pocx/unit_parity.py', 'test/pocx/common.py', 'test/pocx/build_configuration.py')}}
+                  'test/pocx/unit_parity.py', 'test/pocx/common.py', 'test/pocx/build_configuration.py',
+                  'test/pocx/boost_runtime.py')}}
     command = ['ctest', '--test-dir', str(build), '-j', str(args.jobs), '--output-on-failure',
                '--timeout', str(args.timeout), '--no-tests=error', '-R', '^(' + '|'.join(map(re.escape, sorted(suites))) + ')$',
                '--output-junit', str(output / 'junit.xml')] + build_configuration.ctest_arguments(selected_config)
@@ -63,6 +65,7 @@ def main():
         result = subprocess.run(command, env=env, stdout=log, stderr=subprocess.STDOUT)
     shutil.copyfile(build / 'Testing/Temporary/LastTest.log', output / 'boost.log')
     report.update(command=command, returncode=result.returncode,
+                  boost_runtime=boost_runtime.record(env, (output / 'boost.log').read_text()),
                   **{name + '_sha256': sha256(output / name) for name in ('junit.xml', 'boost.log')})
     result_path = output / 'results.json'
     result_path.write_text(json.dumps(report, indent=2) + '\n')

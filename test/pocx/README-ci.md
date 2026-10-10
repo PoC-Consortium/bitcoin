@@ -6,6 +6,22 @@ matching PoCX jobs. The scheduled/manual feature jobs include both sides of the
 Qt, kernel, wallet-disabled and IPC-disabled configurations. A configured job is
 not passing evidence until it has actually executed successfully.
 
+The inherited unit/kernel checkpoints described below initially stripped
+`BOOST_TEST_RANDOM=1`. They retain their green nonrandomized evidence, but their
+randomized CI condition remains unverified until the repaired wrappers execute.
+The repair preserves this setting, records the actual chosen seeds and keeps
+filters and report overrides out of the environment. The current case report
+under `artifacts/ci-parity-20261010/required-ci-coverage/` distinguishes this gap
+from test failures and preserves unaffected Qt, auxiliary and functional evidence.
+
+The randomized local Clang17/libc++ no-wallet pair is now independently verified:
+680 Bitcoin unit cases, 702 PoCX unit cases and all16 kernel cases on each side.
+The unit runs used a180second per-suite deadline; the kernel runs retained the
+inherited2400second deadline. Existing binaries were reused, with no compilation
+or Qt/functional/auxiliary replay. Case reports and actual Boost seeds are under
+`artifacts/ci-parity-20261010/randomized-nowallet-checkpoints/`. Other inherited
+randomized configurations remain separate requirements.
+
 The owned Ubuntu24/GCC13 optional Bitcoin-OFF functional profile is now locally
 verified:459 cases per transport,918 passes and zero skips. This includes the
 prerequisites and173 expanded benchmark entries per transport. Its actual CI

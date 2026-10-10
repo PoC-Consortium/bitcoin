@@ -55,6 +55,19 @@ seven-suite architecture smoke selection; use `--suite NAME` for focused runs.
 Runners in the same build share a lock, so run infrastructure checks after the
 full runner finishes.
 
+The Bitcoin, PoCX and kernel wrappers preserve `BOOST_TEST_RANDOM`. Upstream CI
+sets it to `1`, which asks Boost to choose a random seed; a value greater than
+`1` requests that exact seed. Unset or `0` uses the default test order. The
+wrappers remove inherited Boost filters and report overrides, retain the actual
+chosen seeds in hashed execution logs and verify one seed per executed Boost
+process. Invalid seed settings fail. `test_boost_runtime.py` checks this behavior
+with a small real Boost/CTest executable, including complete case execution and
+repeatable fixed-seed order.
+
+Older wrapper checkpoints stripped this variable and establish their recorded
+nonrandomized scope only. They do not prove upstream CI's randomized condition;
+that condition requires separate execution evidence using the existing binaries.
+
 `unit-baseline.json` pins the verified original case list. `unit-parity.json`
 records applicable cases, explicit exclusions, native additions and reviewed
 source hashes. Its review notes explain assertion/precondition adaptations;

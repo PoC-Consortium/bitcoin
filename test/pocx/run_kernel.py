@@ -14,6 +14,7 @@ import time
 import kernel_parity
 from build_configuration import configuration, executable, build_arguments, ctest_arguments, require_source
 from build_environment import run_build
+import boost_runtime
 
 ROOT = kernel_parity.ROOT
 
@@ -73,7 +74,7 @@ def main():
     command += ctest_arguments(selected)
     # Prevent inherited Boost filters, disabled reports or exception controls
     # from turning a partial/empty execution into an apparent green result.
-    env = {key: value for key, value in os.environ.items() if not key.startswith('BOOST_TEST_')}
+    env = boost_runtime.environment(os.environ)
     env.update(BOOST_TEST_REPORT_LEVEL='detailed', BOOST_TEST_REPORT_FORMAT='XML',
                BOOST_TEST_REPORT_SINK=report['boost_report'], BOOST_TEST_LOG_LEVEL='test_suite')
     for key in ('boost_report', 'ctest_xml'):
@@ -84,6 +85,8 @@ def main():
         env['TMPDIR'] = scratch
         execution = subprocess.run(command, env=env, stdout=log, stderr=subprocess.STDOUT)
     report.update(exit_code=execution.returncode, seconds=time.monotonic() - started,
+                  ctest_log_sha256=kernel_parity.digest(output / 'ctest.log'),
+                  boost_runtime=boost_runtime.record(env, (output / 'ctest.log').read_text()),
                   command=command, verified_at_utc=datetime.datetime.now(datetime.timezone.utc).isoformat())
     # Store failures too; a failed run can never retain an old green summary.
     report['status'] = 'failed'

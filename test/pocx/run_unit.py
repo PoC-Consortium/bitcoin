@@ -17,6 +17,7 @@ from unit_build import verify
 import unit_parity
 import unit_matrix
 import build_configuration
+import boost_runtime
 
 REQUIRED = ['pocx_tests', 'pocx_simd_tests', 'crypto_tests', 'serialize_tests', 'uint256_tests', 'util_string_tests', 'util_check_tests']
 
@@ -64,11 +65,11 @@ def main():
     results = Path(tempfile.mkdtemp(prefix='pocx-unit-', dir=build))
     # Unix IPC socket names must fit sockaddr_un; keep TMPDIR short.
     temp = short_tmpdir(build)
-    env = {key: value for key, value in os.environ.items() if not key.startswith('BOOST_TEST_')}
+    env = boost_runtime.environment(os.environ)
     env.update(TMPDIR=str(temp), BOOST_TEST_REPORT_FORMAT='XML', BOOST_TEST_REPORT_LEVEL='detailed')
     helpers = {source: sha256(ROOT / source) for source in ('test/pocx/run_unit.py',
         'test/pocx/unit_matrix.py', 'test/pocx/unit_parity.py', 'test/pocx/common.py', 'test/pocx/unit_build.py',
-        'test/pocx/build_configuration.py')}
+        'test/pocx/build_configuration.py', 'test/pocx/boost_runtime.py')}
     _, system_file = unit_matrix.configuration(build, selected_config)
     initial_system_sha256 = sha256(system_file)
     selected = sorted(discovered) if args.all else sorted(set(args.suite)) if args.suite else REQUIRED
@@ -87,6 +88,7 @@ def main():
         'selected': selected, 'registered': sorted(registered),
         'binary': str(binary), 'binary_sha256': evidence['binary_sha256'],
         'execution_helpers': helpers, 'target_system_sha256': initial_system_sha256,
+        'boost_runtime': boost_runtime.record(env, (results / 'boost.log').read_text()),
         'junit.xml_sha256': sha256(results / 'junit.xml'), 'boost.log_sha256': sha256(results / 'boost.log'),
         'unit_build_provenance': str(provenance), 'unit_build_provenance_sha256': initial_provenance_sha256,
         'test_sources': evidence['sources'],

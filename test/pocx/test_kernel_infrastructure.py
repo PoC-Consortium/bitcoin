@@ -19,6 +19,7 @@ import xml.etree.ElementTree as ET
 
 import pocx_bootstrap as pocx_bootstrap
 import kernel_parity
+from common import build_options
 
 ROOT = kernel_parity.ROOT
 BUILD = Path(sys.argv.pop(1)).resolve()
@@ -30,6 +31,9 @@ class KernelInfrastructureTest(unittest.TestCase):
         self.review = json.loads((ROOT / 'test/pocx/kernel-parity.json').read_text())
         self.temp = tempfile.TemporaryDirectory(dir=BUILD, prefix='kernel-infrastructure-')
         self.addCleanup(self.temp.cleanup)
+        # Mutated records live in this directory; retain the actual hashed
+        # runtime output so negative checks reach the intended changed field.
+        (Path(self.temp.name) / 'ctest.log').write_bytes(RESULTS.with_name('ctest.log').read_bytes())
 
     def test_original_cases_and_required_reviews_cannot_be_dropped(self):
         self.assertEqual(kernel_parity.check(ROOT, self.review), [])
@@ -88,7 +92,7 @@ class KernelInfrastructureTest(unittest.TestCase):
                 kernel_parity.verify_execution(ROOT, BUILD, record, self.review)
 
     def test_stale_binary_configuration_sources_and_reports_rejected(self):
-        for field in ('binary_sha256', 'cache_sha256', 'executed_source_snapshot', 'boost_report_sha256'):
+        for field in ('binary_sha256', 'cache_sha256', 'executed_source_snapshot', 'boost_report_sha256', 'ctest_log_sha256', 'boost_runtime'):
             report = json.loads(RESULTS.read_text())
             if field == 'executed_source_snapshot':
                 report[field]['src/pocx/test/kernel/test_kernel.cpp'] = '0' * 64
@@ -101,7 +105,9 @@ class KernelInfrastructureTest(unittest.TestCase):
 
     def test_commands_cannot_build_and_run_different_configurations(self):
         original = json.loads(RESULTS.read_text())
-        selected = original.get('build_configuration') or 'Release'
+        selected = original.get('build_configuration') or build_options(
+            (BUILD / 'CMakeCache.txt').read_text()).get('CMAKE_BUILD_TYPE')
+        self.assertTrue(selected, 'Kernel configuration-selection regression requires a configured build type')
         for field, flag in (('build_command', '--config'), ('command', '--build-config')):
             report = deepcopy(original)
             report['build_configuration'] = selected

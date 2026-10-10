@@ -25,7 +25,7 @@ SHARED_REVIEWS = {
     'test/pocx/common.py', 'test/pocx/run_unit.py', 'test/pocx/register_unit.py',
     'test/pocx/unit_build.py', 'test/pocx/test_unit_infrastructure.py',
     'test/pocx/unit_matrix.py', 'test/pocx/run_bitcoin_unit.py', 'test/pocx/test_unit_matrix.py',
-    'test/pocx/test_file_lock.py',
+    'test/pocx/test_file_lock.py', 'test/pocx/boost_runtime.py', 'test/pocx/test_boost_runtime.py',
     'test/pocx/build_configuration.py', 'test/pocx/test_build_configuration.py',
     'src/pocx/test/CMakeLists.txt',
     'src/consensus/params.h', 'src/kernel/chainparams.cpp', 'src/kernel/CMakeLists.txt',

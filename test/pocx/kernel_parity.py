@@ -11,6 +11,7 @@ import xml.etree.ElementTree as ET
 
 from unit_parity import runtime_cases
 from build_configuration import configuration, executable, build_arguments, ctest_arguments, require_source
+import boost_runtime
 
 ROOT = Path(__file__).resolve().parents[2]
 BASELINE_SHA256 = 'a32650e8ac40ed89b2ff3c2fe296499cdc4eb0fb6c7d1ad26a3492566d9b2782'
@@ -21,7 +22,7 @@ BITCOIN_INPUTS = {
     'src/CMakeLists.txt', 'src/kernel/CMakeLists.txt',
     'src/kernel/bitcoinkernel.h', 'src/kernel/bitcoinkernel_wrapper.h',
     'test/pocx/run_kernel.py', 'test/pocx/kernel_parity.py', 'test/pocx/build_configuration.py',
-    'test/pocx/build_environment.py',
+    'test/pocx/build_environment.py', 'test/pocx/boost_runtime.py',
 }
 
 
@@ -50,7 +51,7 @@ def check(root, review=None):
         'src/kernel/bitcoinkernel.h', 'src/kernel/bitcoinkernel_wrapper.h',
         'test/pocx/kernel/parity.json', 'test/pocx/kernel/provenance.json',
         'test/pocx/kernel_parity.py', 'test/pocx/run_kernel.py',
-        'test/pocx/build_configuration.py',
+        'test/pocx/build_configuration.py', 'test/pocx/boost_runtime.py', 'test/pocx/test_boost_runtime.py',
         'test/pocx/build_environment.py', 'test/pocx/test_build_environment.py',
         'test/pocx/test_kernel_infrastructure.py', 'test/pocx/test_cross_kernel.py'}
     reviewed = review.get('reviewed_sources', {})
@@ -131,12 +132,16 @@ def verify_execution(root, build, results, review, bitcoin=False):
     if runtime_cases(listing.stdout + listing.stderr) != expected:
         raise ValueError('Kernel runtime registration differs from the fixed baseline')
     kernel = verify_boost_report((root / report['boost_report']).read_text(), expected)
+    log = results.with_name('ctest.log')
+    if digest(log) != report.get('ctest_log_sha256'):
+        raise ValueError('Stale kernel CTest runtime output')
+    runtime = boost_runtime.verify(log.read_text(), report.get('boost_runtime'), 1)
     tests = list(ET.parse(root / report['ctest_xml']).iter('testcase'))
     if (len(tests) != 1 or tests[0].get('name') != 'test_kernel' or
             any(tests[0].find(tag) is not None for tag in ('failure', 'error', 'skipped'))):
         raise ValueError('Kernel CTest wrapper failed or was skipped')
     return {'original_green': len(baseline['cases']), 'native_only_green': 0 if bitcoin else len(review['additional']),
-            'assertions_passed': kernel['assertions_passed'], 'failed': 0, 'skipped': 0}
+            'assertions_passed': kernel['assertions_passed'], 'boost_runtime': runtime, 'failed': 0, 'skipped': 0}
 
 
 def main():

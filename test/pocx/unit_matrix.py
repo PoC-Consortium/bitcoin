@@ -249,7 +249,7 @@ def verify_execution(root, build, result_path, *, bitcoin=False, lock_held=False
             raise ValueError('Stale unit execution source: ' + source)
     helpers = report.get('execution_helpers', {})
     required_helpers = {'test/pocx/unit_matrix.py', 'test/pocx/unit_parity.py', 'test/pocx/common.py',
-                        'test/pocx/build_configuration.py',
+                        'test/pocx/build_configuration.py', 'test/pocx/boost_runtime.py',
                         'test/pocx/run_bitcoin_unit.py' if bitcoin else 'test/pocx/run_unit.py'}
     if not bitcoin:
         required_helpers.add('test/pocx/unit_build.py')
@@ -289,11 +289,14 @@ def verify_execution(root, build, result_path, *, bitcoin=False, lock_held=False
     if (len(tests) != len(suites) or {test.get('name') for test in tests} != suites or
             any(any(test.find(tag) is not None for tag in ('failure', 'error', 'skipped')) for test in tests)):
         raise ValueError('Missing, failed or skipped unit CTest result')
-    leaves = leaf_results(result_path.with_name('boost.log').read_text(), suites)
+    log = result_path.with_name('boost.log').read_text()
+    import boost_runtime
+    runtime = boost_runtime.verify(log, report.get('boost_runtime'), len(suites))
+    leaves = leaf_results(log, suites)
     if set(leaves) != expected['expected']:
         raise ValueError('Missing or unexpected executed unit leaf cases')
     return {'scope': 'Strict local unit execution for the recorded configuration; not hosted CI attestation',
-            'configuration': options, 'build_configuration': selected_config,
+            'configuration': options, 'build_configuration': selected_config, 'boost_runtime': runtime,
             'suite_timeouts': timing, 'original_inventory': len(expected['original']),
             'original_green': len(expected['applicable']), 'native_green': len(expected['additional']),
             'reviewed_exclusions': sorted(expected['excluded']),
