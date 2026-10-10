@@ -45,11 +45,19 @@ class SlowP2PInterface(P2PInterface):
 
 class P2PEvict(BitcoinTestFramework):
     def set_test_params(self):
+        self.setup_clean_chain = True
+        self.pocx_synchronized_generation = False
         self.num_nodes = 1
         # The choice of maxconnections=32 results in a maximum of 21 inbound connections
         # (32 - 10 outbound - 1 feeler). 20 inbound peers are protected from eviction:
         # 4 by netgroup, 4 that sent us blocks, 4 that sent us transactions and 8 via lowest ping time
         self.extra_args = [['-maxconnections=32']]
+
+    def setup_network(self):
+        super().setup_network()
+        # Ping-based protection needs real elapsed time. A frozen clock gives
+        # every peer the same minimum ping, making sort ties decide protection.
+        self.setup_pocx_live_clock_funding()
 
     def run_test(self):
         protected_peers = set()  # peers that we expect to be protected from eviction
@@ -66,7 +74,8 @@ class P2PEvict(BitcoinTestFramework):
             tip = int(best_block, 16)
             best_block_time = node.getblock(best_block)['time']
             block = create_pocx_block(node, tip, create_pocx_coinbase(node.getblockcount() + 1), best_block_time + 1)
-            node.setmocktime(block.nTime)
+            assert block.nTime <= int(time.time())
+            assert_equal(node.mocktime, None)
             block_peer.send_blocks_and_test([block], node, success=True)
             protected_peers.add(current_peer)
 

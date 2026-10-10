@@ -12813,18 +12813,19 @@
       "source": "test/functional/p2p_eviction.py",
       "replacement": "test/pocx/functional/p2p_eviction.py",
       "source_sha256": "13372de69468b2a20ed3e4d2f18b2bdb84c4dc76c50b34c7e39a473513423209",
-      "replacement_sha256": "d4370a3d60a8bc527836898453cdb04a45f33d2df9c16c0e9795d6dafdd8b36e",
+      "replacement_sha256": "5053092162b1c8b4b811e501fb8681d1038ee33c62c3d25a4bae27168e7bb58a",
       "assertion_and_method_accounting": {
-        "assert_statements": 1,
-        "assertion_calls": 1,
+        "assert_statements": 2,
+        "assertion_calls": 2,
         "function_names": [
           "on_ping",
           "on_ping",
           "set_test_params",
+          "setup_network",
           "run_test"
         ]
       },
-      "review": "Replace only four block-providing peer protection fixtures with signed real native proofs/10coin coinbases on active parent. Advance observer to actual deadline before the unchanged P2P block acceptance call. Preserve original32connection cap,21inbound/20protected accounting,4 block providers,4 transaction providers, ping-time/netgroup/age selection and exact eviction assertions.",
+      "review": "Use signed native proofs and 10coin coinbases for the four block-providing peers. Bootstrap the original200-block funding layout in the past using the existing independently checked helper, then preserve the real clock for ping measurements and eviction. Require each proof deadline to be in the past and the observer clock to remain real before submission. Preserve every original32connection/21inbound protection precondition,4 block providers,4 transaction providers,8 lowest-ping protections, netgroup/age selection and both exact eviction assertions. Frozen mocktime had collapsed all minimum pings to zero; Clang17/libc++ exposed the resulting sort-tie dependency in both transports.",
       "evidence": "build-pocx-clean/pocx-results-fgwf4s35/results.json",
       "execution_by_transport": {
         "v1": "unverified; prerequisite helper and staging provenance changed",
@@ -12886,6 +12887,18 @@
           "set_test_params",
           "run_test"
         ]
+      },
+      "focused_ci_repair": {
+        "scope": "Clang17/libc++ inherited wallet-disabled configuration only; original baseline retained, only the two failed case/transport rows rerun with unchanged compiled binaries and helpers. Whole-profile reuse validation remains required.",
+        "proof": "artifacts/ci-parity-20261010/nowallet-eviction-repair-check/results.json",
+        "source_delta": [
+          "test/pocx/functional/p2p_eviction.py"
+        ],
+        "passed_transports": [
+          "v1",
+          "v2"
+        ],
+        "full_profile_promoted": false
       }
     },
     "p2p_feefilter.py": {

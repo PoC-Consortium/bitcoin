@@ -61,6 +61,17 @@ execution report, and the first failed envelope remains preserved. The remaining
 optional skips require the separate GCC13 enabled profile, currently queued;
 these results do not establish other compilers or platforms.
 
+The inherited Clang17/libc++ wallet-disabled run exposed a clock error in the
+native eviction fixture: frozen time made every minimum ping zero, so compiler
+sort ties could evict a peer the test marked protected. The adaptation now uses
+the existing historical funding helper and real time for peer traffic. Both
+original eviction assertions remain required. The focused repair passed both
+transports using the unchanged compiled build; only those two failing rows were
+rerun. Evidence is in
+`artifacts/ci-parity-20261010/nowallet-eviction-repair-check/`. Combining that
+proof with the unaffected full-run rows still requires independent verification;
+the original failed envelope remains retained.
+
 ## Coverage preserved
 
 Adapters retain original assertions and meaningful preconditions while replacing
