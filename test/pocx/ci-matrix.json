@@ -3,7 +3,7 @@
   "upstream_revision": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
   "inherited_workflow": {
     "path": ".github/workflows/ci.yml",
-    "sha256": "3baa49659590322fede674c0b1f12a7b4346b8fc1affcdcc18ebbe6f92176e33",
+    "sha256": "0faba4651593cda133121fbfc2d31edc32084be95872812dac72dbf1e20bb3dd",
     "matches_pinned_upstream": false,
     "events": {
       "pull_request": "",
@@ -15,9 +15,18 @@
           "**"
         ]
       },
-      "workflow_dispatch": ""
+      "workflow_dispatch": {
+        "inputs": {
+          "baseline_only": {
+            "description": "Run only the original Bitcoin unit baseline on Ubuntu",
+            "type": "boolean",
+            "required": false,
+            "default": false
+          }
+        }
+      }
     },
-    "manual_dispatch_scope": "Request the unchanged complete inherited matrix against a prepared branch; configuration alone does not establish execution."
+    "manual_dispatch_scope": "Add opt-in manual baseline_only=false by default. An explicit true workflow_dispatch runs one Ubuntu24 original bitcoin-unit job with two build jobs and retained reports. All nine existing jobs are gated off only for this manual selection; original conditions, steps, matrices, platforms and dependency edges are structurally unchanged for normal/default runs. No required CI configuration removed and no hosted execution inferred."
   },
   "latest_published_run": {
     "conclusion": "failure",

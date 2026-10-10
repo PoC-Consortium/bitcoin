@@ -5,6 +5,12 @@
 name: CI
 on:
   workflow_dispatch:
+    inputs:
+      baseline_only:
+        description: 'Run only the original Bitcoin unit baseline on Ubuntu'
+        type: boolean
+        required: false
+        default: false
   # See: https://docs.github.com/en/actions/writing-workflows/choosing-when-your-workflow-runs/events-that-trigger-workflows#pull_request.
   pull_request:
   # See: https://docs.github.com/en/actions/writing-workflows/choosing-when-your-workflow-runs/events-that-trigger-workflows#push.
@@ -29,7 +35,36 @@ defaults:
     shell: bash
 
 jobs:
+  bitcoin-baseline:
+    name: 'Original Bitcoin unit baseline only'
+    if: github.event_name == 'workflow_dispatch' && inputs.baseline_only
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install the standard unit profile prerequisites
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential cmake ninja-build pkgconf libevent-dev libboost-dev libsqlite3-dev capnproto libcapnp-dev python3-venv
+          python3 -m venv .ci-venv
+          .ci-venv/bin/pip install pycapnp==2.2.4
+      - name: Build and verify the original Bitcoin unit profile
+        run: .ci-venv/bin/python test/pocx/ci.py --profile bitcoin-unit --jobs 2
+      - name: Retain baseline reports and logs
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: hosted-bitcoin-unit-baseline
+          path: |
+            build-ci-bitcoin-unit/ci-results-*/
+            build-ci-bitcoin-unit/bitcoin-unit-*/
+            build-ci-bitcoin-unit/Testing/
+          if-no-files-found: error
+
   runners:
+    if: ${{ (github.event_name != 'workflow_dispatch' || !inputs.baseline_only) }}
     name: '[meta] determine runners'
     runs-on: ubuntu-slim
     outputs:
@@ -61,7 +96,7 @@ jobs:
     runs-on: ${{ needs.runners.outputs.provider == 'warp' && 'warp-ubuntu-latest-x64-8x' || 'ubuntu-latest' }}
     env:
       TEST_RUNNER_PORT_MIN: "14000"  # Use a larger port range to avoid colliding with other CI services.
-    if: github.event_name == 'pull_request' && github.event.pull_request.commits != 1
+    if: ${{ (github.event_name != 'workflow_dispatch' || !inputs.baseline_only) && (github.event_name == 'pull_request' && github.event.pull_request.commits != 1) }}
     timeout-minutes: 360  # Use maximum time, see https://docs.github.com/en/actions/writing-workflows/workflow-syntax-for-github-actions#jobsjob_idtimeout-minutes.
     steps:
       - name: Determine fetch depth
@@ -144,7 +179,7 @@ jobs:
     # one for the branch push and one for the pull request.
     # This can be avoided by setting SKIP_BRANCH_PUSH=true as a custom env variable
     # in Github repository settings.
-    if: ${{ vars.SKIP_BRANCH_PUSH != 'true' || github.event_name == 'pull_request' }}
+    if: ${{ (github.event_name != 'workflow_dispatch' || !inputs.baseline_only) && (vars.SKIP_BRANCH_PUSH != 'true' || github.event_name == 'pull_request') }}
 
     timeout-minutes: 120
 
@@ -232,7 +267,7 @@ jobs:
     name: ${{ matrix.job-name }}
     runs-on: windows-2025-vs2026
 
-    if: ${{ vars.SKIP_BRANCH_PUSH != 'true' || github.event_name == 'pull_request' }}
+    if: ${{ (github.event_name != 'workflow_dispatch' || !inputs.baseline_only) && (vars.SKIP_BRANCH_PUSH != 'true' || github.event_name == 'pull_request') }}
 
     env:
       PYTHONUTF8: 1
@@ -324,6 +359,7 @@ jobs:
           if-no-files-found: warn
 
   record-frozen-commit:
+    if: ${{ (github.event_name != 'workflow_dispatch' || !inputs.baseline_only) }}
     # Record frozen commit, so that the native tests on cross-builds can run on
     # the exact same commit id of the build.
     name: '[meta] record frozen commit'
@@ -341,7 +377,7 @@ jobs:
     name: 'Windows-cross to x86_64, ${{ matrix.crt }}'
     needs: [runners, record-frozen-commit]
     runs-on: ${{ needs.runners.outputs.provider == 'warp' && 'warp-ubuntu-latest-x64-4x' || 'ubuntu-latest' }}
-    if: ${{ vars.SKIP_BRANCH_PUSH != 'true' || github.event_name == 'pull_request' }}
+    if: ${{ (github.event_name != 'workflow_dispatch' || !inputs.baseline_only) && (vars.SKIP_BRANCH_PUSH != 'true' || github.event_name == 'pull_request') }}
 
     strategy:
       fail-fast: false
@@ -410,6 +446,7 @@ jobs:
           if-no-files-found: error
 
   windows-native-test:
+    if: ${{ (github.event_name != 'workflow_dispatch' || !inputs.baseline_only) }}
     name: 'Windows, ${{ matrix.crt }}, test cross-built'
     runs-on: windows-2022
     needs: [windows-cross, record-frozen-commit]
@@ -482,7 +519,7 @@ jobs:
     name: ${{ matrix.name }}
     needs: runners
     runs-on: ${{ needs.runners.outputs.provider == 'warp' && matrix.warp-runner || matrix.fallback-runner }}
-    if: ${{ vars.SKIP_BRANCH_PUSH != 'true' || github.event_name == 'pull_request' }}
+    if: ${{ (github.event_name != 'workflow_dispatch' || !inputs.baseline_only) && (vars.SKIP_BRANCH_PUSH != 'true' || github.event_name == 'pull_request') }}
     timeout-minutes: ${{ matrix.timeout-minutes }}
 
     env:
@@ -628,7 +665,7 @@ jobs:
     name: 'lint'
     needs: runners
     runs-on: ${{ needs.runners.outputs.provider == 'warp' && 'warp-ubuntu-latest-x64-2x' || 'ubuntu-latest' }}
-    if: ${{ vars.SKIP_BRANCH_PUSH != 'true' || github.event_name == 'pull_request' }}
+    if: ${{ (github.event_name != 'workflow_dispatch' || !inputs.baseline_only) && (vars.SKIP_BRANCH_PUSH != 'true' || github.event_name == 'pull_request') }}
     timeout-minutes: 20
     env:
       CONTAINER_NAME: "bitcoin-linter"

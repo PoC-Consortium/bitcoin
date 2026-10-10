@@ -504,3 +504,11 @@ USDT tests require root, so the hosted revision step runs with that prerequisite
 Published reports have readable artifact permissions after root execution. This
 does not authorize running that elevated CI recipe locally. Actual ancestor CI,
 BPF execution and artifact upload remain unverified.
+
+For a limited hosted baseline, dispatch `ci.yml` with `baseline_only=true`.
+This runs one Ubuntu24 original `bitcoin-unit` job with two build jobs and
+uploads the actual unit/auxiliary reports and logs. It does not launch the
+inherited matrices or PoCX jobs. The option defaults to false; ordinary pushes,
+pull requests and default manual dispatch preserve all existing CI coverage.
+A successful limited run proves only that original unit configuration, not
+Qt, kernel, functional, sanitizer or other-platform coverage.

@@ -4,7 +4,7 @@
   "unchanged_upstream_recipe": ".github/ci-windows-cross.py",
   "source_sha256": {
     ".github/ci-windows-cross.py": "3d67e51113cb3edd9c24a6714d8393510c7b5d8d6a7bb8fed43a6911efd3fcc3",
-    ".github/workflows/ci.yml": "3baa49659590322fede674c0b1f12a7b4346b8fc1affcdcc18ebbe6f92176e33",
+    ".github/workflows/ci.yml": "0faba4651593cda133121fbfc2d31edc32084be95872812dac72dbf1e20bb3dd",
     "ci/test/00_setup_env_win64.sh": "1354e7e29c227f8a5255022b93377c0477ba233d0fe78cbc0f6ba9fcfb4d44d0",
     "ci/test/00_setup_env_win64_msvcrt.sh": "5870e8ebc1618952d45794038e7dc9eadd593f0a23c878ee2463349f521936fa",
     "ci/test/02_run_container.py": "e7d2b69b43a98542de3042393bcb1d80ceaf293fbbb0a33cf016be14f279a2d6",
@@ -37,7 +37,7 @@
     "test/pocx/test_artifact_functional_view.py": "e8e9b697547cc53897e8bb34349d7ab4b388e7eac47c59ac842e5fa262a3ed76",
     "test/pocx/test_cross_kernel.py": "ee0e05522f27143d00dcb40c306cefaa3f0e9a202e292cb9492b85ce95a6d51d",
     "test/pocx/test_cross_unit.py": "660a91fe0aac7519b7a4c5bc344bc2a8197cac5429ac76379353d8c7b68cebe1",
-    "test/pocx/test_inherited_ci.py": "f98d6295b4f20c9ba6aa60864bf66bc8430616dc1408fc13e82dd7b9fd4b886e",
+    "test/pocx/test_inherited_ci.py": "b02e1c32759e324e0e81c0de9d48a3b9f6bcc1adcc6b53b5238e6d817afa0d18",
     "test/pocx/test_processor_configuration.py": "c1fe1235977991aeddae5d458fd4a031d86e94318475e7569bf6ba9ed5a840b6",
     "test/pocx/test_qt_infrastructure.py": "0deaf023534f7c643e1cce79e494b46c077c62fc7c04628d447756df2f20c24f",
     "test/pocx/test_rpc_coverage.py": "c632fc4ca500715b69f76a7ee61a5ce0165d107a857a9fa0baf66704d3389e83",
@@ -73,13 +73,13 @@
   ],
   "actual_windows_cases_executed": 0,
   "unix_makefiles_evidence_review": "The shared build evidence collector now supports the unmodified inherited Unix Makefiles configuration, binding root and recursive make rules, target flags/dependencies/link commands, CTest registrations and built binaries. Missing root graphs and changed inputs fail. Existing Ninja and Visual Studio branches are unchanged; this is evidence-infrastructure support, not target-platform runtime verification.",
-  "shared_workflow_review": "Compared against the previously reviewed a175541176185ded6cb1736287532a913ed2db54 workflow: adds manual dispatch, replaces the Linux ASAN environment mutation with an owned tracing wrapper, and installs matching headers for eight Linux USDT recipes. Windows producer/consumer jobs, matrices, commands, runtime assertions and artifact identities are unchanged. Actual hosted and Windows runtime remains unverified.",
+  "shared_workflow_review": "Add opt-in manual baseline_only=false by default. An explicit true workflow_dispatch runs one Ubuntu24 original bitcoin-unit job with two build jobs and retained reports. All nine existing jobs are gated off only for this manual selection; original conditions, steps, matrices, platforms and dependency edges are structurally unchanged for normal/default runs. No required CI configuration removed and no hosted execution inferred.",
   "shared_helper_updates_review": {
     ".github/workflows/ci.yml": {
-      "previous_reviewed_revision": "a175541176185ded6cb1736287532a913ed2db54",
-      "previous_sha256": "43e7258aab16605c98d91fa5a1100adb6b3c47d00c52851be79245fb42e2a52f",
-      "sha256": "3baa49659590322fede674c0b1f12a7b4346b8fc1affcdcc18ebbe6f92176e33",
-      "review": "Compared to a175541: manual dispatch and Linux tracing/header provisioning only. Windows job matrices, commands and artifact identities are unchanged."
+      "previous_reviewed_revision": "43b023c7e9e7f875415f14dfd9c3eede1ee4dc72",
+      "previous_sha256": "3baa49659590322fede674c0b1f12a7b4346b8fc1affcdcc18ebbe6f92176e33",
+      "sha256": "0faba4651593cda133121fbfc2d31edc32084be95872812dac72dbf1e20bb3dd",
+      "review": "Add opt-in manual baseline_only=false by default. An explicit true workflow_dispatch runs one Ubuntu24 original bitcoin-unit job with two build jobs and retained reports. All nine existing jobs are gated off only for this manual selection; original conditions, steps, matrices, platforms and dependency edges are structurally unchanged for normal/default runs. No required CI configuration removed and no hosted execution inferred."
     },
     "ci/test/02_run_container.py": {
       "previous_reviewed_revision": "a175541176185ded6cb1736287532a913ed2db54",

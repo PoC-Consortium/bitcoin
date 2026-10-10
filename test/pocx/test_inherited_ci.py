@@ -26,6 +26,25 @@ from common import ROOT
 
 
 class InheritedTest(unittest.TestCase):
+    def test_manual_baseline_dispatch_is_single_job_and_default_matrix_remains_enabled(self):
+        workflow = (ROOT/'.github/workflows/ci.yml').read_text()
+        header, jobs = workflow.split('\njobs:\n', 1)
+        self.assertRegex(header, r'baseline_only:\n(?:[^\n]*\n)*?        default: false')
+        self.assertNotIn('    if:', header)
+        blocks = re.split(r'(?=^  [a-z][a-z0-9-]*:\n)', jobs, flags=re.MULTILINE)
+        blocks = {block.split(':',1)[0].strip(): block for block in blocks if block.strip()}
+        baseline = blocks.pop('bitcoin-baseline')
+        self.assertIn("if: github.event_name == 'workflow_dispatch' && inputs.baseline_only", baseline)
+        self.assertIn('--profile bitcoin-unit --jobs 2', baseline)
+        self.assertIn('if: always()', baseline)
+        self.assertNotIn('matrix:', baseline)
+        self.assertEqual(set(blocks), {'runners','test-each-commit','macos-native-arm64',
+            'windows-native-dll','record-frozen-commit','windows-cross','windows-native-test','ci-matrix','lint'})
+        for name, block in blocks.items():
+            condition = re.search(r'^    if: (.+)$', block, re.MULTILINE)
+            self.assertIsNotNone(condition, name)
+            self.assertIn("(github.event_name != 'workflow_dispatch' || !inputs.baseline_only)", condition[1])
+
     def env(self):
         return {'BASE_ROOT_DIR': str(ROOT), 'BASE_SCRATCH_DIR': str(ROOT/'build-inherited-fixture'),
                 'BASE_OUTDIR': str(ROOT/'build-inherited-fixture/out'), 'HOST': 'x86_64-pc-linux-gnu',

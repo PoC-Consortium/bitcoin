@@ -4,7 +4,7 @@
   "unchanged_upstream_recipe": ".github/ci-windows.py",
   "source_sha256": {
     ".github/ci-windows.py": "9cec268ddaf98292b2067ae07ff99e8290a6e1a2e3a97aac9814c6642542e27b",
-    ".github/workflows/ci.yml": "3baa49659590322fede674c0b1f12a7b4346b8fc1affcdcc18ebbe6f92176e33",
+    ".github/workflows/ci.yml": "0faba4651593cda133121fbfc2d31edc32084be95872812dac72dbf1e20bb3dd",
     "test/pocx/build_configuration.py": "c9df217b325f1e3dfd8cd14e002f542bd78aa084b410e8f3b18d18a261a36456",
     "test/pocx/ci_evidence.py": "8f0c10ed4d1f455a940e8787c655b5fc20c35622d7ff1bbb744f79afb2dc1243",
     "test/pocx/inherited_ci.py": "960d8a89bb82d651d4d2d5c497f1c680f3753cda727743a917f717027a167832",
@@ -36,13 +36,13 @@
   "cross_artifact_consumers": "pending; this driver requires a native Visual Studio build tree",
   "windows_functional_dispatch_review": "Keep the unchanged upstream runner for all original variants; separately execute the ancient-release UTXO case in an ASCII-only directory in both transports on Windows. Wallet multiwallet variants remain required. Disabled benchmark builds preserve the source-guarded unexpanded case; enabled builds require actual listing. Pin bytecode and previous-release environment behavior; retain elapsed time and full raw logs. Callback verification is infrastructure only, not hosted or Windows execution.",
   "unix_makefiles_evidence_review": "The shared build evidence collector now supports the unmodified inherited Unix Makefiles configuration, binding root and recursive make rules, target flags/dependencies/link commands, CTest registrations and built binaries. Missing root graphs and changed inputs fail. Existing Ninja and Visual Studio branches are unchanged; this is evidence-infrastructure support, not target-platform runtime verification.",
-  "shared_workflow_review": "Compared against the previously reviewed a175541176185ded6cb1736287532a913ed2db54 workflow: adds manual dispatch, replaces the Linux ASAN environment mutation with an owned tracing wrapper, and installs matching headers for eight Linux USDT recipes. Windows producer/consumer jobs, matrices, commands, runtime assertions and artifact identities are unchanged. Actual hosted and Windows runtime remains unverified.",
+  "shared_workflow_review": "Add opt-in manual baseline_only=false by default. An explicit true workflow_dispatch runs one Ubuntu24 original bitcoin-unit job with two build jobs and retained reports. All nine existing jobs are gated off only for this manual selection; original conditions, steps, matrices, platforms and dependency edges are structurally unchanged for normal/default runs. No required CI configuration removed and no hosted execution inferred.",
   "shared_helper_updates_review": {
     ".github/workflows/ci.yml": {
-      "previous_reviewed_revision": "a175541176185ded6cb1736287532a913ed2db54",
-      "previous_sha256": "43e7258aab16605c98d91fa5a1100adb6b3c47d00c52851be79245fb42e2a52f",
-      "sha256": "3baa49659590322fede674c0b1f12a7b4346b8fc1affcdcc18ebbe6f92176e33",
-      "review": "Compared to a175541: manual dispatch and Linux tracing/header provisioning only. Windows job matrices, commands and artifact identities are unchanged."
+      "previous_reviewed_revision": "43b023c7e9e7f875415f14dfd9c3eede1ee4dc72",
+      "previous_sha256": "3baa49659590322fede674c0b1f12a7b4346b8fc1affcdcc18ebbe6f92176e33",
+      "sha256": "0faba4651593cda133121fbfc2d31edc32084be95872812dac72dbf1e20bb3dd",
+      "review": "Add opt-in manual baseline_only=false by default. An explicit true workflow_dispatch runs one Ubuntu24 original bitcoin-unit job with two build jobs and retained reports. All nine existing jobs are gated off only for this manual selection; original conditions, steps, matrices, platforms and dependency edges are structurally unchanged for normal/default runs. No required CI configuration removed and no hosted execution inferred."
     },
     "test/pocx/ci_evidence.py": {
       "previous_reviewed_revision": "a175541176185ded6cb1736287532a913ed2db54",
