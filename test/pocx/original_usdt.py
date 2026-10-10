@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # Copyright (c) 2026 The Bitcoin PoCX developers
 # Distributed under the MIT software license; see COPYING.
-"""Stage reviewed original i686 USDT imports without editing original tests/builds."""
+"""Stage reviewed BCC compatibility imports without editing original tests/builds."""
 import ast
 import configparser
 import json
@@ -9,11 +9,13 @@ from pathlib import Path
 import shutil
 
 from common import ROOT, sha256
+from framework.bcc_headers import kernel_header_flags
 
 TESTS = {'interface_usdt_' + name + '.py' for name in
          ('coinselection', 'mempool', 'net', 'utxocache', 'validation')}
 REVIEW = 'test/pocx/bitcoin_baseline/usdt/review.json'
 HELPER = 'test/pocx/framework/bpf_abi.py'
+HEADERS = 'test/pocx/framework/bcc_headers.py'
 
 
 def required(binary, options):
@@ -24,7 +26,8 @@ def required(binary, options):
     if len(header) != 20 or header[:4] != b'\x7fELF' or header[4:6] not in (b'\x01\x01', b'\x02\x01'):
         raise ValueError('Expected a Linux little-endian ELF tracing executable')
     if header[4] == 2:
-        return False
+        import bcc
+        return bool(kernel_header_flags(getattr(bcc, '__version__', None)))
     if int.from_bytes(header[18:20], 'little') != 3:
         raise ValueError('Only the reviewed i686 original tracing adapter is supported')
     return True
@@ -32,7 +35,8 @@ def required(binary, options):
 
 def review(root, owned_root):
     record = json.loads((owned_root / REVIEW).read_text())
-    if set(record['tests']) != {'test/functional/' + name for name in TESTS} or set(record['helpers']) != {HELPER}:
+    if (set(record['tests']) != {'test/functional/' + name for name in TESTS} or
+            set(record['helpers']) != {HELPER, HEADERS}):
         raise ValueError('Incomplete original USDT adaptation review')
     sources = {REVIEW: sha256(owned_root / REVIEW)}
     for relative, expected in record['helpers'].items():
@@ -74,7 +78,8 @@ def stage(build, output, *, root=ROOT, owned_root=None):
     shutil.copytree(root / 'test/functional', tests, ignore=shutil.ignore_patterns('__pycache__', '*.pyc'))
     for original, row in record['tests'].items():
         shutil.copyfile(owned_root / row['replacement'], tests / Path(original).name)
-    shutil.copyfile(owned_root / HELPER, tests / 'test_framework/bpf_abi.py')
+    for relative in record['helpers']:
+        shutil.copyfile(owned_root / relative, tests / 'test_framework' / Path(relative).name)
     for name in ('bin', 'lib'):
         (view / name).symlink_to(build / name, target_is_directory=True)
     config = configparser.ConfigParser()
@@ -107,7 +112,8 @@ def verify(view, build, *, root=ROOT, owned_root=None):
     expected = dict(proof['original_sources'])
     for original, row in record['tests'].items():
         expected[Path(original).name] = row['replacement_sha256']
-    expected['test_framework/bpf_abi.py'] = owned_sources[HELPER]
+    for relative in record['helpers']:
+        expected['test_framework/' + Path(relative).name] = owned_sources[relative]
     if proof['files'] != expected:
         raise ValueError('Unexpected original USDT staged input inventory')
     if any(not (view / name).is_symlink() or (view / name).resolve() != (build / name).resolve()

@@ -12,6 +12,7 @@ import unittest
 from unittest.mock import patch
 
 from common import ROOT
+from framework.bcc_headers import kernel_header_flags
 import original_usdt
 
 
@@ -22,7 +23,11 @@ class Backend:
 
 spec = importlib.util.spec_from_file_location('pocx_bpf_abi_fixture', ROOT / original_usdt.HELPER)
 abi = importlib.util.module_from_spec(spec)
-with patch.dict('sys.modules', {'bcc': SimpleNamespace(BPF=Backend)}):
+headers_spec = importlib.util.spec_from_file_location('pocx_bcc_headers_fixture', ROOT / original_usdt.HEADERS)
+headers = importlib.util.module_from_spec(headers_spec)
+headers_spec.loader.exec_module(headers)
+with patch.dict('sys.modules', {'bcc': SimpleNamespace(BPF=Backend),
+                               'test_framework.bcc_headers': headers}):
     spec.loader.exec_module(abi)
 
 
@@ -49,6 +54,30 @@ PROGRAM = '''int trace_event(struct pt_regs *ctx) {
     return 0;
 }
 '''
+
+
+class BCCHeaderCompatibilityTest(unittest.TestCase):
+    def test_only_verified_old_bcc_kernel_pair_selects_flags(self):
+        environment = {'system': 'Linux', 'machine': 'x86_64', 'release': '6.12.107+deb13-amd64'}
+        expected = ['-U__HAVE_BUILTIN_BSWAP16__', '-U__HAVE_BUILTIN_BSWAP32__',
+                    '-U__HAVE_BUILTIN_BSWAP64__', '-fcf-protection']
+        self.assertEqual(kernel_header_flags('0.18.0', **environment), expected)
+        for version in (None, '0.17.0', '0.18.1', '0.29.1', '0.31.0'):
+            with self.subTest(version=version):
+                self.assertEqual(kernel_header_flags(version, **environment), [])
+        for changes in ({'system': 'Darwin'}, {'machine': 'aarch64'}, {'machine': 'i686'},
+                        {'release': '6.11.9'}, {'release': '6.120.1'}, {'release': '6.13.0'}):
+            with self.subTest(changes=changes):
+                self.assertEqual(kernel_header_flags('0.18.0', **{**environment, **changes}), [])
+
+    def test_backend_preserves_caller_flags_and_diagnostics(self):
+        caller_flags = ['-DVALUE=1', '-Werror']
+        backport = ['-U__HAVE_BUILTIN_BSWAP16__', '-fcf-protection']
+        with patch.object(abi, 'kernel_header_flags', return_value=backport):
+            backend = abi.BPF(text=PROGRAM, cflags=caller_flags, debug=7)
+        self.assertEqual(caller_flags, ['-DVALUE=1', '-Werror'])
+        self.assertEqual(backend.kwargs, {'text': PROGRAM, 'cflags': [*caller_flags, *backport], 'debug': 7})
+        self.assertEqual(backend.pocx_kernel_header_flags, backport)
 
 
 class BPFArgumentWidthTest(unittest.TestCase):
@@ -80,7 +109,11 @@ class BPFArgumentWidthTest(unittest.TestCase):
         self.assertFalse(original_usdt.required(self.binary, {**enabled, 'WITH_USDT': 'OFF'}))
         self.assertFalse(original_usdt.required(self.binary, {**enabled, 'target_system': 'Windows'}))
         self.elf(2, 62)
-        self.assertFalse(original_usdt.required(self.binary, enabled))
+        with patch.dict('sys.modules', {'bcc': SimpleNamespace(__version__='0.31.0')}):
+            self.assertFalse(original_usdt.required(self.binary, enabled))
+        with patch.dict('sys.modules', {'bcc': SimpleNamespace(__version__='0.18.0')}), \
+                patch.object(original_usdt, 'kernel_header_flags', return_value=['-fcf-protection']):
+            self.assertTrue(original_usdt.required(self.binary, enabled))
         self.elf(1, 40)
         with self.assertRaises(ValueError):
             original_usdt.required(self.binary, enabled)
@@ -153,7 +186,7 @@ class OriginalUSDTViewTest(unittest.TestCase):
         (tests / 'test_framework/__init__.py').write_text('')
         self.owned = self.root / 'owned'
         review = json.loads((ROOT / original_usdt.REVIEW).read_text())
-        for name in [original_usdt.REVIEW, original_usdt.HELPER,
+        for name in [original_usdt.REVIEW, *review['helpers'],
                      *(row['replacement'] for row in review['tests'].values())]:
             target = self.owned / name
             target.parent.mkdir(parents=True, exist_ok=True)

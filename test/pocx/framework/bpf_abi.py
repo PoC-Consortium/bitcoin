@@ -7,12 +7,17 @@ The BPF compiler uses the host ABI. A 32-bit target can supply four-byte pointer
 or size_t values to an eight-byte host field. BCC rejects mismatched destination
 sizes. Its generated readers identify the actual argument types. Keep those
 readers, every original event field and every assertion; introduce a correctly
-typed temporary only for i686 targets. Native 64-bit programs pass through intact.
+typed temporary only for i686 targets. Native 64-bit BPF text passes through intact.
+The separately reviewed old-BCC/kernel header backport adjusts compiler flags
+only for its verified environment, without disabling diagnostics.
 """
 from pathlib import Path
 import re
 
+import bcc
 from bcc import BPF as BitcoinBPF
+
+from test_framework.bcc_headers import kernel_header_flags
 
 
 def _code(text):
@@ -105,4 +110,7 @@ def argument_reads(text, contexts):
 class BPF(BitcoinBPF):
     def __init__(self, text=None, **kwargs):
         text, self.pocx_usdt_argument_reads = argument_reads(text, kwargs.get('usdt_contexts', []))
+        self.pocx_kernel_header_flags = kernel_header_flags(getattr(bcc, '__version__', None))
+        if self.pocx_kernel_header_flags:
+            kwargs['cflags'] = [*kwargs.get('cflags', []), *self.pocx_kernel_header_flags]
         super().__init__(text=text, **kwargs)

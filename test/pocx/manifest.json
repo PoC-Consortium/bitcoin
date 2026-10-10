@@ -408,6 +408,7 @@
   "framework_additions": {
     "test_framework/wallet_compatibility.py": "framework/wallet_compatibility.py",
     "test_framework/wallet_migration_fixtures.py": "framework/wallet_migration_fixtures.py",
-    "test_framework/bpf_abi.py": "framework/bpf_abi.py"
+    "test_framework/bpf_abi.py": "framework/bpf_abi.py",
+    "test_framework/bcc_headers.py": "framework/bcc_headers.py"
   }
 }

@@ -734,3 +734,27 @@ checks, 47 inherited controller checks, nine Windows controller checks, the
 affected artifact/previous-release checks, source drift checks and focused pinned
 Python lint passed. Isolated real-BCC canaries additionally verify the 32-bit
 repair and unchanged 64-bit behavior; they do not substitute for domain tests.
+
+The Ubuntu22.04 previous-release profile exposed a separate environment issue:
+its BCC0.18 compiler predefines three byte-swap macros now defined by Linux6.12
+headers, and omits x86 control-flow protection required by `nocf_check`.
+The original runner rejects their compiler warnings on stderr. The owned
+`framework/bcc_headers.py` backports modern BCC's removal of those predefines
+and its `-fcf-protection` setting. It selects only the verified BCC0.18.0,
+Linux6.12, x86_64 host pairing. Warnings remain enabled; other environments
+retain their existing flags. ELF64 BPF source remains byte-identical.
+
+The original private-view mechanism also selects this environment. No original
+script, assertion, daemon, build configuration or previous-release binary is
+changed. An actual old-image compiler probe and the production constructor
+both emit identical BPF instructions with empty stderr. All five affected
+original tracing cases then passed with the inherited512KiB stack and both
+previous-release and coverage options enabled. Retaining452 previous passes
+and two explicit inactive entries gives457 first-transport passes and no
+remaining first-transport failures. The five-case repair retains its expected
+partial-selection RPC coverage failure; the unchanged original full-selection
+RPC coverage passed and remains independently required. The missing full
+second transport is running with strict RPC coverage; the complete baseline
+and native previous-release profile remain unverified. Sixteen BCC/staging
+checks,47 inherited-controller checks, artifact/previous-release fixture
+checks, source drift and focused pinned Python lint passed.

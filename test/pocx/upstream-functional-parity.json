@@ -10884,7 +10884,8 @@
         }
       ],
       "dependencies": {
-        "test/pocx/framework/bpf_abi.py": "efe2cd2d7aa1cad2123a1ac00ff5a5e4723ebeb10c860f8a8f30e9976764acf9"
+        "test/pocx/framework/bpf_abi.py": "5bb74f7e8fb3bdf815defbbc2d35362690a2e09f8898645ced8fbcac60259571",
+        "test/pocx/framework/bcc_headers.py": "54c095668335ee50fdb0b2b4842e21eced9c9b2c175652463937f1be05b786ec"
       }
     },
     "interface_usdt_mempool.py": {
@@ -10963,7 +10964,8 @@
         }
       ],
       "dependencies": {
-        "test/pocx/framework/bpf_abi.py": "efe2cd2d7aa1cad2123a1ac00ff5a5e4723ebeb10c860f8a8f30e9976764acf9"
+        "test/pocx/framework/bpf_abi.py": "5bb74f7e8fb3bdf815defbbc2d35362690a2e09f8898645ced8fbcac60259571",
+        "test/pocx/framework/bcc_headers.py": "54c095668335ee50fdb0b2b4842e21eced9c9b2c175652463937f1be05b786ec"
       }
     },
     "interface_usdt_net.py": {
@@ -11053,7 +11055,8 @@
         }
       ],
       "dependencies": {
-        "test/pocx/framework/bpf_abi.py": "efe2cd2d7aa1cad2123a1ac00ff5a5e4723ebeb10c860f8a8f30e9976764acf9"
+        "test/pocx/framework/bpf_abi.py": "5bb74f7e8fb3bdf815defbbc2d35362690a2e09f8898645ced8fbcac60259571",
+        "test/pocx/framework/bcc_headers.py": "54c095668335ee50fdb0b2b4842e21eced9c9b2c175652463937f1be05b786ec"
       }
     },
     "interface_usdt_utxocache.py": {
@@ -11134,7 +11137,8 @@
         }
       ],
       "dependencies": {
-        "test/pocx/framework/bpf_abi.py": "efe2cd2d7aa1cad2123a1ac00ff5a5e4723ebeb10c860f8a8f30e9976764acf9"
+        "test/pocx/framework/bpf_abi.py": "5bb74f7e8fb3bdf815defbbc2d35362690a2e09f8898645ced8fbcac60259571",
+        "test/pocx/framework/bcc_headers.py": "54c095668335ee50fdb0b2b4842e21eced9c9b2c175652463937f1be05b786ec"
       }
     },
     "interface_usdt_validation.py": {
@@ -11207,7 +11211,8 @@
         }
       ],
       "dependencies": {
-        "test/pocx/framework/bpf_abi.py": "efe2cd2d7aa1cad2123a1ac00ff5a5e4723ebeb10c860f8a8f30e9976764acf9"
+        "test/pocx/framework/bpf_abi.py": "5bb74f7e8fb3bdf815defbbc2d35362690a2e09f8898645ced8fbcac60259571",
+        "test/pocx/framework/bcc_headers.py": "54c095668335ee50fdb0b2b4842e21eced9c9b2c175652463937f1be05b786ec"
       }
     },
     "interface_zmq.py": {
@@ -26126,9 +26131,17 @@
     },
     "test_framework/bpf_abi.py": {
       "source": "test/pocx/framework/bpf_abi.py",
-      "sha256": "efe2cd2d7aa1cad2123a1ac00ff5a5e4723ebeb10c860f8a8f30e9976764acf9",
+      "sha256": "5bb74f7e8fb3bdf815defbbc2d35362690a2e09f8898645ced8fbcac60259571",
+      "dependencies": {
+        "test/pocx/framework/bcc_headers.py": "54c095668335ee50fdb0b2b4842e21eced9c9b2c175652463937f1be05b786ec"
+      },
+      "review": "Separate typed i686 BPF argument reads using actual BCC reader declarations and ELF metadata. Preserve original event fields and read return codes, leave destinations untouched on reader failure, and reject ambiguous callbacks/types. Native64-bit programs pass through byte-identically. No original source edits, scenario changes or assertion waivers. For the separately reviewed BCC0.18/Linux6.12 x86_64 host only, compiler flags backport modern BCC header handling; diagnostics and original BPF text remain intact."
+    },
+    "test_framework/bcc_headers.py": {
+      "source": "test/pocx/framework/bcc_headers.py",
+      "sha256": "54c095668335ee50fdb0b2b4842e21eced9c9b2c175652463937f1be05b786ec",
       "dependencies": {},
-      "review": "Separate typed i686 BPF argument reads using actual BCC reader declarations and ELF metadata. Preserve original event fields and read return codes, leave destinations untouched on reader failure, and reject ambiguous callbacks/types. Native64-bit programs pass through byte-identically. No original source edits, scenario changes or assertion waivers."
+      "review": "Pure bounded environment selector for actual verified old BCC/current x86 kernel headers. No diagnostic suppression. Other versions, platforms and kernel families retain unchanged flags."
     }
   }
 }

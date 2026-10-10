@@ -156,7 +156,7 @@ def check(root):
         if not path.is_file() or digest(path) != record['replacement_sha256']:
             issues.append({'source': replacement or source, 'reason': 'functional consumer changed since assertion and precondition parity review'})
         required_dependencies = {
-            **{test: {'test/pocx/framework/bpf_abi.py'} for test in (
+            **{test: {'test/pocx/framework/bpf_abi.py', 'test/pocx/framework/bcc_headers.py'} for test in (
                 'interface_usdt_coinselection.py', 'interface_usdt_mempool.py',
                 'interface_usdt_net.py', 'interface_usdt_utxocache.py',
                 'interface_usdt_validation.py')},

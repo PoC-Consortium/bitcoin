@@ -1,5 +1,5 @@
 {
-  "scope": "Original i686 USDT BPF host/target argument-width compatibility, no original source edits or assertion changes.",
+  "scope": "Original USDT i686 argument widths and verified BCC 0.18/Linux6.12 x86 kernel header flags; original sources, BPF text on ELF64 and assertions preserved.",
   "tests": {
     "test/functional/interface_usdt_coinselection.py": {
       "upstream_sha256": "83b8ca69d1326d6a09d364d1683f0cdd51c93321c16811f38cf09b2881d88598",
@@ -33,6 +33,12 @@
     }
   },
   "helpers": {
-    "test/pocx/framework/bpf_abi.py": "efe2cd2d7aa1cad2123a1ac00ff5a5e4723ebeb10c860f8a8f30e9976764acf9"
+    "test/pocx/framework/bpf_abi.py": "5bb74f7e8fb3bdf815defbbc2d35362690a2e09f8898645ced8fbcac60259571",
+    "test/pocx/framework/bcc_headers.py": "54c095668335ee50fdb0b2b4842e21eced9c9b2c175652463937f1be05b786ec"
+  },
+  "header_flag_backport": {
+    "selection": "BCC0.18.0, Linux6.12, x86_64 host only",
+    "diagnostics": "No warnings disabled; remove obsolete byte-swap predefines and enable control-flow protection as modern upstream BCC does.",
+    "review": "Actual old-image compiler canary emits identical BPF instructions with empty stderr. Domain cases require their own runtime verification."
   }
 }
