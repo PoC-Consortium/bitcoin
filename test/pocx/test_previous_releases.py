@@ -13,6 +13,7 @@ from copy import deepcopy
 from decimal import Decimal
 from pathlib import Path
 import json
+from importlib import import_module
 import sys
 import sqlite3
 import tempfile
@@ -43,24 +44,47 @@ else:
     with patch('stage.subprocess.check_output',return_value='source-only-infrastructure-fixture'):
         staged,_,_=stage(build)
 sys.path.insert(0,str(staged))
-from test_framework.bitcoin_messages import COutPoint, CTransaction, CTxIn, CTxOut
-from test_framework.bitcoin_test_node import TestNode as BitcoinTestNode
-from test_framework.blocktools import bitcoin_block_with_shared_coinbase, bitcoin_block_with_shared_transactions
-from test_framework.messages import uint256_from_compact
-from test_framework.test_framework import BitcoinTestFramework
-from test_framework.test_node import TestNode
-from test_framework.util import initialize_datadir
-from feature_coinstatsindex_compatibility import expected_bitcoin_stats
-from test_framework.bitcoin_messages import ser_compact_size, ser_string
-from test_framework.segwit_addr import encode_segwit_address
-from test_framework.wallet_compatibility import (
-    BITCOIN_GENESIS, POCX_GENESIS, WalletChainContext,
-    read_wallet_dump, rebase_wallet_file, reencode_regtest_address, write_wallet_dump,
-)
-from test_framework.wallet_migration_fixtures import (
-    MigrationWalletRPC, PairedMigrationWallets, cap_shared_coinbase,
-    rpc_descriptor, shared_regtest_subsidy, wallet_rpc_parameters, wallet_rpc_result,
-)
+_test_framework_bitcoin_messages = import_module('test_framework.bitcoin_messages')
+COutPoint = _test_framework_bitcoin_messages.COutPoint
+CTransaction = _test_framework_bitcoin_messages.CTransaction
+CTxIn = _test_framework_bitcoin_messages.CTxIn
+CTxOut = _test_framework_bitcoin_messages.CTxOut
+_test_framework_bitcoin_test_node = import_module('test_framework.bitcoin_test_node')
+BitcoinTestNode = _test_framework_bitcoin_test_node.TestNode
+_test_framework_blocktools = import_module('test_framework.blocktools')
+bitcoin_block_with_shared_coinbase = _test_framework_blocktools.bitcoin_block_with_shared_coinbase
+bitcoin_block_with_shared_transactions = _test_framework_blocktools.bitcoin_block_with_shared_transactions
+_test_framework_messages = import_module('test_framework.messages')
+uint256_from_compact = _test_framework_messages.uint256_from_compact
+_test_framework_test_framework = import_module('test_framework.test_framework')
+BitcoinTestFramework = _test_framework_test_framework.BitcoinTestFramework
+_test_framework_test_node = import_module('test_framework.test_node')
+TestNode = _test_framework_test_node.TestNode
+_test_framework_util = import_module('test_framework.util')
+initialize_datadir = _test_framework_util.initialize_datadir
+_feature_coinstatsindex_compatibility = import_module('feature_coinstatsindex_compatibility')
+expected_bitcoin_stats = _feature_coinstatsindex_compatibility.expected_bitcoin_stats
+_test_framework_bitcoin_messages = import_module('test_framework.bitcoin_messages')
+ser_compact_size = _test_framework_bitcoin_messages.ser_compact_size
+ser_string = _test_framework_bitcoin_messages.ser_string
+_test_framework_segwit_addr = import_module('test_framework.segwit_addr')
+encode_segwit_address = _test_framework_segwit_addr.encode_segwit_address
+_test_framework_wallet_compatibility = import_module('test_framework.wallet_compatibility')
+BITCOIN_GENESIS = _test_framework_wallet_compatibility.BITCOIN_GENESIS
+POCX_GENESIS = _test_framework_wallet_compatibility.POCX_GENESIS
+WalletChainContext = _test_framework_wallet_compatibility.WalletChainContext
+read_wallet_dump = _test_framework_wallet_compatibility.read_wallet_dump
+rebase_wallet_file = _test_framework_wallet_compatibility.rebase_wallet_file
+reencode_regtest_address = _test_framework_wallet_compatibility.reencode_regtest_address
+write_wallet_dump = _test_framework_wallet_compatibility.write_wallet_dump
+_test_framework_wallet_migration_fixtures = import_module('test_framework.wallet_migration_fixtures')
+MigrationWalletRPC = _test_framework_wallet_migration_fixtures.MigrationWalletRPC
+PairedMigrationWallets = _test_framework_wallet_migration_fixtures.PairedMigrationWallets
+cap_shared_coinbase = _test_framework_wallet_migration_fixtures.cap_shared_coinbase
+rpc_descriptor = _test_framework_wallet_migration_fixtures.rpc_descriptor
+shared_regtest_subsidy = _test_framework_wallet_migration_fixtures.shared_regtest_subsidy
+wallet_rpc_parameters = _test_framework_wallet_migration_fixtures.wallet_rpc_parameters
+wallet_rpc_result = _test_framework_wallet_migration_fixtures.wallet_rpc_result
 
 
 class FixtureFramework(BitcoinTestFramework):
