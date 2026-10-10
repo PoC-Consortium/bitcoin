@@ -13,6 +13,18 @@ job retains its compiler, unsigned-char checks and RPC coverage settings. These
 profiles require actual hosted build and runtime evidence; restoring a matrix
 entry does not establish a passing result.
 
+The 2026-10-10 local i686 Bitcoin-OFF build completed with the inherited
+Debian trixie/Clang19 environment, 32-bit dependencies, Debug configuration,
+Boost safe mode, IPC disabled and the upstream512KiB test stack. Its actual
+CTest entrypoint passed737 original unit cases,9 Qt methods,16 kernel cases
+and5 auxiliary executables. Two unit cases require `DEBUG_LOCKORDER` and are
+inactive in this configuration. The independent checkpoint in
+`artifacts/ci-parity-20261010/inherited-i686-original-ctest-checkpoint/`
+revalidates source/build identities, commands, raw reports and individual cases
+without replaying compilation or tests. Original functional execution remains
+incomplete and must pass before the matching PoCX profile starts. This checkpoint
+does not establish a full i686 pair or hosted result.
+
 The previous-release profile runs RPC coverage separately for each transport.
 Bitcoin uses its unchanged runner; PoCX retains raw coverage files and invokes
 the unchanged upstream coverage evaluator. Missing references or uncovered RPC
