@@ -201,6 +201,29 @@ case "$CI_CONTAINER_CAP" in *--privileged*) ;; *) exit 23 ;; esac
         (root / 'CMakeCache.txt').write_text('CMAKE_GENERATOR:INTERNAL=unknown\n')
         with self.assertRaisesRegex(ValueError, 'unsupported CI build generator'):build_snapshot(root)
 
+    def test_unix_makefiles_snapshot_binds_generated_rules_and_target_commands(self):
+        paths = ['CMakeCache.txt', 'test/config.ini', 'Makefile', 'CMakeFiles/Makefile.cmake',
+                 'CMakeFiles/Makefile2', 'src/Makefile', 'src/CMakeFiles/node.dir/build.make',
+                 'src/CMakeFiles/node.dir/flags.make', 'src/CMakeFiles/node.dir/depend.make',
+                 'src/CMakeFiles/node.dir/compiler_depend.make', 'src/CMakeFiles/node.dir/link.txt',
+                 'src/CTestTestfile.cmake', 'bin/test_bitcoin']
+        root = self.files(paths)
+        (root / 'CMakeCache.txt').write_text('CMAKE_GENERATOR:INTERNAL=Unix Makefiles\n')
+        recorded = build_snapshot(root)
+        self.assertEqual(set(recorded), set(paths))
+        for name in paths:
+            path = root / name;before = path.read_bytes()
+            with self.subTest(name=name):
+                path.write_text('changed target input')
+                with self.assertRaises(ValueError):
+                    require_unchanged('Build inputs', recorded, build_snapshot(root))
+                path.write_bytes(before)
+        for name in ('Makefile', 'CMakeFiles/Makefile.cmake', 'CMakeFiles/Makefile2'):
+            path = root / name;before = path.read_bytes();path.unlink()
+            with self.subTest(missing=name), self.assertRaisesRegex(ValueError, 'Missing Unix Makefiles'):
+                build_snapshot(root)
+            path.write_bytes(before)
+
     def test_ci_proof_rejects_green_summary_with_missing_failed_or_changed_steps(self):
         from common import sha256
         root = self.files(['drift.log', 'unit.log', 'auxiliary.log'])

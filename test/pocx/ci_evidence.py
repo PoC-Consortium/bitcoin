@@ -75,6 +75,14 @@ def build_snapshot(build):
         paths.update((build / 'build.ninja', build / 'CMakeFiles/rules.ninja'))
         paths.update(build.glob('*.ninja'))
         paths.update((build / 'CMakeFiles').rglob('*.ninja'))
+    elif generator == 'Unix Makefiles':
+        required = {build / 'Makefile', build / 'CMakeFiles/Makefile.cmake',
+                    build / 'CMakeFiles/Makefile2'}
+        if not all(path.is_file() for path in required):
+            raise ValueError('Missing Unix Makefiles build graph')
+        paths.update(required)
+        for pattern in ('Makefile', '*.make', 'link.txt'):
+            paths.update(build.rglob(pattern))
     elif generator and generator.startswith('Visual Studio '):
         projects = set(build.rglob('*.vcxproj'))
         solutions = set(build.glob('*.sln')) | set(build.glob('*.slnx'))
