@@ -40,6 +40,9 @@ built and verified with the same 278 passes and 17 skips per transport, 78 passi
 infrastructure checks, and 727 original plus 33 native passing unit cases. Its
 source audit, raw reports and logs are in
 `artifacts/functional-checkpoint-20261009/summary.json`.
+Its raw configuration log is stored losslessly as `configure.log.gz`; use
+`gzip -dc configure.log.gz` to read it. `storage.json` binds the compressed
+file to the unchanged uncompressed checksum in the historical summary.
 The Bitcoin baseline is
 `artifacts/functional-bitcoin-fresh-20261009/verification.json`.
 

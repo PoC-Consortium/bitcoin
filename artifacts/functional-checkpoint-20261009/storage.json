@@ -1,0 +1,14 @@
+{
+  "scope": "Lossless storage of an immutable raw configure log. Historical summary bytes and uncompressed evidence checksums unchanged. No test execution or source changes.",
+  "summary_sha256": "e1b034a57ce4ecdb3331c22134829a26f9f82d274753ad378ff6d714b50b9d2b",
+  "storage": {
+    "configure.log": {
+      "path": "configure.log.gz",
+      "encoding": "gzip",
+      "stored_sha256": "4e30f34d61ee1afa7c4b01c6f08a3cd4e7f88a637825c49f6ac630187f014cd9",
+      "uncompressed_sha256": "77ca0fe2a8a0069c6d8474d6d8655c1226263d2ebd91800875ff7cd043784487",
+      "uncompressed_bytes": 16362,
+      "stored_bytes": 3380
+    }
+  }
+}
