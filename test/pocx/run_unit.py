@@ -58,7 +58,7 @@ def main():
         issues = unit_parity.check(ROOT)
         if issues:
             raise ValueError(f'Unit baseline parity review failed: {issues}')
-        configuration, _ = unit_matrix.configuration(build)
+        configuration, _ = unit_matrix.configuration(build, selected_config)
         expected = unit_matrix.inventory(ROOT, configuration)
         unit_matrix.runtime_inventory(binary, expected['expected'])
     results = Path(tempfile.mkdtemp(prefix='pocx-unit-', dir=build))
@@ -69,7 +69,7 @@ def main():
     helpers = {source: sha256(ROOT / source) for source in ('test/pocx/run_unit.py',
         'test/pocx/unit_matrix.py', 'test/pocx/unit_parity.py', 'test/pocx/common.py', 'test/pocx/unit_build.py',
         'test/pocx/build_configuration.py')}
-    _, system_file = unit_matrix.configuration(build)
+    _, system_file = unit_matrix.configuration(build, selected_config)
     initial_system_sha256 = sha256(system_file)
     selected = sorted(discovered) if args.all else sorted(set(args.suite)) if args.suite else REQUIRED
     if not set(selected).issubset(discovered):

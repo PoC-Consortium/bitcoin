@@ -10,6 +10,7 @@ import subprocess
 import xml.etree.ElementTree as ET
 
 BASELINE_SHA256 = '3775a5ee6d6e8cf268eec4d20265ec28c8e4b608b7edeb8b590d03ae16a3ec15'
+DEBUG_LOCKORDER_CASES = {'sync_tests/double_lock_mutex', 'sync_tests/double_lock_recursive_mutex'}
 EXCLUDED = {'pow_tests/' + name for name in (
     'get_next_work', 'get_next_work_pow_limit', 'get_next_work_lower_limit_actual',
     'get_next_work_upper_limit_actual', 'CheckProofOfWork_test_negative_target',
@@ -75,6 +76,11 @@ def check(root, record=None):
             len(record.get('applicable', [])) != len(applicable)):
         issues.append({'source': 'test/pocx/unit-parity.json', 'reason': 'applicable original unit case removed or duplicated'})
     added = record.get('additional', [])
+    conditional = record.get('configuration_cases', {})
+    if (set(conditional) != DEBUG_LOCKORDER_CASES or
+            any(row.get('source') != 'src/test/sync_tests.cpp' or row.get('condition') != 'DEBUG_LOCKORDER'
+                for row in conditional.values())):
+        issues.append({'source': 'test/pocx/unit-parity.json', 'reason': 'original debug-only case inventory changed'})
     if len(added) != len(set(added)) or set(added) & set(baseline['cases']):
         issues.append({'source': 'test/pocx/unit-parity.json', 'reason': 'invalid additional native unit membership'})
     reviewed = record.get('reviewed_sources', {})

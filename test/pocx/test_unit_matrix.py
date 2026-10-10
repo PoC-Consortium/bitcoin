@@ -15,6 +15,7 @@ import xml.etree.ElementTree as ET
 
 from common import ROOT, sha256, exclusive_lock
 import unit_matrix
+import unit_parity
 import build_configuration
 
 
@@ -177,12 +178,34 @@ set(POCX_UNIT_INPUTS "${CMAKE_CURRENT_SOURCE_DIR}/fixture.cpp")
     def test_simd_and_original_windows_omissions_are_explicit(self):
         reduced = unit_matrix.inventory(ROOT, dict(self.options, avx2_compiled=False,
                                                   target_processor='aarch64'))
-        self.assertEqual(set(reduced['configuration_disabled']), unit_matrix.AVX2_CASES | unit_matrix.SSE2_CASES)
+        self.assertEqual(set(reduced['configuration_disabled']), unit_matrix.AVX2_CASES | unit_matrix.SSE2_CASES | unit_parity.DEBUG_LOCKORDER_CASES)
         for processor in ('x86_64', 'amd64', 'AMD64', 'X86_64'):
             windows = unit_matrix.inventory(ROOT, dict(self.options, target_system='Windows', target_processor=processor))
-            self.assertEqual(set(windows['configuration_disabled']), unit_matrix.WINDOWS_OMISSIONS)
+            self.assertEqual(set(windows['configuration_disabled']), unit_matrix.WINDOWS_OMISSIONS | unit_parity.DEBUG_LOCKORDER_CASES)
             self.assertEqual(len(windows['excluded']), 10)
             self.assertTrue(unit_matrix.SSE2_CASES.issubset(windows['expected']))
+
+    def test_debug_only_original_cases_follow_effective_flags_and_selected_configuration(self):
+        variants = [
+            ({'CMAKE_BUILD_TYPE': 'Release'}, False),
+            ({'CMAKE_BUILD_TYPE': 'Debug'}, True),
+            ({'CMAKE_BUILD_TYPE': 'Release', 'APPEND_CPPFLAGS': '-DDEBUG_LOCKORDER'}, True),
+            ({'CMAKE_BUILD_TYPE': 'Release', 'CMAKE_CXX_FLAGS': '-D DEBUG_LOCKORDER=0'}, True),
+            ({'CMAKE_BUILD_TYPE': 'Debug', 'APPEND_CPPFLAGS': '-UDEBUG_LOCKORDER'}, False),
+            ({'CMAKE_BUILD_TYPE': 'Release', 'APPEND_CPPFLAGS': '-DDEBUG_LOCKORDER', 'APPEND_CXXFLAGS': '-UDEBUG_LOCKORDER'}, False),
+            ({'unit_build_configuration': 'Debug', 'CMAKE_CONFIGURATION_TYPES': 'Debug;Release'}, True),
+            ({'unit_build_configuration': 'Release', 'CMAKE_CONFIGURATION_TYPES': 'Debug;Release'}, False),
+            ({'CMAKE_BUILD_TYPE': 'Release', 'APPEND_CPPFLAGS': '/DDEBUG_LOCKORDER'}, True),
+        ]
+        for changes, enabled in variants:
+            for bitcoin in (True, False):
+                options = dict(self.options, **changes, ENABLE_POCX='OFF' if bitcoin else 'ON')
+                result = unit_matrix.inventory(ROOT, options, bitcoin=bitcoin)
+                with self.subTest(changes=changes, bitcoin=bitcoin):
+                    self.assertEqual(result['original'] & unit_parity.DEBUG_LOCKORDER_CASES, unit_parity.DEBUG_LOCKORDER_CASES)
+                    self.assertEqual(result['expected'] & unit_parity.DEBUG_LOCKORDER_CASES,
+                                     unit_parity.DEBUG_LOCKORDER_CASES if enabled else set())
+                    self.assertEqual(len(result['expected']), (737 if bitcoin else 760) + (2 if enabled else 0))
 
     def test_unknown_configuration_does_not_disable_parity_gate(self):
         for key, value in [('ENABLE_IPC', None), ('WITH_USDT', 'AUTO'),

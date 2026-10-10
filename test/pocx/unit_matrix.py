@@ -10,6 +10,7 @@ import json
 from contextlib import nullcontext
 from pathlib import Path
 import re
+import shlex
 import subprocess
 import xml.etree.ElementTree as ET
 
@@ -34,7 +35,7 @@ WINDOWS_OMISSIONS = {'sock_tests/' + name for name in (
     'send_and_receive', 'wait', 'recv_until_terminator_limit')}
 
 
-def configuration(build):
+def configuration(build, selected_config=None):
     cache = (build / 'CMakeCache.txt').read_text()
     options = build_options(cache)
     files = list((build / 'CMakeFiles').glob('*/CMakeSystem.cmake'))
@@ -48,8 +49,25 @@ def configuration(build):
         return matches[0]
     options.update(target_system=field('CMAKE_SYSTEM_NAME'),
                    target_processor=field('CMAKE_SYSTEM_PROCESSOR'),
+                   unit_build_configuration=selected_config or options.get('CMAKE_BUILD_TYPE', ''),
                    avx2_compiled=bool(re.search(r'^HAVE_AVX2:INTERNAL=(1|ON|TRUE)$', cache, re.M)))
     return options, files[0]
+
+
+def debug_lockorder_enabled(options):
+    selected = options.get('unit_build_configuration', options.get('CMAKE_BUILD_TYPE', ''))
+    enabled = selected.lower() == 'debug'
+    flags = shlex.split(' '.join(options.get(key, '') for key in (
+        'CMAKE_CXX_FLAGS', 'CMAKE_CXX_FLAGS_' + selected.upper(), 'APPEND_CPPFLAGS', 'APPEND_CXXFLAGS')))
+    tokens = iter(flags)
+    for token in tokens:
+        if token in ('-D', '/D', '-U', '/U'):
+            token += next(tokens, '')
+        if re.fullmatch(r'(?:-D|/D)DEBUG_LOCKORDER(?:=.*)?', token):
+            enabled = True
+        elif token in ('-UDEBUG_LOCKORDER', '/UDEBUG_LOCKORDER'):
+            enabled = False
+    return enabled
 
 
 def inventory(root, options, *, bitcoin=False):
@@ -67,13 +85,15 @@ def inventory(root, options, *, bitcoin=False):
         raise ValueError('Unrecorded unit SIMD configuration')
     baseline = json.loads((root / 'test/pocx/unit-baseline.json').read_text())
     review = json.loads((root / 'test/pocx/unit-parity.json').read_text())
-    original = set(baseline['cases'])
+    original = set(baseline['cases']) | set(review['configuration_cases'])
     excluded = set() if bitcoin else set(review['excluded'])
     additional = set() if bitcoin else set(review['additional'])
     disabled = {}
     def omit(cases, reason):
         for case in cases:
             disabled[case] = reason
+    if not debug_lockorder_enabled(options):
+        omit(unit_parity.DEBUG_LOCKORDER_CASES, 'Original cases require DEBUG_LOCKORDER')
     if options['ENABLE_WALLET'] == 'OFF':
         omit({case for case in original if case.split('/')[0] in WALLET_SUITES}, 'ENABLE_WALLET=OFF')
         omit({case for case in additional if case.startswith('pocx_block_builder_tests/')}, 'ENABLE_WALLET=OFF')
@@ -194,7 +214,7 @@ def verify_execution(root, build, result_path, *, bitcoin=False, lock_held=False
     if 'build_configuration' not in report:
         raise ValueError('Missing recorded unit build configuration')
     selected_config = build_configuration.configuration(cache, report['build_configuration'])
-    options, system = configuration(build)
+    options, system = configuration(build, selected_config)
     expected = inventory(root, options, bitcoin=bitcoin)
     binary = build_configuration.executable(build, 'test_bitcoin' if bitcoin else 'test_pocx',
                                             cache, selected_config)

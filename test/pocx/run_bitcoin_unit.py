@@ -31,7 +31,7 @@ def main():
     cache = (build / 'CMakeCache.txt').read_text()
     build_configuration.require_source(cache, ROOT)
     selected_config = build_configuration.configuration(cache, args.config)
-    options, system = unit_matrix.configuration(build)
+    options, system = unit_matrix.configuration(build, selected_config)
     expected = unit_matrix.inventory(ROOT, options, bitcoin=True)
     binary = build_configuration.executable(build, 'test_bitcoin', cache, selected_config)
     lock = exclusive_lock(build / 'pocx-unit.lock')
