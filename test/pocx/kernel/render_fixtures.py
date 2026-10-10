@@ -26,6 +26,7 @@ def render(source, output):
     timestamp, height = struct.unpack_from('<Ii', main, 68)
     if version != 0x20000000 or height != 1:
         raise ValueError('Unexpected fixture version/height')
+    previous = b''
     for index, encoded in enumerate(chain, 1):
         raw = bytes.fromhex(encoded)
         if len(raw) < 287 or struct.unpack_from('<i', raw, 72)[0] != index:

@@ -24,7 +24,7 @@
     "test/pocx/kernel/verify_fixtures.py": "f93ed8f7fbd1e60f4aa837a8f9d20b4bc68bee5977a5c674b026f2df00245b55",
     "test/pocx/vectors/Cargo.lock": "2a959ccaa2c4c3fbddef9b0328e9c21a111ec13739bfc1beb441a194760e3786",
     "src/pocx/test/kernel/fixture_generator.cpp": "f8068cac4ef12f25d3ba326e95837d2b4dc5bb12a2bc5f3e0099af02f3f62067",
-    "test/pocx/kernel/render_fixtures.py": "7f88dc854ac1002b18ca2f6412b01d66b8c220f312db00a2dc3d4b7d3b63ba48",
+    "test/pocx/kernel/render_fixtures.py": "fc4034af16dc364d5c18143dd8e9e8fe7b2392f5e50325498d9b099b3d00ce03",
     "src/pocx/test/kernel/test_kernel.cpp": "cc6dfb7c2e3efa767b9061e62ca9bd8c3704e09fbf222d0d9b71cea5f47cb373",
     "src/pocx/test/kernel/CMakeLists.txt": "be88d68df30ffa911eb34faa18cb001b93dcc3da0d58d0c2e5ff9af8e389df40"
   },
@@ -62,5 +62,12 @@
   "functional_299_amendment_review": "Functional-only native regtest height299 commitment amendment, independently reconstructed from both scenario chains and all snapshot bytes. Bitcoin preprocessed translation unit byte-identical; native preprocessed delta consists only of the two299hash literals. Evidence: artifacts/functional-green-20261009/native-assumeutxo-preprocessing-review.json and native-assumeutxo-vectors.json. All mainnet/testnet/signet/height110/height200 parameters and proof fixture bytes unchanged.",
   "signet_calibration_initialization_review": "Native Signet initializes fPoCXLowCapacityCalibration=false, matching its existing normal-capacity genesis. Independently reproduced wrong regtest target before fix; Bitcoin preprocessed translation unit identical; every existing mainnet/regtest field and fixture byte unchanged. artifacts/functional-green-20261009/signet-calibration-preprocessing-review.json",
   "regtest_kernel_permission_review": "Extract unchanged synthetic quality calculation into wallet/global-free regtest proof.cpp; an explicit default-false consensus permission is enabled only in CRegTestParams. CheckBlockHeader and header batching use passed context parameters in daemon and kernel. Real-proof validation, signatures, compression and future-time checks remain required; production networks retain synthetic rejection. Original Bitcoin preprocessing and kernel baseline are checked separately.",
-  "cross_build_fixture_review": "Cross builds copy the byte-identical independently verified207-block snapshot into the build tree and render with host Python. Native generation remains unchanged; every original/native kernel case and assertion remains required. No target executable runs on the build host."
+  "cross_build_fixture_review": "Cross builds copy the byte-identical independently verified207-block snapshot into the build tree and render with host Python. Native generation remains unchanged; every original/native kernel case and assertion remains required. No target executable runs on the build host.",
+  "renderer_initialization_review": {
+    "previous_sha256": "7f88dc854ac1002b18ca2f6412b01d66b8c220f312db00a2dc3d4b7d3b63ba48",
+    "sha256": "fc4034af16dc364d5c18143dd8e9e8fe7b2392f5e50325498d9b099b3d00ce03",
+    "review": "Initialize the previous-block local before iteration. The first iteration still skips the previous-header comparison; every later iteration retains the same linkage check. The independently verified207-block snapshot and complete generated C++ header are byte-identical. No proof oracle or kernel assertion changes.",
+    "rendered_header_sha256": "e39d24ffee2a6ea9e42ad312b31adcbb6ac97be540301b10a263a79b999bcfe7",
+    "evidence": "artifacts/ci-parity-20261010/lint-kernel-renderer-repair/results.json"
+  }
 }

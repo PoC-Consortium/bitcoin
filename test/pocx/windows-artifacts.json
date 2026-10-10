@@ -22,9 +22,9 @@
     "test/pocx/inherited-ci.json": "403a1678eea706f85d3b5842651fbf5340af8e1ed6bb0f84ee7137b2673ef819",
     "test/pocx/inherited_ci.py": "237ac870e7fe5c67f626a0a65d5fc315a0154044de09839368e55950e71c7f72",
     "test/pocx/inherited_functional.py": "516ca111810bb927e3a54ddcf44d799d5d6e46cd68249bcec4f00d1ffddd9167",
-    "test/pocx/kernel-parity.json": "b463c8e5dfb3eac9b37a23bb3f484e0e4c9d3e6382cffaa5480c23d972707d2c",
+    "test/pocx/kernel-parity.json": "49741d15ef0cb7f26065c6c2a2c34b5b2699b1ccadf0e234863e740a7e19319f",
     "test/pocx/kernel/fixtures.json": "0069f80997408a2a13739afe46775c4a5e2cc799a8b963006fdd30c299a7d35f",
-    "test/pocx/kernel/provenance.json": "1701fd2568d6ad4bcb7b58bb8e7c5f6c19bd9f0a7f32a549b6387e803f8126fc",
+    "test/pocx/kernel/provenance.json": "c9edcefe7f483ae296993c9c409f0a748e52ceff21a5c15462bd0fc475166446",
     "test/pocx/kernel_parity.py": "2fe6a18a37298316ed03e1d8ef892accfdf2933fc0fcc14dfe56108391c73979",
     "test/pocx/manifest.json": "ed725f742d6f48682c397e3a64046ea7ba516cb391c941494e9a077777583576",
     "test/pocx/process_tree.py": "12639a920fa4a656eec4f14ea02c4aaf1fe997cfc18c7df2566e82a1d3ab3f29",
@@ -108,7 +108,7 @@
     "test/pocx/kernel-parity.json": {
       "previous_reviewed_revision": "f8bdd9b2110ec6a1d78700801cafb7947598ac99",
       "previous_sha256": "820c48334050d1c9150fe6e4f15d8fde3703c0370935ec73a0710e6a1a67fd16",
-      "sha256": "6b1186406c49640b390e9d90464b94f41450207a7657fada6148e344d74886fe",
+      "sha256": "49741d15ef0cb7f26065c6c2a2c34b5b2699b1ccadf0e234863e740a7e19319f",
       "review": "Adds reviewed build-environment helper dependencies for subprocess stack isolation; fixed kernel case inventory unchanged."
     },
     "test/pocx/kernel_parity.py": {
