@@ -335,7 +335,17 @@ An independent evidence check binds both CSV inventories, retained logs,
 source/build snapshots and the completed ctest checkpoint without replaying a
 build or test. The immutable original checkpoint is under
 `inherited-nowallet-original-complete-checkpoint/`. Matching native compilation
-started after the original gate passed; native runtime remains unverified.
+started after the original gate passed. Its completed ctest phase now separately
+passes 670 original unit cases (481 unchanged and 189 adapted), 32 native unit
+cases, seven original Qt methods (six unchanged and one adapted), one native Qt
+method, all 16 kernel cases and six auxiliary executables. The 59 original unit
+cases, one native unit case and two original Qt methods inactive in this feature
+configuration remain explicitly accounted for; ten original PoW-only unit cases
+are justified exclusions. No active case failed or skipped. The independent
+`inherited-nowallet-native-ctest-checkpoint/` binds actual case outputs, command
+and artifact hashes, source/build snapshots and runtime inventories without
+replaying tests or builds. Matching native functional execution is still running;
+this ctest checkpoint does not establish a passing whole native profile.
 Raw failures and the environment diagnostic remain under
 `inherited-nowallet-ipv6-diagnostic/` and
 `inherited-nowallet-ci-network-recovery/` in the artifact directory above.
