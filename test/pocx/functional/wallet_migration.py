@@ -1656,7 +1656,11 @@ class WalletMigrationTest(PairedMigrationWallets, BitcoinTestFramework):
         self.restart_node(0, ["-fastprune", "-prune=1", "-nowallet"])
         self.connect_nodes(0, 1)
         self.generate(self.master_node, 450, sync_fun=self.no_op)
-        self.master_node.pruneblockchain(250)
+        # Native headers change the heights at which 64 KiB fast-prune files
+        # roll over. Ask for the maximum safe height so the file containing
+        # the wallet's next block is actually removed; retain the RPC failure
+        # assertion below and the full migration rollback/backup checks.
+        self.master_node.pruneblockchain(self.master_node.getblockcount())
         # Ensure next block to sync is unavailable
         assert_raises_rpc_error(-1, "Block not available (pruned data)", self.master_node.getblock, self.master_node.getblockhash(last_wallet_synced_block + 1))
 
@@ -1679,7 +1683,9 @@ class WalletMigrationTest(PairedMigrationWallets, BitcoinTestFramework):
         self.master_node = self.nodes[0]
         self.old_node = self.nodes[1]
 
-        self.generate(self.master_node, 101)
+        # Match the original 50 BTC mature funding budget with native 10 BTC rewards.
+        self.generate(self.master_node, 105)
+        assert_equal(self.master_node.getbalance(), 50)
 
         # TODO: Test the actual records in the wallet for these tests too. The behavior may be correct, but the data written may not be what we actually want
         self.test_basic()
@@ -1724,7 +1730,7 @@ class WalletMigrationTest(PairedMigrationWallets, BitcoinTestFramework):
         self.test_solvable_no_privs()
         self.test_loading_failure_after_migration()
 
-        # Note: After this test the first 250 blocks of 'master_node' are pruned
+        # Note: After this test the blocks preceding the wallet checkpoint are pruned
         self.unsynced_wallet_on_pruned_node_fails()
 
 if __name__ == '__main__':

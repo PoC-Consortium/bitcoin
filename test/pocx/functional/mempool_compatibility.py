@@ -14,7 +14,7 @@ from io import BytesIO
 
 from test_framework.blocktools import COINBASE_MATURITY, bitcoin_block_with_shared_coinbase
 from test_framework.bitcoin_test_node import TestNode as BitcoinTestNode
-from test_framework.messages import CBlock
+from test_framework.messages import CBlock, COIN
 from test_framework.test_framework import BitcoinTestFramework
 from test_framework.test_node import TestNode
 from test_framework.util import assert_equal
@@ -50,8 +50,17 @@ class MempoolCompatibilityTest(BitcoinTestFramework):
         native_funding_block = CBlock()
         native_funding_block.deserialize(BytesIO(bytes.fromhex(new_node.getblock(native_funding_hash, 0))))
         old_node.setmocktime(new_node.mocktime)
+        # v0.20.1 refuses getblocktemplate without peers, even on regtest.
+        # Build only its first regtest header from the actual genesis fields;
+        # submitblock still validates the shared funding transaction normally.
+        assert_equal(old_node.getblockcount(), 0)
+        genesis = old_node.getblockheader(old_node.getbestblockhash())
         bitcoin_funding_block = bitcoin_block_with_shared_coinbase(
-            native_funding_block.vtx[0], old_node.getblocktemplate({'rules': ['segwit']}))
+            native_funding_block.vtx[0], {
+                'version': 4, 'previousblockhash': genesis['hash'],
+                'bits': genesis['bits'], 'curtime': native_funding_block.nTime,
+                'mintime': genesis['time'] + 1, 'coinbasevalue': 50 * COIN,
+            })
         assert_equal(old_node.submitblock(bitcoin_funding_block.serialize().hex()), None)
         self.generate(new_node, COINBASE_MATURITY, sync_fun=self.no_op)
         old_node.generate(COINBASE_MATURITY, called_by_framework=True)
@@ -95,7 +104,8 @@ class MempoolCompatibilityTest(BitcoinTestFramework):
         new_node_mempool.rename(old_node_mempool)
 
         self.log.info("Start old node again and verify mempool contains both txs")
-        self.start_node(0, ['-nowallet'])
+        # Preserve fixture time during startup, before mempool expiry is applied.
+        self.start_node(0, ['-nowallet', f'-mocktime={old_node.mocktime}'])
         assert old_tx_hash in old_node.getrawmempool()
         assert unbroadcasted_tx_hash in old_node.getrawmempool()
 

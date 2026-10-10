@@ -11273,7 +11273,7 @@
       "source": "test/functional/mempool_compatibility.py",
       "replacement": "test/pocx/functional/mempool_compatibility.py",
       "source_sha256": "e7023ecfa2d1629658a0997f9836f08a7258691c2dca6ef657de3928523f37e9",
-      "replacement_sha256": "bcdeca7afe54105c4d6e6c371f46c66d0cf2fa91f68b2deb4efae80aa2487eeb",
+      "replacement_sha256": "58806f7687b7e71b3749e50a127eee99c611b4a60968bca92e4d5bc9e5910217",
       "assertion_and_method_accounting": {
         "assert_statements": 7,
         "assertion_calls": 0,
@@ -11284,16 +11284,39 @@
           "run_test"
         ]
       },
-      "review": "Retain every original assertion and both actual mempool.dat transfers, including unbroadcast persistence. Mine the exact same coinbase transaction in native and genuine Bitcoin PoW headers on independent chains; Bitcoin underclaims its subsidy. Mature both identical outpoints and compare their value, script, confirmation count and coinbase status. No cross-consensus block synchronization or UTXO acceptance bypass. Full functional execution remains unverified.",
-      "evidence": null,
+      "review": "Retain every original assertion and both actual mempool.dat transfers, including unbroadcast persistence. Mine the exact same coinbase transaction in native and genuine Bitcoin PoW headers on independent chains; Bitcoin underclaims its subsidy. Mature both identical outpoints and compare their value, script, confirmation count and coinbase status. No cross-consensus block synchronization or UTXO acceptance bypass. Full corrected case passes both transports in the separately recorded Linux optional configuration. Runtime fixture correction: first v0.20.1 Bitcoin header is constructed from its actual regtest genesis because peerless getblocktemplate is unavailable; wallet fixtures use five mature native rewards to retain the original 50 BTC funding budget. Original compatibility/migration assertions retained. Corrected case verified in both transports; broader CI configurations remain outstanding. Retain the old-node fixture epoch on restart before mempool expiry is evaluated.",
+      "evidence": {
+        "report": "artifacts/ci-parity-20261010/optional-native-current-inputs.json",
+        "scope": "Corrected optional case in both transports on Linux GCC release with genuine previous-release binaries; not sanitizer or hosted coverage."
+      },
       "execution_by_transport": {
-        "v1": "unverified; prerequisite helper and staging provenance changed",
-        "v2": "unverified; prerequisite helper and staging provenance changed"
+        "v1": "passed; scoped current-input verification in artifacts/ci-parity-20261010/optional-native-current-inputs.json",
+        "v2": "passed; scoped current-input verification in artifacts/ci-parity-20261010/optional-native-current-inputs.json"
       },
       "execution_status_scope": "Latest owned-runner evidence by declared argument case; historical observations do not establish current-input parity.",
-      "latest_observed_outcome": "skipped",
-      "current_input_outcome": "unverified",
-      "runtime_case_evidence": [
+      "latest_observed_outcome": "passed",
+      "current_input_outcome": "passed",
+      "dependencies": {
+        "test/pocx/framework/test_framework.py": "ea89c485b4ec374f62b0a28eb177f9ec5a5f67d2a4c0d54ee4d896ce99928f0b",
+        "test/functional/test_framework/test_node.py": "59799d482ecf3aeb7f5ec2fa52ffe839f4e377ac0a903bf22daa5ecfaaa5d2ac",
+        "test/pocx/framework/blocktools.py": "55c86eea25296bf3f10809c8381287f728361abeec11504454eb5100b5ee395f",
+        "test/functional/test_framework/messages.py": "c786651a517a49dd084b1d76072f755d40c5483f5be53b7322ca4f3403548b26"
+      },
+      "adapted_assertion_and_method_accounting": {
+        "assert_statements": 8,
+        "assertion_calls": 6,
+        "function_names": [
+          "set_test_params",
+          "skip_test_if_missing_module",
+          "setup_network",
+          "run_test"
+        ]
+      },
+      "direct_fixture_evidence": {
+        "report": "artifacts/ci-parity-20261009/compatibility-fixtures/direct-consensus/results.json",
+        "scope": "Offline fixture acceptance and genuine legacy database format rejection; not a full functional case pass"
+      },
+      "previous_runtime_case_evidence": [
         {
           "case": "mempool_compatibility.py",
           "upstream_case": "mempool_compatibility.py",
@@ -11343,26 +11366,22 @@
           ]
         }
       ],
-      "dependencies": {
-        "test/pocx/framework/test_framework.py": "ea89c485b4ec374f62b0a28eb177f9ec5a5f67d2a4c0d54ee4d896ce99928f0b",
-        "test/functional/test_framework/test_node.py": "59799d482ecf3aeb7f5ec2fa52ffe839f4e377ac0a903bf22daa5ecfaaa5d2ac",
-        "test/pocx/framework/blocktools.py": "55c86eea25296bf3f10809c8381287f728361abeec11504454eb5100b5ee395f",
-        "test/functional/test_framework/messages.py": "c786651a517a49dd084b1d76072f755d40c5483f5be53b7322ca4f3403548b26"
-      },
-      "adapted_assertion_and_method_accounting": {
-        "assert_statements": 8,
-        "assertion_calls": 6,
-        "function_names": [
-          "set_test_params",
-          "skip_test_if_missing_module",
-          "setup_network",
-          "run_test"
-        ]
-      },
-      "direct_fixture_evidence": {
-        "report": "artifacts/ci-parity-20261009/compatibility-fixtures/direct-consensus/results.json",
-        "scope": "Offline fixture acceptance and genuine legacy database format rejection; not a full functional case pass"
-      }
+      "runtime_case_evidence": [
+        {
+          "case": "mempool_compatibility.py",
+          "transport": "v1",
+          "status": "passed",
+          "report": "/home/johnny/Code/bitcoin-pocx/bitcoin-tests-m0-m1-20261007/build-pocx-optional/pocx-results-8egqk06u/results.json",
+          "report_sha256": "c3800919b0c85c39b9f5bc48667416b7743c83cb5a6576ebc55bf66ec810b418"
+        },
+        {
+          "case": "mempool_compatibility.py",
+          "transport": "v2",
+          "status": "passed",
+          "report": "/home/johnny/Code/bitcoin-pocx/bitcoin-tests-m0-m1-20261007/build-pocx-optional/pocx-results-8egqk06u/results.json",
+          "report_sha256": "c3800919b0c85c39b9f5bc48667416b7743c83cb5a6576ebc55bf66ec810b418"
+        }
+      ]
     },
     "mining_basic.py": {
       "source": "test/functional/mining_basic.py",
@@ -19521,7 +19540,7 @@
       "source": "test/functional/wallet_backwards_compatibility.py",
       "replacement": "test/pocx/functional/wallet_backwards_compatibility.py",
       "source_sha256": "fd4eb01644c028d8eb4f51006c528e2eacef3728e8e5ee56bb12ee3c8d370eba",
-      "replacement_sha256": "0d45e3d7ee5a486287a5d5d2eeb15dbab4b38ad40c03f3da4117bb35aa274763",
+      "replacement_sha256": "dcc22f6b8d5de52a2a1141bf830bda4a9160212f3372f171d6c79634570d6961",
       "assertion_and_method_accounting": {
         "assert_statements": 22,
         "assertion_calls": 25,
@@ -19541,16 +19560,57 @@
           "check_upgraded_records"
         ]
       },
-      "review": "Retain all 47 original assertions and every original wallet scenario. Keep the two native nodes and six genuine previous Bitcoin releases on independent P2P chains. Mirror full transaction/witness bytes and positions into genuine Bitcoin PoW blocks; validate both chains normally. Explicitly rebase detached wallet fixtures only at encoded address-book destinations, block locators and serialized transaction confirmation hashes, preserving all other records and verifying reversibility. Genuine v28.2 wallet tools retain Berkeley DB record format. Native/Bitcoin copies and backups retain keys, descriptors, transactions, balances, conflicts, abandonment and metadata. No production wallet or consensus code is changed. Full functional execution remains unverified. Relay the native P2P group current mempool before collecting old snapshots, so a real accepted replacement removes stale conflicts before the reverse relay. Policy/consensus rejection remains fatal. The v28.2 wallet-tool filename follows the configured executable suffix; fixture conversions and all original/adapted assertions remain unchanged.",
-      "evidence": null,
+      "review": "Retain all 47 original assertions and every original wallet scenario. Keep the two native nodes and six genuine previous Bitcoin releases on independent P2P chains. Mirror full transaction/witness bytes and positions into genuine Bitcoin PoW blocks; validate both chains normally. Explicitly rebase detached wallet fixtures only at encoded address-book destinations, block locators and serialized transaction confirmation hashes, preserving all other records and verifying reversibility. Genuine v28.2 wallet tools retain Berkeley DB record format. Native/Bitcoin copies and backups retain keys, descriptors, transactions, balances, conflicts, abandonment and metadata. No production wallet or consensus code is changed. Full corrected case passes both transports in the separately recorded Linux optional configuration. Relay the native P2P group current mempool before collecting old snapshots, so a real accepted replacement removes stale conflicts before the reverse relay. Policy/consensus rejection remains fatal. The v28.2 wallet-tool filename follows the configured executable suffix; fixture conversions and all original/adapted assertions remain unchanged. Runtime fixture correction: first v0.20.1 Bitcoin header is constructed from its actual regtest genesis because peerless getblocktemplate is unavailable; wallet fixtures use five mature native rewards to retain the original 50 BTC funding budget. Original compatibility/migration assertions retained. Corrected case verified in both transports; broader CI configurations remain outstanding. Initialize every node at the coordinated epoch before peer relay timers are created. Mirror and synchronize each generated block before advancing the next native proof clock, retaining live peers in both consensus groups. Encode the v22 dump destinations for native RPC calls, preserving their witness programs and derivation-path assertions.",
+      "evidence": {
+        "report": "artifacts/ci-parity-20261010/optional-native-current-inputs.json",
+        "scope": "Corrected optional case in both transports on Linux GCC release with genuine previous-release binaries; not sanitizer or hosted coverage."
+      },
       "execution_by_transport": {
-        "v1": "unverified; prerequisite helper and staging provenance changed",
-        "v2": "unverified; prerequisite helper and staging provenance changed"
+        "v1": "passed; scoped current-input verification in artifacts/ci-parity-20261010/optional-native-current-inputs.json",
+        "v2": "passed; scoped current-input verification in artifacts/ci-parity-20261010/optional-native-current-inputs.json"
       },
       "execution_status_scope": "Latest owned-runner evidence by declared argument case; historical observations do not establish current-input parity.",
-      "latest_observed_outcome": "skipped",
-      "current_input_outcome": "unverified",
-      "runtime_case_evidence": [
+      "latest_observed_outcome": "passed",
+      "current_input_outcome": "passed",
+      "dependencies": {
+        "test/pocx/framework/test_framework.py": "ea89c485b4ec374f62b0a28eb177f9ec5a5f67d2a4c0d54ee4d896ce99928f0b",
+        "test/functional/test_framework/test_node.py": "59799d482ecf3aeb7f5ec2fa52ffe839f4e377ac0a903bf22daa5ecfaaa5d2ac",
+        "test/pocx/framework/blocktools.py": "55c86eea25296bf3f10809c8381287f728361abeec11504454eb5100b5ee395f",
+        "test/pocx/framework/wallet_compatibility.py": "9df8dd702518891b76acd8a34509382f91efce6005e1d1c66785437a372dff50",
+        "test/functional/test_framework/messages.py": "c786651a517a49dd084b1d76072f755d40c5483f5be53b7322ca4f3403548b26"
+      },
+      "adapted_assertion_and_method_accounting": {
+        "assert_statements": 25,
+        "assertion_calls": 33,
+        "function_names": [
+          "set_test_params",
+          "skip_test_if_missing_module",
+          "setup_nodes",
+          "setup_network",
+          "wallet_context",
+          "rebase_fixture",
+          "mirror_native_blocks",
+          "generate",
+          "generatetoaddress",
+          "sync_blocks",
+          "sync_mempools",
+          "split_version",
+          "major_version_equals",
+          "major_version_less_than",
+          "major_version_at_least",
+          "test_v22_inactivehdchain_path",
+          "check_keymeta",
+          "test_ignore_legacy_during_startup",
+          "run_test",
+          "get_flags",
+          "check_upgraded_records"
+        ]
+      },
+      "direct_fixture_evidence": {
+        "report": "artifacts/ci-parity-20261009/compatibility-fixtures/wallet-context/results.json",
+        "scope": "Real offline BDB/SQLite tools and reversible record conversion; not a full wallet functional case pass"
+      },
+      "previous_runtime_case_evidence": [
         {
           "case": "wallet_backwards_compatibility.py",
           "upstream_case": "wallet_backwards_compatibility.py",
@@ -19596,44 +19656,22 @@
           ]
         }
       ],
-      "dependencies": {
-        "test/pocx/framework/test_framework.py": "ea89c485b4ec374f62b0a28eb177f9ec5a5f67d2a4c0d54ee4d896ce99928f0b",
-        "test/functional/test_framework/test_node.py": "59799d482ecf3aeb7f5ec2fa52ffe839f4e377ac0a903bf22daa5ecfaaa5d2ac",
-        "test/pocx/framework/blocktools.py": "55c86eea25296bf3f10809c8381287f728361abeec11504454eb5100b5ee395f",
-        "test/pocx/framework/wallet_compatibility.py": "9df8dd702518891b76acd8a34509382f91efce6005e1d1c66785437a372dff50",
-        "test/functional/test_framework/messages.py": "c786651a517a49dd084b1d76072f755d40c5483f5be53b7322ca4f3403548b26"
-      },
-      "adapted_assertion_and_method_accounting": {
-        "assert_statements": 25,
-        "assertion_calls": 33,
-        "function_names": [
-          "set_test_params",
-          "skip_test_if_missing_module",
-          "setup_nodes",
-          "setup_network",
-          "wallet_context",
-          "rebase_fixture",
-          "mirror_native_blocks",
-          "generate",
-          "generatetoaddress",
-          "sync_blocks",
-          "sync_mempools",
-          "split_version",
-          "major_version_equals",
-          "major_version_less_than",
-          "major_version_at_least",
-          "test_v22_inactivehdchain_path",
-          "check_keymeta",
-          "test_ignore_legacy_during_startup",
-          "run_test",
-          "get_flags",
-          "check_upgraded_records"
-        ]
-      },
-      "direct_fixture_evidence": {
-        "report": "artifacts/ci-parity-20261009/compatibility-fixtures/wallet-context/results.json",
-        "scope": "Real offline BDB/SQLite tools and reversible record conversion; not a full wallet functional case pass"
-      }
+      "runtime_case_evidence": [
+        {
+          "case": "wallet_backwards_compatibility.py",
+          "transport": "v1",
+          "status": "passed",
+          "report": "/home/johnny/Code/bitcoin-pocx/bitcoin-tests-m0-m1-20261007/build-pocx-optional/pocx-results-yopaxam5/results.json",
+          "report_sha256": "be9122bf5b0d9afb580695d2bb5638e9f138935baac80193d163dc2a0a2c37ce"
+        },
+        {
+          "case": "wallet_backwards_compatibility.py",
+          "transport": "v2",
+          "status": "passed",
+          "report": "/home/johnny/Code/bitcoin-pocx/bitcoin-tests-m0-m1-20261007/build-pocx-optional/pocx-results-yopaxam5/results.json",
+          "report_sha256": "be9122bf5b0d9afb580695d2bb5638e9f138935baac80193d163dc2a0a2c37ce"
+        }
+      ]
     },
     "wallet_blank.py": {
       "source": "test/functional/wallet_blank.py",
@@ -21683,7 +21721,7 @@
       "source": "test/functional/wallet_migration.py",
       "replacement": "test/pocx/functional/wallet_migration.py",
       "source_sha256": "2a26f66b94ea805b357e9e3f8270750465df8bdb2f69e2e5b4dd5a6e3f71e78c",
-      "replacement_sha256": "14bf104f6c2b1876686f7abc0e349f7c4d96ae2a2ad2691295f09051bea93a0f",
+      "replacement_sha256": "4c8a7949c66fd341e4f8397c794d024edf1debfdbf1cd01e1fdb0764c7e56735",
       "assertion_and_method_accounting": {
         "assert_statements": 49,
         "assertion_calls": 223,
@@ -21738,16 +21776,30 @@
           "check_comments"
         ]
       },
-      "review": "Retain all289original assertions, all original methods and the identical run_test scenario sequence, including parameterized paths/failures, genuine BDB-to-descriptor migration, balances, keys, address-book labels, metadata, conflicts, backup restoration, no-rescan, conflicting-file hashes, pruned-data failure and deliberate wrong-signet-chain rollback. Real Bitcoin v28.2 and PoCX nodes validate independent chains sharing every transaction/witness byte and position. Explicit unloaded fixture rebasing only changes encoded destinations, block locators and confirmation block identities; inverse copies preserve backups. Schema-specific old-wallet RPC conversion never rewrites opaque values. Mining underclaims the smaller regtest subsidy across both halving schedules; normal transaction acceptance relays successful producers first to retain RBF semantics. No original test, production wallet or consensus code is changed. Full functional execution remains unverified.",
-      "evidence": null,
+      "review": "Retain all289original assertions, all original methods and the identical run_test scenario sequence, including parameterized paths/failures, genuine BDB-to-descriptor migration, balances, keys, address-book labels, metadata, conflicts, backup restoration, no-rescan, conflicting-file hashes, pruned-data failure and deliberate wrong-signet-chain rollback. Real Bitcoin v28.2 and PoCX nodes validate independent chains sharing every transaction/witness byte and position. Explicit unloaded fixture rebasing only changes encoded destinations, block locators and confirmation block identities; inverse copies preserve backups. Schema-specific old-wallet RPC conversion never rewrites opaque values. Mining underclaims the smaller regtest subsidy across both halving schedules; normal transaction acceptance relays successful producers first to retain RBF semantics. No original test, production wallet or consensus code is changed. Full corrected case passes both transports in the separately recorded Linux optional configuration. Runtime fixture correction: first v0.20.1 Bitcoin header is constructed from its actual regtest genesis because peerless getblocktemplate is unavailable; wallet fixtures use five mature native rewards to retain the original 50 BTC funding budget. Original compatibility/migration assertions retained. Corrected case verified in both transports; broader CI configurations remain outstanding. Request the maximum safe manual prune height because native header sizes change fast-prune file boundaries; retain the original unavailable-next-block assertion, migration failure, BDB preservation and backup checks.",
+      "evidence": {
+        "report": "artifacts/ci-parity-20261010/optional-native-current-inputs.json",
+        "scope": "Corrected optional case in both transports on Linux GCC release with genuine previous-release binaries; not sanitizer or hosted coverage."
+      },
       "execution_by_transport": {
-        "v1": "unverified; prerequisite helper and staging provenance changed",
-        "v2": "unverified; prerequisite helper and staging provenance changed"
+        "v1": "passed; scoped current-input verification in artifacts/ci-parity-20261010/optional-native-current-inputs.json",
+        "v2": "passed; scoped current-input verification in artifacts/ci-parity-20261010/optional-native-current-inputs.json"
       },
       "execution_status_scope": "Latest owned-runner evidence by declared argument case; historical observations do not establish current-input parity.",
-      "latest_observed_outcome": "skipped",
-      "current_input_outcome": "unverified",
-      "runtime_case_evidence": [
+      "latest_observed_outcome": "passed",
+      "current_input_outcome": "passed",
+      "dependencies": {
+        "test/pocx/framework/test_framework.py": "ea89c485b4ec374f62b0a28eb177f9ec5a5f67d2a4c0d54ee4d896ce99928f0b",
+        "test/functional/test_framework/test_node.py": "59799d482ecf3aeb7f5ec2fa52ffe839f4e377ac0a903bf22daa5ecfaaa5d2ac",
+        "test/pocx/framework/test_node.py": "449dec8a3bbd0a19c081bc1eb3e0d0220e93ebcc1873fd921c2ed9ab8427c0b9",
+        "test/pocx/framework/blocktools.py": "55c86eea25296bf3f10809c8381287f728361abeec11504454eb5100b5ee395f",
+        "test/pocx/framework/wallet_compatibility.py": "9df8dd702518891b76acd8a34509382f91efce6005e1d1c66785437a372dff50",
+        "test/pocx/framework/wallet_migration_fixtures.py": "50a03e6973aa0ef1c18f284d53c0b279e689ec63ac26a3e95546b04ee2ad4bbf",
+        "test/functional/test_framework/messages.py": "c786651a517a49dd084b1d76072f755d40c5483f5be53b7322ca4f3403548b26",
+        "src/rpc/mining.cpp": "43a0c08407392af60475990ed3fffd4dc5f384f83fc9ab9d613004284f83e80e",
+        "src/pocx/regtest/forging.cpp": "c5fc3a90375e8e435829725bf0f71f2cc63970986473976b3824b824df34fcf7"
+      },
+      "previous_runtime_case_evidence": [
         {
           "case": "wallet_migration.py",
           "upstream_case": "wallet_migration.py",
@@ -21793,17 +21845,22 @@
           ]
         }
       ],
-      "dependencies": {
-        "test/pocx/framework/test_framework.py": "ea89c485b4ec374f62b0a28eb177f9ec5a5f67d2a4c0d54ee4d896ce99928f0b",
-        "test/functional/test_framework/test_node.py": "59799d482ecf3aeb7f5ec2fa52ffe839f4e377ac0a903bf22daa5ecfaaa5d2ac",
-        "test/pocx/framework/test_node.py": "449dec8a3bbd0a19c081bc1eb3e0d0220e93ebcc1873fd921c2ed9ab8427c0b9",
-        "test/pocx/framework/blocktools.py": "55c86eea25296bf3f10809c8381287f728361abeec11504454eb5100b5ee395f",
-        "test/pocx/framework/wallet_compatibility.py": "9df8dd702518891b76acd8a34509382f91efce6005e1d1c66785437a372dff50",
-        "test/pocx/framework/wallet_migration_fixtures.py": "f674c096ce2023461d6b4b8b1b856820f180ca16671ad86181576544fa3fcd7e",
-        "test/functional/test_framework/messages.py": "c786651a517a49dd084b1d76072f755d40c5483f5be53b7322ca4f3403548b26",
-        "src/rpc/mining.cpp": "43a0c08407392af60475990ed3fffd4dc5f384f83fc9ab9d613004284f83e80e",
-        "src/pocx/regtest/forging.cpp": "c5fc3a90375e8e435829725bf0f71f2cc63970986473976b3824b824df34fcf7"
-      }
+      "runtime_case_evidence": [
+        {
+          "case": "wallet_migration.py",
+          "transport": "v1",
+          "status": "passed",
+          "report": "/home/johnny/Code/bitcoin-pocx/bitcoin-tests-m0-m1-20261007/build-pocx-optional/pocx-results-h_bg6nmb/results.json",
+          "report_sha256": "ca118743f9a16b41a1e43ce4dec3b8234a27b8263c7e4acf2d13b26a34ed1aaa"
+        },
+        {
+          "case": "wallet_migration.py",
+          "transport": "v2",
+          "status": "passed",
+          "report": "/home/johnny/Code/bitcoin-pocx/bitcoin-tests-m0-m1-20261007/build-pocx-optional/pocx-results-h_bg6nmb/results.json",
+          "report_sha256": "ca118743f9a16b41a1e43ce4dec3b8234a27b8263c7e4acf2d13b26a34ed1aaa"
+        }
+      ]
     },
     "wallet_miniscript.py": {
       "source": "test/functional/wallet_miniscript.py",
@@ -25938,7 +25995,7 @@
     },
     "test_framework/wallet_migration_fixtures.py": {
       "source": "test/pocx/framework/wallet_migration_fixtures.py",
-      "sha256": "f674c096ce2023461d6b4b8b1b856820f180ca16671ad86181576544fa3fcd7e",
+      "sha256": "50a03e6973aa0ef1c18f284d53c0b279e689ec63ac26a3e95546b04ee2ad4bbf",
       "dependencies": {
         "test/pocx/framework/wallet_compatibility.py": "9df8dd702518891b76acd8a34509382f91efce6005e1d1c66785437a372dff50",
         "test/pocx/framework/blocktools.py": "55c86eea25296bf3f10809c8381287f728361abeec11504454eb5100b5ee395f",
@@ -25949,7 +26006,7 @@
         "test/pocx/framework/util.py": "466f768bc95a6889e253b4953714fa31583057d655614e6b111ef9036e11b771",
         "src/rpc/mining.cpp": "43a0c08407392af60475990ed3fffd4dc5f384f83fc9ab9d613004284f83e80e"
       },
-      "review": "Explicit mixed-consensus wallet fixture helpers. Exact schema-specific RPC encoding retains all non-context fields and opaque user data. Native/legacy node factories remain separate. Track successful producers; relay replacements before reverse mempool synchronization without masking errors. Full block bodies and witness/order preserved; signed native coinbases underclaim only subsidy after Bitcoin/PoCX halvings. Unknown block identities and unexpected coinbase amounts fail. Unloaded fixtures rebased explicitly; inverse detached backups; wrong-chain migration bypass retained. Infrastructure proof is separate from full functional evidence. The genuine v28.2 wallet-tool path now follows environment.EXEEXT, preserving every schema conversion and assertion. Native/configured Windows path selection is checked without starting a Windows process."
+      "review": "Explicit mixed-consensus wallet fixture helpers. Exact schema-specific RPC encoding retains all non-context fields and opaque user data. Native/legacy node factories remain separate. Track successful producers; relay replacements before reverse mempool synchronization without masking errors. Full block bodies and witness/order preserved; signed native coinbases underclaim only subsidy after Bitcoin/PoCX halvings. Unknown block identities and unexpected coinbase amounts fail. Unloaded fixtures rebased explicitly; inverse detached backups; wrong-chain migration bypass retained. Infrastructure proof is separate from full functional evidence. The genuine v28.2 wallet-tool path now follows environment.EXEEXT, preserving every schema conversion and assertion. Native/configured Windows path selection is checked without starting a Windows process. getbalances.lastprocessedblock is an explicit block-context field and is rebased with the same checked bijection as getwalletinfo; all balances and other fields remain unchanged. Preserve upstream synchronization notification barriers on both nodes before inspecting wallet state. Construct each shared block at a monotonic epoch consistent with both node clocks and wallet birthdays, even after backup-filename mocktime changes. Retain the validated native chain epoch across backup-filename clock resets so restart VerifyDB keeps its real future-time checks."
     }
   }
 }

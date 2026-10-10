@@ -77,6 +77,10 @@ class BackwardsCompatibilityTest(BitcoinTestFramework):
         ], node_classes=[TestNode, TestNode] + [BitcoinTestNode] * 6)
 
         self.start_nodes()
+        # Set the coordinated epoch before connecting peers: relay timers must
+        # not be scheduled at wall time and then moved backwards to genesis.
+        for node in self.nodes:
+            node.setmocktime(2000000000)
         self.import_deterministic_coinbase_privkeys()
 
     def setup_network(self):
@@ -119,18 +123,26 @@ class BackwardsCompatibilityTest(BitcoinTestFramework):
             assert_equal(bitcoin.getblockhash(block.nHeight), shared.hash_hex)
         BitcoinTestFramework.sync_blocks(self, self.nodes[2:])
 
-    def generate(self, generator, *args, sync_fun=None, **kwargs):
+    def generate(self, generator, nblocks, *args, sync_fun=None, **kwargs):
         assert generator is self.nodes[0]
-        hashes = BitcoinTestFramework.generate(self, generator, *args, sync_fun=self.no_op, **kwargs)
-        self.mirror_native_blocks(hashes)
-        sync_fun() if sync_fun else self.sync_all()
+        hashes = []
+        for _ in range(nblocks):
+            produced = BitcoinTestFramework.generate(self, generator, 1, *args, sync_fun=self.no_op, **kwargs)
+            self.mirror_native_blocks(produced)
+            sync_fun() if sync_fun else self.sync_all()
+            hashes.extend(produced)
         return hashes
 
-    def generatetoaddress(self, generator, *args, sync_fun=None, **kwargs):
+    def generatetoaddress(self, generator, nblocks, *args, sync_fun=None, **kwargs):
         assert generator is self.nodes[0]
-        hashes = BitcoinTestFramework.generatetoaddress(self, generator, *args, sync_fun=self.no_op, **kwargs)
-        self.mirror_native_blocks(hashes)
-        sync_fun() if sync_fun else self.sync_all()
+        hashes = []
+        # Keep both P2P groups active as fixture time advances; mirroring a
+        # whole native batch afterward can expire old peers' activity timers.
+        for _ in range(nblocks):
+            produced = BitcoinTestFramework.generatetoaddress(self, generator, 1, *args, sync_fun=self.no_op, **kwargs)
+            self.mirror_native_blocks(produced)
+            sync_fun() if sync_fun else self.sync_all()
+            hashes.extend(produced)
         return hashes
 
     def sync_blocks(self, nodes=None, **kwargs):
@@ -226,7 +238,7 @@ class BackwardsCompatibilityTest(BitcoinTestFramework):
         bad_deriv_wallet.sethdseed()
         bad_deriv_wallet.unloadwallet()
         # Receive at addr to trigger inactive chain topup on next load
-        self.nodes[0].sendtoaddress(addr, 1)
+        self.nodes[0].sendtoaddress(reencode_regtest_address(addr, 'rpocx'), 1)
         self.generate(self.nodes[0], 1, sync_fun=self.no_op)
         self.sync_all(nodes=[self.nodes[0], node_master, node_v22])
         node_v22.loadwallet(wallet_name)
@@ -263,7 +275,7 @@ class BackwardsCompatibilityTest(BitcoinTestFramework):
         self.rebase_fixture(os.path.join(wallet_dir_master, "wallet.dat"))
         node_master.migratewallet(wallet_name)
         bad_deriv_wallet_master = node_master.get_wallet_rpc(wallet_name)
-        assert_equal(bad_deriv_wallet_master.getaddressinfo(bad_path_addr)["hdkeypath"], good_deriv_path)
+        assert_equal(bad_deriv_wallet_master.getaddressinfo(reencode_regtest_address(bad_path_addr, 'rpocx'))["hdkeypath"], good_deriv_path)
         bad_deriv_wallet_master.unloadwallet()
 
         def check_keymeta(conn):
@@ -316,10 +328,13 @@ class BackwardsCompatibilityTest(BitcoinTestFramework):
         legacy_nodes = self.nodes[2:] # Nodes that support legacy wallets
         descriptors_nodes = self.nodes[2:-1] # Nodes that support descriptor wallets
 
-        self.generatetoaddress(node_miner, COINBASE_MATURITY + 1, node_miner.getnewaddress())
+        # Five mature native rewards supply the original 50 BTC funding budget.
+        funding_blocks = COINBASE_MATURITY + 5
+        self.generatetoaddress(node_miner, funding_blocks, node_miner.getnewaddress())
+        assert_equal(node_miner.getbalance(), 50)
 
         # Sanity check the test framework:
-        assert_equal(node_v20.getblockchaininfo()["blocks"], COINBASE_MATURITY + 1)
+        assert_equal(node_v20.getblockchaininfo()["blocks"], funding_blocks)
 
         self.log.info("Test wallet backwards compatibility...")
         # Create a number of wallets and open them in older versions:

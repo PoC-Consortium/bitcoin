@@ -150,7 +150,7 @@ def wallet_rpc_result(method, value, context):
     if method in ('listtransactions', 'listunspent'):
         for row in value:
             transaction(row)
-    if method == 'getwalletinfo' and 'lastprocessedblock' in value:
+    if method in ('getwalletinfo', 'getbalances') and 'lastprocessedblock' in value:
         value['lastprocessedblock']['hash'] = block_hash(value['lastprocessedblock']['hash'])
     if method == 'listaddressgroupings':
         for group in value:
@@ -252,6 +252,10 @@ class PairedMigrationWallets:
                 if txid not in destination.getrawmempool():
                     assert_equal(destination.sendrawtransaction(source.getrawtransaction(txid)), txid)
         assert_equal(set(first.getrawmempool()), set(second.getrawmempool()))
+        # Preserve upstream sync_mempools' wallet-notification barrier before
+        # callers inspect balances or copy an unloaded wallet fixture.
+        for node in self.nodes:
+            node.syncwithvalidationinterfacequeue()
 
     def rebase_migration_fixture(self, wallet_name):
         if self.nodes[1].chain != 'regtest':
@@ -295,7 +299,10 @@ class PairedMigrationWallets:
             parent = native.getblockheader(native.getbestblockhash())
             clock = native.mocktime
             try:
-                native.setmocktime(parent['time'] + 1)
+                # Wallet birthdays and block times must share the same epoch.
+                # Migration temporarily changes mocktime for backup filenames;
+                # never mine before the retained clock of either fixture node.
+                native.setmocktime(max(parent['time'] + 1, clock or 0, bitcoin.mocktime or 0))
                 raw = native.generateblock(output, self.ordered_mempool(native), False, called_by_framework=True)
                 block = CBlock()
                 block.deserialize(BytesIO(bytes.fromhex(raw['hex'])))
@@ -314,6 +321,9 @@ class PairedMigrationWallets:
             assert_equal([tx.serialize() for tx in shared.vtx], [tx.serialize() for tx in block.vtx])
             assert_equal(native.submitblock(block.serialize().hex()), None)
             assert_equal(bitcoin.submitblock(shared.serialize().hex()), None)
+            # Backup-name checks restore wall time. Retain the validated chain
+            # epoch for VerifyDB on subsequent native restarts (15s window).
+            native.pocx_fixture_time = timestamp
             self.wallet_block_map[shared.hash_hex] = block.hash_hex
             hashes.append(block.hash_hex)
             self.sync_blocks()

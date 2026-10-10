@@ -260,6 +260,22 @@ class WalletContextFixturesTest(unittest.TestCase):
         def methods(tree):
             return Counter(node.name for node in ast.walk(tree) if isinstance(node,ast.FunctionDef))
         self.assertEqual(sum(assertions(original).values()),47)
+        # Review only the explicit funding-height and witness-HRP changes.
+        # Every other original assertion must remain structurally identical.
+        for before, after in [
+            ('assert_equal(node_v20.getblockchaininfo()["blocks"], COINBASE_MATURITY + 1)',
+             'assert_equal(node_v20.getblockchaininfo()["blocks"], funding_blocks)'),
+            ('assert_equal(bad_deriv_wallet_master.getaddressinfo(bad_path_addr)["hdkeypath"], good_deriv_path)',
+             'assert_equal(bad_deriv_wallet_master.getaddressinfo(reencode_regtest_address(bad_path_addr, "rpocx"))["hdkeypath"], good_deriv_path)'),
+        ]:
+            old = ast.dump(ast.parse(before).body[0].value)
+            new = ast.dump(ast.parse(after).body[0].value)
+            self.assertEqual(assertions(original)[old], 1)
+            self.assertEqual(assertions(adapted)[new], 1)
+            for node in ast.walk(original):
+                if isinstance(node, ast.Call) and ast.dump(node) == old:
+                    replacement = ast.parse(after).body[0].value
+                    node.func, node.args, node.keywords = replacement.func, replacement.args, replacement.keywords
         self.assertFalse(assertions(original)-assertions(adapted))
         self.assertFalse(methods(original)-methods(adapted))
 
@@ -352,6 +368,22 @@ class MigrationFixturesTest(unittest.TestCase):
         row['blockhash']='33'*32
         with self.assertRaises(ValueError):wallet_rpc_result('gettransaction',row,self.context())
 
+    def test_balance_context_preserves_amounts_and_requires_known_tip(self):
+        row = {'mine': {'trusted': Decimal('1.25'), 'untrusted_pending': Decimal('0.5'),
+                        'immature': Decimal('10')},
+               'lastprocessedblock': {'hash': '11' * 32, 'height': 115},
+               'future_field': {'hash': '11' * 32}}
+        expected = deepcopy(row)
+        expected['lastprocessedblock']['hash'] = '22' * 32
+        for method in ('getwalletinfo', 'getbalances'):
+            with self.subTest(method=method):
+                self.assertEqual(wallet_rpc_result(method, row, self.context()), expected)
+                self.assertEqual(row['lastprocessedblock']['hash'], '11' * 32)
+                unknown = deepcopy(row)
+                unknown['lastprocessedblock']['hash'] = '33' * 32
+                with self.assertRaises(ValueError):
+                    wallet_rpc_result(method, unknown, self.context())
+
     def test_rpc_proxy_tracks_successful_producers_and_preserves_exceptions(self):
         from types import SimpleNamespace
         bitcoin,native=self.addresses();calls=[];producers=[]
@@ -398,6 +430,7 @@ class MigrationFixturesTest(unittest.TestCase):
         calls=[]
         class Node:
             def __init__(self,name,pool):self.name=name;self.pool=pool
+            def syncwithvalidationinterfacequeue(self):calls.append((self.name,'flush'))
             def getrawmempool(self,verbose=False):return {tx:{'depends':[]} for tx in self.pool} if verbose else list(self.pool)
             def getrawtransaction(self,txid):return txid
             def sendrawtransaction(self,txid):
@@ -407,7 +440,7 @@ class MigrationFixturesTest(unittest.TestCase):
         class Fixture(PairedMigrationWallets):pass
         fixture=Fixture();fixture.nodes=[Node('native',{'stale'}),Node('bitcoin',{'replacement'})]
         fixture.wallet_relay_source=1;fixture.sync_mempools()
-        self.assertEqual(calls,[('native','replacement')])
+        self.assertEqual(calls,[('native','replacement'),('native','flush'),('bitcoin','flush')])
         self.assertEqual(fixture.nodes[0].pool,fixture.nodes[1].pool)
 
     def test_mempool_dependency_cycles_and_relay_rejections_are_not_suppressed(self):
@@ -460,7 +493,13 @@ class MigrationFixturesTest(unittest.TestCase):
         methods=lambda tree:Counter(n.name for n in ast.walk(tree) if isinstance(n,ast.FunctionDef))
         self.assertFalse(methods(original)-methods(adapted))
         run=lambda tree:next(n for n in ast.walk(tree) if isinstance(n,ast.FunctionDef) and n.name=='run_test')
-        self.assertEqual(ast.dump(run(original)),ast.dump(run(adapted)))
+        old_run, new_run = run(original), run(adapted)
+        self.assertEqual(ast.dump(old_run.body[2]), ast.dump(ast.parse('self.generate(self.master_node, 101)').body[0]))
+        self.assertEqual(ast.dump(new_run.body[2]), ast.dump(ast.parse('self.generate(self.master_node, 105)').body[0]))
+        self.assertEqual(ast.dump(new_run.body[3]), ast.dump(ast.parse('assert_equal(self.master_node.getbalance(), 50)').body[0]))
+        # Only initial funding differs; preserve the complete scenario sequence.
+        new_run.body[2:4] = [old_run.body[2]]
+        self.assertEqual(ast.dump(old_run), ast.dump(new_run))
 
 
 if __name__=='__main__':
