@@ -58,6 +58,7 @@ def short_tmpdir(build):
 
 def build_options(cache):
     options = {}
+    internal = {}
     for line in cache.splitlines():
         if line.startswith(('//', '#')) or ':' not in line or '=' not in line:
             continue
@@ -65,4 +66,14 @@ def build_options(cache):
         kind, value = rest.split('=', 1)
         if kind != 'INTERNAL':
             options[key] = value
+        else:
+            internal[key] = value
+    # CMake hides dependent GUI options in INTERNAL cache entries when their
+    # parent is disabled. The cached value is a preference for a later enabled
+    # configuration; the effective value is OFF while the condition is false.
+    for key, parents in {'BUILD_GUI_TESTS': ('BUILD_GUI', 'BUILD_TESTS'),
+                         'WITH_QRENCODE': ('BUILD_GUI',)}.items():
+        if (key not in options and internal.get(key) in ('ON', 'OFF') and
+                any(options.get(parent) == 'OFF' for parent in parents)):
+            options[key] = 'OFF'
     return options

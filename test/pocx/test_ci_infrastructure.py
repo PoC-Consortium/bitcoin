@@ -38,6 +38,20 @@ class CIInfrastructureTest(unittest.TestCase):
             shutil.rmtree(root / 'v2/case/node0/regtest' / name)
         self.assertEqual({str(path.relative_to(root)) for path in artifact_paths(root)}, expected)
 
+    def test_headless_cmake_internal_preferences_resolve_to_effective_disabled_options(self):
+        from common import build_options
+        for cached in ('ON', 'OFF'):
+            options = build_options('BUILD_GUI:BOOL=OFF\nBUILD_TESTS:BOOL=ON\n'
+                                    f'BUILD_GUI_TESTS:INTERNAL={cached}\nWITH_QRENCODE:INTERNAL={cached}\n'
+                                    'CMAKE_HOME_DIRECTORY:INTERNAL=/source\n')
+            self.assertEqual(options['BUILD_GUI_TESTS'], 'OFF')
+            self.assertEqual(options['WITH_QRENCODE'], 'OFF')
+            self.assertNotIn('CMAKE_HOME_DIRECTORY', options)
+        self.assertNotIn('BUILD_GUI_TESTS', build_options(
+            'BUILD_GUI:BOOL=ON\nBUILD_TESTS:BOOL=ON\nBUILD_GUI_TESTS:INTERNAL=OFF\n'))
+        self.assertNotIn('WITH_QRENCODE', build_options(
+            'BUILD_GUI:BOOL=OFF\nWITH_QRENCODE:INTERNAL=invalid\n'))
+
     def test_address_fixture_corrections_are_explicit_and_preserve_framework(self):
         from ci import stage_bitcoin_functional
         runner = stage_bitcoin_functional(BITCOIN, Path(self.temp.name), network_addresses=True)
