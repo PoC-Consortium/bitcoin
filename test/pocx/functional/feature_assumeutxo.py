@@ -49,12 +49,6 @@ from test_framework.wallet import (
     getnewdestination,
     MiniWallet,
 )
-from test_framework.blocktools import (
-    REGTEST_N_BITS,
-    REGTEST_TARGET,
-    nbits_str,
-    target_str,
-)
 
 START_HEIGHT = 199
 SNAPSHOT_BASE_HEIGHT = 299
@@ -97,7 +91,7 @@ class AssumeutxoTest(BitcoinTestFramework):
         script_code = deser_varint(first)
         assert_equal(script_code, 28)  # uncompressed22byte WPKH program
         first_coin_end = first.tell() + script_code - 6
-        bad_snapshot_path = valid_snapshot_path + '.mod' 
+        bad_snapshot_path = valid_snapshot_path + '.mod'
         node = self.nodes[1]
 
         def expected_error(msg):

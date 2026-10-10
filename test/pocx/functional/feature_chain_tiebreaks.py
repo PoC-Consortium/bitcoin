@@ -132,7 +132,7 @@ class ChainTiebreaksTest(BitcoinTestFramework):
         # Construct three equal-work blocks building from the tip.
         start_height = node.getblockcount()
         tip_block = node.getblock(node.getbestblockhash())
-        prev_time = tip_block["time"]
+        _prev_time = tip_block["time"]
 
         template = create_pocx_block(node)
         for i in range(0, 3):

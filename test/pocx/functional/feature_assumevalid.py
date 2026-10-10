@@ -183,7 +183,7 @@ class AssumeValidTest(BitcoinTestFramework):
         self.log.info("Send two header chains, and a block not in the best header chain to node3.")
         best_hash = self.nodes[3].getbestblockhash()
         tip_block = self.nodes[3].getblock(best_hash)
-        second_chain_tip, second_chain_time, second_chain_height = int(best_hash, 16), tip_block["time"] + 1, tip_block["height"] + 1
+        _second_chain_tip, _second_chain_time, _second_chain_height = int(best_hash, 16), tip_block["time"] + 1, tip_block["height"] + 1
         second_chain = create_pocx_branch(self.nodes[3], int(best_hash, 16), 150)
         # A distinct first coinbase makes this an independent competing branch.
         second_chain[0].vtx[0].vin[0].scriptSig += b'\x00'

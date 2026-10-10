@@ -69,7 +69,7 @@ class GetChainTipsTest (BitcoinTestFramework):
         tip = int(n0.getbestblockhash(), 16)
         start_height = self.nodes[0].getblockcount()
         # Create invalid block (too high coinbase)
-        block_time = n0.getblock(n0.getbestblockhash())['time'] + 1
+        _block_time = n0.getblock(n0.getbestblockhash())['time'] + 1
         invalid_block, block2 = create_empty_fork(n0, fork_length=2)
         assert_equal(invalid_block.hashPrevBlock, tip)
         assert_equal(invalid_block.nHeight, start_height + 1)

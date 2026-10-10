@@ -15,7 +15,6 @@ test that this parameter functions as intended by verifying that block relay
 only succeeds past a given node once its nMinimumChainWork has been exceeded.
 """
 
-import time
 
 from test_framework.p2p import P2PInterface, msg_getheaders
 from test_framework.test_framework import BitcoinTestFramework

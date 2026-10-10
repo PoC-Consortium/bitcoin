@@ -3,7 +3,6 @@
 # Distributed under the MIT software license, see the accompanying
 # file COPYING or https://www.opensource.org/licenses/mit-license.php.
 
-import time
 
 from test_framework.blocktools import MAX_FUTURE_BLOCK_TIME
 from test_framework.descriptors import descsum_create

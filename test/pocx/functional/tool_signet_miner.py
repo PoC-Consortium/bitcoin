@@ -4,12 +4,6 @@
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
 """Test signet miner tool"""
 
-import json
-import os.path
-import shlex
-import subprocess
-import sys
-import time
 
 from test_framework.blocktools import SIGNET_HEADER
 from feature_signet import unsigned_native_block, add_solution, signet_miner_helpers

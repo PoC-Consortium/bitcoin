@@ -5,7 +5,6 @@
 """Test BIP68 implementation."""
 
 import random
-import time
 
 from test_framework.blocktools import (
     NORMAL_GBT_REQUEST_PARAMS,

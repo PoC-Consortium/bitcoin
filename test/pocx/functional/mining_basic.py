@@ -19,7 +19,6 @@ from test_framework.blocktools import (
     resign_pocx_block,
     get_witness_script,
     NORMAL_GBT_REQUEST_PARAMS,
-    TIME_GENESIS_BLOCK,
     POCX_MAX_FUTURE_BLOCK_TIME,
 )
 from test_framework.messages import (

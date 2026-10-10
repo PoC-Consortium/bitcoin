@@ -26,23 +26,16 @@ from decimal import Decimal
 import http.client
 import os
 import subprocess
-import textwrap
 
 from test_framework.blocktools import (
     POCX_MAX_FUTURE_BLOCK_TIME as MAX_FUTURE_BLOCK_TIME,
     TIME_GENESIS_BLOCK,
-    REGTEST_N_BITS,
-    REGTEST_TARGET,
-    create_pocx_block,
     create_pocx_coinbase,
     create_pocx_branch,
     resign_pocx_block,
     create_tx_with_script,
-    nbits_str,
-    target_str,
 )
 from test_framework.messages import (
-    CBlock,
     CBlockHeader,
     COIN,
     NODE_NONE,
@@ -586,7 +579,7 @@ class BlockchainTest(BitcoinTestFramework):
         #
         fork_height = current_height - 100 # choose something vaguely near our tip
         fork_hash = node.getblockhash(fork_height)
-        fork_block = node.getblock(fork_hash)
+        _fork_block = node.getblock(fork_hash)
 
         b1, b2 = create_pocx_branch(node, int(fork_hash, 16), 2)
         node.setmocktime(max(node.mocktime, b2.nTime))

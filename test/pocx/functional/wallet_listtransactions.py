@@ -5,7 +5,6 @@
 """Test the listtransactions API."""
 
 from decimal import Decimal
-import time
 import os
 import shutil
 

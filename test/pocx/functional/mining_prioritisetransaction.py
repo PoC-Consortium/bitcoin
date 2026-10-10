@@ -5,7 +5,6 @@
 """Test the prioritisetransaction mining RPC."""
 
 from decimal import Decimal
-import time
 
 from test_framework.messages import (
     COIN,

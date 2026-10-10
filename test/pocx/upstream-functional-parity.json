@@ -6098,7 +6098,7 @@
       "source": "test/functional/feature_assumeutxo.py",
       "replacement": "test/pocx/functional/feature_assumeutxo.py",
       "source_sha256": "e6add4fb5efe1a29d7d1071302da5a6b4cfced5b034269d44c0a4c98014b1855",
-      "replacement_sha256": "0e8c3593169ebb1efff722a2031ff91a6648130b885791bf2156af862c0be3cf",
+      "replacement_sha256": "c2b782921627ad04359291e1a09eb6f9c916205f2b8107b4564acbd39e16c65c",
       "assertion_and_method_accounting": {
         "assert_statements": 17,
         "assertion_calls": 85,
@@ -6208,13 +6208,14 @@
           "check_dump_output",
           "check_tx_counts"
         ]
-      }
+      },
+      "lint_binding_review": "Unused imports removed and unused assignment targets renamed; all remaining runtime AST, calls and assertions unchanged."
     },
     "feature_assumevalid.py": {
       "source": "test/functional/feature_assumevalid.py",
       "replacement": "test/pocx/functional/feature_assumevalid.py",
       "source_sha256": "13b22b69b1b71a6e972f6b25428b486c20f0bf963ae222ee491915ac68e4a12a",
-      "replacement_sha256": "4ccf09cf37c304c204ea5eee2a574bb81492dbdef3c6d5b920d18c92c252e5aa",
+      "replacement_sha256": "a10a271d03eea05c4d70f4563199d47cbb782d2e565836589fd70e79d7d339f7",
       "assertion_and_method_accounting": {
         "assert_statements": 0,
         "assertion_calls": 9,
@@ -6288,7 +6289,8 @@
           "prepare_native_chain",
           "run_test"
         ]
-      }
+      },
+      "lint_binding_review": "Unused imports removed and unused assignment targets renamed; all remaining runtime AST, calls and assertions unchanged."
     },
     "feature_bind_extra.py": {
       "source": "test/functional/feature_bind_extra.py",
@@ -6506,7 +6508,7 @@
       "source": "test/functional/feature_bip68_sequence.py",
       "replacement": "test/pocx/functional/feature_bip68_sequence.py",
       "source_sha256": "e84296532012715ab4ecc949c033fa119ab0f78aaea1276df14da33e80231496",
-      "replacement_sha256": "b63649b56cf4572a5eeb786740b44ec52c233f77fa9b89dea4480c2f023a6844",
+      "replacement_sha256": "2a2f15c8b05987771b5cbbd538b28a9f7b5c728d0459acedb5234b988663699a",
       "assertion_and_method_accounting": {
         "assert_statements": 13,
         "assertion_calls": 9,
@@ -6591,7 +6593,8 @@
           "test_version2_relay",
           "test_nonzero_locks"
         ]
-      }
+      },
+      "lint_binding_review": "Unused imports removed and unused assignment targets renamed; all remaining runtime AST, calls and assertions unchanged."
     },
     "feature_block.py": {
       "source": "test/functional/feature_block.py",
@@ -6773,7 +6776,7 @@
       "source": "test/functional/feature_chain_tiebreaks.py",
       "replacement": "test/pocx/functional/feature_chain_tiebreaks.py",
       "source_sha256": "fa7d085850b2be8331118f17504de484aaf959871325950da7eba1b58bcd34fd",
-      "replacement_sha256": "4afedad19607d39a180cf3a0216173aed862f4bbc4fa72d10b888bc2a09d47df",
+      "replacement_sha256": "95713022d6f57f8f059d3d6f1ce6074e3ffd9915a27ccaa751a05c6b15277a3c",
       "assertion_and_method_accounting": {
         "assert_statements": 0,
         "assertion_calls": 7,
@@ -6850,7 +6853,8 @@
           "test_chain_split_from_disk",
           "run_test"
         ]
-      }
+      },
+      "lint_binding_review": "Unused imports removed and unused assignment targets renamed; all remaining runtime AST, calls and assertions unchanged."
     },
     "feature_cltv.py": {
       "source": "test/functional/feature_cltv.py",
@@ -8636,7 +8640,7 @@
       "source": "test/functional/feature_minchainwork.py",
       "replacement": "test/pocx/functional/feature_minchainwork.py",
       "source_sha256": "0f04f8dc0d8f93c7bbe5d979ed0e445a16f1710a7afa1ca49f19a1934d77d7d1",
-      "replacement_sha256": "e134a1a02a2f0ef9cd562d5bef6c28f7b307831674d7eac331ed5d6ca0927b4d",
+      "replacement_sha256": "5093096bb9ba16b7e8828d3d67420f1d78928e201f52e812282c19dfd1e81b5c",
       "assertion_and_method_accounting": {
         "assert_statements": 1,
         "assertion_calls": 4,
@@ -8708,7 +8712,8 @@
           "generate",
           "run_test"
         ]
-      }
+      },
+      "lint_binding_review": "Unused imports removed and unused assignment targets renamed; all remaining runtime AST, calls and assertions unchanged."
     },
     "feature_notifications.py": {
       "source": "test/functional/feature_notifications.py",
@@ -9696,7 +9701,7 @@
       "source": "test/functional/feature_signet.py",
       "replacement": "test/pocx/functional/feature_signet.py",
       "source_sha256": "88ae5172d333a0e06111ed9873ef6236c83956db7d147781757842ea83a8ca87",
-      "replacement_sha256": "7e154a2359c83165289f3bcb74641af92965f58db655c7e6ed958cf639cbca8a",
+      "replacement_sha256": "d23c99a64f8b69f958c9bc58729b9d0a484f30d39da70f9ec5e51c933d2c5a65",
       "assertion_and_method_accounting": {
         "assert_statements": 2,
         "assertion_calls": 10,
@@ -9790,7 +9795,8 @@
           "check_getblockchaininfo",
           "check_getmininginfo"
         ]
-      }
+      },
+      "lint_binding_review": "Unused imports removed and unused assignment targets renamed; all remaining runtime AST, calls and assertions unchanged."
     },
     "feature_startupnotify.py": {
       "source": "test/functional/feature_startupnotify.py",
@@ -10213,7 +10219,7 @@
       "source": "test/functional/feature_versionbits_warning.py",
       "replacement": "test/pocx/functional/feature_versionbits_warning.py",
       "source_sha256": "25a4a5dcc2db77f5d2c6bdfa25ff5679f534f1199b42162e20ffe46fe927f13d",
-      "replacement_sha256": "db77833d052366171da2d403e710e40b6412c0199b2589a0cbb35cc79f81e142",
+      "replacement_sha256": "4cd17bd0c9230e9940b0bef2735f3498c507821ba1137ad3177519b50d8b1164",
       "assertion_and_method_accounting": {
         "assert_statements": 4,
         "assertion_calls": 0,
@@ -10291,7 +10297,8 @@
           "versionbits_in_alert_file",
           "run_test"
         ]
-      }
+      },
+      "lint_binding_review": "Unused imports removed and unused assignment targets renamed; all remaining runtime AST, calls and assertions unchanged."
     },
     "interface_bitcoin_cli.py": {
       "source": "test/functional/interface_bitcoin_cli.py",
@@ -11405,7 +11412,7 @@
       "source": "test/functional/mining_basic.py",
       "replacement": "test/pocx/functional/mining_basic.py",
       "source_sha256": "63ccf8db34cb44c1c7609d50456a072eb0a5c828834038eb6050ca02b8822b77",
-      "replacement_sha256": "eacff9e79bde4a54840d1839dd6c41bae3457c165b81a06ef136be3cd001d043",
+      "replacement_sha256": "718b3152eea96f5fef50841f93ac2ced6c60eb310a8bbd2705445a99ef231509",
       "assertion_and_method_accounting": {
         "assert_statements": 17,
         "assertion_calls": 57,
@@ -11507,7 +11514,8 @@
           "run_test",
           "chain_tip"
         ]
-      }
+      },
+      "lint_binding_review": "Unused imports removed and unused assignment targets renamed; all remaining runtime AST, calls and assertions unchanged."
     },
     "mining_getblocktemplate_longpoll.py": {
       "source": "test/functional/mining_getblocktemplate_longpoll.py",
@@ -11674,7 +11682,7 @@
       "source": "test/functional/mining_prioritisetransaction.py",
       "replacement": "test/pocx/functional/mining_prioritisetransaction.py",
       "source_sha256": "41cfff425005932a614c13f59dc352662054e3321b35877d208ca53e9f2e8ec1",
-      "replacement_sha256": "9a7f4f591546524049d554d4c8405021f99abb1b97eeb43a0b2a8fa87a5eb138",
+      "replacement_sha256": "f12c812d65c5662b35097c985ed5892def6c7ff9fc1d114c907d0d10684d075f",
       "assertion_and_method_accounting": {
         "assert_statements": 15,
         "assertion_calls": 46,
@@ -11751,7 +11759,8 @@
           "test_diamond",
           "run_test"
         ]
-      }
+      },
+      "lint_binding_review": "Unused imports removed and unused assignment targets renamed; all remaining runtime AST, calls and assertions unchanged."
     },
     "mining_template_verification.py": {
       "source": "test/functional/mining_template_verification.py",
@@ -15874,7 +15883,7 @@
       "source": "test/functional/rpc_blockchain.py",
       "replacement": "test/pocx/functional/rpc_blockchain.py",
       "source_sha256": "35969192462a87e9568910013304edc8288c3c11f07ec365d060ff3b5e036f7f",
-      "replacement_sha256": "e8aed35ad6f47987205048b757716e80d382c8ed89f71a972454e081d3f30125",
+      "replacement_sha256": "f1e2a2ce4d46990d9ad253dc08aaa186618ac4615265a9abeaf0f0b7bcf02f20",
       "assertion_and_method_accounting": {
         "assert_statements": 31,
         "assertion_calls": 140,
@@ -16044,7 +16053,8 @@
           "assert_vin_does_not_contain_prevout",
           "move_block_file"
         ]
-      }
+      },
+      "lint_binding_review": "Unused imports removed and unused assignment targets renamed; all remaining runtime AST, calls and assertions unchanged."
     },
     "rpc_createmultisig.py": {
       "source": "test/functional/rpc_createmultisig.py",
@@ -16923,7 +16933,7 @@
       "source": "test/functional/rpc_getchaintips.py",
       "replacement": "test/pocx/functional/rpc_getchaintips.py",
       "source_sha256": "68f1766fb1cc3ddc96911bf0188c003d4ac3e1843ed2861c8b8de007294cabf9",
-      "replacement_sha256": "6c16e492c00d1b1a487dba8fba802385877e2adb90029e2154c08ec7e4cfda22",
+      "replacement_sha256": "3b5f03ed4ad346613f0f27ea729de97caea1f2abca0b94fb29c622e5125ad879",
       "assertion_and_method_accounting": {
         "assert_statements": 0,
         "assertion_calls": 21,
@@ -16992,7 +17002,8 @@
           "set_test_params",
           "run_test"
         ]
-      }
+      },
+      "lint_binding_review": "Unused imports removed and unused assignment targets renamed; all remaining runtime AST, calls and assertions unchanged."
     },
     "rpc_getdescriptoractivity.py": {
       "source": "test/functional/rpc_getdescriptoractivity.py",
@@ -18552,7 +18563,7 @@
       "source": "test/functional/tool_signet_miner.py",
       "replacement": "test/pocx/functional/tool_signet_miner.py",
       "source_sha256": "6b0a6d849c86a8838965336470f68f404e53adfd9db5b5a46ec58cd5542e5805",
-      "replacement_sha256": "78c75e9982daa3a877fb0cdeaf09a14b6119ddff6916fe26cb2afd825406f78a",
+      "replacement_sha256": "29ad801d8a955071e153e0504b9ee2e7f33c46915415ccbfaeaff88a12f984e3",
       "assertion_and_method_accounting": {
         "assert_statements": 7,
         "assertion_calls": 3,
@@ -18625,7 +18636,7 @@
       "dependencies": {
         "contrib/signet/miner": "2df980a48e688a9e1b54f1764772edd941c0e7008bcc99faa65546d263e8dffe",
         "test/pocx/kernel/provenance.json": "c9edcefe7f483ae296993c9c409f0a748e52ceff21a5c15462bd0fc475166446",
-        "test/pocx/functional/feature_signet.py": "7e154a2359c83165289f3bcb74641af92965f58db655c7e6ed958cf639cbca8a"
+        "test/pocx/functional/feature_signet.py": "d23c99a64f8b69f958c9bc58729b9d0a484f30d39da70f9ec5e51c933d2c5a65"
       },
       "replacement_assertion_and_method_accounting": {
         "assert_statements": 7,
@@ -18640,7 +18651,8 @@
           "mine_block_manual",
           "run_test"
         ]
-      }
+      },
+      "lint_binding_review": "Unused imports removed and unused assignment targets renamed; all remaining runtime AST, calls and assertions unchanged."
     },
     "tool_utils.py": {
       "source": "test/functional/tool_utils.py",
@@ -19060,7 +19072,7 @@
       "source": "test/functional/wallet_anchor.py",
       "replacement": "test/pocx/functional/wallet_anchor.py",
       "source_sha256": "063920224cfe4ff832a08bb7b8ad0ea55ea8618ca593fb60079458d9703cdb1f",
-      "replacement_sha256": "5d7c1e9f3fea0c3a9069d36dc8a666689d91d735317c922360e07ffa5d24fe8e",
+      "replacement_sha256": "96f14a1c72de3e3708020303334342bd5692742c79f5dbc34eec7327ee625ad4",
       "assertion_and_method_accounting": {
         "assert_statements": 0,
         "assertion_calls": 21,
@@ -19158,7 +19170,8 @@
           "test_cannot_sign_anchors",
           "run_test"
         ]
-      }
+      },
+      "lint_binding_review": "Unused imports removed and unused assignment targets renamed; all remaining runtime AST, calls and assertions unchanged."
     },
     "wallet_assumeutxo.py": {
       "source": "test/functional/wallet_assumeutxo.py",
@@ -21634,7 +21647,7 @@
       "source": "test/functional/wallet_listtransactions.py",
       "replacement": "test/pocx/functional/wallet_listtransactions.py",
       "source_sha256": "5dcce042b6bc4321c3cff3355a1c223fd0739471b08f0efde0b345888c9380c4",
-      "replacement_sha256": "132dbe8f902e06fed0e5315c68561d7649f88c913ef36901e7f453756ebb94f0",
+      "replacement_sha256": "eea8d18391a7e87c94a9c712c36d77b119a7288d15ea8b59b6c6765d39473fde",
       "assertion_and_method_accounting": {
         "assert_statements": 9,
         "assertion_calls": 51,
@@ -21750,7 +21763,8 @@
           "get_unconfirmed_utxo_entry",
           "normalize_list"
         ]
-      }
+      },
+      "lint_binding_review": "Unused imports removed and unused assignment targets renamed; all remaining runtime AST, calls and assertions unchanged."
     },
     "wallet_migration.py": {
       "source": "test/functional/wallet_migration.py",
