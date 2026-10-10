@@ -20,6 +20,47 @@ import build_configuration
 
 
 class UnitMatrixTests(unittest.TestCase):
+    def test_windows_hidden_ipc_preference_matches_original_cmake_effective_value(self):
+        definitions = [line for line in (ROOT / 'CMakeLists.txt').read_text().splitlines()
+                       if line.startswith('cmake_dependent_option(ENABLE_IPC ')]
+        self.assertEqual(len(definitions), 1)
+        with tempfile.TemporaryDirectory(prefix='unit-ipc-config-') as directory:
+            source = Path(directory) / 'source'
+            source.mkdir()
+            (source / 'CMakeLists.txt').write_text('''cmake_minimum_required(VERSION 3.22)
+project(ipc_configuration_probe NONE)
+include(CMakeDependentOption)
+option(ENABLE_POCX "Consensus fixture" OFF)
+option(ENABLE_WALLET "Wallet fixture" ON)
+option(WITH_USDT "Tracing fixture" OFF)
+''' + definitions[0] + '''
+file(WRITE "${CMAKE_BINARY_DIR}/effective-ipc.txt" "${ENABLE_IPC}")
+''')
+            for target in ('Windows', 'Linux'):
+                for preference in ('ON', 'OFF'):
+                    with self.subTest(target=target, preference=preference):
+                        build = Path(directory) / (target + '-' + preference)
+                        subprocess.run(['cmake', '-S', str(source), '-B', str(build), '-G', 'Ninja',
+                                        '-DCMAKE_SYSTEM_NAME=' + target, '-DCMAKE_SYSTEM_PROCESSOR=x86_64',
+                                        '-DENABLE_IPC=' + preference], capture_output=True, text=True, check=True)
+                        effective = (build / 'effective-ipc.txt').read_text()
+                        options, _ = unit_matrix.configuration(build)
+                        self.assertEqual(options['ENABLE_IPC'], effective)
+                        inventory = unit_matrix.inventory(ROOT, options, bitcoin=True)
+                        ipc_cases = {case for case in inventory['original'] if case.startswith('ipc_tests/')}
+                        self.assertTrue(ipc_cases)
+                        self.assertEqual(ipc_cases <= inventory['applicable'], effective == 'ON')
+                        if target == 'Windows':
+                            cache = (build / 'CMakeCache.txt').read_text()
+                            self.assertIn('ENABLE_IPC:INTERNAL=' + preference, cache)
+                            self.assertEqual(effective, 'OFF')
+                            for replacement in ('ENABLE_IPC:INTERNAL=invalid', ''):
+                                (build / 'CMakeCache.txt').write_text(cache.replace(
+                                    'ENABLE_IPC:INTERNAL=' + preference, replacement))
+                                invalid, _ = unit_matrix.configuration(build)
+                                with self.assertRaisesRegex(ValueError, 'ENABLE_IPC'):
+                                    unit_matrix.inventory(ROOT, invalid, bitcoin=True)
+
     def test_configuration_specific_discovery_keeps_both_compiled_executables(self):
         # Execute the production CMake discovery block against small compiled
         # probes. These are infrastructure checks, not Bitcoin/PoCX case proof.

@@ -51,6 +51,13 @@ def configuration(build, selected_config=None):
                    target_processor=field('CMAKE_SYSTEM_PROCESSOR'),
                    unit_build_configuration=selected_config or options.get('CMAKE_BUILD_TYPE', ''),
                    avx2_compiled=bool(re.search(r'^HAVE_AVX2:INTERNAL=(1|ON|TRUE)$', cache, re.M)))
+    # On Windows, the original cmake_dependent_option disables IPC and hides
+    # its saved preference in an INTERNAL cache entry. That preference may be
+    # ON; the effective value is OFF while the NOT WIN32 condition is false.
+    if options['target_system'] == 'Windows' and 'ENABLE_IPC' not in options:
+        preferences = re.findall(r'^ENABLE_IPC:INTERNAL=(ON|OFF)$', cache, re.M)
+        if len(preferences) == 1:
+            options['ENABLE_IPC'] = 'OFF'
     return options, files[0]
 
 

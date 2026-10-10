@@ -19,14 +19,14 @@
     "test/pocx/functional_cases.py": "903124835dc4e3d902036a6789a72727f82ff334a2c0c236cc2ee2a49ef4b68f",
     "test/pocx/functional_environment.py": "0b9a8336bc866a3f7d145fc32933f00172113b24cc50563f54121a6d9256c10e",
     "test/pocx/functional_results.py": "4355a7bd0f08ada20a7d82587160a10c0493041205d92b3ab7fb4335459e4613",
-    "test/pocx/inherited-ci.json": "d196165bd59f7c2f28c8983bfbbdf2c1aeba80f1dbe97106ab9afa65beddbbca",
-    "test/pocx/inherited_ci.py": "f4159b0177030cd881e55a9ce876e864f694cf5bdce4cda6d9fdf96af59cd42f",
+    "test/pocx/inherited-ci.json": "4fc9f15aaa87a329c27f9213cdc46572e5dc73eaf2bff83e5223ebd50171f52e",
+    "test/pocx/inherited_ci.py": "9044f35b052ac10391e5b854efd2851bf162ee55a901c270b17e006e0fbd8744",
     "test/pocx/inherited_functional.py": "1a6b54bf4c50a2188d6834e269cab43aabc012625e0cfaf5d7d2e8d89ee88b85",
     "test/pocx/kernel-parity.json": "cb9b73ae36fcac1b637427f9724d8571c25564a030fa5bf0404b8f7837a15d42",
     "test/pocx/kernel/fixtures.json": "0069f80997408a2a13739afe46775c4a5e2cc799a8b963006fdd30c299a7d35f",
     "test/pocx/kernel/provenance.json": "c9edcefe7f483ae296993c9c409f0a748e52ceff21a5c15462bd0fc475166446",
     "test/pocx/kernel_parity.py": "2fe6a18a37298316ed03e1d8ef892accfdf2933fc0fcc14dfe56108391c73979",
-    "test/pocx/manifest.json": "1447d6149883a8f5d6970acc46da4a6e687722a1b957e4f98a118858a5114fe9",
+    "test/pocx/manifest.json": "aafe0bce90e53758ca8cc00e62de5b98e2f02b302c2227be1a3b6f7d8177221b",
     "test/pocx/process_tree.py": "12639a920fa4a656eec4f14ea02c4aaf1fe997cfc18c7df2566e82a1d3ab3f29",
     "test/pocx/qt_parity.py": "ad4d9087e2058b42d33291b71f324677c32ffdf6276687519d3c8078e8187ace",
     "test/pocx/record_cross_unit.py": "b6fd82f31216e35ca534c5290eea1b2d44bf5fbbbbdddc1e0e68e8350bb0a28e",
@@ -49,9 +49,9 @@
     "test/pocx/test_windows_cross.py": "fe09e5b453625b7c849f4c9177392f9b7c72931f530a21e353101d6b36ebbe57",
     "test/pocx/unit_assets.py": "1c34c321789b13246532e2d702b2212a5812cdd88bd4f6289945aa7f5680f992",
     "test/pocx/unit_build.py": "e53b2493f8f3a9cc7dc14aa53e21ac5c0b2599a1dd9ce87c4d09187f48b44420",
-    "test/pocx/unit_matrix.py": "4e44fcdb6f98afd8ad26c38d74dd60bb6457f07c8636aa460f8a1df0691ea6d1",
+    "test/pocx/unit_matrix.py": "cebaf2bd9cd71436e579c29682275a3b76d11ea5a544f6d97c0643401e3a2e0c",
     "test/pocx/unit_parity.py": "4360deeb6a074fd1fb7c7c19d77930c296e4a874de9239976b720771295b6651",
-    "test/pocx/upstream-functional-parity.json": "caf106d60f362abf1f663f4d543e6e7dfbe72fc1cf1a4206f640d324fd94a21a",
+    "test/pocx/upstream-functional-parity.json": "378afb4ef6367e2e64c6c4599f2f346fc19ccff947891254f49fa42da2705eaf",
     "test/pocx/verify_functional.py": "f15b101b3c535ae7330c015a905b2dcefde106194ea04f7f7a6e56ef3c825eae",
     "test/pocx/windows_artifact_ci.py": "71b0b4970ec735c3cd381854ffb5533d5125d1e3b405e785591e4f3050b71f56",
     "test/pocx/windows_artifact_functional.py": "531f68a41395ecc75208d552a43f106a7d2f336971bc57b358560ed4910f02a4",
@@ -163,5 +163,37 @@
   "original_failure_reporting_review": "Retain parsed original functional case results before rejecting a failed aggregate/exit, and explicitly record missing original case/transport evidence as unverified. Counts and CSV remain available on failure. Fail-fast original-before-native gating, assertions, selections and successful execution commands are unchanged. Infrastructure fixtures cover actual failed aggregates and abnormal exits; this is not new target-platform runtime evidence.",
   "enabled_linux_python_prerequisites_review": "Provision Python ZeroMQ for the reviewed Debian/Ubuntu functional recipes and add pinned pycapnp only where IPC is enabled and the original environment omitted it. Preserve existing pip requirements; Ubuntu22.04 does not receive the unsupported --break-system-packages option. Export added PIP_PACKAGES through host/container setup. Original compiler, dependency build flags, features, test selections and assertions remain unchanged. Actual-recipe regression checks all eight environments, disabled/fuzz routing and idempotence; package/runtime execution remains separately required.",
   "inherited_feature_guard_review": "Recognize unconditional feature guards inherited by a single test class through an unambiguous single-base chain in sibling source modules, without importing or executing those modules. Record the actual declaration source; child overrides, conditional guards, ambiguous classes/bases and cycles remain unverified. Missing enabled prerequisites and failed cases remain failures or unverified. Three existing native wallet-dependent scripts inherit their original skip guard; no test is newly disabled. Existing run commands, original-first ordering, selections, assertions and builds are unchanged.",
-  "python_statement_formatting_review": "Split owned one-line Python statements without changing parsed runtime syntax or ordered comments. Update current affected source hashes and dependent kernel review. Also reconcile the already-reviewed inherited controller/guard checks and functional parity manifest from commits e46a1e4ecb and 2bd44df24c; original recipes/tests and historical previous hashes are unchanged. Infrastructure-only validation does not establish target platform runtime."
+  "python_statement_formatting_review": "Split owned one-line Python statements without changing parsed runtime syntax or ordered comments. Update current affected source hashes and dependent kernel review. Also reconcile the already-reviewed inherited controller/guard checks and functional parity manifest from commits e46a1e4ecb and 2bd44df24c; original recipes/tests and historical previous hashes are unchanged. Infrastructure-only validation does not establish target platform runtime.",
+  "windows_ipc_effective_configuration_review": {
+    "test/pocx/unit_matrix.py": {
+      "previous_sha256": "4e44fcdb6f98afd8ad26c38d74dd60bb6457f07c8636aa460f8a1df0691ea6d1",
+      "sha256": "cebaf2bd9cd71436e579c29682275a3b76d11ea5a544f6d97c0643401e3a2e0c",
+      "review": "Resolve hidden ENABLE_IPC preferences to effective OFF only for the actual Windows target, matching the unchanged original NOT WIN32 CMake dependency. Preserve Linux preferences and reject missing or malformed hidden options. Actual CMake configurations exercise both saved preferences on Windows/Linux and retain explicit original IPC inactive cases; no original source, assertion, binary or runtime result changes."
+    }
+  },
+  "reviewed_tracing_dependency_metadata_update": {
+    "reviewed_commit": "a0fb62aaeda0d1d889d139528642dd1602af4974",
+    "sources": {
+      "test/pocx/inherited-ci.json": {
+        "previous_sha256": "d196165bd59f7c2f28c8983bfbbdf2c1aeba80f1dbe97106ab9afa65beddbbca",
+        "sha256": "4fc9f15aaa87a329c27f9213cdc46572e5dc73eaf2bff83e5223ebd50171f52e",
+        "review": "Carry the already reviewed a0fb62aaed BCC/kernel-header compatibility dependency into the Windows artifact source gate. Original CMake/Windows recipe, target selections, test IDs, compiled source and assertions unchanged. No runtime success inferred."
+      },
+      "test/pocx/inherited_ci.py": {
+        "previous_sha256": "f4159b0177030cd881e55a9ce876e864f694cf5bdce4cda6d9fdf96af59cd42f",
+        "sha256": "9044f35b052ac10391e5b854efd2851bf162ee55a901c270b17e006e0fbd8744",
+        "review": "Carry the already reviewed a0fb62aaed BCC/kernel-header compatibility dependency into the Windows artifact source gate. Original CMake/Windows recipe, target selections, test IDs, compiled source and assertions unchanged. No runtime success inferred."
+      },
+      "test/pocx/manifest.json": {
+        "previous_sha256": "1447d6149883a8f5d6970acc46da4a6e687722a1b957e4f98a118858a5114fe9",
+        "sha256": "aafe0bce90e53758ca8cc00e62de5b98e2f02b302c2227be1a3b6f7d8177221b",
+        "review": "Carry the already reviewed a0fb62aaed BCC/kernel-header compatibility dependency into the Windows artifact source gate. Original CMake/Windows recipe, target selections, test IDs, compiled source and assertions unchanged. No runtime success inferred."
+      },
+      "test/pocx/upstream-functional-parity.json": {
+        "previous_sha256": "caf106d60f362abf1f663f4d543e6e7dfbe72fc1cf1a4206f640d324fd94a21a",
+        "sha256": "378afb4ef6367e2e64c6c4599f2f346fc19ccff947891254f49fa42da2705eaf",
+        "review": "Carry the already reviewed a0fb62aaed BCC/kernel-header compatibility dependency into the Windows artifact source gate. Original CMake/Windows recipe, target selections, test IDs, compiled source and assertions unchanged. No runtime success inferred."
+      }
+    }
+  }
 }
