@@ -8778,7 +8778,7 @@
       ],
       "dependencies": {
         "contrib/signet/miner": "2df980a48e688a9e1b54f1764772edd941c0e7008bcc99faa65546d263e8dffe",
-        "test/pocx/kernel/provenance.json": "612feda6a0284af52c9e8932a1a2c6d9dfe193899e59e1e8b826da6b4f3a6972",
+        "test/pocx/kernel/provenance.json": "1701fd2568d6ad4bcb7b58bb8e7c5f6c19bd9f0a7f32a549b6387e803f8126fc",
         "src/pocx/rpc/mining.cpp": "5b79761cb582dbbf1e581366ee1e99cc24b7768685845d2e79f92901c619d959",
         "src/kernel/chainparams.cpp": "63283d4612b9fe0dd0cb2009f5cea7bf60e59613b1f4e888a0f265ffcbbb1b1e"
       },
@@ -16645,7 +16645,7 @@
       ],
       "dependencies": {
         "contrib/signet/miner": "2df980a48e688a9e1b54f1764772edd941c0e7008bcc99faa65546d263e8dffe",
-        "test/pocx/kernel/provenance.json": "612feda6a0284af52c9e8932a1a2c6d9dfe193899e59e1e8b826da6b4f3a6972",
+        "test/pocx/kernel/provenance.json": "1701fd2568d6ad4bcb7b58bb8e7c5f6c19bd9f0a7f32a549b6387e803f8126fc",
         "test/pocx/functional/feature_signet.py": "7e154a2359c83165289f3bcb74641af92965f58db655c7e6ed958cf639cbca8a"
       },
       "replacement_assertion_and_method_accounting": {

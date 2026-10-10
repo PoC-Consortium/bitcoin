@@ -13,7 +13,11 @@ selector. The kernel library does not use that shortcut. Coinbase maturity and
 the original spent-coin/undo checks remain exercised. Legacy kernel `Bits()` and
 `Nonce()` accessors return zero in PoCX; their assertions follow that C API contract.
 
-Generated JSON and C++ headers live only under the build directory. Python
+Native builds generate JSON and C++ headers under the build directory. Cross
+builds copy `fixtures.json`, the byte-identical independently verified snapshot,
+into that directory and render the same header with host Python. They never run
+a target-platform fixture generator on the build host. Both paths require the
+same fixed fixture hash and retain every kernel assertion. Python
 computes expected header hashes and field values independently. Before rendering,
 the JSON must match the independently verified SHA256 in `provenance.json`.
 Normal builds need no Rust checkout. Drift checking also rejects changes to the

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # Copyright (c) 2026 The Bitcoin PoCX developers
 # Distributed under the MIT software license; see COPYING.
-"""Rebuild and run every applicable native kernel case, retaining checked evidence."""
+"""Rebuild and run the complete Bitcoin or PoCX kernel suite with checked evidence."""
 import argparse
 import datetime
 import json
@@ -12,6 +12,7 @@ import tempfile
 import time
 
 import kernel_parity
+from build_configuration import configuration, executable, build_arguments, ctest_arguments, require_source
 
 ROOT = kernel_parity.ROOT
 
@@ -21,40 +22,54 @@ def main():
     parser.add_argument('--build-dir', type=Path, required=True)
     parser.add_argument('--output-dir', type=Path, required=True)
     parser.add_argument('--jobs', type=int, default=3)
+    parser.add_argument('--timeout', type=int, default=900)
+    parser.add_argument('--config', help='Required configuration for Visual Studio/Ninja Multi-Config builds')
+    parser.add_argument('--bitcoin', action='store_true', help='Run the PoCX-disabled original kernel baseline')
     args = parser.parse_args()
     build, output = args.build_dir.resolve(), args.output_dir.resolve()
-    if args.jobs < 1:
-        parser.error('--jobs must be positive')
+    if args.jobs < 1 or args.timeout < 1 or build == ROOT or not build.is_relative_to(ROOT):
+        parser.error('Use a build directory in this worktree and positive --jobs')
     output.mkdir(parents=True, exist_ok=True)
     results = output / 'verification.json'
     results.write_text(json.dumps({'status': 'failed', 'phase': 'preparing build and execution'}) + '\n')
     issues = kernel_parity.check(ROOT)
     if issues:
         raise ValueError(issues)
-    required = {'ENABLE_POCX:BOOL=ON', 'BUILD_KERNEL_LIB:BOOL=ON',
-                'BUILD_KERNEL_TEST:BOOL=ON', f'CMAKE_HOME_DIRECTORY:INTERNAL={ROOT}'}
-    if not required.issubset((build / 'CMakeCache.txt').read_text().splitlines()):
-        raise ValueError('Configure a native kernel build from this source tree first')
+    consensus = 'bitcoin' if args.bitcoin else 'pocx'
+    required = {f'ENABLE_POCX:BOOL={"OFF" if args.bitcoin else "ON"}', 'BUILD_KERNEL_LIB:BOOL=ON',
+                'BUILD_KERNEL_TEST:BOOL=ON'}
+    cache = (build / 'CMakeCache.txt').read_text()
+    selected = configuration(cache, args.config)
+    require_source(cache, ROOT)
+    if not required.issubset(cache.splitlines()):
+        raise ValueError(f'Configure a {consensus} kernel build from this source tree first')
     review = json.loads((ROOT / 'test/pocx/kernel-parity.json').read_text())
     build_command = ['cmake', '--build', str(build), '--target', 'test_kernel', '-j', str(args.jobs)]
+    build_command += build_arguments(selected)
     with (output / 'build.log').open('w') as log:
         subprocess.run(build_command, stdout=log, stderr=subprocess.STDOUT, check=True)
     issues = kernel_parity.check(ROOT)
     if issues:
         raise ValueError(issues)
-    snapshot = {name: kernel_parity.digest(ROOT / name) for name in review['execution_inputs']}
+    inputs = kernel_parity.BITCOIN_INPUTS if args.bitcoin else review['execution_inputs']
+    snapshot = {name: kernel_parity.digest(ROOT / name) for name in sorted(inputs)}
+    binary = executable(build, 'test_kernel', cache, selected)
     report = {
         'source_revision': subprocess.check_output(['git', '-C', str(ROOT), 'rev-parse', 'HEAD'], text=True).strip(),
         'executed_source_snapshot': snapshot,
-        'binary_sha256': kernel_parity.digest(build / 'bin/test_kernel'),
+        'binary_sha256': kernel_parity.digest(binary),
+        'binary': str(binary), 'build_configuration': selected,
+        'consensus': consensus,
         'cache_sha256': kernel_parity.digest(build / 'CMakeCache.txt'),
         'build_command': build_command,
         'boost_report': str(output / 'boost-report.xml'),
         'ctest_xml': str(output / 'ctest.xml'),
     }
-    command = ['ctest', '--test-dir', str(build / 'src/pocx/test/kernel'),
-               '-R', '^test_kernel$', '--verbose', '--timeout', '900', '--no-tests=error',
+    test_dir = 'src/test/kernel' if args.bitcoin else 'src/pocx/test/kernel'
+    command = ['ctest', '--test-dir', str(build / test_dir),
+               '-R', '^test_kernel$', '--verbose', '--timeout', str(args.timeout), '--no-tests=error',
                '--output-junit', report['ctest_xml']]
+    command += ctest_arguments(selected)
     # Prevent inherited Boost filters, disabled reports or exception controls
     # from turning a partial/empty execution into an apparent green result.
     env = {key: value for key, value in os.environ.items() if not key.startswith('BOOST_TEST_')}
@@ -63,7 +78,7 @@ def main():
     for key in ('boost_report', 'ctest_xml'):
         Path(report[key]).unlink(missing_ok=True)
     started = time.monotonic()
-    print('Running all 16 native kernel cases; detailed output is in', output / 'ctest.log', flush=True)
+    print(f'Running all 16 {consensus} kernel cases; detailed output is in', output / 'ctest.log', flush=True)
     with tempfile.TemporaryDirectory(prefix='pocx-kernel-') as scratch, (output / 'ctest.log').open('w') as log:
         env['TMPDIR'] = scratch
         execution = subprocess.run(command, env=env, stdout=log, stderr=subprocess.STDOUT)
@@ -78,7 +93,7 @@ def main():
     issues = kernel_parity.check(ROOT)
     if issues:
         raise ValueError(issues)
-    checked = kernel_parity.verify_execution(ROOT, build, results, review)
+    checked = kernel_parity.verify_execution(ROOT, build, results, review, bitcoin=args.bitcoin)
     report.update(checked, status='passed')
     results.write_text(json.dumps(report, indent=2) + '\n')
     print(json.dumps(checked, indent=2))

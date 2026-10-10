@@ -99,6 +99,20 @@ class KernelInfrastructureTest(unittest.TestCase):
             with self.subTest(field=field), self.assertRaises(ValueError):
                 kernel_parity.verify_execution(ROOT, BUILD, record, self.review)
 
+    def test_commands_cannot_build_and_run_different_configurations(self):
+        original = json.loads(RESULTS.read_text())
+        selected = original.get('build_configuration') or 'Release'
+        for field, flag in (('build_command', '--config'), ('command', '--build-config')):
+            report = deepcopy(original)
+            report['build_configuration'] = selected
+            report['build_command'] = ['cmake', '--config', selected]
+            report['command'] = ['ctest', '--build-config', selected]
+            report[field] = [arg for arg in report[field] if arg not in (flag, selected)]
+            record = Path(self.temp.name) / 'results.json'
+            record.write_text(json.dumps(report))
+            with self.subTest(field=field), self.assertRaisesRegex(ValueError, 'commands do not select'):
+                kernel_parity.verify_execution(ROOT, BUILD, record, self.review)
+
     def test_failed_rebuild_cannot_leave_old_green_summary(self):
         directory = Path(self.temp.name)
         fake_bin = directory / 'bin'
