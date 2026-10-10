@@ -1,0 +1,38 @@
+{
+  "scope": "Original i686 USDT BPF host/target argument-width compatibility, no original source edits or assertion changes.",
+  "tests": {
+    "test/functional/interface_usdt_coinselection.py": {
+      "upstream_sha256": "83b8ca69d1326d6a09d364d1683f0cdd51c93321c16811f38cf09b2881d88598",
+      "replacement": "test/pocx/bitcoin_baseline/usdt/interface_usdt_coinselection.py",
+      "replacement_sha256": "937ed589df1a6bf42d62ae4b20d4a9a11b00f8b68f712be21d708bfc25e7e2e5",
+      "review": "The full original script and BPF programs are unchanged except the explicit BPF constructor import. Every original Python assertion, callback, event structure and scenario is preserved. The owned constructor reads i686 arguments at actual target widths; ELF64 BPF text passes through unchanged."
+    },
+    "test/functional/interface_usdt_mempool.py": {
+      "upstream_sha256": "766cda2876efcf879773b02fd953e4af3c70c85371cbe4a0df343cad4836211c",
+      "replacement": "test/pocx/bitcoin_baseline/usdt/interface_usdt_mempool.py",
+      "replacement_sha256": "73336cf4489b45fc87729287814236d5f5e20ca528427500a18aaa00885d173a",
+      "review": "The full original script and BPF programs are unchanged except the explicit BPF constructor import. Every original Python assertion, callback, event structure and scenario is preserved. The owned constructor reads i686 arguments at actual target widths; ELF64 BPF text passes through unchanged."
+    },
+    "test/functional/interface_usdt_net.py": {
+      "upstream_sha256": "00a45dbcf78eda4093310fd340c51fa44422d373e4205c69dcd52038c517c913",
+      "replacement": "test/pocx/bitcoin_baseline/usdt/interface_usdt_net.py",
+      "replacement_sha256": "113bc1b4208988dc906187b5c4baebde9af438dc5684a5009f0cf49c0dadeb55",
+      "review": "The full original script and BPF programs are unchanged except the explicit BPF constructor import. Every original Python assertion, callback, event structure and scenario is preserved. The owned constructor reads i686 arguments at actual target widths; ELF64 BPF text passes through unchanged."
+    },
+    "test/functional/interface_usdt_utxocache.py": {
+      "upstream_sha256": "fbfdbb13c9778aff7550d7e373185cf56c420d07fb5429a22ae54312f42f1bf6",
+      "replacement": "test/pocx/bitcoin_baseline/usdt/interface_usdt_utxocache.py",
+      "replacement_sha256": "10059ade02b7eaf59ecd5df1e2a4df1ca3895da27aa0a533c4fee4d9a453e73c",
+      "review": "The full original script and BPF programs are unchanged except the explicit BPF constructor import. Every original Python assertion, callback, event structure and scenario is preserved. The owned constructor reads i686 arguments at actual target widths; ELF64 BPF text passes through unchanged."
+    },
+    "test/functional/interface_usdt_validation.py": {
+      "upstream_sha256": "57410957024e40837095597ebd82fae07c2341917a6804911c062e439d685799",
+      "replacement": "test/pocx/bitcoin_baseline/usdt/interface_usdt_validation.py",
+      "replacement_sha256": "d4a7dfc3fda13e7b0ca0609dd97fd25195d6a3939a4bcea7efd85b808a910bca",
+      "review": "The full original script and BPF programs are unchanged except the explicit BPF constructor import. Every original Python assertion, callback, event structure and scenario is preserved. The owned constructor reads i686 arguments at actual target widths; ELF64 BPF text passes through unchanged."
+    }
+  },
+  "helpers": {
+    "test/pocx/framework/bpf_abi.py": "efe2cd2d7aa1cad2123a1ac00ff5a5e4723ebeb10c860f8a8f30e9976764acf9"
+  }
+}
