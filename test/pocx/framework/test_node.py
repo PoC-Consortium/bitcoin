@@ -7,13 +7,13 @@ Staging copies the reviewed upstream module to bitcoin_test_node.py. No runtime
 patches or changes to the upstream class are used.
 """
 from .bitcoin_test_node import (
-    BITCOIN_PID_FILENAME_DEFAULT,
-    ErrorMatch,
-    FailedToStartError,
-    NULL_BLK_XOR_KEY,
+    BITCOIN_PID_FILENAME_DEFAULT as BITCOIN_PID_FILENAME_DEFAULT,
+    ErrorMatch as ErrorMatch,
+    FailedToStartError as FailedToStartError,
+    NULL_BLK_XOR_KEY as NULL_BLK_XOR_KEY,
     TestNode as BitcoinTestNode,
-    TestNodeCLI,
-    TestNodeCLIAttr,
+    TestNodeCLI as TestNodeCLI,
+    TestNodeCLIAttr as TestNodeCLIAttr,
 )
 from .address import base58_to_byte, program_to_witness
 from .util import chain_folder

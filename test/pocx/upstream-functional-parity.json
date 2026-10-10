@@ -7134,7 +7134,7 @@
       "dependencies": {
         "test/pocx/framework/test_framework.py": "ea89c485b4ec374f62b0a28eb177f9ec5a5f67d2a4c0d54ee4d896ce99928f0b",
         "test/functional/test_framework/test_node.py": "59799d482ecf3aeb7f5ec2fa52ffe839f4e377ac0a903bf22daa5ecfaaa5d2ac",
-        "test/pocx/framework/blocktools.py": "55c86eea25296bf3f10809c8381287f728361abeec11504454eb5100b5ee395f",
+        "test/pocx/framework/blocktools.py": "b87707eb61097f1b7cf651a5c81ccd2570ca505e809bcd4a1026aede6afc1ceb",
         "test/functional/test_framework/messages.py": "c786651a517a49dd084b1d76072f755d40c5483f5be53b7322ca4f3403548b26"
       },
       "adapted_assertion_and_method_accounting": {
@@ -9701,7 +9701,7 @@
       "source": "test/functional/feature_signet.py",
       "replacement": "test/pocx/functional/feature_signet.py",
       "source_sha256": "88ae5172d333a0e06111ed9873ef6236c83956db7d147781757842ea83a8ca87",
-      "replacement_sha256": "d23c99a64f8b69f958c9bc58729b9d0a484f30d39da70f9ec5e51c933d2c5a65",
+      "replacement_sha256": "69b95779ebca236f8c6220a5a5598dde51f4c1c429036b5203711421714af3bc",
       "assertion_and_method_accounting": {
         "assert_statements": 2,
         "assertion_calls": 10,
@@ -9796,7 +9796,8 @@
           "check_getmininginfo"
         ]
       },
-      "lint_binding_review": "Unused imports removed and unused assignment targets renamed; all remaining runtime AST, calls and assertions unchanged."
+      "lint_binding_review": "Unused imports removed and unused assignment targets renamed; all remaining runtime AST, calls and assertions unchanged.",
+      "import_order_review": "Gather identical imports before module constants; preserve import order and every non-import AST node."
     },
     "feature_startupnotify.py": {
       "source": "test/functional/feature_startupnotify.py",
@@ -11322,7 +11323,7 @@
       "dependencies": {
         "test/pocx/framework/test_framework.py": "ea89c485b4ec374f62b0a28eb177f9ec5a5f67d2a4c0d54ee4d896ce99928f0b",
         "test/functional/test_framework/test_node.py": "59799d482ecf3aeb7f5ec2fa52ffe839f4e377ac0a903bf22daa5ecfaaa5d2ac",
-        "test/pocx/framework/blocktools.py": "55c86eea25296bf3f10809c8381287f728361abeec11504454eb5100b5ee395f",
+        "test/pocx/framework/blocktools.py": "b87707eb61097f1b7cf651a5c81ccd2570ca505e809bcd4a1026aede6afc1ceb",
         "test/functional/test_framework/messages.py": "c786651a517a49dd084b1d76072f755d40c5483f5be53b7322ca4f3403548b26"
       },
       "adapted_assertion_and_method_accounting": {
@@ -18638,7 +18639,7 @@
       "dependencies": {
         "contrib/signet/miner": "2df980a48e688a9e1b54f1764772edd941c0e7008bcc99faa65546d263e8dffe",
         "test/pocx/kernel/provenance.json": "c9edcefe7f483ae296993c9c409f0a748e52ceff21a5c15462bd0fc475166446",
-        "test/pocx/functional/feature_signet.py": "d23c99a64f8b69f958c9bc58729b9d0a484f30d39da70f9ec5e51c933d2c5a65"
+        "test/pocx/functional/feature_signet.py": "69b95779ebca236f8c6220a5a5598dde51f4c1c429036b5203711421714af3bc"
       },
       "replacement_assertion_and_method_accounting": {
         "assert_statements": 7,
@@ -19074,7 +19075,7 @@
       "source": "test/functional/wallet_anchor.py",
       "replacement": "test/pocx/functional/wallet_anchor.py",
       "source_sha256": "063920224cfe4ff832a08bb7b8ad0ea55ea8618ca593fb60079458d9703cdb1f",
-      "replacement_sha256": "96f14a1c72de3e3708020303334342bd5692742c79f5dbc34eec7327ee625ad4",
+      "replacement_sha256": "f6641a5f76e0935e23c3087d0217814de4f4ccefab15c6c58a33e3ab5e9088e8",
       "assertion_and_method_accounting": {
         "assert_statements": 0,
         "assertion_calls": 21,
@@ -19173,7 +19174,8 @@
           "run_test"
         ]
       },
-      "lint_binding_review": "Unused imports removed and unused assignment targets renamed; all remaining runtime AST, calls and assertions unchanged."
+      "lint_binding_review": "Unused imports removed and unused assignment targets renamed; all remaining runtime AST, calls and assertions unchanged.",
+      "import_order_review": "Gather identical imports before module constants; preserve import order and every non-import AST node."
     },
     "wallet_assumeutxo.py": {
       "source": "test/functional/wallet_assumeutxo.py",
@@ -19622,7 +19624,7 @@
       "dependencies": {
         "test/pocx/framework/test_framework.py": "ea89c485b4ec374f62b0a28eb177f9ec5a5f67d2a4c0d54ee4d896ce99928f0b",
         "test/functional/test_framework/test_node.py": "59799d482ecf3aeb7f5ec2fa52ffe839f4e377ac0a903bf22daa5ecfaaa5d2ac",
-        "test/pocx/framework/blocktools.py": "55c86eea25296bf3f10809c8381287f728361abeec11504454eb5100b5ee395f",
+        "test/pocx/framework/blocktools.py": "b87707eb61097f1b7cf651a5c81ccd2570ca505e809bcd4a1026aede6afc1ceb",
         "test/pocx/framework/wallet_compatibility.py": "9df8dd702518891b76acd8a34509382f91efce6005e1d1c66785437a372dff50",
         "test/functional/test_framework/messages.py": "c786651a517a49dd084b1d76072f755d40c5483f5be53b7322ca4f3403548b26"
       },
@@ -21843,8 +21845,8 @@
       "dependencies": {
         "test/pocx/framework/test_framework.py": "ea89c485b4ec374f62b0a28eb177f9ec5a5f67d2a4c0d54ee4d896ce99928f0b",
         "test/functional/test_framework/test_node.py": "59799d482ecf3aeb7f5ec2fa52ffe839f4e377ac0a903bf22daa5ecfaaa5d2ac",
-        "test/pocx/framework/test_node.py": "449dec8a3bbd0a19c081bc1eb3e0d0220e93ebcc1873fd921c2ed9ab8427c0b9",
-        "test/pocx/framework/blocktools.py": "55c86eea25296bf3f10809c8381287f728361abeec11504454eb5100b5ee395f",
+        "test/pocx/framework/test_node.py": "a4935df6cd38842cbd8577dbd839d931f464bd69f6a9f8419c6bdcc4bf5bb6a1",
+        "test/pocx/framework/blocktools.py": "b87707eb61097f1b7cf651a5c81ccd2570ca505e809bcd4a1026aede6afc1ceb",
         "test/pocx/framework/wallet_compatibility.py": "9df8dd702518891b76acd8a34509382f91efce6005e1d1c66785437a372dff50",
         "test/pocx/framework/wallet_migration_fixtures.py": "50a03e6973aa0ef1c18f284d53c0b279e689ec63ac26a3e95546b04ee2ad4bbf",
         "test/functional/test_framework/messages.py": "c786651a517a49dd084b1d76072f755d40c5483f5be53b7322ca4f3403548b26",
@@ -24076,11 +24078,11 @@
     "test/functional/test_framework/blocktools.py": {
       "replacement": "test/pocx/framework/blocktools.py",
       "source_sha256": "a04bd5c095826c99f4f47e49db91136159b7dc7804ca751255785928d28f449f",
-      "replacement_sha256": "55c86eea25296bf3f10809c8381287f728361abeec11504454eb5100b5ee395f",
+      "replacement_sha256": "b87707eb61097f1b7cf651a5c81ccd2570ca505e809bcd4a1026aede6afc1ceb",
       "copied_upstream_alias": "test_framework/bitcoin_blocktools.py",
       "dependencies": {
         "test/pocx/framework/test_framework.py": "ea89c485b4ec374f62b0a28eb177f9ec5a5f67d2a4c0d54ee4d896ce99928f0b",
-        "test/pocx/framework/test_node.py": "449dec8a3bbd0a19c081bc1eb3e0d0220e93ebcc1873fd921c2ed9ab8427c0b9",
+        "test/pocx/framework/test_node.py": "a4935df6cd38842cbd8577dbd839d931f464bd69f6a9f8419c6bdcc4bf5bb6a1",
         "test/pocx/framework/messages.py": "f93a7e32521a57c7e5b49214c8bb949b4bc1d1d33eb12ce724462edd37d45898",
         "src/chain.h": "556ee891313051c191ea17edd45c0dc50cdd1299e4ea374997165a0dcd4a581b",
         "src/chain.cpp": "66d7cbdeb434fe80f8d72d6690ff7c539f57d614177babc95773cb70ee6d59da",
@@ -24118,7 +24120,8 @@
         "same_ast_execution_evidence": "build-pocx-clean/pocx-results-mo6sqmyb/results.json"
       },
       "unit_storage_review": "artifacts/unit-completion-storage-review1.json: CheckBlockHeader rule body byte-identical, exported for disk reads; all727 applicable unit cases plus33 native PASS. No new functional execution claimed.",
-      "current_input_outcome": "unverified"
+      "current_input_outcome": "unverified",
+      "public_export_review": "Explicit self aliases retain the exact existing public imported objects; all non-import AST nodes unchanged."
     },
     "test/functional/test_framework/util.py": {
       "source_sha256": "2e8499f47175e6a4df9508a37c30dc24ff90de8bc1ea117ff054f99c77bc8aa2",
@@ -26074,7 +26077,7 @@
   "native_forging_clock": {
     "sources": {
       "test/pocx/framework/test_framework.py": "ea89c485b4ec374f62b0a28eb177f9ec5a5f67d2a4c0d54ee4d896ce99928f0b",
-      "test/pocx/framework/blocktools.py": "55c86eea25296bf3f10809c8381287f728361abeec11504454eb5100b5ee395f"
+      "test/pocx/framework/blocktools.py": "b87707eb61097f1b7cf651a5c81ccd2570ca505e809bcd4a1026aede6afc1ceb"
     },
     "review": "Opt-in synchronized forging obtains an unsubmitted real native proof on active parent at parent_time+1. Existing builder verifies tip, height, mempool, clock, proof hash and parent preservation. Independently bound preview time using uint64 quality, target decrease20percent and integer time bending. Set actors to max(actual proof deadline, existing clocks), preserving explicit scenario advances and stopped-node startup clock. Original generation RPC/body/amount and sync calls retained. Avoid expiring unrelated block downloads by advancing worst-case579seconds for an actual102second proof. Historical200-block funding remains explicitly paced at the independent worst-case interval to keep its genesis-target invariant and backdating bound. Its complete per-block target,10-coin reward,script allocation,tip age,IBD and verifychain checks remain unchanged. Ordinary scenario generation uses actual deadlines. Historical funded tip is20h plus one bound interval before real time, retaining the asserted24h usability and leaving room for the original orphan scenario170 additional funding coinbases plus cleanup blocks. Per-block proof bounds and real-clock eligibility assertions remain active. Connected generation previews explicitly allow legitimate incoming/replacement mempool transactions while retaining empty-body, proof hash, active-parent, height, deadline, clock and normal mining assertions. Strict mempool equality remains the default for quiescent explicit constructors. The added equality is not an original Bitcoin assertion and previously raced with asynchronous wallet transaction relay. A native mining regression injects a real valid transaction after the unsubmitted preview RPC, requires unchanged tip/height, then verifies the actual mining RPC includes exactly that transaction and empties the mempool. All original100block wrapper assertions remain intact. Failed full candidate and owned-group cleanup retained in complete-selection-matrix-final-third-interruption.json. Explicitmixednodeclasses retain defaultnativeclass for existing consumers; only reviewedcompatibilityadapters select the unchangedBitcoinTestNode for priorBitcoinreleases. NewBitcoinproofconstructor uses an unchangedaliased upstreammessages module and identicalcoinbases; it does not affect nativeforging. Currentexecution remains unverified.",
     "historical_failure": "build-pocx-clean/native-fixture-review-zqi15wex/470d7b8cb463/node0/regtest/debug.log",
@@ -26109,8 +26112,8 @@
       "sha256": "50a03e6973aa0ef1c18f284d53c0b279e689ec63ac26a3e95546b04ee2ad4bbf",
       "dependencies": {
         "test/pocx/framework/wallet_compatibility.py": "9df8dd702518891b76acd8a34509382f91efce6005e1d1c66785437a372dff50",
-        "test/pocx/framework/blocktools.py": "55c86eea25296bf3f10809c8381287f728361abeec11504454eb5100b5ee395f",
-        "test/pocx/framework/test_node.py": "449dec8a3bbd0a19c081bc1eb3e0d0220e93ebcc1873fd921c2ed9ab8427c0b9",
+        "test/pocx/framework/blocktools.py": "b87707eb61097f1b7cf651a5c81ccd2570ca505e809bcd4a1026aede6afc1ceb",
+        "test/pocx/framework/test_node.py": "a4935df6cd38842cbd8577dbd839d931f464bd69f6a9f8419c6bdcc4bf5bb6a1",
         "test/functional/test_framework/test_node.py": "59799d482ecf3aeb7f5ec2fa52ffe839f4e377ac0a903bf22daa5ecfaaa5d2ac",
         "test/functional/test_framework/descriptors.py": "8c2a4490c1b2a09c6c6e209eda090b160214d8156e20d6db671459cb4090a16a",
         "test/pocx/framework/messages.py": "f93a7e32521a57c7e5b49214c8bb949b4bc1d1d33eb12ce724462edd37d45898",

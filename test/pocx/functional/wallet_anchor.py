@@ -17,14 +17,14 @@ from test_framework.script_util import (
 )
 from test_framework.segwit_addr import encode_segwit_address
 from test_framework.test_framework import BitcoinTestFramework
-
-# Same witness-v1 two-byte anchor program, with the native regtest HRP.
-ANCHOR_ADDRESS = encode_segwit_address('rpocx', 1, bytes.fromhex('4e73'))
 from test_framework.util import (
     assert_equal,
     assert_raises_rpc_error,
 )
 from test_framework.wallet import MiniWallet
+
+# Same witness-v1 two-byte anchor program, with the native regtest HRP.
+ANCHOR_ADDRESS = encode_segwit_address('rpocx', 1, bytes.fromhex('4e73'))
 
 class WalletAnchorTest(BitcoinTestFramework):
     def set_test_params(self):

@@ -7,6 +7,11 @@ sources. Its PoW block constructors remain unsupported for PoCX. Only the fork
 fixture below replaces a mining-dependent entrypoint; no globals are patched.
 """
 from .bitcoin_blocktools import *  # noqa: F403
+from .bitcoin_blocktools import (
+    COIN as COIN,
+    FORK_LENGTH as FORK_LENGTH,
+    create_coinbase as create_coinbase,
+)
 from io import BytesIO
 from pathlib import Path
 import json
