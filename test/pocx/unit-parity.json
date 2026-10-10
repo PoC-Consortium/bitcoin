@@ -961,16 +961,18 @@
       "review": "Disk reads reuse existing PoCX header checks. Header rule body and Bitcoin branch unchanged. Non-genesis height-zero/negative disk headers rejected. Positive/malformed native disk fixtures and complete Bitcoin/PoCX unit runs required."
     },
     "src/validation.cpp": {
-      "sha256": "8089acb11dbfededfdd5448e07d1f07a6322d0915aa03e8e6fd6736a643435af",
-      "review": "Disk reads reuse existing PoCX header checks. Header rule body and Bitcoin branch unchanged. Non-genesis height-zero/negative disk headers rejected. Positive/malformed native disk fixtures and complete Bitcoin/PoCX unit runs required."
+      "sha256": "740bad4f2113e7e83dfdcb4c4317fc57e4c42d7ec7835fafadc8221d2f653b03",
+      "review": "Extract unchanged synthetic quality calculation into wallet/global-free regtest proof.cpp; an explicit default-false consensus permission is enabled only in CRegTestParams. CheckBlockHeader and header batching use passed context parameters in daemon and kernel. Real-proof validation, signatures, compression and future-time checks remain required; production networks retain synthetic rejection. Original Bitcoin preprocessing and kernel baseline are checked separately.",
+      "evidence": "artifacts/ci-parity-20261009/chainstate-clock/"
     },
     "src/validation.h": {
       "sha256": "b7b31f5d77c478ad581d5c95fff6428a532c469d88cafc2835986c069219257e",
       "review": "Disk reads reuse existing PoCX header checks. Header rule body and Bitcoin branch unchanged. Non-genesis height-zero/negative disk headers rejected. Positive/malformed native disk fixtures and complete Bitcoin/PoCX unit runs required."
     },
     "test/pocx/unit_parity.py": {
-      "sha256": "5ae2e74f61a606d3bd3d2b07880772a14aee3ac46c98d623ce84a8a03823af92",
-      "review": "Existing exact runtime/execution gate retained. Added standalone source-check CLI, original168-source review and reviewed native/data dependencies so unit package does not require future functional/fuzz manifests."
+      "sha256": "695940b2aa28af71312c3582c4d629d0ac83515f6c48e86705e8923ec748fb9b",
+      "review": "Extract unchanged synthetic quality calculation into wallet/global-free regtest proof.cpp; an explicit default-false consensus permission is enabled only in CRegTestParams. CheckBlockHeader and header batching use passed context parameters in daemon and kernel. Real-proof validation, signatures, compression and future-time checks remain required; production networks retain synthetic rejection. Original Bitcoin preprocessing and kernel baseline are checked separately. Use nonblocking shared file locks: retain POSIX flock compatibility and use Windows CRT byte-zero locking. Preserve existing file contents, close descriptors on lock failure, and fail rather than run unlocked. Real host concurrency and Windows adapter fixtures are infrastructure evidence; actual Windows runtime is unverified. Case inventories, assertions and original sources unchanged. Explicit CMake configuration selection binds unit executable, CTest inspection/execution and saved verification. Native discovery and evaluated input manifests are separate per configuration. Resolved registration paths tolerate native Windows path spelling; duplicate registrations fail. Compiled Release/Debug infrastructure probes test the production discovery block without claiming Windows or Bitcoin/PoCX runtime success. Original unit sources, assertions and exclusions unchanged.",
+      "evidence": "artifacts/ci-parity-20261009/chainstate-clock/"
     },
     "src/pocx/test/data/bip341_wallet_vectors.json": {
       "review": "Unit-package dependency extraction: existing native checks/vectors/generators unchanged; shared runner helpers moved byte-for-byte out of functional staging. Unit-only infrastructure checks extracted from previously passing full infrastructure suite.",
@@ -993,8 +995,9 @@
       "sha256": "7762729955f6237850eff58ef06c7c453cd5aae1dbd52b0f103a01c0db1bd0b0"
     },
     "src/pocx/test/pocx_real_proof_tests.cpp": {
-      "review": "Unit-package dependency extraction: existing native checks/vectors/generators unchanged; shared runner helpers moved byte-for-byte out of functional staging. Unit-only infrastructure checks extracted from previously passing full infrastructure suite.",
-      "sha256": "8d9ea74638d4c5b95c1737487630cac7613d849f242fc6533eeb8af1f6f2cebc"
+      "review": "Extract unchanged synthetic quality calculation into wallet/global-free regtest proof.cpp; an explicit default-false consensus permission is enabled only in CRegTestParams. CheckBlockHeader and header batching use passed context parameters in daemon and kernel. Real-proof validation, signatures, compression and future-time checks remain required; production networks retain synthetic rejection. Original Bitcoin preprocessing and kernel baseline are checked separately.",
+      "sha256": "2fe5c0b2f93f601e26fc82fc07478ef7095d00f95f42d471a78b4663ea20a6de",
+      "evidence": "artifacts/ci-parity-20261009/chainstate-clock/"
     },
     "src/pocx/test/pocx_simd_tests.cpp": {
       "review": "Unit-package dependency extraction: existing native checks/vectors/generators unchanged; shared runner helpers moved byte-for-byte out of functional staging. Unit-only infrastructure checks extracted from previously passing full infrastructure suite.",
@@ -1129,6 +1132,46 @@
       "upstream_source": "src/test/coins_tests.cpp",
       "upstream_sha256": "64fd623bf07a9a604ce50a21886ad83fb60393b506f7a5e5275ac29ceefccb1d",
       "review": "Only mock BatchWrite signature accepts the two native assignment arguments required by the PoCX interface. All 15 original cases and every assertion retained unchanged; original file restored byte-for-byte to upstream."
+    },
+    "src/CMakeLists.txt": {
+      "sha256": "fad235f69e7bc821e095ec589dbaf27972986193c0eb0963227054385bff629b",
+      "review": "Reviewed regtest kernel-context build selection. Architecture spelling and owned chainstate tool selection are separate review packages.",
+      "evidence": "artifacts/ci-parity-20261009/chainstate-clock/"
+    },
+    "src/consensus/params.h": {
+      "sha256": "4ed972393e50604b258a4890e8556eb02589190db7835ed8b6a8d3425ad97db8",
+      "review": "Extract unchanged synthetic quality calculation into wallet/global-free regtest proof.cpp; an explicit default-false consensus permission is enabled only in CRegTestParams. CheckBlockHeader and header batching use passed context parameters in daemon and kernel. Real-proof validation, signatures, compression and future-time checks remain required; production networks retain synthetic rejection. Original Bitcoin preprocessing and kernel baseline are checked separately.",
+      "evidence": "artifacts/ci-parity-20261009/chainstate-clock/"
+    },
+    "src/kernel/CMakeLists.txt": {
+      "sha256": "5ab444c0a05f7ce5b500f21e20656eaeb7de3da853fc46a5bf0b74d0e9675598",
+      "review": "Extract unchanged synthetic quality calculation into wallet/global-free regtest proof.cpp; an explicit default-false consensus permission is enabled only in CRegTestParams. CheckBlockHeader and header batching use passed context parameters in daemon and kernel. Real-proof validation, signatures, compression and future-time checks remain required; production networks retain synthetic rejection. Original Bitcoin preprocessing and kernel baseline are checked separately.",
+      "evidence": "artifacts/ci-parity-20261009/chainstate-clock/"
+    },
+    "src/kernel/chainparams.cpp": {
+      "sha256": "63283d4612b9fe0dd0cb2009f5cea7bf60e59613b1f4e888a0f265ffcbbb1b1e",
+      "review": "Extract unchanged synthetic quality calculation into wallet/global-free regtest proof.cpp; an explicit default-false consensus permission is enabled only in CRegTestParams. CheckBlockHeader and header batching use passed context parameters in daemon and kernel. Real-proof validation, signatures, compression and future-time checks remain required; production networks retain synthetic rejection. Original Bitcoin preprocessing and kernel baseline are checked separately.",
+      "evidence": "artifacts/ci-parity-20261009/chainstate-clock/"
+    },
+    "src/pocx/regtest/forging.cpp": {
+      "sha256": "c5fc3a90375e8e435829725bf0f71f2cc63970986473976b3824b824df34fcf7",
+      "review": "Extract unchanged synthetic quality calculation into wallet/global-free regtest proof.cpp; an explicit default-false consensus permission is enabled only in CRegTestParams. CheckBlockHeader and header batching use passed context parameters in daemon and kernel. Real-proof validation, signatures, compression and future-time checks remain required; production networks retain synthetic rejection. Original Bitcoin preprocessing and kernel baseline are checked separately.",
+      "evidence": "artifacts/ci-parity-20261009/chainstate-clock/"
+    },
+    "src/pocx/regtest/forging.h": {
+      "sha256": "a3c6d36b2345f3676f28b24e169e3a8fdb0778b78e5c5406d2b70f13b7eb96b1",
+      "review": "Extract unchanged synthetic quality calculation into wallet/global-free regtest proof.cpp; an explicit default-false consensus permission is enabled only in CRegTestParams. CheckBlockHeader and header batching use passed context parameters in daemon and kernel. Real-proof validation, signatures, compression and future-time checks remain required; production networks retain synthetic rejection. Original Bitcoin preprocessing and kernel baseline are checked separately.",
+      "evidence": "artifacts/ci-parity-20261009/chainstate-clock/"
+    },
+    "src/pocx/regtest/proof.cpp": {
+      "sha256": "53ee3c70548de5e20e01774e9921cdb36a57b5400ffb99de1990f849e3bb0fa3",
+      "review": "Extract unchanged synthetic quality calculation into wallet/global-free regtest proof.cpp; an explicit default-false consensus permission is enabled only in CRegTestParams. CheckBlockHeader and header batching use passed context parameters in daemon and kernel. Real-proof validation, signatures, compression and future-time checks remain required; production networks retain synthetic rejection. Original Bitcoin preprocessing and kernel baseline are checked separately.",
+      "evidence": "artifacts/ci-parity-20261009/chainstate-clock/"
+    },
+    "src/pocx/regtest/proof.h": {
+      "sha256": "470b7ff274c07c0a619ecdeec9e58d7a7dee65ed1d7dbae8614fdeb58b902e54",
+      "review": "Extract unchanged synthetic quality calculation into wallet/global-free regtest proof.cpp; an explicit default-false consensus permission is enabled only in CRegTestParams. CheckBlockHeader and header batching use passed context parameters in daemon and kernel. Real-proof validation, signatures, compression and future-time checks remain required; production networks retain synthetic rejection. Original Bitcoin preprocessing and kernel baseline are checked separately.",
+      "evidence": "artifacts/ci-parity-20261009/chainstate-clock/"
     }
   },
   "review_limit": "Review covers selected adaptations and shared fixture transformations, not every production branch. Exact Bitcoin-only exclusions do not waive native proof/retarget coverage.",

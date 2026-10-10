@@ -91,6 +91,7 @@ add_library(bitcoinkernel
   $<$<BOOL:${ENABLE_POCX}>:../pocx/assignments/opcodes.cpp>
   $<$<BOOL:${ENABLE_POCX}>:../pocx/assignments/replay.cpp>
   $<$<BOOL:${ENABLE_POCX}>:../pocx/mining/defensive_forge.cpp>
+  $<$<BOOL:${ENABLE_POCX}>:../pocx/regtest/proof.cpp>
   $<TARGET_OBJECTS:bitcoin_clientversion>
   $<TARGET_OBJECTS:bitcoin_crypto>
   $<TARGET_OBJECTS:leveldb>
@@ -120,13 +121,6 @@ target_link_libraries(bitcoinkernel
     $<TARGET_NAME_IF_EXISTS:USDT::headers>
     Boost::headers
 )
-
-# Mark this TU as kernel-library build so validation.cpp can skip code
-# paths that depend on symbols only present in bitcoin_node/bitcoin_common
-# (e.g. Params(), regtest hot-path forger).
-if(ENABLE_POCX)
-  target_compile_definitions(bitcoinkernel PRIVATE BUILD_BITCOIN_KERNEL)
-endif()
 
 # Enable AVX2 for PoCX batch validation if available
 if(ENABLE_POCX AND HAVE_AVX2)

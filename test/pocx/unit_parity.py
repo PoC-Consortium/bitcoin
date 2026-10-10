@@ -17,6 +17,16 @@ EXCLUDED = {'pow_tests/' + name for name in (
     'CheckProofOfWork_test_biger_hash_than_target', 'CheckProofOfWork_test_zero_target',
     'ChainParams_TESTNET4_sanity')}
 SHARED_REVIEWS = {
+    'src/CMakeLists.txt',
+    'src/consensus/params.h',
+    'src/kernel/CMakeLists.txt',
+    'src/kernel/chainparams.cpp',
+    'src/validation.cpp',
+    'src/pocx/regtest/forging.cpp',
+    'src/pocx/regtest/forging.h',
+    'src/pocx/regtest/proof.cpp',
+    'src/pocx/regtest/proof.h',
+
     'src/pocx/test/util/mining.cpp',
     'src/pocx/test/util/setup_common.cpp', 'src/pocx/test/util/forging.h',
     'src/pocx/test/util/bitcoin_block_fixture.h', 'src/node/blockstorage.cpp',

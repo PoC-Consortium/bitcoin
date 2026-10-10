@@ -5533,7 +5533,7 @@
       },
       "execution_status_scope": "Latest owned-runner evidence by declared argument case; historical observations do not establish current-input parity.",
       "latest_observed_outcome": "passed",
-      "current_input_outcome": "passed",
+      "current_input_outcome": "unverified",
       "runtime_case_evidence": [
         {
           "case": "feature_assumeutxo.py",
@@ -5571,7 +5571,7 @@
         }
       ],
       "dependencies": {
-        "src/kernel/chainparams.cpp": "9765ddda60b8b95126350e54a90ff23e055b25bd87e92bd7bb027ef8afddda13",
+        "src/kernel/chainparams.cpp": "63283d4612b9fe0dd0cb2009f5cea7bf60e59613b1f4e888a0f265ffcbbb1b1e",
         "src/pocx/consensus/regtest_functional_assumeutxo.inc": "9e1abbae3942cc638f94b7c9ad4733dc156e24430873ae099e7d9df08ff34262"
       },
       "replacement_assertion_and_method_accounting": {
@@ -8739,7 +8739,7 @@
       },
       "execution_status_scope": "Latest owned-runner evidence by declared argument case; historical observations do not establish current-input parity.",
       "latest_observed_outcome": "passed",
-      "current_input_outcome": "passed",
+      "current_input_outcome": "unverified",
       "runtime_case_evidence": [
         {
           "case": "feature_signet.py",
@@ -8778,9 +8778,9 @@
       ],
       "dependencies": {
         "contrib/signet/miner": "2df980a48e688a9e1b54f1764772edd941c0e7008bcc99faa65546d263e8dffe",
-        "test/pocx/kernel/provenance.json": "af19fbac2cff2fefc1db18d7f65c6e15a9b9e09484ff21f50ce113142ce97904",
+        "test/pocx/kernel/provenance.json": "612feda6a0284af52c9e8932a1a2c6d9dfe193899e59e1e8b826da6b4f3a6972",
         "src/pocx/rpc/mining.cpp": "5b79761cb582dbbf1e581366ee1e99cc24b7768685845d2e79f92901c619d959",
-        "src/kernel/chainparams.cpp": "9765ddda60b8b95126350e54a90ff23e055b25bd87e92bd7bb027ef8afddda13"
+        "src/kernel/chainparams.cpp": "63283d4612b9fe0dd0cb2009f5cea7bf60e59613b1f4e888a0f265ffcbbb1b1e"
       },
       "replacement_assertion_and_method_accounting": {
         "assert_statements": 4,
@@ -16606,7 +16606,7 @@
       },
       "execution_status_scope": "Latest owned-runner evidence by declared argument case; historical observations do not establish current-input parity.",
       "latest_observed_outcome": "passed",
-      "current_input_outcome": "passed",
+      "current_input_outcome": "unverified",
       "runtime_case_evidence": [
         {
           "case": "tool_signet_miner.py",
@@ -16645,7 +16645,7 @@
       ],
       "dependencies": {
         "contrib/signet/miner": "2df980a48e688a9e1b54f1764772edd941c0e7008bcc99faa65546d263e8dffe",
-        "test/pocx/kernel/provenance.json": "af19fbac2cff2fefc1db18d7f65c6e15a9b9e09484ff21f50ce113142ce97904",
+        "test/pocx/kernel/provenance.json": "612feda6a0284af52c9e8932a1a2c6d9dfe193899e59e1e8b826da6b4f3a6972",
         "test/pocx/functional/feature_signet.py": "7e154a2359c83165289f3bcb74641af92965f58db655c7e6ed958cf639cbca8a"
       },
       "replacement_assertion_and_method_accounting": {
@@ -17162,7 +17162,7 @@
       },
       "execution_status_scope": "Latest owned-runner evidence by declared argument case; historical observations do not establish current-input parity.",
       "latest_observed_outcome": "passed",
-      "current_input_outcome": "passed",
+      "current_input_outcome": "unverified",
       "runtime_case_evidence": [
         {
           "case": "wallet_assumeutxo.py",
@@ -17200,7 +17200,7 @@
         }
       ],
       "dependencies": {
-        "src/kernel/chainparams.cpp": "9765ddda60b8b95126350e54a90ff23e055b25bd87e92bd7bb027ef8afddda13",
+        "src/kernel/chainparams.cpp": "63283d4612b9fe0dd0cb2009f5cea7bf60e59613b1f4e888a0f265ffcbbb1b1e",
         "src/pocx/consensus/regtest_functional_assumeutxo.inc": "9e1abbae3942cc638f94b7c9ad4733dc156e24430873ae099e7d9df08ff34262"
       },
       "replacement_assertion_and_method_accounting": {
@@ -21449,17 +21449,17 @@
         "test/pocx/framework/messages.py": "f93a7e32521a57c7e5b49214c8bb949b4bc1d1d33eb12ce724462edd37d45898",
         "src/chain.h": "556ee891313051c191ea17edd45c0dc50cdd1299e4ea374997165a0dcd4a581b",
         "src/chain.cpp": "66d7cbdeb434fe80f8d72d6690ff7c539f57d614177babc95773cb70ee6d59da",
-        "src/pocx/regtest/forging.cpp": "c8c9a1d075ae030dbc022d4ac40c51ce274e90c595b61530d852f80939fb29c9",
-        "src/pocx/regtest/forging.h": "479f2ad94c08e6cf33d88f30d234f2e3effdc0e270d03a4fe21a3297c99ac55a",
+        "src/pocx/regtest/forging.cpp": "c5fc3a90375e8e435829725bf0f71f2cc63970986473976b3824b824df34fcf7",
+        "src/pocx/regtest/forging.h": "a3c6d36b2345f3676f28b24e169e3a8fdb0778b78e5c5406d2b70f13b7eb96b1",
         "src/pocx/consensus/signature.cpp": "866c14307754479278dd46307a847994669d6b572e1011d09a1d8b3fb84fae69",
-        "src/kernel/chainparams.cpp": "9765ddda60b8b95126350e54a90ff23e055b25bd87e92bd7bb027ef8afddda13",
+        "src/kernel/chainparams.cpp": "63283d4612b9fe0dd0cb2009f5cea7bf60e59613b1f4e888a0f265ffcbbb1b1e",
         "src/rpc/mining.cpp": "43a0c08407392af60475990ed3fffd4dc5f384f83fc9ab9d613004284f83e80e",
         "test/pocx/stage.py": "dcad39be650a2e400ea210ea28d10937c2706c5c9aaccf80e695b915cd0cbe28",
         "test/functional/test_framework/key.py": "1f48819cbecacb5916a32a4930b4576ab362c190fa552342378e5c809a6bae77",
         "test/functional/test_framework/crypto/secp256k1.py": "cab75b7335f839b88eb8517b417715858e538aaf0071f6c01ec4eb3e1867f246",
         "src/pocx/consensus/difficulty.cpp": "9769f411840097321c9dce8b715922152003ff6a18273905bc5060146f563e56",
         "test/pocx/functional/feature_pocx_fork_fixture.py": "0212a746f59ad3e6dcccff03857f4651e58048cf45c6bcf687a7338f94840879",
-        "src/validation.cpp": "8089acb11dbfededfdd5448e07d1f07a6322d0915aa03e8e6fd6736a643435af",
+        "src/validation.cpp": "740bad4f2113e7e83dfdcb4c4317fc57e4c42d7ec7835fafadc8221d2f653b03",
         "src/net_processing.cpp": "4207af3ca251d9a5e7adb5e387dc70e3c667893c4e5b602924b5bb116e026430",
         "src/pocx/consensus/regtest_functional_assumeutxo.inc": "9e1abbae3942cc638f94b7c9ad4733dc156e24430873ae099e7d9df08ff34262"
       },
@@ -21481,7 +21481,8 @@
         "after_sha256": "1770eb0a36c887bc52a4c93575ac1105a0b2b3c25df132f87e7a43661c5c3448",
         "same_ast_execution_evidence": "build-pocx-clean/pocx-results-mo6sqmyb/results.json"
       },
-      "unit_storage_review": "artifacts/unit-completion-storage-review1.json: CheckBlockHeader rule body byte-identical, exported for disk reads; all727 applicable unit cases plus33 native PASS. No new functional execution claimed."
+      "unit_storage_review": "artifacts/unit-completion-storage-review1.json: CheckBlockHeader rule body byte-identical, exported for disk reads; all727 applicable unit cases plus33 native PASS. No new functional execution claimed.",
+      "current_input_outcome": "unverified"
     },
     "test/functional/test_framework/util.py": {
       "source_sha256": "2e8499f47175e6a4df9508a37c30dc24ff90de8bc1ea117ff054f99c77bc8aa2",

@@ -33,7 +33,7 @@
     "src/test/kernel/test_kernel.cpp": "b239ffd7977a3390d024745b00b5ab485817c26648f0d5328d94c60730c1dbc4",
     "src/test/kernel/block_data.h": "37237946a7f8174b99f08390daea444e03d3557342f0a65dfc6c68a4a5ae16f5",
     "src/kernel/bitcoinkernel.cpp": "174890768e31e67bb8decb166b40b61c51e097a41ef5cb80708bc423eb8a788f",
-    "src/kernel/chainparams.cpp": "9765ddda60b8b95126350e54a90ff23e055b25bd87e92bd7bb027ef8afddda13",
+    "src/kernel/chainparams.cpp": "63283d4612b9fe0dd0cb2009f5cea7bf60e59613b1f4e888a0f265ffcbbb1b1e",
     "src/pocx/consensus/difficulty.cpp": "9769f411840097321c9dce8b715922152003ff6a18273905bc5060146f563e56",
     "src/pocx/consensus/proof.cpp": "7c0b3c643d674c373590ea9b37a116722f2c674c2abe4a51d815217cc0487247",
     "src/pocx/consensus/proof.h": "f80eb5096e477e6147e4f3b04b705ac5886da245cb55fc4203f006d5c9ff95cd",
@@ -48,12 +48,17 @@
     "src/pocx/mining/key_signing.h": "af0c2ed945006bbf52392c286b5c17b9835cea0e1d1cc0e528bc38fc66be98f4",
     "src/primitives/block.cpp": "b82d4cada356ec14071813598e989a3aa3c4b304510304408dee63abf6854629",
     "src/primitives/block.h": "e4e9fb810eb62093584253ee5617e80a4d536dee05ff0f205248c21cab66d334",
-    "src/validation.cpp": "8089acb11dbfededfdd5448e07d1f07a6322d0915aa03e8e6fd6736a643435af",
-    "src/pocx/consensus/regtest_functional_assumeutxo.inc": "9e1abbae3942cc638f94b7c9ad4733dc156e24430873ae099e7d9df08ff34262"
+    "src/validation.cpp": "740bad4f2113e7e83dfdcb4c4317fc57e4c42d7ec7835fafadc8221d2f653b03",
+    "src/pocx/consensus/regtest_functional_assumeutxo.inc": "9e1abbae3942cc638f94b7c9ad4733dc156e24430873ae099e7d9df08ff34262",
+    "src/consensus/params.h": "4ed972393e50604b258a4890e8556eb02589190db7835ed8b6a8d3425ad97db8",
+    "src/pocx/regtest/proof.cpp": "53ee3c70548de5e20e01774e9921cdb36a57b5400ffb99de1990f849e3bb0fa3",
+    "src/pocx/regtest/forging.h": "a3c6d36b2345f3676f28b24e169e3a8fdb0778b78e5c5406d2b70f13b7eb96b1",
+    "src/pocx/regtest/proof.h": "470b7ff274c07c0a619ecdeec9e58d7a7dee65ed1d7dbae8614fdeb58b902e54"
   },
   "evidence": "build-kernel-proof-reference/results.json",
   "unit_storage_review": "artifacts/unit-completion-storage-review1.json; existing header rules unchanged; disk validator restored; affected native/kernel execution separately recorded; kernel fixed-chain transaction lookup memoizes helper block reads only; full-chain disk reads, every original transaction/input/script assertion, final file removal and failure checks retained. Interrupted uncached run is preserved separately.",
   "api_reverification": "artifacts/unit-completion-kernel-verification1.json; complete16-case PASS after disk-read repair and fixed-chain lookup memoization",
   "functional_299_amendment_review": "Functional-only native regtest height299 commitment amendment, independently reconstructed from both scenario chains and all snapshot bytes. Bitcoin preprocessed translation unit byte-identical; native preprocessed delta consists only of the two299hash literals. Evidence: artifacts/functional-green-20261009/native-assumeutxo-preprocessing-review.json and native-assumeutxo-vectors.json. All mainnet/testnet/signet/height110/height200 parameters and proof fixture bytes unchanged.",
-  "signet_calibration_initialization_review": "Native Signet initializes fPoCXLowCapacityCalibration=false, matching its existing normal-capacity genesis. Independently reproduced wrong regtest target before fix; Bitcoin preprocessed translation unit identical; every existing mainnet/regtest field and fixture byte unchanged. artifacts/functional-green-20261009/signet-calibration-preprocessing-review.json"
+  "signet_calibration_initialization_review": "Native Signet initializes fPoCXLowCapacityCalibration=false, matching its existing normal-capacity genesis. Independently reproduced wrong regtest target before fix; Bitcoin preprocessed translation unit identical; every existing mainnet/regtest field and fixture byte unchanged. artifacts/functional-green-20261009/signet-calibration-preprocessing-review.json",
+  "regtest_kernel_permission_review": "Extract unchanged synthetic quality calculation into wallet/global-free regtest proof.cpp; an explicit default-false consensus permission is enabled only in CRegTestParams. CheckBlockHeader and header batching use passed context parameters in daemon and kernel. Real-proof validation, signatures, compression and future-time checks remain required; production networks retain synthetic rejection. Original Bitcoin preprocessing and kernel baseline are checked separately."
 }

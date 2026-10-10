@@ -125,6 +125,9 @@ struct Params {
     int nForgingAssignmentDelay; // Blocks to wait before assignment becomes active (default: 30)
     int nForgingRevocationDelay; // Blocks to wait before revocation becomes active (default: 720)
     bool fPoCXLowCapacityCalibration; // Use 16-nonce calibration (2^60) instead of 1TiB (2^42)
+    // Network permission for the deterministic regtest proof format. This must
+    // be explicit in each kernel context, independent of daemon-global Params().
+    bool fPoCXAllowSyntheticRegtestProof{false};
 #endif
     std::chrono::seconds PowTargetSpacing() const
     {

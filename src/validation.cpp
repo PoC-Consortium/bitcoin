@@ -27,10 +27,7 @@
 #include <pocx/assignments/opcodes.h>
 #include <pocx/assignments/replay.h>
 #include <pocx/mining/defensive_forge.h>
-#ifndef BUILD_BITCOIN_KERNEL
-#include <chainparams.h> // For Params() in the regtest hot path (not visible to the kernel lib)
-#include <pocx/regtest/forging.h>
-#endif
+#include <pocx/regtest/proof.h>
 #endif
 #include <cuckoocache.h>
 #include <flatfile.h>
@@ -4295,8 +4292,7 @@ static bool CheckBlockHeader(const CBlockHeader& block, BlockValidationState& st
             // Skip if already batch-validated during header sync
             if (skip_pocx_proof) {
                 LogDebug(BCLog::VALIDATION, "CheckBlockHeader: skipping PoCX proof validation for height=%d\n", block.nHeight);
-#ifndef BUILD_BITCOIN_KERNEL
-            } else if (Params().GetChainType() == ChainType::REGTEST &&
+            } else if (consensusParams.fPoCXAllowSyntheticRegtestProof &&
                        pocx::regtest::IsRegtestHotPathProof(block.pocxProof)) {
                 // Regtest hot path: recompute synthetic quality and verify.
                 uint64_t computed_quality = 0;
@@ -4311,7 +4307,6 @@ static bool CheckBlockHeader(const CBlockHeader& block, BlockValidationState& st
                                          strprintf("Claimed quality %llu does not match synthetic quality %llu",
                                                    block.pocxProof.quality, computed_quality));
                 }
-#endif
             } else {
                 auto result = pocx::consensus::ValidateProofOfCapacity(
                     block.generationSignature,
@@ -4850,19 +4845,15 @@ bool ChainstateManager::ProcessNewBlockHeaders(std::span<const CBlockHeader> hea
     // Batch-validate PoCX proofs upfront (SIMD path). Skipped on regtest
     // (when reachable): the synthetic-plot hot path is incompatible with
     // the real PoC2 batch validator, and per-header regtest validation is
-    // already microseconds. The kernel-library build can't see Params()
-    // and never processes regtest anyway, so just run the batch there.
+    // already microseconds. Use this manager's consensus parameters for both
+    // daemon and kernel contexts, which can select different chains in process.
     bool skip_pocx_proof = false;
     // First far-future header in the batch: the prefix before it is processed
     // normally, it and the rest wait for a later batch (temporary, non-punishing).
     std::optional<size_t> future_cutoff;
     int future_height = 0;
-#ifdef BUILD_BITCOIN_KERNEL
-    if (!headers.empty() && headers.size() >= 2) {
-#else
-    if (Params().GetChainType() != ChainType::REGTEST &&
+    if (!GetConsensus().fPoCXAllowSyntheticRegtestProof &&
         !headers.empty() && headers.size() >= 2) {
-#endif
         // Filter to non-genesis headers that we don't already have in the
         // block index. Peers re-send batches during catch-up, reconnects and
         // overlapping tip announcements, and without this check the threaded

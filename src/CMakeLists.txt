@@ -298,6 +298,7 @@ add_library(bitcoin_node STATIC EXCLUDE_FROM_ALL
   $<$<BOOL:${ENABLE_POCX}>:pocx/mining/defensive_forge.cpp>
   $<$<BOOL:${ENABLE_POCX}>:pocx/mining/key_signing.cpp>
   $<$<BOOL:${ENABLE_POCX}>:pocx/regtest/forging.cpp>
+  $<$<BOOL:${ENABLE_POCX}>:pocx/regtest/proof.cpp>
   $<$<AND:$<BOOL:${ENABLE_POCX}>,$<TARGET_EXISTS:bitcoin_wallet>>:pocx/mining/scheduler.cpp>
   $<$<AND:$<BOOL:${ENABLE_POCX}>,$<TARGET_EXISTS:bitcoin_wallet>>:pocx/mining/submission.cpp>
   $<$<AND:$<BOOL:${ENABLE_POCX}>,$<TARGET_EXISTS:bitcoin_wallet>>:pocx/mining/block_builder.cpp>

@@ -842,6 +842,7 @@ public:
         consensus.nForgingAssignmentDelay = 4;
         consensus.nForgingRevocationDelay = 8;
         consensus.fPoCXLowCapacityCalibration = true;
+        consensus.fPoCXAllowSyntheticRegtestProof = true;
 #else
         consensus.nPowTargetSpacing = 10 * 60;
 #endif

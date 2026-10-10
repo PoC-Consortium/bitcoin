@@ -150,7 +150,7 @@ BOOST_AUTO_TEST_CASE(scalar_independent_known_vectors)
 
 BOOST_AUTO_TEST_CASE(synthetic_proof_rejected_on_production_networks)
 {
-    for (const auto chain : {ChainType::MAIN, ChainType::TESTNET4}) {
+    for (const auto chain : {ChainType::MAIN, ChainType::TESTNET4, ChainType::SIGNET}) {
         BasicTestingSetup setup{chain};
         auto block = SyntheticBlock();
         BlockValidationState state;
@@ -160,6 +160,12 @@ BOOST_AUTO_TEST_CASE(synthetic_proof_rejected_on_production_networks)
         BOOST_CHECK_EQUAL(state.GetRejectReason(), "bad-pocx-quality-mismatch");
         BOOST_CHECK(state.GetResult() == BlockValidationResult::BLOCK_INVALID_HEADER);
         BOOST_TEST_MESSAGE("Synthetic proof rejected on " << ChainTypeToString(chain));
+        // A kernel context supplies its own parameters; daemon-global selection
+        // must not decide whether its deterministic regtest proof is allowed.
+        const auto regtest = CChainParams::RegTest({});
+        BlockValidationState regtest_state;
+        BOOST_CHECK(CheckBlockHeader(block, regtest_state, regtest->GetConsensus()));
+        BOOST_CHECK(regtest_state.IsValid());
     }
 }
 
@@ -170,6 +176,10 @@ BOOST_AUTO_TEST_CASE(synthetic_proof_regtest_positive_control)
     BlockValidationState state;
     BOOST_REQUIRE(CheckBlock(block, state, Params().GetConsensus()));
     BOOST_CHECK(state.IsValid());
+    const auto mainnet = CChainParams::Main();
+    BlockValidationState mainnet_state;
+    BOOST_CHECK(!CheckBlockHeader(block, mainnet_state, mainnet->GetConsensus()));
+    BOOST_CHECK_EQUAL(mainnet_state.GetRejectReason(), "bad-pocx-quality-mismatch");
     // This is stateless block validation, not contextual chain acceptance.
 }
 
