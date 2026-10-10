@@ -34,7 +34,7 @@ def main():
     options, system = unit_matrix.configuration(build, selected_config)
     expected = unit_matrix.inventory(ROOT, options, bitcoin=True)
     binary = build_configuration.executable(build, 'test_bitcoin', cache, selected_config)
-    lock = exclusive_lock(build / 'pocx-unit.lock')
+    _lock = exclusive_lock(build / 'pocx-unit.lock')
     unit_matrix.runtime_inventory(binary, expected['expected'])
     suites = {case.split('/')[0] for case in expected['expected']}
     tests = json.loads(subprocess.check_output(['ctest', '--test-dir', str(build), '--show-only=json-v1'] +

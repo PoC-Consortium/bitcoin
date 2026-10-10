@@ -9,7 +9,7 @@ from pathlib import Path
 import shutil
 import subprocess
 
-from common import ROOT, OWNED, sha256, short_tmpdir, build_options
+from common import ROOT, OWNED, sha256, short_tmpdir as short_tmpdir, build_options
 import build_configuration
 
 

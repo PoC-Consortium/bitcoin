@@ -40,7 +40,7 @@ def main():
     if not build.is_relative_to(ROOT) or build == ROOT or args.jobs < 1 or args.timeout < 1:
         raise ValueError('Invalid build directory or job count')
     # CTest writes shared Testing/Temporary files; serialize runs in this build.
-    lock = exclusive_lock(build / 'pocx-unit.lock')
+    _lock = exclusive_lock(build / 'pocx-unit.lock')
     binary = build_configuration.executable(build, 'test_pocx', cache, selected_config)
     listing = subprocess.run([str(binary), '--list_content'], text=True, capture_output=True, check=True)
     discovered = set(re.findall(r'^([A-Za-z_][A-Za-z_0-9]*)\*?$', listing.stdout + listing.stderr, re.M))
@@ -52,7 +52,7 @@ def main():
     inputs, provenance = unit_matrix.provenance_paths(build, cache, selected_config)
     evidence = verify(binary, inputs, build / 'CMakeCache.txt', provenance, discovered)
     initial_provenance_sha256 = sha256(provenance)
-    options = build_options(cache)
+    _options = build_options(cache)
     baseline_profile = args.all
     if baseline_profile:
         issues = unit_parity.check(ROOT)

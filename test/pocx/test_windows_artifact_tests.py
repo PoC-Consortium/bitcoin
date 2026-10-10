@@ -2,7 +2,6 @@
 # Copyright (c) 2026 The Bitcoin PoCX developers
 # Distributed under the MIT software license; see COPYING.
 """Exercise artifact phase ordering and rejection; fixtures are not Windows proof."""
-from copy import deepcopy
 import json
 import os
 from pathlib import Path

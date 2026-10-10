@@ -6,7 +6,6 @@
 These are infrastructure checks; fake recipe callbacks are never framework or
 hosted execution evidence. No container, installation or privileged recipe runs.
 """
-from copy import deepcopy
 import importlib.util
 import hashlib
 import json

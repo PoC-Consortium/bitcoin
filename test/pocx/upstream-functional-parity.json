@@ -9766,7 +9766,7 @@
       ],
       "dependencies": {
         "contrib/signet/miner": "2df980a48e688a9e1b54f1764772edd941c0e7008bcc99faa65546d263e8dffe",
-        "test/pocx/kernel/provenance.json": "1701fd2568d6ad4bcb7b58bb8e7c5f6c19bd9f0a7f32a549b6387e803f8126fc",
+        "test/pocx/kernel/provenance.json": "c9edcefe7f483ae296993c9c409f0a748e52ceff21a5c15462bd0fc475166446",
         "src/pocx/rpc/mining.cpp": "5b79761cb582dbbf1e581366ee1e99cc24b7768685845d2e79f92901c619d959",
         "src/kernel/chainparams.cpp": "63283d4612b9fe0dd0cb2009f5cea7bf60e59613b1f4e888a0f265ffcbbb1b1e"
       },
@@ -18609,7 +18609,7 @@
       ],
       "dependencies": {
         "contrib/signet/miner": "2df980a48e688a9e1b54f1764772edd941c0e7008bcc99faa65546d263e8dffe",
-        "test/pocx/kernel/provenance.json": "1701fd2568d6ad4bcb7b58bb8e7c5f6c19bd9f0a7f32a549b6387e803f8126fc",
+        "test/pocx/kernel/provenance.json": "c9edcefe7f483ae296993c9c409f0a748e52ceff21a5c15462bd0fc475166446",
         "test/pocx/functional/feature_signet.py": "7e154a2359c83165289f3bcb74641af92965f58db655c7e6ed958cf639cbca8a"
       },
       "replacement_assertion_and_method_accounting": {
@@ -24058,7 +24058,7 @@
         "src/pocx/consensus/signature.cpp": "866c14307754479278dd46307a847994669d6b572e1011d09a1d8b3fb84fae69",
         "src/kernel/chainparams.cpp": "63283d4612b9fe0dd0cb2009f5cea7bf60e59613b1f4e888a0f265ffcbbb1b1e",
         "src/rpc/mining.cpp": "43a0c08407392af60475990ed3fffd4dc5f384f83fc9ab9d613004284f83e80e",
-        "test/pocx/stage.py": "909ddffa0e235afad2a40ceb300c52a4b28513132308499dc404f31d37e10f0e",
+        "test/pocx/stage.py": "2b86aabfee94c796e8f5b82af15415fb740de87b96bf76c4b702af81e3d3015b",
         "test/functional/test_framework/key.py": "1f48819cbecacb5916a32a4930b4576ab362c190fa552342378e5c809a6bae77",
         "test/functional/test_framework/crypto/secp256k1.py": "cab75b7335f839b88eb8517b417715858e538aaf0071f6c01ec4eb3e1867f246",
         "src/pocx/consensus/difficulty.cpp": "9769f411840097321c9dce8b715922152003ff6a18273905bc5060146f563e56",
@@ -24501,7 +24501,7 @@
       "test/pocx/functional_results.py": "4355a7bd0f08ada20a7d82587160a10c0493041205d92b3ab7fb4335459e4613",
       "test/pocx/update_inventory.py": "c8816297f36f3fe265c2deb660797b302fce1aaf165fa696130c0f184814ba6c",
       "test/pocx/functional_cases.py": "903124835dc4e3d902036a6789a72727f82ff334a2c0c236cc2ee2a49ef4b68f",
-      "test/pocx/stage.py": "909ddffa0e235afad2a40ceb300c52a4b28513132308499dc404f31d37e10f0e",
+      "test/pocx/stage.py": "2b86aabfee94c796e8f5b82af15415fb740de87b96bf76c4b702af81e3d3015b",
       "test/pocx/verify_functional.py": "e0f7c98199360247a458956528f7967080ae34326c23a5531ec014322a2db8dc",
       "test/pocx/functional-profile-skips.json": "668fa3587439eb4c93e296926730507a72664af478e8ed9f913e9f2a9902d5c0",
       "test/pocx/functional_environment.py": "0b9a8336bc866a3f7d145fc32933f00172113b24cc50563f54121a6d9256c10e",
@@ -24535,7 +24535,8 @@
     "build_configuration_review": "Format8 binds an explicit CMake configuration to staging and all functional executable paths, with native platform executable suffixes. Both staging and verification use normalized source identity and pinned helper hashes; feature options must match the hashed cache. Every tool environment path and PATH selects the same output directory, including absent optional tools, preventing another configuration from concealing missing prerequisites. Existing report formats remain readable. Source-staging and path fixtures verify rejection of wrong binaries/configurations, missing tools and stale helpers; they are not Windows or functional runtime evidence. Original test sources, identities, assertions and skip policy unchanged. Windows process-tree cleanup and actual CI execution remain unfinished. Verification also requires the exact present executable inventory, so newly added or omitted optional tools invalidate saved configuration evidence.",
     "process_tree_review": "Format9 binds process controller source, interpreter, platform strategy, actual invocation and completed cleanup to each case. Preserve Unix session TERM/KILL cleanup. Windows uses a named Job Object with kill-on-close and no breakaway flags; the worker joins and closes its temporary handle before launching any test, while the parent retains control and waits for zero active members. No unmanaged fallback is allowed. Preserve success/failure/skip exits and record timeouts separately. Real host descendant success/failure/skip/timeout probes and Windows API adapter failure checks provide infrastructure evidence only; actual Windows and full functional execution remain unverified. Original cases, assertions, feature guards and skip policy unchanged.",
     "rpc_coverage_review": "Opt-in format10 retains independent raw RPC coverage inputs for each transport, uses the unchanged upstream evaluator, binds its source/helper/command/log/result and requires no uncovered commands. Missing references fail. Format9 and older evidence cannot claim this gate. The restored previous-release profile preserves RPC coverage and extends its historical feature_dbcrash exclusion to the complete requested selection. Synthetic checks establish infrastructure behavior only; actual feature/platform execution remains unverified.",
-    "database_retention_review": "After a passed case exits and its owned process cleanup completes, remove only ordinary direct node[0-9]+/regtest/{blocks,chainstate,indexes} directories. Never traverse directory links or nested fixture layouts. Retain logs, wallets, configuration, coverage inputs and complete failed/skipped case data. Record removed database paths per case. Storage errors retain terminal case results and fail the runner. Original tests, commands, assertions, case identities, timeout policy and transport coverage are unchanged. Filesystem boundary checks and actual synthetic dispatcher subprocesses verify retention and failure propagation; these checks are infrastructure evidence, not additional Bitcoin/PoCX runtime passes."
+    "database_retention_review": "After a passed case exits and its owned process cleanup completes, remove only ordinary direct node[0-9]+/regtest/{blocks,chainstate,indexes} directories. Never traverse directory links or nested fixture layouts. Retain logs, wallets, configuration, coverage inputs and complete failed/skipped case data. Record removed database paths per case. Storage errors retain terminal case results and fail the runner. Original tests, commands, assertions, case identities, timeout policy and transport coverage are unchanged. Filesystem boundary checks and actual synthetic dispatcher subprocesses verify retention and failure propagation; these checks are infrastructure evidence, not additional Bitcoin/PoCX runtime passes.",
+    "unused_bindings_review": "Remove unused standard-library imports, explicitly retain the stage.short_tmpdir public reexport, and rename ignored runner locals without dropping validation calls or lock lifetimes. Also advance two consumers of the kernel renderer provenance: initialization-only change in9e38520cce renders the identical independently verified207-block header. No original functional assertion or oracle changes."
   },
   "case_selection": {
     "upstream_runner_sha256": "faee6591d749e7fae8340430039f0b6f7450c6eb5a2960d61f0be2118ca529c3",

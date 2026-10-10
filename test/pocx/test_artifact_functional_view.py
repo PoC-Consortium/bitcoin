@@ -3,7 +3,6 @@
 # Distributed under the MIT software license; see COPYING.
 """Exercise immutable payload relocation, without running Windows binaries."""
 from copy import deepcopy
-import json
 from pathlib import Path
 import tempfile
 import unittest

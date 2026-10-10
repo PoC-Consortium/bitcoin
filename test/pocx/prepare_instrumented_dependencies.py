@@ -4,7 +4,6 @@
 """Build pinned LLVM libc++ and inherited depends in a fresh owned directory."""
 import argparse
 import json
-import os
 from pathlib import Path
 import shutil
 import subprocess

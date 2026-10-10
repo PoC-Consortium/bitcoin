@@ -33,17 +33,17 @@
     "test/pocx/rpc_coverage.py": "3d6afe81054a7acc05c634a54967d167eb4223205b421c7db2f3ce4406da6723",
     "test/pocx/run_bitcoin_functional.py": "bdd1a0d312532f48ea1a784a5e6517f2f3bf245d6ebeb3c1aa439a6377c34933",
     "test/pocx/run_qt.py": "7f2634e51b9b625a85b645f90c86db0e58d4b97cf0e6937b695744b25621b9fc",
-    "test/pocx/stage.py": "909ddffa0e235afad2a40ceb300c52a4b28513132308499dc404f31d37e10f0e",
-    "test/pocx/test_artifact_functional_view.py": "e272f1c14a0ffbeeb0b76bad7b6501916354cbc9b5871b734e08088bdb162504",
+    "test/pocx/stage.py": "2b86aabfee94c796e8f5b82af15415fb740de87b96bf76c4b702af81e3d3015b",
+    "test/pocx/test_artifact_functional_view.py": "450f4a123046cce47669d266268192deccada9081923c2611630336bcc20df9c",
     "test/pocx/test_cross_kernel.py": "6e4b82a58d7f248c4bebe35d3df39d92dfee31b42b17b56fc46ede613a36b477",
     "test/pocx/test_cross_unit.py": "81bbd22bd9a4f3403f5fa2ae4552c392a3f97d6895d4f038b17cabcae43ab824",
-    "test/pocx/test_inherited_ci.py": "de2d809e13bc20ff41ae4e7a4c8b34327e9ceccb2cecc16a4613d0141dca5de3",
+    "test/pocx/test_inherited_ci.py": "86cd922309aa8ab277f9d37a11f5528a8367dea08c0c8591991d7a866b24738a",
     "test/pocx/test_processor_configuration.py": "4842fab8bccab3fc89dcab45a5b78b78ca04973a10bd950b8064d9290d8a260d",
     "test/pocx/test_qt_infrastructure.py": "15cb1066af6da72a000ff19cef46f2f4c689ac523623086e31ea2ea43c7a707f",
     "test/pocx/test_rpc_coverage.py": "29b65f5e94a4f61dd2323bc00dc1b173d488c36451f91abccef8ccfb4ecc087b",
     "test/pocx/test_windows_artifact_ci.py": "2d78c5455c3447046567902b80454e81f508dab0b71f1bff4e3c7cce3793a01f",
     "test/pocx/test_windows_artifact_functional.py": "834b0df31e6cb55075e7f47b8769340743a86eafc9ba22084d43b8677b54b56e",
-    "test/pocx/test_windows_artifact_tests.py": "de6e55941388edfe1d7714967cfa6577223c6502a4986b537bfe7ad1e0e3264e",
+    "test/pocx/test_windows_artifact_tests.py": "2ef315af92d86ed4f6fff5e88d0f7b90653308a3ea60dfda2cc969ed518c6319",
     "test/pocx/test_windows_artifact_unit.py": "c541c014843b0ced5bfb8a35f32e9be715ee82c51cc41b284af488720b6bfd3c",
     "test/pocx/test_windows_artifacts.py": "a243151b9ad0cfb25d48d031c305b13d97094975b9142f88d91d86fde2813c5b",
     "test/pocx/test_windows_cross.py": "fe09e5b453625b7c849f4c9177392f9b7c72931f530a21e353101d6b36ebbe57",
@@ -51,10 +51,10 @@
     "test/pocx/unit_build.py": "e53b2493f8f3a9cc7dc14aa53e21ac5c0b2599a1dd9ce87c4d09187f48b44420",
     "test/pocx/unit_matrix.py": "4e44fcdb6f98afd8ad26c38d74dd60bb6457f07c8636aa460f8a1df0691ea6d1",
     "test/pocx/unit_parity.py": "4360deeb6a074fd1fb7c7c19d77930c296e4a874de9239976b720771295b6651",
-    "test/pocx/upstream-functional-parity.json": "2a25eb2b3b700e19cb2150a51db6944fa2c6586aaf6fc1967e2a44b2dd1eb095",
+    "test/pocx/upstream-functional-parity.json": "b91f09f7dfd58c2ec68befe40f269233472340658b10d2b6c85267396f8d7639",
     "test/pocx/verify_functional.py": "e0f7c98199360247a458956528f7967080ae34326c23a5531ec014322a2db8dc",
     "test/pocx/windows_artifact_ci.py": "71b0b4970ec735c3cd381854ffb5533d5125d1e3b405e785591e4f3050b71f56",
-    "test/pocx/windows_artifact_functional.py": "2f406596f3df169e44d6cf6f98edbee7bf331ef64cbee77133b86542f63f3d8a",
+    "test/pocx/windows_artifact_functional.py": "531f68a41395ecc75208d552a43f106a7d2f336971bc57b358560ed4910f02a4",
     "test/pocx/windows_artifact_tests.py": "658aea57c8c750d2acef35508405868785df6f2b278e4806abc8be97262b3e52",
     "test/pocx/windows_artifact_unit.py": "b0e19d4ac7efaae98e344741034cc664fc41b0d11e20f87a4d898c62d5714c7a",
     "test/pocx/windows_artifacts.py": "4413b7342580c02eca3f6fa3636761d258325da1940fcf0fc9463c0f5150730c",
@@ -126,7 +126,7 @@
     "test/pocx/test_inherited_ci.py": {
       "previous_reviewed_revision": "feecfbbe767a1ba7f2be13febba34394a3d77b50",
       "previous_sha256": "b02e1c32759e324e0e81c0de9d48a3b9f6bcc1adcc6b53b5238e6d817afa0d18",
-      "sha256": "de2d809e13bc20ff41ae4e7a4c8b34327e9ceccb2cecc16a4613d0141dca5de3",
+      "sha256": "86cd922309aa8ab277f9d37a11f5528a8367dea08c0c8591991d7a866b24738a",
       "review": "Provision Python ZeroMQ for the reviewed Debian/Ubuntu functional recipes and add pinned pycapnp only where IPC is enabled and the original environment omitted it. Preserve existing pip requirements; Ubuntu22.04 does not receive the unsupported --break-system-packages option. Export added PIP_PACKAGES through host/container setup. Original compiler, dependency build flags, features, test selections and assertions remain unchanged. Actual-recipe regression checks all eight environments, disabled/fuzz routing and idempotence; package/runtime execution remains separately required. Windows/non-Linux recipes are outside this Linux-only helper change."
     },
     "test/pocx/unit_matrix.py": {
@@ -144,7 +144,7 @@
     "test/pocx/upstream-functional-parity.json": {
       "previous_reviewed_revision": "f8bdd9b2110ec6a1d78700801cafb7947598ac99",
       "previous_sha256": "c804e497fd2852f08bb1bf087ef77aa716eecd279622f88f9ae4232263add7a1",
-      "sha256": "f4497c9de65844ee0264409e1e86078a07eb0ed8fb4b13b0a18cb3b7c4fa982b",
+      "sha256": "42001e6d8a27cf3c0d3627d754014b05bb327f485fbd0cb91dce93a31300566f",
       "review": "References already reviewed optional historical wallet/mempool adaptations and fixture provenance, plus passed-case database retention. Original sources, case selection and exclusions unchanged; actual optional Linux execution remains separate from Windows runtime."
     },
     "test/pocx/verify_functional.py": {

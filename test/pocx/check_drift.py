@@ -10,7 +10,6 @@ import argparse
 import hashlib
 import json
 from pathlib import Path
-import re
 from functional_cases import selected_cases, selection_digest, upstream_cases
 
 ROOT = Path(__file__).resolve().parents[2]

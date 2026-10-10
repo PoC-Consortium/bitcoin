@@ -55,7 +55,7 @@ def required_options(root=ROOT):
 
 
 def tools(root=ROOT):
-    spec = specification(root)
+    _spec = specification(root)
     result = {}
     for name in ('clang-22', 'clang++-22', 'llvm-symbolizer-22', 'llvm-nm-22', 'mold'):
         path = shutil.which(name)
