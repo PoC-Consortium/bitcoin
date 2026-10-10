@@ -326,10 +326,18 @@ already configured by `ci/test/02_run_container.py`. Both unchanged failing
 cases reproduce before, and pass after, adding a private IPv6 interface.
 Recovery uses the actual upstream `ci-ip6net`: all 12 IPv6/interface-sensitive
 entries pass, yielding 364 v1 passes and 80 configuration-disabled entries.
-The other 432 v1 entries and completed build/ctest are reused. The missing v2
-transport is running; native execution follows only after that complete
-applicable baseline passes. Raw failures and the environment diagnostic remain
-under `inherited-nowallet-ipv6-diagnostic/` and
+The other 432 v1 entries and completed build/ctest are reused. The v2 transport
+also completed with 364 passes and 80 configuration-disabled entries, completing
+the applicable original baseline. Across both transports, 728 case executions
+pass; the 160 inactive entries comprise 146 feature-disabled entries and 14
+previous-release/special-address entries required separately in optional profiles.
+An independent evidence check binds both CSV inventories, retained logs,
+source/build snapshots and the completed ctest checkpoint without replaying a
+build or test. The immutable original checkpoint is under
+`inherited-nowallet-original-complete-checkpoint/`. Matching native compilation
+started after the original gate passed; native runtime remains unverified.
+Raw failures and the environment diagnostic remain under
+`inherited-nowallet-ipv6-diagnostic/` and
 `inherited-nowallet-ci-network-recovery/` in the artifact directory above.
 
 Inherited functional failure reports retain parsed case rows before rejecting
@@ -343,8 +351,9 @@ directory inventory 22 owned profiles, 36 original/native inherited matrix
 conditions and the runtime-expanded ancestor-commit job. They distinguish
 configured coverage, scoped completed frameworks and complete profiles. Missing
 runtime counts remain unknown; case catalogs are referenced rather than inventing
-passes or combining benchmark/transport counting units. All hosted conditions
-remain unverified. The goal remains active.
+passes or combining benchmark/transport counting units. The single hosted
+original unit baseline described below passes within its recorded scope; other
+hosted conditions remain unverified. The goal remains active.
 
 The original LLVM22 ASan build has a scoped passing checkpoint for all739
 applicable original unit cases, all9 Qt methods, all16 kernel cases and all6
