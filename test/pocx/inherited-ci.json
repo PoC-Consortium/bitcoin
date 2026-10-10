@@ -19,7 +19,7 @@
     "ci/test/03_test_script.sh": "cfd9e9583398dee9527a2fb7ea099104a8cab53f7bf5ccdceb3f4e84425ebb8b",
     "test/pocx/ci/inherited_test_script.sh": "25b6f367bed45e7c7d040ae2a82bba21b278790d83c536ade4d7b7a835273930",
     "test/pocx/inherited_ci.py": "7d5c5e66e9ebd9b2c3d482777115aaecfec8dd7d77d816a65baf2b33f128db9c",
-    "test/pocx/inherited_functional.py": "cadc51ab9d186e1de4b9388ae207a7f9ac69458074386e7d5ce0890b8d564b86",
+    "test/pocx/inherited_functional.py": "08113b32aec0f04c83b1ae466590aaf1117db1fa4f8d9ce958be994bf99a4130",
     "test/pocx/inherited_tests.py": "c9171243d26768994f0c7d171ad3270344bf87ad018ece2ab7e436829853f511",
     "test/pocx/revision_ci.py": "4ae8bac50834eb3d9bb3a883b6d8897c51730f6989e981bcd589c14fbd7e0998",
     "test/pocx/test_windows_cross.py": "835669be83f461be2faa58ef2fe28fb1f7b67cd70e08d774c27224d051a8f0e8",
@@ -57,5 +57,6 @@
     ],
     "diagnostic": "artifacts/ci-parity-20261010/iwyu-source-guard-diagnostic/results.json",
     "runtime_scope": "Infrastructure contract regression only; no full IWYU analysis or framework pass inferred."
-  }
+  },
+  "inherited_feature_guard_review": "Recognize unconditional feature guards inherited by a single test class through an unambiguous single-base chain in sibling source modules, without importing or executing those modules. Record the actual declaration source; child overrides, conditional guards, ambiguous classes/bases and cycles remain unverified. Missing enabled prerequisites and failed cases remain failures or unverified. Three existing native wallet-dependent scripts inherit their original skip guard; no test is newly disabled. Existing run commands, original-first ordering, selections, assertions and builds are unchanged."
 }

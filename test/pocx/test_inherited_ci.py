@@ -392,6 +392,66 @@ class InheritedTest(unittest.TestCase):
             path.write_text('class Probe:\n def skip_test_if_missing_module(self):\n  if condition:\n   self.skip_if_no_wallet()\n')
             self.assertIsNone(functional.disabled_reason(path.name, {'ENABLE_WALLET':'OFF'}, functional.inherited_options({}), root=root))
 
+    def test_native_inherited_wallet_guards_require_disabled_wallet(self):
+        profile = functional.inherited_options({})
+        for name, origin in [
+                ('feature_pocx_assignment_multinode.py', 'feature_pocx_assignment_lifecycle.py'),
+                ('feature_pocx_assignment_multinode_attacks.py', 'feature_pocx_assignment_lifecycle.py'),
+                ('feature_pocx_scheduler_early_height.py', 'feature_pocx_scheduler_payout.py')]:
+            with self.subTest(name=name):
+                state, reason = functional.classify(name, 'skipped', {'ENABLE_WALLET': 'OFF'}, profile, native=True)
+                self.assertEqual(state, 'configuration-disabled')
+                self.assertIn(origin, reason)
+                self.assertEqual(functional.classify(name, 'skipped', {'ENABLE_WALLET': 'ON'}, profile, native=True)[0], 'unverified')
+                self.assertEqual(functional.classify(name, 'failed', {'ENABLE_WALLET': 'OFF'}, profile, native=True)[0], 'failed')
+
+    def test_inherited_guards_parse_aliases_without_importing_test_modules(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            package = root / 'test/functional'
+            package.mkdir(parents=True)
+            (package / 'guard_parent.py').write_text(
+                'raise RuntimeError("must not execute test modules during classification")\n'
+                'class Parent:\n def skip_test_if_missing_module(self):\n  self.skip_if_no_wallet()\n')
+            (package / 'guard_middle.py').write_text('from guard_parent import Parent as Renamed\nclass Middle(Renamed):\n pass\n')
+            child = package / 'feature_probe.py'
+            child.write_text('from guard_middle import Middle\nclass Child(Middle):\n pass\n')
+            reason = functional.disabled_reason(child.name, {'ENABLE_WALLET': 'OFF'}, functional.inherited_options({}), root=root)
+            self.assertIn('guard_parent.py', reason)
+
+    def test_inherited_guards_do_not_bypass_overrides_or_conditional_guards(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            package = root / 'test/functional'
+            package.mkdir(parents=True)
+            parent = package / 'guard_parent.py'
+            parent.write_text('class Parent:\n def skip_test_if_missing_module(self):\n  self.skip_if_no_wallet()\n')
+            child = package / 'feature_probe.py'
+            for body in ['def skip_test_if_missing_module(self):\n  pass',
+                         'def skip_test_if_missing_module(self):\n  if condition:\n   super().skip_test_if_missing_module()',
+                         'def skip_test_if_missing_module(self):\n  return\n  self.skip_if_no_wallet()']:
+                with self.subTest(body=body):
+                    child.write_text('from guard_parent import Parent\nclass Child(Parent):\n ' + body + '\n')
+                    self.assertIsNone(functional.disabled_reason(child.name, {'ENABLE_WALLET': 'OFF'}, functional.inherited_options({}), root=root))
+            parent.write_text('class Parent:\n def skip_test_if_missing_module(self):\n  if condition:\n   self.skip_if_no_wallet()\n')
+            child.write_text('from guard_parent import Parent\nclass Child(Parent):\n pass\n')
+            self.assertIsNone(functional.disabled_reason(child.name, {'ENABLE_WALLET': 'OFF'}, functional.inherited_options({}), root=root))
+
+    def test_inherited_guard_cycles_and_ambiguous_bases_remain_unverified(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            package = root / 'test/functional'
+            package.mkdir(parents=True)
+            (package / 'guard_parent.py').write_text('from feature_probe import Child\nclass Parent(Child):\n pass\n')
+            child = package / 'feature_probe.py'
+            child.write_text('from guard_parent import Parent\nclass Child(Parent):\n pass\n')
+            self.assertIsNone(functional.disabled_reason(child.name, {'ENABLE_WALLET': 'OFF'}, functional.inherited_options({}), root=root))
+            (package / 'guard_parent.py').write_text('class Parent:\n def skip_test_if_missing_module(self):\n  self.skip_if_no_wallet()\n')
+            child.write_text('from guard_parent import Parent\nclass Child(Other, Parent):\n pass\n')
+            self.assertIsNone(functional.disabled_reason(child.name, {'ENABLE_WALLET': 'OFF'}, functional.inherited_options({}), root=root))
+            child.write_text('from guard_parent import Parent\nclass Helper(Parent):\n pass\nclass ActualTest:\n pass\n')
+            self.assertIsNone(functional.disabled_reason(child.name, {'ENABLE_WALLET': 'OFF'}, functional.inherited_options({}), root=root))
+
     def test_auxiliary_zero_missing_duplicate_failed_or_skipped_rejected(self):
         valid='<testsuite><testcase name="library"/></testsuite>'
         self.assertEqual(tests.verify_auxiliary(valid,['library']), ['library'])

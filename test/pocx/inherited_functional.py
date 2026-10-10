@@ -138,6 +138,56 @@ def inherited_options(environment):
             'selection_extensions': extended_selection}
 
 
+def class_guards(path, cls, seen=frozenset(), *, inherited=True):
+    """Find unconditional guards, including unchanged single-base inheritance.
+
+    Parse sibling modules only; never import or execute test code. An override
+    stops inheritance, as do ambiguous bases, import forms and dependency cycles.
+    The returned paths identify the actual guard declarations.
+    """
+    identity = (path.resolve(), cls.name)
+    if identity in seen:
+        return {}
+    seen = seen | {identity}
+    methods = [node for node in cls.body if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+               and node.name == 'skip_test_if_missing_module']
+    if methods:
+        guards = {}
+        if len(methods) != 1 or not isinstance(methods[0], ast.FunctionDef):
+            return guards
+        for node in methods[0].body:
+            if isinstance(node, (ast.Return, ast.Raise)):
+                break
+            call = node.value if isinstance(node, ast.Expr) else None
+            if (isinstance(call, ast.Call) and isinstance(call.func, ast.Attribute) and
+                    isinstance(call.func.value, ast.Name) and call.func.value.id == 'self' and
+                    not call.args and not call.keywords):
+                guards[call.func.attr] = {path}
+        return guards
+    if not inherited or len(cls.bases) != 1 or not isinstance(cls.bases[0], ast.Name):
+        return {}
+    base = cls.bases[0].id
+    module = ast.parse(path.read_text())
+    local = [node for node in module.body if isinstance(node, ast.ClassDef) and node.name == base]
+    if len(local) == 1:
+        return class_guards(path, local[0], seen)
+    if local:
+        return {}
+    imports = [(node, alias) for node in module.body if isinstance(node, ast.ImportFrom)
+               for alias in node.names if (alias.asname or alias.name) == base]
+    if len(imports) != 1:
+        return {}
+    declaration, alias = imports[0]
+    if declaration.level or not declaration.module or not declaration.module.isidentifier():
+        return {}
+    parent = (path.parent / (declaration.module + '.py')).resolve()
+    if parent.parent != path.parent.resolve() or not parent.is_file():
+        return {}
+    classes = [node for node in ast.parse(parent.read_text()).body
+               if isinstance(node, ast.ClassDef) and node.name == alias.name]
+    return class_guards(parent, classes[0], seen) if len(classes) == 1 else {}
+
+
 def disabled_reason(name, options, profile, *, native=False, root=ROOT):
     if name in PREVIOUS and not profile['previous_releases']:
         return 'Previous-release execution explicitly disabled by this profile; required in the optional profile'
@@ -148,24 +198,20 @@ def disabled_reason(name, options, profile, *, native=False, root=ROOT):
         path = root / 'test/functional' / name
     if not path.is_file():
         raise ValueError('Missing reviewed functional source: ' + name)
-    guards = set()
-    for cls in ast.parse(path.read_text()).body:
-        if not isinstance(cls, ast.ClassDef):
-            continue
-        for method in cls.body:
-            if not isinstance(method, ast.FunctionDef) or method.name != 'skip_test_if_missing_module':
-                continue
-            # Only unconditional direct guards justify a build-feature omission.
-            for node in method.body:
-                call = node.value if isinstance(node, ast.Expr) else None
-                if (isinstance(call, ast.Call) and isinstance(call.func, ast.Attribute) and
-                        isinstance(call.func.value, ast.Name) and call.func.value.id == 'self' and
-                        not call.args and not call.keywords):
-                    guards.add(call.func.attr)
-    reasons = [f'{GUARDS[guard]}=OFF' for guard in sorted(guards & GUARDS.keys())
+    guards = {}
+    classes = [node for node in ast.parse(path.read_text()).body if isinstance(node, ast.ClassDef)]
+    for cls in classes:
+        # Without identifying an entry class, an unused helper subclass cannot
+        # justify inherited feature omissions for another test in this module.
+        for guard, origins in class_guards(path, cls, inherited=len(classes) == 1).items():
+            guards.setdefault(guard, set()).update(origins)
+    disabled = sorted(guards.keys() & GUARDS.keys())
+    reasons = [f'{GUARDS[guard]}=OFF' for guard in disabled
                if options.get(GUARDS[guard]) == 'OFF']
     if reasons:
-        return ', '.join(reasons) + '; unconditional guard in ' + str(path.relative_to(root))
+        origins = sorted({str(origin.relative_to(root)) for guard in disabled
+                          if options.get(GUARDS[guard]) == 'OFF' for origin in guards[guard]})
+        return ', '.join(reasons) + '; unconditional guard in ' + ', '.join(origins)
     if 'skip_if_platform_not_linux' in guards and options.get('target_system') != 'Linux':
         return 'Original tracing guard requires Linux; target is ' + options['target_system']
     return None

@@ -21,7 +21,7 @@
     "test/pocx/functional_results.py": "4355a7bd0f08ada20a7d82587160a10c0493041205d92b3ab7fb4335459e4613",
     "test/pocx/inherited-ci.json": "f1fae102d70028cc25dcedb8852e9a3fcc54ff152e670b20f7e87d115101cdd3",
     "test/pocx/inherited_ci.py": "960d8a89bb82d651d4d2d5c497f1c680f3753cda727743a917f717027a167832",
-    "test/pocx/inherited_functional.py": "cadc51ab9d186e1de4b9388ae207a7f9ac69458074386e7d5ce0890b8d564b86",
+    "test/pocx/inherited_functional.py": "08113b32aec0f04c83b1ae466590aaf1117db1fa4f8d9ce958be994bf99a4130",
     "test/pocx/kernel-parity.json": "6b1186406c49640b390e9d90464b94f41450207a7657fada6148e344d74886fe",
     "test/pocx/kernel/fixtures.json": "0069f80997408a2a13739afe46775c4a5e2cc799a8b963006fdd30c299a7d35f",
     "test/pocx/kernel/provenance.json": "1701fd2568d6ad4bcb7b58bb8e7c5f6c19bd9f0a7f32a549b6387e803f8126fc",
@@ -154,12 +154,13 @@
       "review": "Rejects storage-retention errors without changing raw terminal test outcomes; no weakening of functional assertions or skip policy."
     },
     "test/pocx/inherited_functional.py": {
-      "previous_reviewed_revision": "26f48080266cd77fa6d79973650aa0aa3a3275f8",
-      "previous_sha256": "8fde271730c1dd3a1c7aca239f65aac2a3ace9c6d5fb66c880f7192b937f8f25",
-      "sha256": "cadc51ab9d186e1de4b9388ae207a7f9ac69458074386e7d5ce0890b8d564b86",
-      "review": "Retain parsed original functional case results before rejecting a failed aggregate/exit, and explicitly record missing original case/transport evidence as unverified. Counts and CSV remain available on failure. Fail-fast original-before-native gating, assertions, selections and successful execution commands are unchanged. Infrastructure fixtures cover actual failed aggregates and abnormal exits; this is not new target-platform runtime evidence."
+      "previous_reviewed_revision": "e46a1e4ecb8e3c61a1712a055ca70faf5cd42349",
+      "previous_sha256": "cadc51ab9d186e1de4b9388ae207a7f9ac69458074386e7d5ce0890b8d564b86",
+      "sha256": "08113b32aec0f04c83b1ae466590aaf1117db1fa4f8d9ce958be994bf99a4130",
+      "review": "Recognize unconditional feature guards inherited by a single test class through an unambiguous single-base chain in sibling source modules, without importing or executing those modules. Record the actual declaration source; child overrides, conditional guards, ambiguous classes/bases and cycles remain unverified. Missing enabled prerequisites and failed cases remain failures or unverified. Three existing native wallet-dependent scripts inherit their original skip guard; no test is newly disabled. Existing run commands, original-first ordering, selections, assertions and builds are unchanged."
     }
   },
   "original_failure_reporting_review": "Retain parsed original functional case results before rejecting a failed aggregate/exit, and explicitly record missing original case/transport evidence as unverified. Counts and CSV remain available on failure. Fail-fast original-before-native gating, assertions, selections and successful execution commands are unchanged. Infrastructure fixtures cover actual failed aggregates and abnormal exits; this is not new target-platform runtime evidence.",
-  "enabled_linux_python_prerequisites_review": "Provision Python ZeroMQ for the reviewed Debian/Ubuntu functional recipes and add pinned pycapnp only where IPC is enabled and the original environment omitted it. Preserve existing pip requirements; Ubuntu22.04 does not receive the unsupported --break-system-packages option. Export added PIP_PACKAGES through host/container setup. Original compiler, dependency build flags, features, test selections and assertions remain unchanged. Actual-recipe regression checks all eight environments, disabled/fuzz routing and idempotence; package/runtime execution remains separately required."
+  "enabled_linux_python_prerequisites_review": "Provision Python ZeroMQ for the reviewed Debian/Ubuntu functional recipes and add pinned pycapnp only where IPC is enabled and the original environment omitted it. Preserve existing pip requirements; Ubuntu22.04 does not receive the unsupported --break-system-packages option. Export added PIP_PACKAGES through host/container setup. Original compiler, dependency build flags, features, test selections and assertions remain unchanged. Actual-recipe regression checks all eight environments, disabled/fuzz routing and idempotence; package/runtime execution remains separately required.",
+  "inherited_feature_guard_review": "Recognize unconditional feature guards inherited by a single test class through an unambiguous single-base chain in sibling source modules, without importing or executing those modules. Record the actual declaration source; child overrides, conditional guards, ambiguous classes/bases and cycles remain unverified. Missing enabled prerequisites and failed cases remain failures or unverified. Three existing native wallet-dependent scripts inherit their original skip guard; no test is newly disabled. Existing run commands, original-first ordering, selections, assertions and builds are unchanged."
 }

@@ -26,6 +26,19 @@ job retains its compiler, unsigned-char checks and RPC coverage settings. These
 profiles require actual hosted build and runtime evidence; restoring a matrix
 entry does not establish a passing result.
 
+The local inherited Clang17/libc++ wallet-disabled pair is now independently
+verified through its applicable native frameworks: 702 unit cases, 8 Qt methods,
+16 kernel cases, 6 auxiliary executables and 386 functional case/transport rows
+passed. The 204 disabled-feature functional rows remain separately recorded.
+The native functional checkpoint reuses 588 unchanged rows and the two corrected
+eviction rows; it preserves the original failed envelopes. Unconditional wallet
+guards inherited through unambiguous single-base sibling test classes now identify
+their actual declaration files. Overrides, conditional guards, ambiguous classes
+and inheritance cycles do not justify omissions, and missing enabled prerequisites
+remain unverified. Evidence is under
+`artifacts/ci-parity-20261010/inherited-nowallet-native-complete-checkpoint/`.
+This is a reconciled local checkpoint, not a rewritten recipe exit or hosted pass.
+
 The 2026-10-10 local i686 Bitcoin-OFF build completed with the inherited
 Debian trixie/Clang19 environment, 32-bit dependencies, Debug configuration,
 Boost safe mode, IPC disabled and the upstream512KiB test stack. Its actual
