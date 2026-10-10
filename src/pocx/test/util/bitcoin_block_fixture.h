@@ -17,4 +17,4 @@ inline void ReadBitcoinBlockFixture(DataStream& stream, CBlock& block)
     block.nBaseTarget = 1;
     stream >> TX_WITH_WITNESS(block.vtx);
 }
-#endif
+#endif // BITCOIN_POCX_TEST_UTIL_BITCOIN_BLOCK_FIXTURE_H

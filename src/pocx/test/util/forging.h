@@ -27,4 +27,4 @@ inline void ForgeTestBlock(CBlock& block, const CBlockIndex& prev, const Consens
     }
     SetMockTime(std::max(saved_time, std::chrono::seconds{block.nTime}));
 }
-#endif
+#endif // BITCOIN_POCX_TEST_UTIL_FORGING_H

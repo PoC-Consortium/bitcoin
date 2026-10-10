@@ -8,4 +8,4 @@
 struct PoCXTestingSetup : BasicTestingSetup {
     PoCXTestingSetup() : BasicTestingSetup{ChainType::REGTEST, {.extra_args = {"-regtest"}}} {}
 };
-#endif
+#endif // BITCOIN_POCX_TEST_UTIL_SETUP_POCX_H

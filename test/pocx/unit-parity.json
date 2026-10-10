@@ -949,11 +949,11 @@
       "review": "Native fixture, explicit original Bitcoin transaction reader, guarded coins mock override or unit baseline verifier."
     },
     "src/pocx/test/util/forging.h": {
-      "sha256": "21de147d2427e5926a89139cf011aa2f20d50705a454bff009e92cafe6818e71",
+      "sha256": "f55d62718e4a9feb3b677e102ed5e669ccfbfe2e680a293e2fb2d887d4881c9f",
       "review": "Native fixture, explicit original Bitcoin transaction reader, guarded coins mock override or unit baseline verifier."
     },
     "src/pocx/test/util/bitcoin_block_fixture.h": {
-      "sha256": "097ae901b95d5b9f6f8967caac0e678916fe3d9ab0ee463d6a371c98e98f44da",
+      "sha256": "71596ae96f701e285a5310c0482218a739c98237cbd7effc52a47a6931059330",
       "review": "Native fixture, explicit original Bitcoin transaction reader, guarded coins mock override or unit baseline verifier."
     },
     "src/node/blockstorage.cpp": {
