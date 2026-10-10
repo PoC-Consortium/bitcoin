@@ -222,7 +222,7 @@ class SendHeadersTest(BitcoinTestFramework):
         for node in self.nodes[:2]:
             node.setmocktime(max(node.mocktime or 0, timestamp))
 
-    def native_block(self, parent, coinbase, unused_pow_time):
+    def native_block(self, parent, coinbase, _unused_pow_time):
         if parent not in self.native_heights:
             self.native_heights[parent] = self.nodes[0].getblockheader(f'{parent:064x}')['height']
         height = self.native_heights[parent] + 1

@@ -15345,7 +15345,7 @@
       "source": "test/functional/p2p_sendheaders.py",
       "replacement": "test/pocx/functional/p2p_sendheaders.py",
       "source_sha256": "5b59c0ae7fcb972cba6e5e2b524f0a80ee59db485b3b31384799d3a1e92d88e4",
-      "replacement_sha256": "c9c3e01b86a25d5df2433f92c435380d48cff7d369ba5145eaf8a9d944f91731",
+      "replacement_sha256": "15080081bb9ff1457248280592f85c316937544f411485b4faa7a833c8c2f5f6",
       "assertion_and_method_accounting": {
         "assert_statements": 7,
         "assertion_calls": 4,
@@ -15451,7 +15451,8 @@
           "test_null_locators",
           "test_nonnull_locators"
         ]
-      }
+      },
+      "lint_binding_review": "Rename unused legacy positional PoW time parameter; native block implementation, calls and assertions unchanged."
     },
     "p2p_sendtxrcncl.py": {
       "source": "test/functional/p2p_sendtxrcncl.py",
