@@ -758,3 +758,16 @@ second transport is running with strict RPC coverage; the complete baseline
 and native previous-release profile remain unverified. Sixteen BCC/staging
 checks,47 inherited-controller checks, artifact/previous-release fixture
 checks, source drift and focused pinned Python lint passed.
+
+Shared CI lint preserves the original locale checker unchanged. Its separate
+`lint/locale_dependence.py` policy copy transfers Bitcoin's existing exception
+for `atoi64_legacy` to the same independent reference in the adapted unit file.
+The original reference and complete locale test, including60 assertion calls,
+remain byte-identical. The exception matches only the exact filename and one
+complete call line. The checked original/copy source hashes and normalized
+checker AST reject altered references, assertions, scanner rules, additional
+exceptions and duplicate calls. Other locale-dependent uses remain failures.
+The shared Rust entrypoint delegates only this checker through the separate
+`lint/dispatch.rs`; all other original Python linters run directly. A missing
+owned checker fails. Infrastructure checks exercise real checker exits for
+new violations as well as source-policy rejection; they do not rerun units.

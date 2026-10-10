@@ -1,0 +1,19 @@
+{
+  "scope": "Transfer Bitcoin's existing legacy-reference locale exception to exactly its byte-identical owned unit copy; no original checker/test edits. CI routes one checker to a separately reviewed policy copy; every other original Python linter is reused directly.",
+  "source_sha256": {
+    "test/lint/test_runner/src/main.rs": "09098b3ae5aeb3d04fe649ff2cfd75b90f593668a5a1afd3a0ab406b61a81d07",
+    "test/pocx/lint/dispatch.rs": "488a9a9343c94cc0713600c10911fc919bc134bbd47e28178bd562c59e2dd67d",
+    "test/pocx/lint/locale_dependence.py": "e3b11a82bdc8c7a619c66330181cfd1929949b0aa6382024cfa6ad23e24ea8d9",
+    "test/pocx/lint/locale_reference.py": "4414bf09be339d6be44936d33d205b6cbbbefa5a2bae096c8f47123ebf2c195c",
+    "test/pocx/test_lint_infrastructure.py": "6c703de76e5e321b9065bf0d50418a9e8e15d1a5d1a7d22e154fce085cceebe9",
+    "test/lint/lint-locale-dependence.py": "b88885df387243d0f861fc68556710f05ab1b05ab8395786d0368ec536490ee0",
+    "ci/lint/06_script.sh": "624c5a370c48b6f3eaf36412b65d044271035847862c06766f8a7447b1475c65"
+  },
+  "original_reference": "src/test/util_tests.cpp::atoi64_legacy plus complete test_LocaleIndependentAtoi",
+  "adapted_reference": "src/pocx/test/adapted/util_tests.cpp::atoi64_legacy plus complete test_LocaleIndependentAtoi",
+  "reference_block_sha256": "68264d4c9f248408651083176af6bd8c8759a58aada7d862af0396755ac03e41",
+  "original_assertion_calls_preserved": 60,
+  "policy": "Exact filename and entire single call line only. Pin original checker, normalize and compare complete owned checker AST; pin original/copied complete reference-and-test block and reject duplicate conversion calls. Scanner, function inventory, existing exclusions and diagnostics unchanged.",
+  "missing_owned_checker": "Python invocation fails; no fallback skip",
+  "verification_scope": "Infrastructure; actual full CI lint execution remains separately required."
+}
