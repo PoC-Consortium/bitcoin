@@ -132,7 +132,7 @@ class InstrumentedInfrastructureTest(unittest.TestCase):
             path = self.directory / (name + '.log')
             path.write_text('synthetic passing build fixture')
             report['steps'][name] = {'returncode': 0, 'log_sha256': sha256(path)}
-        archives = ['libcapnp.a', 'libkj.a', 'libzmq.a'] + (['libevent.a', 'libsqlite3.a'] if kind == 'msan' else [])
+        archives = ['libcapnp.a', 'libkj.a', 'libzmq.a'] + (['libevent_core.a', 'libevent_extra.a', 'libevent_pthreads.a', 'libsqlite3.a'] if kind == 'msan' else [])
         for name in archives + ['libc++.so.1', 'libc++abi.so.1']:
             path = (self.prefix / 'lib' if name.endswith('.a') else self.directory / 'libcxx/lib') / name
             path.parent.mkdir(parents=True, exist_ok=True)
@@ -162,6 +162,21 @@ class InstrumentedInfrastructureTest(unittest.TestCase):
                     (self.directory / 'preparation.json').write_text(json.dumps(changed))
                     with self.subTest(kind=kind, variant=variant), self.assertRaises(ValueError):
                         gate.verify_dependencies(kind, self.directory)
+
+    def test_legacy_builder_reuse_requires_all_linked_msan_components(self):
+        spec, report = self.dependencies('msan')
+        report['builder_sha256'] = next(iter(spec['compatible_builder_sha256']))
+        path = self.directory / 'preparation.json'
+        path.write_text(json.dumps(report))
+        with patch('instrumented_ci.specification', return_value=spec), \
+             patch('instrumented_ci.tools', return_value=report['tools']):
+            self.assertEqual(gate.verify_dependencies('msan', self.directory)['status'], 'passed')
+            for name in ('libevent_core.a', 'libevent_extra.a', 'libevent_pthreads.a'):
+                changed = deepcopy(report)
+                changed['archive_instrumentation'].pop(name)
+                path.write_text(json.dumps(changed))
+                with self.subTest(component=name), self.assertRaisesRegex(ValueError, 'archive inventory'):
+                    gate.verify_dependencies('msan', self.directory)
 
     def test_builder_stops_before_download_when_toolchain_is_missing(self):
         directory = self.directory / 'new-preparation'

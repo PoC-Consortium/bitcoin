@@ -14,7 +14,7 @@ import urllib.request
 
 sys.dont_write_bytecode = True
 from common import ROOT, sha256
-from instrumented_ci import dependency_options, installed_inputs, specification, tools, verify_dependencies
+from instrumented_ci import dependency_options, installed_inputs, required_archives, specification, tools, verify_dependencies
 
 
 def prepare(kind, directory, jobs):
@@ -77,9 +77,7 @@ def prepare(kind, directory, jobs):
                               *report['depends_options']])
         prefix = Path(report['prefix'])
         report['installed_inputs'] = installed_inputs(directory, prefix)
-        libraries = ['libcapnp.a', 'libkj.a', 'libzmq.a']
-        if kind == 'msan':
-            libraries += ['libevent.a', 'libsqlite3.a']
+        libraries = required_archives(kind)
         report['archive_instrumentation'] = {}
         for name in libraries:
             library = prefix / 'lib' / name

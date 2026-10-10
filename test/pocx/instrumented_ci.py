@@ -109,6 +109,15 @@ def installed_inputs(directory, prefix):
     return {str(path): sha256(path) for path in sorted(paths)}
 
 
+def required_archives(kind):
+    archives = ['libcapnp.a', 'libkj.a', 'libzmq.a']
+    if kind == 'msan':
+        # The inherited libevent recipe removes the umbrella archive. These
+        # are the components selected by FindLibevent.cmake on Linux.
+        archives += ['libevent_core.a', 'libevent_extra.a', 'libevent_pthreads.a', 'libsqlite3.a']
+    return archives
+
+
 def verify_dependencies(kind, directory, root=ROOT):
     spec = specification(kind, root)
     path = directory / 'preparation.json'
@@ -118,7 +127,9 @@ def verify_dependencies(kind, directory, root=ROOT):
             report.get('llvm_archive_sha256') != spec['llvm']['sha256'] or
             report.get('depends_options') != dependency_options(kind, directory)):
         raise ValueError('Missing, stale or wrong instrumented dependency preparation')
-    if (report.get('builder_sha256') != sha256(root / 'test/pocx/prepare_instrumented_dependencies.py') or
+    reviewed_builders = {sha256(root / 'test/pocx/prepare_instrumented_dependencies.py'),
+                         *spec.get('compatible_builder_sha256', {})}
+    if (report.get('builder_sha256') not in reviewed_builders or
             sha256(directory / 'llvm.src.tar.xz') != spec['llvm']['sha256']):
         raise ValueError('Instrumented dependency builder or LLVM archive changed')
     prefix = Path(report['prefix'])
@@ -143,9 +154,7 @@ def verify_dependencies(kind, directory, root=ROOT):
         raise ValueError('Instrumented dependency compiler changed')
     # These archives are built by the inherited depends recipes. Native code
     # generators are host tools, not libraries linked into the tested programs.
-    expected = ['libcapnp.a', 'libkj.a', 'libzmq.a']
-    if kind == 'msan':
-        expected += ['libevent.a', 'libsqlite3.a']
+    expected = required_archives(kind)
     archives = report.get('archive_instrumentation', {})
     if set(archives) != set(expected):
         raise ValueError('Incomplete instrumented dependency archive inventory')

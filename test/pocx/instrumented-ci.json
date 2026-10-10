@@ -167,5 +167,8 @@
     "TSAN preserves upstream C++ dependency instrumentation; MSAN also instruments C dependencies.",
     "Neither C++ instrumentation nor passing C++ canaries establish Rust sanitizer instrumentation.",
     "Required runtime and hosted executions remain unverified until actually run."
-  ]
+  ],
+  "compatible_builder_sha256": {
+    "18211f86f4913ce32ba1f315f3f887152af6047505a7b25db9994177e0467cc6": "Reviewed predecessor: identical LLVM/depends build commands and inputs; only post-build MSAN archive verification expected removed libevent.a. Reuse requires the current full component inventory, symbols, source pins, compiler, installed inputs and successful build logs; failed preparation never counts as passed."
+  }
 }
