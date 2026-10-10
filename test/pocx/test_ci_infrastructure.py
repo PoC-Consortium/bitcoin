@@ -19,6 +19,21 @@ class CIInfrastructureTest(unittest.TestCase):
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)
 
+    def test_asan_tracing_wrapper_enables_prerequisites_without_mutating_original_recipe(self):
+        import subprocess
+        from common import sha256
+        original = ROOT / 'ci/test/00_setup_env_native_asan.sh'
+        before = sha256(original)
+        command = ['bash', '-ec', '''export INSTALL_BCC_TRACING_TOOLS=false
+source ./test/pocx/ci/00_setup_env_native_asan_tracing.sh
+test "$INSTALL_BCC_TRACING_TOOLS" = true
+test "$CONTAINER_NAME" = ci_native_asan
+case "$PACKAGES" in *bpfcc-tools*linux-headers-*) ;; *) exit 19 ;; esac
+case "$CI_CONTAINER_CAP" in *--privileged*) ;; *) exit 23 ;; esac
+''']
+        subprocess.run(command, cwd=ROOT, check=True)
+        self.assertEqual(sha256(original), before)
+
     def test_retention_keeps_case_proof_and_prunes_only_node_chain_databases(self):
         import shutil
         root = self.files(['results.json', 'case.py.log', 'v2/case/test_framework.log',

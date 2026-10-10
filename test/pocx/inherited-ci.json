@@ -18,12 +18,13 @@
     "ci/test/02_run_container.py": "f202b4fc207da95776e1a3bd883375494ce0af16faff9a5c6957ee1cfacd026e",
     "ci/test/03_test_script.sh": "cfd9e9583398dee9527a2fb7ea099104a8cab53f7bf5ccdceb3f4e84425ebb8b",
     "test/pocx/ci/inherited_test_script.sh": "25b6f367bed45e7c7d040ae2a82bba21b278790d83c536ade4d7b7a835273930",
-    "test/pocx/inherited_ci.py": "b468e0dd9a93706bb7afdbffc17877222a4fed5c168effdbd358bf1eeaa13f6b",
+    "test/pocx/inherited_ci.py": "e922259590963ee030f286340f10b033d0765e3b31bd57da4a08d5fa782f1dbc",
     "test/pocx/inherited_functional.py": "8fde271730c1dd3a1c7aca239f65aac2a3ace9c6d5fb66c880f7192b937f8f25",
     "test/pocx/inherited_tests.py": "c9171243d26768994f0c7d171ad3270344bf87ad018ece2ab7e436829853f511",
     "test/pocx/revision_ci.py": "4ae8bac50834eb3d9bb3a883b6d8897c51730f6989e981bcd589c14fbd7e0998",
     "test/pocx/test_windows_cross.py": "835669be83f461be2faa58ef2fe28fb1f7b67cd70e08d774c27224d051a8f0e8",
-    "test/pocx/windows_cross.py": "e1495418b36684e7ed61fd77b8d2c1e5ac3f688e0bec9eda5d8761ce0a1a301f"
+    "test/pocx/windows_cross.py": "e1495418b36684e7ed61fd77b8d2c1e5ac3f688e0bec9eda5d8761ce0a1a301f",
+    "test/pocx/ci/00_setup_env_native_asan_tracing.sh": "30b254f14628cf682ddad55ecf2b0ceb4b74057b95a85733300c03141cdf1b27"
   },
   "evidence_retention": "Copy newly created bounded framework report trees into artifacts/pocx-inherited on success and failure; export container reports before cleanup; upload in inherited POSIX jobs",
   "unchanged_upstream_revision_recipe": ".github/ci-test-each-commit-exec.py",
@@ -40,5 +41,6 @@
     ],
     "coverage": "Preserve original and native RPC coverage gates per transport with unchanged upstream evaluator; run the historical slow dbcrash exclusion as a documented selection extension. No execution claim."
   },
-  "runtime_stack_review": "Preserve the inherited512KiB soft stack limit for every test process. Apply it as a soft limit only so reviewed Qt/kernel build subprocesses can restore their normal8MiB stack without changing caller/test limits. Original upstream recipe and assertions remain byte-identical. Real execution of the actual owned shell block verifies enabled/disabled conditions, preserved hard limit and isolated build-child limits; full inherited target recipes remain separately required."
+  "runtime_stack_review": "Preserve the inherited512KiB soft stack limit for every test process. Apply it as a soft limit only so reviewed Qt/kernel build subprocesses can restore their normal8MiB stack without changing caller/test limits. Original upstream recipe and assertions remain byte-identical. Real execution of the actual owned shell block verifies enabled/disabled conditions, preserved hard limit and isolated build-child limits; full inherited target recipes remain separately required.",
+  "asan_tracing_environment_review": "Select an owned FILE_ENV wrapper which exports INSTALL_BCC_TRACING_TOOLS=true before sourcing the unchanged upstream ASAN environment. Both host setup and Docker image build receive the intended BCC/header packages and capability flags. Remove workflow sed mutation which invalidated the original environment source checksum. Compiler/options, original source hashes and test selections unchanged. Actual hosted execution remains unverified."
 }
