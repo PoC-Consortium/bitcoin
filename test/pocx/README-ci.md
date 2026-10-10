@@ -196,25 +196,33 @@ synthetic producer/consumer fixtures are infrastructure evidence only; actual
 hosted compilation and Windows execution remain required and unverified.
 
 The initial functional checkpoint has 17 explicitly documented optional skips.
-The later focused work passed 10 of those entries in both transports with their
-recorded inputs; current source changes require rerunning all 17 entries. All five
-previous-release cases now have separate owned adaptations for mempool files,
-coinstats indexes, unsupported UTXO databases, wallet backward compatibility and
-wallet migration.
-Their fixture checks do not establish full functional passes. The full wallet
-migration adapter retains every original assertion and scenario, including
-backup, rollback, no-rescan, pruned-data and deliberate wrong-chain failures.
-Its paired chains use the smaller applicable subsidy at each height, preserving
-identical transaction bodies across Bitcoin's 150-block and PoCX's 500-block
-regtest halving schedules. Schema-specific RPC fixture encoding preserves opaque
-labels and comments; ordinary mempool acceptance handles fee replacements.
-The chainstate tool has an owned adaptation and direct tool checks; its full
-functional case remains unverified. All 173 benchmark subcases passed with their
-recorded inputs, but the benchmark functional wrapper cannot complete its
-network-thread shutdown in the current socket-restricted environment. None of
-these remaining entries count as green. Normal functional profiles retain their
-reviewed checkpoint skip policy; required optional profiles must eventually pass
-with `verify_functional.py --require-no-skips` and their dependencies enabled.
+The 2026-10-10 local prerequisite-enabled checkpoint passes all 17 original entries
+and their PoCX counterparts in both transports, with no skips. These entries
+include all five USDT tracing cases, IPC, ZMQ, previous-release compatibility,
+chainstate tools and the benchmark wrapper. The original benchmark entry expands
+to all 173 registered benchmark cases per transport; the PoCX wrapper executes
+its full registered list. Entry counts and expanded benchmark counts overlap and
+must not be added together.
+
+The five previous-release cases have separate owned adaptations for mempool
+files, coinstats indexes, unsupported UTXO databases, wallet backward compatibility
+and wallet migration. The migration adapter retains the original assertions and
+scenarios, including backup, rollback, no-rescan, pruned-data and deliberate
+wrong-chain failures. Mixed-chain fixtures preserve transaction bodies while
+explicitly translating chain-specific context. Original source files remain
+unchanged. Raw failed attempts remain available alongside corrected passing runs.
+The case-level checkpoint is recorded in
+`artifacts/ci-parity-20261010/optional-functional-cases.csv`, with scoped input
+reuse checks in `optional-native-current-inputs.json` in that directory.
+
+These focused local results do not establish complete optional-profile or hosted
+CI success. The complete original v1 selection reuses unchanged passing cases
+and focused corrections for environment failures. The previously missing full
+v2 selection now passes, including all 40 database-crash iterations and both
+special-address cases: 459 original cases per transport. The complete native
+optional CI entry point remains in progress.
+Required optional profiles reject skips with `--require-no-skips`; normal
+functional profiles retain their explicitly documented limited-checkpoint policy.
 
 The scheduled/manual `optional-functional` job provisions matching kernel headers,
 BCC, ZMQ, IPC bindings and eight checksum-verified historical releases. It builds
@@ -255,13 +263,16 @@ checked. This requires the genuine v28.2 `bitcoin-wallet` tool in addition to th
 previous-release daemons and CLI tools; the runner fingerprints all 17 binaries.
 It does not claim that unmodified Bitcoin wallets are portable across chains.
 
-Required optional-feature, platform and sanitizer coverage remains broader than
-this workflow. Original wallet-enabled and wallet-disabled unit runs currently
-retain sandbox IPC/socket failures; their native feature-profile verification
-must await a passing matching baseline. Local Qt/kernel entrypoint proof does not
-establish hosted CI or the complete required matrix. See the dated artifacts in
-`artifacts/ci-parity-20261009/` for exact executed configurations and unresolved
-cases. The full goal remains active.
+Required platform and sanitizer coverage remains broader than these local
+checkpoints. Local wallet-enabled and wallet-disabled unit baselines and their
+PoCX counterparts now pass with working socket/IPC prerequisites. The disabled
+wallet checkpoint has 680 original passes; PoCX has 670 original passes and 32
+native passes, with ten reviewed PoW exclusions. The 57 original wallet cases
+and one additional native wallet case are configuration-disabled in that profile.
+The local GCC14 result does not establish the inherited Clang/libc++ no-wallet
+configuration. Local Qt/kernel proof likewise does not establish the complete
+platform matrix. Dated artifacts retain exact executed configurations; the goal
+remains active.
 
 The scheduled/manual `asan` job uses the inherited Clang 22 configuration:
 `address,float-divide-by-zero,integer,undefined`, shared libraries, C++23,
@@ -280,14 +291,18 @@ infrastructure evidence, not additional Bitcoin/PoCX test cases. They do not
 establish sanitizer coverage of Rust or vendored dependencies.
 
 Runtime controls replace inherited environment overrides with fatal error/leak
-settings and the reviewed upstream suppressions. Unit, Qt and kernel retain the
+settings and the reviewed upstream suppressions. All sanitizer profiles enforce
+the inherited 512 KiB runtime stack limit, recorded and checked independently
+by the parent and runtime gate. Unit, Qt and kernel retain the
 inherited 2400-second sanitizer timeout. Functional waits scale by40; format6
 records the scaling separately from case identity and verifies the actual
 executed flag. Ordinary profiles retain their existing timeout defaults and
 format5 evidence. Fuzz remains explicitly disabled in this package.
 
-The Clang 22 toolchain and full sanitizer runtime have not been executed locally
-or in hosted CI for this package. Toolchain provisioning follows the [LLVM package repository](https://apt.llvm.org/);
+The local Clang 22 environment passes all six ASAN/UBSAN/LSAN runtime canaries
+and a live BPF tracing prerequisite check. The original full ASAN build and
+framework execution remain in progress; hosted execution remains unverified.
+Toolchain provisioning follows the [LLVM package repository](https://apt.llvm.org/);
 runtime controls follow the inherited recipes and the official
 [ASan](https://clang.llvm.org/docs/AddressSanitizer.html) and
 [UBSan](https://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html) documentation.
