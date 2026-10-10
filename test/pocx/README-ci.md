@@ -36,6 +36,16 @@ Qt, auxiliary and functional execution were not replayed. Reports are under
 `artifacts/ci-parity-20261010/randomized-{i686,previous-releases}-original-checkpoint/`.
 The matching native profiles remain queued and require their own execution proof.
 
+The local Alpine3.23/musl original CTest phase passed 739 unit cases, 9 Qt
+methods, 16 kernel cases and 6 auxiliary executables. Its missing randomized
+unit/kernel conditions are independently verified using the same binaries,
+with actual seeds retained, 2400 second deadlines and no compilation replay.
+Alpine leaves `CI_LIMIT_STACK_SIZE` unset and uses the original 8 MiB stack;
+the i686/previous-release 512 KiB limit does not apply. Evidence is under
+`artifacts/ci-parity-20261010/inherited-alpine-original-ctest-checkpoint/` and
+`artifacts/ci-parity-20261010/randomized-alpine-original-checkpoint/`.
+Its original full functional baseline and matching PoCX execution remain required.
+
 The owned Ubuntu24/GCC13 prerequisite-complete optional functional pair is now
 locally verified with both transports and zero skips: Bitcoin passed 918 rows
 (459 per transport), and PoCX passed 590 rows (295 per transport). The PoCX rows
