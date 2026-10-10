@@ -39,6 +39,15 @@ remain unverified. Evidence is under
 `artifacts/ci-parity-20261010/inherited-nowallet-native-complete-checkpoint/`.
 This is a reconciled local checkpoint, not a rewritten recipe exit or hosted pass.
 
+The inherited Ubuntu22/GCC12 previous-release Bitcoin-OFF build also passed its
+local CTest phase with the original unsigned-char, Werror, Debug and Boost safe
+settings: 739 unit cases, 9 Qt methods, 16 kernel cases and 6 auxiliary executables.
+The source/build-checked checkpoint is under
+`artifacts/ci-parity-20261010/inherited-previous-releases-original-ctest-checkpoint/`.
+Its functional matrix and RPC coverage are still running; native execution remains
+gated on that complete original baseline. No completed build or test was replayed
+to export this phase.
+
 The 2026-10-10 local i686 Bitcoin-OFF build completed with the inherited
 Debian trixie/Clang19 environment, 32-bit dependencies, Debug configuration,
 Boost safe mode, IPC disabled and the upstream512KiB test stack. Its actual
