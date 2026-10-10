@@ -191,13 +191,14 @@ def verify_sanitizer_execution(root, report, output):
     import json
     from pathlib import Path
     from sanitizer_ci import CANARIES, required_binaries, runtime_environment, verify_compile_commands
-    if report.get('sanitizer_environment') != runtime_environment(root):
-        raise ValueError('Sanitizer runtime environment was missing or weakened')
+    if report.get('sanitizer_environment') != runtime_environment(root) or report.get('sanitizer_stack_limit') != 524288:
+        raise ValueError('Sanitizer runtime environment or stack limit was missing or weakened')
     path = output / 'sanitizer/verification.json'
     if report.get('artifacts', {}).get(str(path)) != sha256(path):
         raise ValueError('Sanitizer verification artifact missing or changed')
     child = json.loads(path.read_text())
     if (child.get('status') != 'passed' or child.get('environment') != runtime_environment(root) or
+            child.get('stack_limit') != 524288 or
             not child.get('instrumentation', {}).get('compile_commands') or
             not child.get('instrumentation', {}).get('binaries')):
         raise ValueError('Missing passing sanitizer instrumentation/runtime proof')

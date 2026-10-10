@@ -304,12 +304,12 @@ def main():
                  '--timeout', ctest_timeout, '--no-tests=error']
         commands = []
         if sanitizer:
+            # Match upstream CI_LIMIT_STACK_SIZE for every sanitizer runtime.
+            stack_limit = 512 * 1024
+            _, hard = resource.getrlimit(resource.RLIMIT_STACK)
+            resource.setrlimit(resource.RLIMIT_STACK, (stack_limit, hard))
+            report['sanitizer_stack_limit'] = resource.getrlimit(resource.RLIMIT_STACK)[0]
             if instrumented:
-                # Match upstream CI_LIMIT_STACK_SIZE for runtime execution.
-                stack_limit = 512 * 1024
-                _, hard = resource.getrlimit(resource.RLIMIT_STACK)
-                resource.setrlimit(resource.RLIMIT_STACK, (stack_limit, hard))
-                report['sanitizer_stack_limit'] = stack_limit
                 gate = [sys.executable, ROOT / 'test/pocx/instrumented_ci.py', '--sanitizer', kind,
                         '--directory', dependency_directory, '--build-dir', build,
                         '--output', output / 'sanitizer/verification.json']

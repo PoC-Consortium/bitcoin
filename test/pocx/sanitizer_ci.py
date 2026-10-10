@@ -11,6 +11,7 @@ import json
 import os
 from pathlib import Path
 import re
+import resource
 import shlex
 import shutil
 import subprocess
@@ -174,6 +175,9 @@ def main():
         toolchain = tools()
         report.update(tools=toolchain, environment=runtime_environment())
         if args.build_dir:
+            report['stack_limit'] = resource.getrlimit(resource.RLIMIT_STACK)[0]
+            if report['stack_limit'] != 512 * 1024:
+                raise ValueError('Required sanitizer runtime stack limit is 512 KiB')
             build = args.build_dir.resolve()
             if not build.is_relative_to(ROOT) or build == ROOT:
                 raise ValueError('Sanitizer build must belong to this worktree')

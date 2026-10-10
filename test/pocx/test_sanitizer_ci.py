@@ -137,14 +137,14 @@ class SanitizerInfrastructureTest(unittest.TestCase):
         path = self.output / 'sanitizer/verification.json'
         path.parent.mkdir(exist_ok=True)
         env = sanitizer_ci.runtime_environment()
-        child = {'status': 'passed', 'environment': env,
+        child = {'status': 'passed', 'environment': env, 'stack_limit': 524288,
                  'instrumentation': {'compile_commands': {str(ROOT / 'src/validation.cpp'): [shlex.join(self.compile_line())]},
                                      'binaries': {}},
                  'canaries': [{'canary': name, 'status': 'passed',
                                'expected_diagnostic': diagnostic, 'returncode': 0 if diagnostic is None else 1}
                               for name, (_, diagnostic) in sanitizer_ci.CANARIES.items()]}
         report = {'profile': 'bitcoin-asan', 'build': str(ROOT / 'build-fixture'),
-                  'execution_build_snapshot': {}, 'sanitizer_environment': env, 'steps': [
+                  'execution_build_snapshot': {}, 'sanitizer_environment': env, 'sanitizer_stack_limit': 524288, 'steps': [
             {'name': name, 'command': ['synthetic-runner', '--timeout', '2400']}
             for name in ('unit', 'auxiliary', 'qt', 'kernel')] + [
             {'name': 'functional', 'command': ['synthetic-runner', '--timeout-factor', '40']}]}
@@ -196,6 +196,34 @@ class SanitizerInfrastructureTest(unittest.TestCase):
         (self.output / 'functional-verification.json').write_text(json.dumps({'timeout_factor': 1}))
         with self.assertRaisesRegex(ValueError, 'unscaled'):
             verify_sanitizer_execution(ROOT, report, self.output)
+
+    def test_saved_proof_rejects_missing_or_wrong_runtime_stack_limits(self):
+        path, report, child = self.proof()
+        for target, key in (('parent', 'sanitizer_stack_limit'), ('child', 'stack_limit')):
+            for value in (None, 8388608, -1):
+                changed_report, changed_child = deepcopy(report), deepcopy(child)
+                record = changed_report if target == 'parent' else changed_child
+                if value is None:
+                    record.pop(key)
+                else:
+                    record[key] = value
+                self.save_proof(path, changed_report, changed_child)
+                with self.subTest(target=target, value=value), self.assertRaises(ValueError):
+                    verify_sanitizer_execution(ROOT, changed_report, self.output)
+
+    def test_runtime_gate_rejects_unrestricted_stack_before_instrumentation(self):
+        path = self.output / 'stack-rejection.json'
+        with patch('sys.argv', ['sanitizer_ci.py', '--build-dir', str(ROOT / 'build-fixture'),
+                                '--output', str(path)]), \
+             patch('sanitizer_ci.tools', return_value={}), \
+             patch('sanitizer_ci.resource.getrlimit', return_value=(8388608, -1)), \
+             patch('sanitizer_ci.instrumentation') as instrumentation:
+            self.assertEqual(sanitizer_ci.main(), 1)
+        instrumentation.assert_not_called()
+        report = json.loads(path.read_text())
+        self.assertEqual(report['status'], 'failed')
+        self.assertEqual(report['stack_limit'], 8388608)
+        self.assertIn('512 KiB', report['error'])
 
     def test_saved_proof_requires_all_executables_and_actual_compile_flags(self):
         path, report, child = self.proof()
