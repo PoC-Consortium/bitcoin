@@ -48,6 +48,8 @@ def verify(report, expected_cases, modes, policy, build_options, require_no_skip
     counts = {mode: Counter() for mode in modes}
     skips = []
     for mode, row in pairs:
+        if 'retention_error' in row:
+            raise ValueError('Functional database retention failed: ' + row['case'] + ' (' + mode + ')')
         counts[mode][row['status']] += 1
         if row['status'] == 'failed':
             raise ValueError('Functional failure: ' + row['case'] + ' (' + mode + ')')

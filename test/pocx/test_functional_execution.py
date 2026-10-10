@@ -24,7 +24,7 @@ from functional_results import transport_results
 
 
 class ExecutionTest(unittest.TestCase):
-    def test_actual_owned_dispatch_cleans_children_and_retains_success_skip_transport_results(self):
+    def test_actual_owned_dispatch_cleans_children_and_retains_success_skip_failure_results(self):
         # Actual dispatcher and subprocess lifecycles around synthetic scripts.
         # These executable placeholders never run Bitcoin or PoCX test cases.
         from test_process_tree import alive
@@ -43,6 +43,12 @@ class ExecutionTest(unittest.TestCase):
             script = '''import pathlib, subprocess, sys, time
 directory = pathlib.Path(next(arg.split('=',1)[1] for arg in sys.argv if arg.startswith('--tmpdir=')))
 directory.mkdir(parents=True)
+for name in ('node0/regtest/blocks/blk00000.dat', 'node0/regtest/chainstate/CURRENT',
+             'node0/regtest/indexes/txindex/CURRENT', 'node0/regtest/debug.log',
+             'node0/regtest/wallets/default/wallet.dat', 'fixtures/blocks/retained'):
+    path = directory / name
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text('retained fixture')
 pidfile = directory / 'child.pid'
 child = "import os,pathlib,sys,time; pathlib.Path(sys.argv[1]).write_text(str(os.getpid())); time.sleep(120)"
 subprocess.Popen([sys.executable, '-c', child, str(pidfile)])
@@ -53,8 +59,10 @@ while not pidfile.is_file() or not pidfile.read_text().strip():
 if pathlib.Path(__file__).name == 'interface_ipc.py':
     print('Test Skipped: synthetic disabled IPC fixture')
     sys.exit(77)
+if pathlib.Path(__file__).name == 'feature_abort.py':
+    sys.exit(1)
 '''
-            manifest = {'tests': {name:'synthetic' for name in ('p2p_ping.py','interface_ipc.py')}, 'reused_tests': []}
+            manifest = {'tests': {name:'synthetic' for name in ('p2p_ping.py','interface_ipc.py','feature_abort.py')}, 'reused_tests': []}
             for name in manifest['tests']:(tree / name).write_text(script)
             provenance = {'build_configuration': None, 'build_options': {'ENABLE_POCX':'ON'}}
             output = io.StringIO()
@@ -68,13 +76,41 @@ if pathlib.Path(__file__).name == 'interface_ipc.py':
             report = json.loads(reports[0].read_text())
             self.assertEqual(report['provenance']['format_version'], 9)
             pairs = transport_results(report)
-            self.assertEqual(len(pairs), 4)
+            self.assertEqual(len(pairs), 6)
             self.assertEqual({(mode,row['status']) for mode,row in pairs},
-                             {('v1','passed'),('v2','passed'),('v1','skipped'),('v2','skipped')})
+                             {(mode,status) for mode in ('v1','v2') for status in ('passed','skipped','failed')})
             for _, row in pairs:
                 pid = int((Path(row['output_dir']) / 'child.pid').read_text())
                 self.assertFalse(alive(pid), 'Dispatcher released a slot before descendant cleanup')
                 self.assertIs(row['process_control']['cleanup_complete'], True)
+                case = Path(row['output_dir'])
+                expected = ['node0/regtest/' + name for name in ('blocks','chainstate','indexes')]
+                self.assertEqual(row['pruned_databases'], expected if row['status'] == 'passed' else [])
+                for name in expected:
+                    self.assertEqual((case / name).exists(), row['status'] != 'passed')
+                for name in ('node0/regtest/debug.log', 'node0/regtest/wallets/default/wallet.dat',
+                             'fixtures/blocks/retained'):
+                    self.assertEqual((case / name).read_text(), 'retained fixture')
+
+            # A storage failure must fail the dispatcher, while retaining the
+            # passed subprocess outcome and its full diagnostic files.
+            with patch.object(runner, 'stage', return_value=(tree, manifest, provenance)), \
+                 patch.object(runner.functional_retention, 'prune_passed_case', side_effect=OSError('storage fixture')), \
+                 patch.object(sys, 'argv', ['runner', '--build-dir', str(build), '--timeout', '10',
+                                           'p2p_ping.py']), redirect_stdout(output):
+                self.assertEqual(runner.main(), 1)
+            report = next(json.loads(path.read_text()) for path in build.glob('pocx-results-*/results.json')
+                          if 'retention_error' in json.loads(path.read_text())['results'][0])
+            self.assertEqual(len(report['results']), 1)
+            row = report['results'][0]
+            self.assertEqual(row['status'], 'passed')
+            self.assertEqual(row['retention_error'], 'storage fixture')
+            self.assertTrue((Path(row['output_dir']) / 'node0/regtest/blocks/blk00000.dat').is_file())
+            self.assertFalse(alive(int((Path(row['output_dir']) / 'child.pid').read_text())))
+            from verify_functional import verify
+            with self.assertRaisesRegex(ValueError, 'database retention failed'):
+                verify(report, report['provenance']['selected_cases'], ['v1'], {'cases': {}},
+                       report['provenance']['build_options'])
 
     def test_current_controller_report_requires_completed_command_bound_cleanup(self):
         report = self.report()

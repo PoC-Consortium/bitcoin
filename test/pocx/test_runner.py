@@ -21,6 +21,7 @@ from stage import stage, sha256
 from common import exclusive_lock
 import functional_environment
 import functional_execution
+import functional_retention
 import process_tree
 import rpc_coverage
 from functional_cases import selected_cases, selection_digest, upstream_cases
@@ -210,6 +211,14 @@ def main():
             if status == 'skipped':
                 reasons = re.findall(r'Test Skipped: (.+)', (mode_dir / logfile).read_text())
                 result['skip_reason'] = reasons[-1] if reasons else 'Exit 77 without a reported skip reason; review required'
+            try:
+                result['pruned_databases'] = functional_retention.prune_passed_case(
+                    mode_dir / directory, status=status, process_control=execution['process_control'])
+            except (OSError, ValueError) as error:
+                # Preserve terminal test outcomes even if storage maintenance
+                # fails. The runner still fails its infrastructure gate below.
+                result['retention_error'] = str(error)
+                print(f"{spec['id']} ({mode}): database retention failed: {error}", flush=True)
             print(f"{spec['id']} ({mode}): {result['status']}", flush=True)
             return result
 
@@ -229,7 +238,8 @@ def main():
                 (results_dir / "results.json").write_text(json.dumps(report, indent=2) + "\n")
         (results_dir / "results.json").write_text(json.dumps(report, indent=2) + "\n")
         print(f"Results: {results_dir}")
-        return 0 if all(result["status"] == "passed" for result in results) and rpc_coverage.verify(report) else 1
+        return 0 if all(result["status"] == "passed" and 'retention_error' not in result
+                        for result in results) and rpc_coverage.verify(report) else 1
 
 
 if __name__ == "__main__":

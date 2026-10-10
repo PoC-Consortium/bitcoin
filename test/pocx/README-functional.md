@@ -125,6 +125,14 @@ For a focused individual case, run it directly with a filename or `--case`.
 Transport flags set the upstream default; explicit mixed peers and downgrade
 scenarios retain their original behavior.
 
+The owned runner retains logs, wallets, configuration and fixtures. After each
+passed case exits and its owned processes have been cleaned up, it removes only
+direct `node[0-9]+/regtest/{blocks,chainstate,indexes}` database directories and
+records their paths in the case result. Directory links are never traversed.
+Failed and skipped cases retain their databases. A storage-cleanup error retains
+the terminal test outcome but fails both the runner and profile verification.
+This bounds scratch storage during a full matrix without changing test execution.
+
 This checkpoint covers the declared local profile. CI feature/platform expansion
 and resolution of the 17 environment-dependent skips are the next milestone.
 Historical failed, interrupted and superseded runs remain in artifacts and are

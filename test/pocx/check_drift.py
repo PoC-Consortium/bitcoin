@@ -116,6 +116,7 @@ def check(root):
                          'test/pocx/update_inventory.py', 'test/pocx/functional_cases.py',
                          'test/pocx/functional_environment.py',
                          'test/pocx/functional_execution.py',
+                         'test/pocx/functional_retention.py',
                          'test/pocx/build_configuration.py',
                          'test/pocx/process_tree.py',
                          'test/pocx/rpc_coverage.py',
