@@ -3,7 +3,7 @@
   "upstream_revision": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
   "inherited_workflow": {
     "path": ".github/workflows/ci.yml",
-    "sha256": "43e7258aab16605c98d91fa5a1100adb6b3c47d00c52851be79245fb42e2a52f",
+    "sha256": "98e87d8aa8b254a1b23b07dcf20ad56cc6f46e4a7ec06bbd9f944a678d42bdf7",
     "matches_pinned_upstream": false,
     "events": {
       "pull_request": "",
@@ -14,8 +14,10 @@
         "tags-ignore": [
           "**"
         ]
-      }
-    }
+      },
+      "workflow_dispatch": ""
+    },
+    "manual_dispatch_scope": "Request the unchanged complete inherited matrix against a prepared branch; configuration alone does not establish execution."
   },
   "latest_published_run": {
     "conclusion": "failure",
