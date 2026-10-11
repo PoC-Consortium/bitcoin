@@ -16,7 +16,11 @@
 // Our memory analysis in headerssync-params.py assumes this many bytes for a
 // CompressedHeader (we should re-calculate parameters if we compress further).
 #ifdef ENABLE_POCX
-static_assert(sizeof(CompressedHeader) == 264,
+// The same fields have four bytes less tail padding on four-byte-aligned
+// uint64_t ABIs (including i686 SysV). Keep an exact check for both layouts;
+// the maximum per-header memory requirement remains 264 bytes.
+static_assert(alignof(uint64_t) == 4 || alignof(uint64_t) == 8);
+static_assert(sizeof(CompressedHeader) == (alignof(uint64_t) == 8 ? 264 : 260),
               "CompressedHeader size changed - update memory analysis");
 #else
 static_assert(sizeof(CompressedHeader) == 48);

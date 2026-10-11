@@ -22,9 +22,9 @@
     "test/pocx/inherited-ci.json": "4a19dc6be91263ea32e1e4900070e2345e1d3413aa7bf94360cb9e6500069803",
     "test/pocx/inherited_ci.py": "9044f35b052ac10391e5b854efd2851bf162ee55a901c270b17e006e0fbd8744",
     "test/pocx/inherited_functional.py": "6fc43cec5640b33de7e34d236a4ded1276720d70171fb5bf899d96f0297802c7",
-    "test/pocx/kernel-parity.json": "cf1413a9c21da8aa12a37a8f3afdc02653546a94c84f919e75d7790866cec5c3",
+    "test/pocx/kernel-parity.json": "a13c0677b26233a03ed9df417736a1f9720481c03456296d85d0a0ccb480a9b8",
     "test/pocx/kernel/fixtures.json": "0069f80997408a2a13739afe46775c4a5e2cc799a8b963006fdd30c299a7d35f",
-    "test/pocx/kernel/provenance.json": "c9edcefe7f483ae296993c9c409f0a748e52ceff21a5c15462bd0fc475166446",
+    "test/pocx/kernel/provenance.json": "c95dedf94330d6e5f229aee89373920f09e6342174da4976266b62c27c38f7d0",
     "test/pocx/kernel_parity.py": "56345a332de96ed52218b5220fce286e2d97f4e9e540b3d2adf72223d795ed34",
     "test/pocx/manifest.json": "aafe0bce90e53758ca8cc00e62de5b98e2f02b302c2227be1a3b6f7d8177221b",
     "test/pocx/process_tree.py": "12639a920fa4a656eec4f14ea02c4aaf1fe997cfc18c7df2566e82a1d3ab3f29",
@@ -51,7 +51,7 @@
     "test/pocx/unit_build.py": "e53b2493f8f3a9cc7dc14aa53e21ac5c0b2599a1dd9ce87c4d09187f48b44420",
     "test/pocx/unit_matrix.py": "ac430dbc42959c520a5b2d546689070f241763d02c23f89bc25e7486f88fb37a",
     "test/pocx/unit_parity.py": "64613ed3815c4cd59fd5352c2af2412f7826e0a1dfd184fbc7d00649a3257b6d",
-    "test/pocx/upstream-functional-parity.json": "cf36a594238a44e9c9f50a71ba1758b4f8cea57fd3b82ba3088cd6329c575e7b",
+    "test/pocx/upstream-functional-parity.json": "019decefdfea40317fd3ec026b0dd6013e9298afe91acee8328e830e6923472c",
     "test/pocx/verify_functional.py": "f15b101b3c535ae7330c015a905b2dcefde106194ea04f7f7a6e56ef3c825eae",
     "test/pocx/windows_artifact_ci.py": "71b0b4970ec735c3cd381854ffb5533d5125d1e3b405e785591e4f3050b71f56",
     "test/pocx/windows_artifact_functional.py": "531f68a41395ecc75208d552a43f106a7d2f336971bc57b358560ed4910f02a4",
@@ -265,5 +265,42 @@
         "review": "Current CLI classifier regression fixtures supplement the unchanged inherited-entrypoint and feature guards."
       }
     }
+  },
+  "quality_cache_dependency_review": {
+    "scope": "Bounded memoization of successfully computed scalar quality; every calculation input is compared by value. Signature, claimed-quality, compression, consensus and current-base-target deadline validation remain required.",
+    "base_quality_sha256": "8d5f73c7296364da7eb2300f3b9a5ea5c4b6e79d51541049618c55781eaf620b",
+    "quality_sha256": "0d1caf1eb4fd117b0be396107e3e178c24846ba5d1564abefd13090a76d10cc3",
+    "cache_entries": 512,
+    "cache_key_fields": [
+      "height",
+      "nonce",
+      "compression",
+      "account payload20bytes",
+      "seed32bytes",
+      "generation signature32bytes"
+    ],
+    "original_scalar_miss_body_preserved": true,
+    "proof_signature_or_deadline_cached": false,
+    "historical_fixture_oracle_preserved": true,
+    "private_canary_actual_status": "pending; no pass inferred",
+    "current_ci_execution": "unverified; original kernel fixture and timeout remain unchanged"
+  },
+  "native_ci_repair_review": {
+    "scope": "Pending combined native CI repair sources only: bounded exact-output quality memoization, higher-work shorter-chain progress, include declarations, and exact i686 header layout checks. Original Bitcoin OFF branches and all test assertions/inventories remain unchanged. Current linked runtime and private compiler/analysis checks are still required.",
+    "status": "source review only; actual native integration and CI execution pending",
+    "reviewed_native_sources": {
+      "src/pocx/algorithms/quality.cpp": "0d1caf1eb4fd117b0be396107e3e178c24846ba5d1564abefd13090a76d10cc3",
+      "src/pocx/test/pocx_real_proof_tests.cpp": "a3495ba421c645753062a0768417326667725dac79dbbe4539027bfd7943129f",
+      "src/validation.cpp": "380eae4c8e044e4c8180587da29720bd835752970958f07d4887085f84f4a2ca",
+      "src/kernel/chainparams.cpp": "8dfb7f1f5a8e98af703bfb492fd9d70bb619e66cf7a087279ad9e63ccc3ff348",
+      "src/node/blockstorage.cpp": "976d6f7c7f42ac45871563f564045bfbd6439643d201075dd2de8ee1001e0a89",
+      "src/primitives/block.cpp": "7f2c51c31459e7ef26a3b02e680502889016392b20ac2ad912d03c2021fd6489",
+      "src/primitives/block.h": "b791e3f8a070602d614dbb48874bf2c7beca5c6052f57b6e69793b4b5a8a66f3",
+      "src/headerssync.cpp": "75a6308da948427ffc8e0a3a112af8fd504b221f70545c33da9b9d48027a2a5f"
+    },
+    "historical_independent_oracle_fields_preserved": true,
+    "existing_case_execution_records_remain_historical": true,
+    "actual_tests_or_compilations_launched": 0,
+    "full_current_source_pass_inferred": false
   }
 }

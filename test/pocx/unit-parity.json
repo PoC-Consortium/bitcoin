@@ -957,12 +957,12 @@
       "review": "Native fixture, explicit original Bitcoin transaction reader, guarded coins mock override or unit baseline verifier."
     },
     "src/node/blockstorage.cpp": {
-      "sha256": "c6c6389db0a2e753556f52f8f59c15cc0a428adfdb8b3f8c5a06cca7e96b0c48",
-      "review": "Disk reads reuse existing PoCX header checks. Header rule body and Bitcoin branch unchanged. Non-genesis height-zero/negative disk headers rejected. Positive/malformed native disk fixtures and complete Bitcoin/PoCX unit runs required."
+      "sha256": "976d6f7c7f42ac45871563f564045bfbd6439643d201075dd2de8ee1001e0a89",
+      "review": "Disk reads reuse existing PoCX header checks. Header rule body and Bitcoin branch unchanged. Non-genesis height-zero/negative disk headers rejected. Positive/malformed native disk fixtures and complete Bitcoin/PoCX unit runs required. Current native CI repair review: include declarations and shorter higher-work branch progress only; original OFF body and assertions preserved; current runtime verification remains required."
     },
     "src/validation.cpp": {
-      "sha256": "740bad4f2113e7e83dfdcb4c4317fc57e4c42d7ec7835fafadc8221d2f653b03",
-      "review": "Extract unchanged synthetic quality calculation into wallet/global-free regtest proof.cpp; an explicit default-false consensus permission is enabled only in CRegTestParams. CheckBlockHeader and header batching use passed context parameters in daemon and kernel. Real-proof validation, signatures, compression and future-time checks remain required; production networks retain synthetic rejection. Original Bitcoin preprocessing and kernel baseline are checked separately.",
+      "sha256": "380eae4c8e044e4c8180587da29720bd835752970958f07d4887085f84f4a2ca",
+      "review": "Extract unchanged synthetic quality calculation into wallet/global-free regtest proof.cpp; an explicit default-false consensus permission is enabled only in CRegTestParams. CheckBlockHeader and header batching use passed context parameters in daemon and kernel. Real-proof validation, signatures, compression and future-time checks remain required; production networks retain synthetic rejection. Original Bitcoin preprocessing and kernel baseline are checked separately. Current native CI repair review: include declarations and shorter higher-work branch progress only; original OFF body and assertions preserved; current runtime verification remains required.",
       "evidence": "artifacts/ci-parity-20261009/chainstate-clock/"
     },
     "src/validation.h": {
@@ -995,8 +995,8 @@
       "sha256": "7762729955f6237850eff58ef06c7c453cd5aae1dbd52b0f103a01c0db1bd0b0"
     },
     "src/pocx/test/pocx_real_proof_tests.cpp": {
-      "review": "Extract unchanged synthetic quality calculation into wallet/global-free regtest proof.cpp; an explicit default-false consensus permission is enabled only in CRegTestParams. CheckBlockHeader and header batching use passed context parameters in daemon and kernel. Real-proof validation, signatures, compression and future-time checks remain required; production networks retain synthetic rejection. Original Bitcoin preprocessing and kernel baseline are checked separately.",
-      "sha256": "2fe5c0b2f93f601e26fc82fc07478ef7095d00f95f42d471a78b4663ea20a6de",
+      "review": "Extract unchanged synthetic quality calculation into wallet/global-free regtest proof.cpp; an explicit default-false consensus permission is enabled only in CRegTestParams. CheckBlockHeader and header batching use passed context parameters in daemon and kernel. Real-proof validation, signatures, compression and future-time checks remain required; production networks retain synthetic rejection. Original Bitcoin preprocessing and kernel baseline are checked separately. Add independent full-value cache key comparisons, null-input/output guards, current-base-target deadline and concurrent known-vector checks while preserving all prior assertions and six leaf cases. Exercise eight simultaneous cold misses synchronized with a barrier and compared against independently computed batch qualities, followed by1024 warm known-vector comparisons; all Boost assertions remain on the main thread.",
+      "sha256": "a3495ba421c645753062a0768417326667725dac79dbbe4539027bfd7943129f",
       "evidence": "artifacts/ci-parity-20261009/chainstate-clock/"
     },
     "src/pocx/test/pocx_simd_tests.cpp": {
@@ -1156,8 +1156,8 @@
       "evidence": "artifacts/ci-parity-20261009/chainstate-clock/"
     },
     "src/kernel/chainparams.cpp": {
-      "sha256": "63283d4612b9fe0dd0cb2009f5cea7bf60e59613b1f4e888a0f265ffcbbb1b1e",
-      "review": "Extract unchanged synthetic quality calculation into wallet/global-free regtest proof.cpp; an explicit default-false consensus permission is enabled only in CRegTestParams. CheckBlockHeader and header batching use passed context parameters in daemon and kernel. Real-proof validation, signatures, compression and future-time checks remain required; production networks retain synthetic rejection. Original Bitcoin preprocessing and kernel baseline are checked separately.",
+      "sha256": "8dfb7f1f5a8e98af703bfb492fd9d70bb619e66cf7a087279ad9e63ccc3ff348",
+      "review": "Extract unchanged synthetic quality calculation into wallet/global-free regtest proof.cpp; an explicit default-false consensus permission is enabled only in CRegTestParams. CheckBlockHeader and header batching use passed context parameters in daemon and kernel. Real-proof validation, signatures, compression and future-time checks remain required; production networks retain synthetic rejection. Original Bitcoin preprocessing and kernel baseline are checked separately. Current native CI repair review: include declarations and shorter higher-work branch progress only; original OFF body and assertions preserved; current runtime verification remains required.",
       "evidence": "artifacts/ci-parity-20261009/chainstate-clock/"
     },
     "src/consensus/params.h": {
@@ -1224,6 +1224,10 @@
     "test/pocx/test_boost_runtime.py": {
       "sha256": "17cd6a99197dcfb5d05ad8ab375734a6079826819833999a29580d7d9a185d68",
       "review": "Preserve upstream CI Boost randomization while removing inherited coverage filters; retain and validate actual execution seeds."
+    },
+    "src/headerssync.cpp": {
+      "sha256": "75a6308da948427ffc8e0a3a112af8fd504b221f70545c33da9b9d48027a2a5f",
+      "review": "Native compressed-header size is exactly260 bytes for four-byte uint64_t alignment and264 for eight-byte alignment. Both checks remain exact; fields and serialization are unchanged. Bitcoin/OFF48-byte assertion is byte-identical. Actual i686 compiler canary and full recipe execution remain required."
     }
   },
   "review_limit": "Review covers selected adaptations and shared fixture transformations, not every production branch. Exact Bitcoin-only exclusions do not waive native proof/retarget coverage.",
@@ -1409,5 +1413,44 @@
       "condition": "DEBUG_LOCKORDER",
       "review": "Original Bitcoin case reused unchanged on both consensus builds when lock-order debugging is enabled. The immutable737-case Release checkpoint did not compile this case; absence there is configuration-disabled, not a PoCX exclusion."
     }
+  },
+  "quality_cache_review": {
+    "scope": "Bounded memoization of successfully computed scalar quality; every calculation input is compared by value. Signature, claimed-quality, compression, consensus and current-base-target deadline validation remain required.",
+    "base_quality_sha256": "8d5f73c7296364da7eb2300f3b9a5ea5c4b6e79d51541049618c55781eaf620b",
+    "quality_sha256": "0d1caf1eb4fd117b0be396107e3e178c24846ba5d1564abefd13090a76d10cc3",
+    "cache_entries": 512,
+    "cache_key_fields": [
+      "height",
+      "nonce",
+      "compression",
+      "account payload20bytes",
+      "seed32bytes",
+      "generation signature32bytes"
+    ],
+    "original_scalar_miss_body_preserved": true,
+    "proof_signature_or_deadline_cached": false,
+    "historical_fixture_oracle_preserved": true,
+    "private_canary_actual_status": "pending; no pass inferred",
+    "current_ci_execution": "unverified; original kernel fixture and timeout remain unchanged",
+    "concurrent_cold_quality_comparisons": 8,
+    "concurrent_warm_known_vector_comparisons": 1024
+  },
+  "native_ci_repair_review": {
+    "scope": "Pending combined native CI repair sources only: bounded exact-output quality memoization, higher-work shorter-chain progress, include declarations, and exact i686 header layout checks. Original Bitcoin OFF branches and all test assertions/inventories remain unchanged. Current linked runtime and private compiler/analysis checks are still required.",
+    "status": "source review only; actual native integration and CI execution pending",
+    "reviewed_native_sources": {
+      "src/pocx/algorithms/quality.cpp": "0d1caf1eb4fd117b0be396107e3e178c24846ba5d1564abefd13090a76d10cc3",
+      "src/pocx/test/pocx_real_proof_tests.cpp": "a3495ba421c645753062a0768417326667725dac79dbbe4539027bfd7943129f",
+      "src/validation.cpp": "380eae4c8e044e4c8180587da29720bd835752970958f07d4887085f84f4a2ca",
+      "src/kernel/chainparams.cpp": "8dfb7f1f5a8e98af703bfb492fd9d70bb619e66cf7a087279ad9e63ccc3ff348",
+      "src/node/blockstorage.cpp": "976d6f7c7f42ac45871563f564045bfbd6439643d201075dd2de8ee1001e0a89",
+      "src/primitives/block.cpp": "7f2c51c31459e7ef26a3b02e680502889016392b20ac2ad912d03c2021fd6489",
+      "src/primitives/block.h": "b791e3f8a070602d614dbb48874bf2c7beca5c6052f57b6e69793b4b5a8a66f3",
+      "src/headerssync.cpp": "75a6308da948427ffc8e0a3a112af8fd504b221f70545c33da9b9d48027a2a5f"
+    },
+    "historical_independent_oracle_fields_preserved": true,
+    "existing_case_execution_records_remain_historical": true,
+    "actual_tests_or_compilations_launched": 0,
+    "full_current_source_pass_inferred": false
   }
 }

@@ -8,6 +8,8 @@
 #include <pocx/crypto/shabal256.h>
 #include <pocx/crypto/shabal256_lite.h>
 
+#include <array>
+#include <mutex>
 #include <cstring>
 #include <cstdlib>
 #include <algorithm>
@@ -50,7 +52,7 @@ int CalculateScoop(uint64_t block_height, const uint8_t generation_signature[32]
     return (static_cast<uint64_t>(hash[30] & 0x0F) << 8) | static_cast<uint64_t>(hash[31]);
 }
 
-int CalculateQuality(
+static int CalculateQualityUncached(
     const uint8_t address_payload[20],
     const uint8_t seed[32],
     uint64_t nonce,
@@ -73,6 +75,66 @@ int CalculateQuality(
     *quality = crypto::Shabal256Lite(scoop_data, generation_sig);
 
     return 0;
+}
+
+// Cache only successfully computed qualities, keyed by every calculation input.
+// Proof signatures, claimed qualities and deadlines still require their normal checks.
+// Keep memory bounded and perform expensive nonce generation outside the mutex.
+namespace {
+struct QualityInput {
+    uint64_t height;
+    uint64_t nonce;
+    uint32_t compression;
+    std::array<uint8_t, 20> account;
+    std::array<uint8_t, 32> seed;
+    std::array<uint8_t, 32> generation_signature;
+    bool operator==(const QualityInput&) const = default;
+};
+class QualityCache {
+    struct Entry {
+        QualityInput input{};
+        uint64_t quality{0};
+        bool valid{false};
+    };
+    std::array<Entry, 512> entries{};
+    size_t next{0};
+    std::mutex mutex;
+public:
+    bool Find(const QualityInput& input, uint64_t& quality)
+    {
+        std::lock_guard guard(mutex);
+        for (size_t i = 0; i < entries.size(); ++i) {
+            const auto& entry = entries[(next + entries.size() - 1 - i) % entries.size()];
+            if (entry.valid && entry.input == input) {
+                quality = entry.quality;
+                return true;
+            }
+        }
+        return false;
+    }
+    void Store(const QualityInput& input, uint64_t quality)
+    {
+        std::lock_guard guard(mutex);
+        entries[next] = {input, quality, true};
+        next = (next + 1) % entries.size();
+    }
+};
+} // namespace
+
+int CalculateQuality(
+    const uint8_t address_payload[20], const uint8_t seed[32], uint64_t nonce,
+    uint32_t compression, uint64_t height, const uint8_t generation_sig[32], uint64_t* quality)
+{
+    if (!address_payload || !seed || !generation_sig || !quality) return -1;
+    QualityInput input{height, nonce, compression, {}, {}, {}};
+    std::memcpy(input.account.data(), address_payload, input.account.size());
+    std::memcpy(input.seed.data(), seed, input.seed.size());
+    std::memcpy(input.generation_signature.data(), generation_sig, input.generation_signature.size());
+    static QualityCache cache;
+    if (cache.Find(input, *quality)) return 0;
+    const int result = CalculateQualityUncached(address_payload, seed, nonce, compression, height, generation_sig, quality);
+    if (result == 0) cache.Store(input, *quality);
+    return result;
 }
 
 // Internal helper: Generate scoop data for a specific compression level

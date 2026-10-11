@@ -14,8 +14,13 @@
 #include <kernel/messagestartchars.h>
 #include <primitives/block.h>
 #include <primitives/transaction.h>
+#ifndef ENABLE_POCX
 #include <script/interpreter.h>
+#endif
 #include <script/script.h>
+#ifdef ENABLE_POCX
+#include <span.h>
+#endif
 #include <uint256.h>
 #include <util/chaintype.h>
 #include <util/log.h>
@@ -27,13 +32,18 @@
 #include <cstdint>
 #include <cstring>
 #include <iterator>
+#ifndef ENABLE_POCX
 #include <map>
+#endif
 #include <span>
 #include <utility>
 
 #ifdef ENABLE_POCX
 #include <pocx/consensus/params.h>
 #include <pocx/pocx_seeds.h>
+
+#include <initializer_list>
+#include <string_view>
 #endif
 
 using namespace util::hex_literals;
@@ -953,7 +963,7 @@ public:
             {
                 // For use by test/functional/feature_assumeutxo.py and test/functional/tool_bitcoin_chainstate.py
 #ifdef ENABLE_POCX
-#include <pocx/consensus/regtest_functional_assumeutxo.inc>
+#include <pocx/consensus/regtest_functional_assumeutxo.inc> // IWYU pragma: keep
 #else
                 .height = 299,
                 .hash_serialized = AssumeutxoHash{uint256{"d2b051ff5e8eef46520350776f4100dd710a63447a8e01d917e92e79751a63e2"}},

@@ -16,7 +16,9 @@
 #include <kernel/messagestartchars.h>
 #include <kernel/notifications_interface.h>
 #include <kernel/types.h>
+#ifndef ENABLE_POCX
 #include <pow.h>
+#endif
 #include <primitives/block.h>
 #include <primitives/transaction.h>
 #include <random.h>
@@ -42,6 +44,7 @@
 #include <validation.h>
 
 #ifdef ENABLE_POCX
+#include <consensus/validation.h>
 #include <pocx/consensus/difficulty.h>
 #endif
 

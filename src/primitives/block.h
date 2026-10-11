@@ -17,9 +17,9 @@
 #include <vector>
 
 #ifdef ENABLE_POCX
-#include <array>
 #include <algorithm>
-#include <pubkey.h>
+#include <array>
+#include <stdexcept>
 #endif
 
 #ifdef ENABLE_POCX

@@ -23,6 +23,10 @@
 #include <validation.h>
 #include <boost/test/unit_test.hpp>
 #include <array>
+#include <atomic>
+#include <barrier>
+#include <cstddef>
+#include <thread>
 #include <limits>
 #include <vector>
 
@@ -146,6 +150,51 @@ BOOST_AUTO_TEST_CASE(scalar_independent_known_vectors)
             BOOST_CHECK_EQUAL(wrapped.deadline, v.bended_deadline);
         }
     }
+
+    // Copies use distinct addresses: cache identity must depend on input bytes.
+    // Keep Boost assertions on this thread while workers exercise shared lookup.
+    const auto vectors = Vectors();
+    // Derive eight distinct inputs not used by the known-vector warmup or
+    // field-mutation case. The independent batch implementation computes their
+    // expected qualities without entering the scalar CalculateQuality cache.
+    auto cold = std::vector(8, vectors.front());
+    for (size_t worker = 0; worker < cold.size(); ++worker) {
+        auto& v = cold[worker];
+        v.seed[0] ^= 0xa5;
+        v.seed[31] ^= static_cast<uint8_t>(worker + 17);
+        const auto input = v.Input();
+        ValidationResult independent;
+        BOOST_REQUIRE_EQUAL(pocx_validate_blocks(&input, 1, &independent), -2);
+        BOOST_REQUIRE_EQUAL(independent.error_code, VALIDATION_ERROR_QUALITY_MISMATCH);
+        v.quality = independent.quality;
+    }
+    std::atomic<size_t> failures{0};
+    std::barrier first_calculation{static_cast<std::ptrdiff_t>(cold.size())};
+    std::vector<std::thread> workers;
+    for (size_t worker = 0; worker < 8; ++worker) {
+        workers.emplace_back([&, worker] {
+            const auto copies = vectors;
+            const auto fresh = cold[worker];
+            first_calculation.arrive_and_wait();
+            uint64_t first_quality{0};
+            if (CalculateQuality(fresh.account.data(), fresh.seed.data(), fresh.nonce, fresh.compression,
+                                 fresh.height, fresh.gensig.data(), &first_quality) != 0 || first_quality != fresh.quality) {
+                failures.fetch_add(1, std::memory_order_relaxed);
+            }
+            for (size_t repeat = 0; repeat < 16; ++repeat) {
+                for (size_t offset = 0; offset < copies.size(); ++offset) {
+                    const auto& v = copies[(offset + worker + repeat) % copies.size()];
+                    uint64_t quality{0};
+                    if (CalculateQuality(v.account.data(), v.seed.data(), v.nonce, v.compression,
+                                         v.height, v.gensig.data(), &quality) != 0 || quality != v.quality) {
+                        failures.fetch_add(1, std::memory_order_relaxed);
+                    }
+                }
+            }
+        });
+    }
+    for (auto& worker : workers) worker.join();
+    BOOST_CHECK_EQUAL(failures.load(), 0U);
 }
 
 BOOST_AUTO_TEST_CASE(synthetic_proof_rejected_on_production_networks)
@@ -202,6 +251,32 @@ BOOST_AUTO_TEST_CASE(batch_independent_known_vectors)
 BOOST_AUTO_TEST_CASE(proof_field_mutations_and_compression_rejection)
 {
     const auto original = Vectors().front();
+    uint64_t cached_quality{0};
+    BOOST_REQUIRE_EQUAL(CalculateQuality(original.account.data(), original.seed.data(), original.nonce,
+                                        original.compression, original.height, original.gensig.data(), &cached_quality), 0);
+    BOOST_CHECK_EQUAL(cached_quality, original.quality);
+    // Quality is independent of target; a cache hit must still derive the
+    // deadline from the current target in the public proof validator.
+    BOOST_REQUIRE_LT(original.target, std::numeric_limits<uint64_t>::max());
+    const uint64_t changed_target = original.target + 1;
+    ValidationResult changed_deadline;
+    BOOST_REQUIRE(pocx_validate_block(HexStr(original.gensig).c_str(), changed_target, original.account.data(),
+                                     original.height, original.nonce, original.seed.data(), original.compression, &changed_deadline));
+    BOOST_CHECK_EQUAL(changed_deadline.quality, original.quality);
+    BOOST_CHECK_EQUAL(changed_deadline.deadline, original.quality / changed_target);
+    // Warm cache entries must never bypass the public API's null checks.
+    uint64_t sentinel{123};
+    BOOST_CHECK_EQUAL(CalculateQuality(nullptr, original.seed.data(), original.nonce, original.compression,
+                                      original.height, original.gensig.data(), &sentinel), -1);
+    BOOST_CHECK_EQUAL(sentinel, 123U);
+    BOOST_CHECK_EQUAL(CalculateQuality(original.account.data(), nullptr, original.nonce, original.compression,
+                                      original.height, original.gensig.data(), &sentinel), -1);
+    BOOST_CHECK_EQUAL(sentinel, 123U);
+    BOOST_CHECK_EQUAL(CalculateQuality(original.account.data(), original.seed.data(), original.nonce, original.compression,
+                                      original.height, nullptr, &sentinel), -1);
+    BOOST_CHECK_EQUAL(sentinel, 123U);
+    BOOST_CHECK_EQUAL(CalculateQuality(original.account.data(), original.seed.data(), original.nonce, original.compression,
+                                      original.height, original.gensig.data(), nullptr), -1);
     for (int mutation = 0; mutation < 7; ++mutation) {
         auto v = original;
         switch (mutation) {
@@ -220,6 +295,19 @@ BOOST_AUTO_TEST_CASE(proof_field_mutations_and_compression_rejection)
         BOOST_REQUIRE_EQUAL(pocx_validate_blocks(&input, 1, &result), -2);
         BOOST_CHECK(!result.is_valid);
         BOOST_CHECK_EQUAL(result.error_code, VALIDATION_ERROR_QUALITY_MISMATCH);
+        // The independent batch computation detects omitted key fields and
+        // proves that a previously accepted quality cannot authorize mutations.
+        uint64_t quality{0};
+        BOOST_REQUIRE_EQUAL(CalculateQuality(v.account.data(), v.seed.data(), v.nonce, v.compression,
+                                            v.height, v.gensig.data(), &quality), 0);
+        BOOST_CHECK_EQUAL(quality, result.quality);
+        const auto copy = v;
+        BOOST_REQUIRE_EQUAL(CalculateQuality(copy.account.data(), copy.seed.data(), copy.nonce, copy.compression,
+                                            copy.height, copy.gensig.data(), &quality), 0);
+        BOOST_CHECK_EQUAL(quality, result.quality);
+        BOOST_REQUIRE_EQUAL(CalculateQuality(original.account.data(), original.seed.data(), original.nonce,
+                                            original.compression, original.height, original.gensig.data(), &quality), 0);
+        BOOST_CHECK_EQUAL(quality, original.quality);
     }
     for (uint32_t compression : {0U, 8U, 31U, 32U, 63U, 64U, std::numeric_limits<uint32_t>::max()}) {
         auto input = original.Input();

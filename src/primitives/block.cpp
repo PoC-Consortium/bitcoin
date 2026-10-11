@@ -10,6 +10,9 @@
 #ifdef ENABLE_POCX
 #include <crypto/hex_base.h>
 
+#include <cstddef>
+#include <string_view>
+
 namespace {
 // Local fixed-length hex decoder (consensus lib cannot depend on util/strencodings).
 bool DecodeFixedHex(std::string_view hex, std::span<uint8_t> out)

@@ -51528,13 +51528,13 @@
     "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
     "baseline_revision": "5de2720ca47b3a753081e5ce545113cd3b616018",
     "follow_up": "M2: scenario/case parity; M3: consensus gaps; M4: drift/CI",
-    "execution": "passed",
+    "execution": "unverified",
     "baseline_sha256": null,
     "upstream_sha256": null,
     "classification": "PoCX-specific",
     "reason": "Byte comparison against upstream v31.1; reused does not imply PoCX-compatible",
     "replacement": null,
-    "current_sha256": "8d9ea74638d4c5b95c1737487630cac7613d849f242fc6533eeb8af1f6f2cebc",
+    "current_sha256": "a3495ba421c645753062a0768417326667725dac79dbbe4539027bfd7943129f",
     "covered_behavior": [
       "pocx_real_proof_tests"
     ],
@@ -51543,6 +51543,46 @@
     "pocx_conditional_lines": [],
     "profile_status": "Selection: src/pocx/test/sources.cmake; runtime registration/results authoritative",
     "execution_by_profile": {
+      "pocx": {
+        "pocx_real_proof_tests": {
+          "status": "unverified",
+          "evidence": "/home/johnny/Code/bitcoin-pocx/bitcoin-unit-package-20261009/build-p/pocx-unit-5n38ggnb/junit.xml",
+          "scope": "Fresh standalone ownership-cleanup run; exact original case membership verified; all168 original test/support sources equal upstream.",
+          "source_record": "/home/johnny/Code/bitcoin-pocx/bitcoin-unit-package-20261009/build-p/pocx-unit-5n38ggnb/results.json",
+          "current_source_verification": "Pending augmented real-proof cases and linked quality dependency; historical execution retained separately."
+        }
+      },
+      "pocx-wallet-disabled": {
+        "pocx_real_proof_tests": {
+          "status": "unverified",
+          "evidence": "build-ci-pocx-wallet-disabled/pocx-unit-py8ow1kw/junit.xml",
+          "source_record": "build-ci-pocx-wallet-disabled/pocx-unit-py8ow1kw/results.json",
+          "scope": "Evaluated unit test sources and selected support/data/build inputs; not full compiler dependency graph",
+          "recorded_sources_match_current": true,
+          "changed_since_execution": [],
+          "production_source_freshness": "Historical execution predates unit-completion disk-read repair; not a current rebuilt profile result.",
+          "current_source_verification": "Pending augmented real-proof cases and linked quality dependency; historical execution retained separately."
+        }
+      },
+      "pocx-kernel": {
+        "pocx_real_proof_tests": {
+          "status": "unverified",
+          "evidence": "build-ci-pocx-kernel/pocx-unit-eonupbpq/junit.xml",
+          "source_record": "build-ci-pocx-kernel/pocx-unit-eonupbpq/results.json",
+          "scope": "Evaluated unit test sources and selected support/data/build inputs; not full compiler dependency graph",
+          "recorded_sources_match_current": true,
+          "changed_since_execution": [],
+          "production_source_freshness": "Historical execution predates unit-completion disk-read repair; not a current rebuilt profile result.",
+          "current_source_verification": "Pending augmented real-proof cases and linked quality dependency; historical execution retained separately."
+        }
+      }
+    },
+    "unit_baseline_parity": {
+      "review": "test/pocx/unit-parity.json",
+      "scope": "Applicable original case membership explicitly verified; inspect exclusions instead of treating entire upstream file as applicable",
+      "evidence": "test/pocx/unit-verification.json"
+    },
+    "historical_execution_by_profile": {
       "pocx": {
         "pocx_real_proof_tests": {
           "status": "passed",
@@ -51574,10 +51614,26 @@
         }
       }
     },
-    "unit_baseline_parity": {
-      "review": "test/pocx/unit-parity.json",
-      "scope": "Applicable original case membership explicitly verified; inspect exclusions instead of treating entire upstream file as applicable",
-      "evidence": "test/pocx/unit-verification.json"
+    "quality_cache_review": {
+      "scope": "Bounded memoization of successfully computed scalar quality; every calculation input is compared by value. Signature, claimed-quality, compression, consensus and current-base-target deadline validation remain required.",
+      "base_quality_sha256": "8d5f73c7296364da7eb2300f3b9a5ea5c4b6e79d51541049618c55781eaf620b",
+      "quality_sha256": "0d1caf1eb4fd117b0be396107e3e178c24846ba5d1564abefd13090a76d10cc3",
+      "cache_entries": 512,
+      "cache_key_fields": [
+        "height",
+        "nonce",
+        "compression",
+        "account payload20bytes",
+        "seed32bytes",
+        "generation signature32bytes"
+      ],
+      "original_scalar_miss_body_preserved": true,
+      "proof_signature_or_deadline_cached": false,
+      "historical_fixture_oracle_preserved": true,
+      "private_canary_actual_status": "pending; no pass inferred",
+      "current_ci_execution": "unverified; original kernel fixture and timeout remain unchanged",
+      "concurrent_cold_quality_comparisons": 8,
+      "concurrent_warm_known_vector_comparisons": 1024
     }
   },
   {

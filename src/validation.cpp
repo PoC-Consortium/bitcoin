@@ -6369,7 +6369,13 @@ double ChainstateManager::GuessVerificationProgress(const CBlockIndex* pindex) c
     const int64_t nNow{TicksSinceEpoch<std::chrono::seconds>(NodeClock::now())};
     const auto block_time{
         (Assume(m_best_header) && std::abs(nNow - pindex->GetBlockTime()) <= Ticks<std::chrono::seconds>(2h) &&
+#ifdef ENABLE_POCX
+         // A competing PoCX branch can have more accumulated work at a lower
+         // height. Estimate using this block's timestamp in that case.
+         m_best_header->nHeight >= pindex->nHeight) ?
+#else
          Assume(m_best_header->nHeight >= pindex->nHeight)) ?
+#endif
             // When the header is known to be recent, switch to a height-based
             // approach. This ensures the returned value is quantized when
             // close to "1.0", because some users expect it to be. This also
