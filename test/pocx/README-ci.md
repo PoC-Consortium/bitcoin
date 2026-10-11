@@ -912,6 +912,17 @@ Evidence is under
 `artifacts/ci-parity-20261010/inherited-iwyu-original-complete-checkpoint-v3/`.
 PoCX analysis and the complete paired entrypoint remain required.
 
+The native enforced IWYU phase then failed its unchanged empty-diff gate.
+Its code-generation command completed; 47 of 50 translation units reported
+correct includes. Three translation units and `primitives/block.h` requested
+include changes, producing four failed analysis/gate rows. Advisory analysis
+never started. Exact source restoration and the original baseline were checked
+independently; evidence is under
+`artifacts/ci-parity-20261010/inherited-iwyu-native-enforced-failure-checkpoint/`.
+A private include-only proposal preserves the required textual assumeutxo data
+include and the exact source projection with PoCX disabled. Its native enforced
+analysis is queued; neither this proposal nor its preparation counts as a pass.
+
 The inherited LLVM22 clang-tidy original-first pair completed on 2026-10-11.
 Independent inspection verifies the frozen native build/install, analysis of
 631 unique translation units and dependency check, with no reported diagnostics.
@@ -1011,6 +1022,18 @@ inactive address-dependent rows. Two `mempool_reorg.py` daemon crashes remain
 failed in that profile; this checkpoint does not establish a full profile or
 inherited entrypoint pass. Other configurations require fresh execution of the
 changed IPC helper only; no original Bitcoin baseline was rerun.
+
+On 2026-10-11, a private one-object validation repair passed `mempool_reorg.py`
+in both transports with the previous-release profile, 512 KiB stack and timeout
+factor 40. PoCX accumulated-work ordering can select a shorter branch as the
+best header; verification-progress estimation now uses the existing timestamp
+estimate when that header is lower than the queried block. The original OFF
+height assertion is preserved byte for byte in the proposal. Independent
+source/build/log verification confirms exactly two successful case executions,
+one compiled validation object and an unchanged retained lower build. Evidence
+is under `artifacts/ci-parity-20261010/native-previous-reorg-progress-checkpoint/`.
+The production repair is pending integration with the other focused proposals;
+this private checkpoint does not promote the full production functional profile.
 
 The Python3.10-compatible IPC adaptation also passed both transports in three
 other required configurations on 2026-10-11, without compilation or baseline
