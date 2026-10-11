@@ -54,13 +54,29 @@ exporter accepts the actual zero-exit controller label and does not invent
 historical container-log hashes. TSan's missing original functional mode is now
 running; MSan follows it. Full inherited sanitizer entrypoints remain unverified.
 
-The still-running owned PoCX ASan profile has completed its CTest phases. Its
-frozen older SIMD fixture reports an AddressSanitizer stack overflow. The kernel
-executable also reached the unchanged 2,400 second deadline during its final
+The repaired SIMD fixture is now independently verified under ASan, TSan and
+MSan with the inherited 512 KiB runtime stack and `BOOST_TEST_RANDOM=0`.
+ASan and MSan each pass 762 unit cases; TSan passes 760, with two DEBUG-only
+cases inactive. All three retain ten justified PoW exclusions. Each repair
+compiled one C++ object and executed only the 17 incomplete SIMD cases, then
+reconciled those numeric assertion reports with 745 retained unit passes
+(743 for TSan). The AVX2 and SSE2 nonce cases executed ten and six assertions.
+Evidence is under
+`artifacts/ci-parity-20261010/native-{asan,tsan,msan}-unit-scratch-composite-checkpoint/`.
+The first repaired executions failed before assertions because their fixture
+scratch directory was read-only. Those failures remain retained; the corrected
+runs mount writable scratch and reuse the same compiled binaries. No original
+baseline, completed suite or full build was replayed. Other framework and full
+entrypoint conditions retain their own status.
+
+The still-running owned PoCX ASan profile's frozen original execution retains
+its older SIMD stack-overflow failure. Its kernel executable also reached the
+unchanged 2,400 second deadline during its final
 `btck_chainman_regtest_tests` case, after the in-memory chain case took about
 1,228 seconds. Its unfinished Boost report is empty, so no complete kernel leaf
-success is inferred. These failures remain required work; the SIMD fix in another
-toolchain does not establish ASan success, and the kernel timeout needs investigation.
+success is inferred. MSan's kernel executable also timed out at that deadline
+without completing its numeric report. Both kernel failures remain required
+work; the repaired unit proofs do not establish kernel success.
 The current-revision Clang18/mold reproduction independently passed original
 CTest (739 unit, nine Qt, 16 kernel and six auxiliary), then hit the same local
 WalletMigration working-directory failure in its first functional transport.
@@ -870,7 +886,15 @@ original/analysis hashes, then restores the exact input C/C++ bytes and modes
 before the next consensus phase. A failed enforced analysis remains failed and
 never starts native analysis. Changes outside C/C++ inputs, and source edits in
 other recipes, still fail the ordinary source guard. These are verified controller
-contract checks; complete IWYU tool/source execution remains separately required.
+contract checks. On 2026-10-11, the original baseline also passed independent
+inspection of its actual code-generation stage, 50 enforced translation units
+and final empty-diff gate. The advisory phase retains parser errors for 31
+translation units, including missing generated primary inputs; these diagnostic
+rows are not counted as analysis passes. All 554 source restorations were
+checked against the retained patch, analysis hashes, original bytes and modes.
+Evidence is under
+`artifacts/ci-parity-20261010/inherited-iwyu-original-complete-checkpoint-v3/`.
+PoCX analysis and the complete paired entrypoint remain required.
 
 Original i686 tracing uses a private, reviewed test view when USDT is enabled.
 BCC compiles BPF for the host ABI, but the 32-bit daemon supplies four-byte
