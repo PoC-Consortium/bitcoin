@@ -46,6 +46,17 @@ the i686/previous-release 512 KiB limit does not apply. Evidence is under
 `artifacts/ci-parity-20261010/randomized-alpine-original-checkpoint/`.
 Its original full functional baseline and matching PoCX execution remain required.
 
+The original ASan build also passed the missing inherited randomized runtime
+condition: 739 unit cases and all 16 kernel cases, with zero skips, actual seeds,
+a 512 KiB test stack and 2400 second deadlines. Source/build/library identities
+were checked against the retained compiler/dependency equivalence evidence.
+No compilation, Qt, auxiliary or functional execution was repeated. The strict
+checkpoint is under
+`artifacts/ci-parity-20261010/randomized-asan-original-checkpoint/`.
+This verifies the randomized framework condition; the complete inherited
+sanitizer build/install entrypoints and remaining framework conditions still
+require their own proof.
+
 The owned Ubuntu24/GCC13 prerequisite-complete optional functional pair is now
 locally verified with both transports and zero skips: Bitcoin passed 918 rows
 (459 per transport), and PoCX passed 590 rows (295 per transport). The PoCX rows
