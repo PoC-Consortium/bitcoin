@@ -73,6 +73,56 @@ class RetentionTest(unittest.TestCase):
             self.assertEqual(sentinel.read_text(), 'external fixture')
             self.assertTrue((chain / 'blocks').is_symlink())
 
+    def test_native_bootstrap_databases_follow_the_same_passed_case_boundary(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            bootstrap = root / 'pocx-premined'
+            self.populate(bootstrap)
+            before = {path.relative_to(root): path.read_bytes()
+                      for path in root.rglob('*') if path.is_file()}
+            for status in ('failed', 'skipped'):
+                self.assertEqual(self.prune(root, status), [])
+            with self.assertRaisesRegex(ValueError, 'completed process cleanup'):
+                self.prune(root, complete=False)
+            self.assertEqual({path.relative_to(root): path.read_bytes()
+                              for path in root.rglob('*') if path.is_file()}, before)
+            self.assertEqual(self.prune(root), [
+                'pocx-premined/node0/regtest/blocks',
+                'pocx-premined/node0/regtest/chainstate',
+                'pocx-premined/node0/regtest/indexes'])
+            for path, contents in before.items():
+                database = path.parts[:4] in [
+                    ('pocx-premined', 'node0', 'regtest', name)
+                    for name in ('blocks', 'chainstate', 'indexes')]
+                if database:
+                    self.assertFalse((root / path).exists())
+                else:
+                    self.assertEqual((root / path).read_bytes(), contents)
+
+    def test_native_bootstrap_links_cannot_remove_external_fixtures(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            outside = root / 'outside'
+            self.populate(outside)
+            before = {path.relative_to(outside): path.read_bytes()
+                      for path in outside.rglob('*') if path.is_file()}
+            case = root / 'case'
+            case.mkdir()
+            bootstrap = case / 'pocx-premined'
+            bootstrap.symlink_to(outside, target_is_directory=True)
+            self.assertEqual(self.prune(case), [])
+            bootstrap.unlink()
+            bootstrap.mkdir()
+            (bootstrap / 'node0').symlink_to(outside / 'node0', target_is_directory=True)
+            (bootstrap / 'node1').mkdir()
+            (bootstrap / 'node1/regtest').symlink_to(outside / 'node0/regtest', target_is_directory=True)
+            chain = bootstrap / 'node2/regtest'
+            chain.mkdir(parents=True)
+            (chain / 'blocks').symlink_to(outside / 'node0/regtest/blocks', target_is_directory=True)
+            self.assertEqual(self.prune(case), [])
+            self.assertEqual({path.relative_to(outside): path.read_bytes()
+                              for path in outside.rglob('*') if path.is_file()}, before)
+
     def test_junctions_are_not_ordinary_directories(self):
         with tempfile.TemporaryDirectory() as directory:
             # Exercise the Windows directory-link predicate on older Python too.

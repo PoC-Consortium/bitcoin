@@ -1269,3 +1269,31 @@ was rebased onto the functional repairs under
 V5 candidate. `final-native-source-view-v3/` independently verifies 3451 tracked
 files, 712 preserved original test files, drift and Windows recipe integrity.
 All earlier running jobs, source views and pinned inputs remain unchanged.
+
+The subsequent TSan disk-recovery check passed all ten previously disk-exhausted
+previous-release executions, with exact old/current test-script hashes and the
+same retained binary, stack and timeout factor. The independently verified
+`tsan-focused-functional-repairs-and-disk-recovery-checkpoint/` now records 22
+focused passes (20 adapted original and two PoCX-only executions), covering
+all 18 failures of the earlier full TSan functional run. This remains scoped
+repair evidence; the earlier full failure and complete-source qualifications
+are preserved.
+
+Artifact storage recovery removed 2920 generated database directories only from
+completed cases in three old artifact runs. All 57136 other evidence files and
+symlinks retain identical hashes or link targets; no live job, source, compiled
+build, report, log, wallet or configuration was changed. Evidence is under
+`storage-recovery-completed-cases-20261011T1745Z-v4/`. The guard rejects live
+process references and follows no database links. Earlier preflight failures
+remain recorded without any deletion.
+
+Future owned functional runs also release the generated databases beneath each
+passed case's direct `pocx-premined` root after completed process cleanup. The
+native framework creates this bootstrap privately before starting scenario
+nodes. The cleanup checks only direct `node[0-9]+/regtest` layouts in those two
+explicit roots; arbitrary nested fixtures and shared caches remain retained.
+Six filesystem boundary checks and the unchanged actual synthetic dispatcher
+lifecycle test passed. Test selection, commands, assertions, failed/skipped
+case data and original Bitcoin execution remain unchanged. Frozen running jobs
+continue with their original sources. These seven checks are infrastructure
+validation, with no additional domain or platform runtime pass inferred.
