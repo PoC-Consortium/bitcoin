@@ -42,10 +42,17 @@ passes and seven explicit inactive entries. Its sole failure was the unchanged
 WalletMigration benchmark trying to remove a relative `mockable` directory in
 the local read-only source checkout. That case passed from writable scratch
 space with the same binary, assertions and sanitizer settings. Only the missing
-second transport is running; the successful first-transport cases, including the
-long database-crash scenario, were not replayed. TSan/MSan's still-unrun functional
-modes use the same local working-directory correction after that run. Complete
-sanitizer functional and full inherited entrypoint proofs remain required.
+second transport was executed; the successful first-transport cases, including
+the long database-crash scenario, were not replayed. On 2026-10-11, independent
+reconciliation verified 904 case/transport passes and 14 explicitly inactive
+entries, with zero failures, unexpected skips or unverified cases. It rechecked
+both execution CSVs, producer-recorded log hashes, benchmark discovery, original
+source hashes, build identities, stack limits and commands. Evidence is under
+`artifacts/ci-parity-20261010/inherited-asan-original-functional-runtime-composite-checkpoint/`.
+The original observer's completion-label mismatch remains retained; the second
+exporter accepts the actual zero-exit controller label and does not invent
+historical container-log hashes. TSan's missing original functional mode is now
+running; MSan follows it. Full inherited sanitizer entrypoints remain unverified.
 
 The still-running owned PoCX ASan profile has completed its CTest phases. Its
 frozen older SIMD fixture reports an AddressSanitizer stack overflow. The kernel
@@ -945,3 +952,14 @@ inactive address-dependent rows. Two `mempool_reorg.py` daemon crashes remain
 failed in that profile; this checkpoint does not establish a full profile or
 inherited entrypoint pass. Other configurations require fresh execution of the
 changed IPC helper only; no original Bitcoin baseline was rerun.
+
+The Python3.10-compatible IPC adaptation also passed both transports in three
+other required configurations on 2026-10-11, without compilation or baseline
+replay. Independent source/build reconciliation retains 588 unrelated optional
+passes, giving590 owned optional passes with no skips; 558 unrelated standard
+passes, giving560 passes with30 explicit prerequisite skips; and384 unrelated
+no-wallet passes, giving386 passes with204 configuration-inactive rows. The
+standard skips remain required in enabled profiles. Evidence is under
+`artifacts/ci-parity-20261010/ipc-functional-source-refresh/` with separate
+`owned-optional`, `owned-standard` and `nowallet` checkpoints. These focused
+updates do not establish other platforms, sanitizers or full inherited entrypoints.
