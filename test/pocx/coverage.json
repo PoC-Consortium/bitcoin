@@ -8148,7 +8148,7 @@
     "upstream_sha256": null,
     "reason": "Byte comparison against upstream v31.1; reused does not imply PoCX-compatible",
     "replacement": "src/pocx/test/pocx_simd_tests.cpp",
-    "current_sha256": "42fd551e4ca385416be838b30fc87bb48e6aa4e4feefa74110564cd4418cb91c",
+    "current_sha256": "93739730b531f130c48fa80e2a5e45d71641ee47f89e430b197a5478e9e81558",
     "covered_behavior": [
       "pocx_simd_tests"
     ],
@@ -8243,7 +8243,12 @@
           "status": "passed",
           "evidence": "/home/johnny/Code/bitcoin-pocx/bitcoin-unit-package-20261009/build-p/pocx-unit-5n38ggnb/junit.xml",
           "scope": "Fresh standalone ownership-cleanup run; exact original case membership verified; all168 original test/support sources equal upstream.",
-          "source_record": "/home/johnny/Code/bitcoin-pocx/bitcoin-unit-package-20261009/build-p/pocx-unit-5n38ggnb/results.json"
+          "source_record": "/home/johnny/Code/bitcoin-pocx/bitcoin-unit-package-20261009/build-p/pocx-unit-5n38ggnb/results.json",
+          "recorded_sources_match_current": false,
+          "changed_since_execution": [
+            "src/pocx/test/pocx_simd_tests.cpp"
+          ],
+          "production_source_freshness": "Historical execution predates the restricted-stack SIMD buffer repair; retain its recorded scope. Current repaired-source execution remains required."
         }
       },
       "pocx-wallet-disabled": {
@@ -8252,9 +8257,11 @@
           "evidence": "build-ci-pocx-wallet-disabled/pocx-unit-py8ow1kw/junit.xml",
           "source_record": "build-ci-pocx-wallet-disabled/pocx-unit-py8ow1kw/results.json",
           "scope": "Evaluated unit test sources and selected support/data/build inputs; not full compiler dependency graph",
-          "recorded_sources_match_current": true,
-          "changed_since_execution": [],
-          "production_source_freshness": "Historical execution predates unit-completion disk-read repair; not a current rebuilt profile result."
+          "recorded_sources_match_current": false,
+          "changed_since_execution": [
+            "src/pocx/test/pocx_simd_tests.cpp"
+          ],
+          "production_source_freshness": "Historical execution predates the restricted-stack SIMD buffer repair; retain its recorded scope. Current repaired-source execution remains required."
         }
       },
       "pocx-kernel": {
@@ -8263,9 +8270,11 @@
           "evidence": "build-ci-pocx-kernel/pocx-unit-eonupbpq/junit.xml",
           "source_record": "build-ci-pocx-kernel/pocx-unit-eonupbpq/results.json",
           "scope": "Evaluated unit test sources and selected support/data/build inputs; not full compiler dependency graph",
-          "recorded_sources_match_current": true,
-          "changed_since_execution": [],
-          "production_source_freshness": "Historical execution predates unit-completion disk-read repair; not a current rebuilt profile result."
+          "recorded_sources_match_current": false,
+          "changed_since_execution": [
+            "src/pocx/test/pocx_simd_tests.cpp"
+          ],
+          "production_source_freshness": "Historical execution predates the restricted-stack SIMD buffer repair; retain its recorded scope. Current repaired-source execution remains required."
         }
       }
     },
@@ -8273,7 +8282,8 @@
       "review": "test/pocx/unit-parity.json",
       "scope": "Applicable original case membership explicitly verified; inspect exclusions instead of treating entire upstream file as applicable",
       "evidence": "test/pocx/unit-verification.json"
-    }
+    },
+    "source_change_review": "Move only large nonce-comparison buffers to heap storage; preserve all cases, lanes, byte comparisons and assertions. Historical executions retain their recorded source scope; the new restricted-stack condition needs its own execution proof."
   },
   {
     "source": "src/test/pocx_tests.cpp",
@@ -51568,7 +51578,7 @@
     "classification": "PoCX-specific",
     "reason": "Byte comparison against upstream v31.1; reused does not imply PoCX-compatible",
     "replacement": null,
-    "current_sha256": "42fd551e4ca385416be838b30fc87bb48e6aa4e4feefa74110564cd4418cb91c",
+    "current_sha256": "93739730b531f130c48fa80e2a5e45d71641ee47f89e430b197a5478e9e81558",
     "covered_behavior": [
       "pocx_simd_tests"
     ],
@@ -51663,7 +51673,12 @@
           "status": "passed",
           "evidence": "/home/johnny/Code/bitcoin-pocx/bitcoin-unit-package-20261009/build-p/pocx-unit-5n38ggnb/junit.xml",
           "scope": "Fresh standalone ownership-cleanup run; exact original case membership verified; all168 original test/support sources equal upstream.",
-          "source_record": "/home/johnny/Code/bitcoin-pocx/bitcoin-unit-package-20261009/build-p/pocx-unit-5n38ggnb/results.json"
+          "source_record": "/home/johnny/Code/bitcoin-pocx/bitcoin-unit-package-20261009/build-p/pocx-unit-5n38ggnb/results.json",
+          "recorded_sources_match_current": false,
+          "changed_since_execution": [
+            "src/pocx/test/pocx_simd_tests.cpp"
+          ],
+          "production_source_freshness": "Historical execution predates the restricted-stack SIMD buffer repair; retain its recorded scope. Current repaired-source execution remains required."
         }
       },
       "pocx-wallet-disabled": {
@@ -51672,9 +51687,11 @@
           "evidence": "build-ci-pocx-wallet-disabled/pocx-unit-py8ow1kw/junit.xml",
           "source_record": "build-ci-pocx-wallet-disabled/pocx-unit-py8ow1kw/results.json",
           "scope": "Evaluated unit test sources and selected support/data/build inputs; not full compiler dependency graph",
-          "recorded_sources_match_current": true,
-          "changed_since_execution": [],
-          "production_source_freshness": "Historical execution predates unit-completion disk-read repair; not a current rebuilt profile result."
+          "recorded_sources_match_current": false,
+          "changed_since_execution": [
+            "src/pocx/test/pocx_simd_tests.cpp"
+          ],
+          "production_source_freshness": "Historical execution predates the restricted-stack SIMD buffer repair; retain its recorded scope. Current repaired-source execution remains required."
         }
       },
       "pocx-kernel": {
@@ -51683,9 +51700,11 @@
           "evidence": "build-ci-pocx-kernel/pocx-unit-eonupbpq/junit.xml",
           "source_record": "build-ci-pocx-kernel/pocx-unit-eonupbpq/results.json",
           "scope": "Evaluated unit test sources and selected support/data/build inputs; not full compiler dependency graph",
-          "recorded_sources_match_current": true,
-          "changed_since_execution": [],
-          "production_source_freshness": "Historical execution predates unit-completion disk-read repair; not a current rebuilt profile result."
+          "recorded_sources_match_current": false,
+          "changed_since_execution": [
+            "src/pocx/test/pocx_simd_tests.cpp"
+          ],
+          "production_source_freshness": "Historical execution predates the restricted-stack SIMD buffer repair; retain its recorded scope. Current repaired-source execution remains required."
         }
       }
     },
@@ -51693,7 +51712,8 @@
       "review": "test/pocx/unit-parity.json",
       "scope": "Applicable original case membership explicitly verified; inspect exclusions instead of treating entire upstream file as applicable",
       "evidence": "test/pocx/unit-verification.json"
-    }
+    },
+    "source_change_review": "Move only large nonce-comparison buffers to heap storage; preserve all cases, lanes, byte comparisons and assertions. Historical executions retain their recorded source scope; the new restricted-stack condition needs its own execution proof."
   },
   {
     "source": "src/pocx/test/pocx_block_builder_tests.cpp",

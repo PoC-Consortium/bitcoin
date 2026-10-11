@@ -64,24 +64,24 @@ BOOST_AUTO_TEST_CASE(generate_nonces_avx2_matches_scalar)
         nonces[i] = rng() % 100000;
     }
 
-    // Generate nonces with scalar GenerateNonces
-    uint8_t scalar_buffers[8][pocx::algorithms::NONCE_SIZE];
+    // Keep full nonce buffers off the stack for CI's 512 KiB stack limit.
+    std::vector<std::array<uint8_t, pocx::algorithms::NONCE_SIZE>> scalar_buffers(8);
     for (int i = 0; i < 8; i++) {
         int ret = pocx::algorithms::GenerateNonces(
-            scalar_buffers[i], pocx::algorithms::NONCE_SIZE, 0,
+            scalar_buffers[i].data(), pocx::algorithms::NONCE_SIZE, 0,
             account_ids[i], seeds[i], nonces[i], 1
         );
         BOOST_REQUIRE_EQUAL(ret, 0);
     }
 
     // Generate nonces with AVX2
-    uint8_t avx2_buffers[8][pocx::algorithms::NONCE_SIZE];
+    std::vector<std::array<uint8_t, pocx::algorithms::NONCE_SIZE>> avx2_buffers(8);
     uint8_t* buffer_ptrs[8];
     const uint8_t* account_ptrs[8];
     const uint8_t* seed_ptrs[8];
 
     for (int i = 0; i < 8; i++) {
-        buffer_ptrs[i] = avx2_buffers[i];
+        buffer_ptrs[i] = avx2_buffers[i].data();
         account_ptrs[i] = account_ids[i];
         seed_ptrs[i] = seeds[i];
     }
@@ -92,7 +92,7 @@ BOOST_AUTO_TEST_CASE(generate_nonces_avx2_matches_scalar)
     // Compare byte-by-byte
     int mismatches = 0;
     for (int i = 0; i < 8; i++) {
-        if (std::memcmp(scalar_buffers[i], avx2_buffers[i], pocx::algorithms::NONCE_SIZE) != 0) {
+        if (std::memcmp(scalar_buffers[i].data(), avx2_buffers[i].data(), pocx::algorithms::NONCE_SIZE) != 0) {
             mismatches++;
             // Find first mismatch
             for (size_t j = 0; j < pocx::algorithms::NONCE_SIZE; j++) {
@@ -810,24 +810,24 @@ BOOST_AUTO_TEST_CASE(generate_nonces_sse2_matches_scalar)
         nonces[i] = rng() % 100000;
     }
 
-    // Generate nonces with scalar GenerateNonces
-    uint8_t scalar_buffers[4][pocx::algorithms::NONCE_SIZE];
+    // Keep full nonce buffers off the stack for CI's 512 KiB stack limit.
+    std::vector<std::array<uint8_t, pocx::algorithms::NONCE_SIZE>> scalar_buffers(4);
     for (int i = 0; i < 4; i++) {
         int ret = pocx::algorithms::GenerateNonces(
-            scalar_buffers[i], pocx::algorithms::NONCE_SIZE, 0,
+            scalar_buffers[i].data(), pocx::algorithms::NONCE_SIZE, 0,
             account_ids[i], seeds[i], nonces[i], 1
         );
         BOOST_REQUIRE_EQUAL(ret, 0);
     }
 
     // Generate nonces with SSE2
-    uint8_t sse2_buffers[4][pocx::algorithms::NONCE_SIZE];
+    std::vector<std::array<uint8_t, pocx::algorithms::NONCE_SIZE>> sse2_buffers(4);
     uint8_t* buffer_ptrs[4];
     const uint8_t* account_ptrs[4];
     const uint8_t* seed_ptrs[4];
 
     for (int i = 0; i < 4; i++) {
-        buffer_ptrs[i] = sse2_buffers[i];
+        buffer_ptrs[i] = sse2_buffers[i].data();
         account_ptrs[i] = account_ids[i];
         seed_ptrs[i] = seeds[i];
     }
@@ -838,7 +838,7 @@ BOOST_AUTO_TEST_CASE(generate_nonces_sse2_matches_scalar)
     // Compare byte-by-byte
     int mismatches = 0;
     for (int i = 0; i < 4; i++) {
-        if (std::memcmp(scalar_buffers[i], sse2_buffers[i], pocx::algorithms::NONCE_SIZE) != 0) {
+        if (std::memcmp(scalar_buffers[i].data(), sse2_buffers[i].data(), pocx::algorithms::NONCE_SIZE) != 0) {
             mismatches++;
             // Find first mismatch
             for (size_t j = 0; j < pocx::algorithms::NONCE_SIZE; j++) {

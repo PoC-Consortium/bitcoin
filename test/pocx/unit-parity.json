@@ -1000,8 +1000,8 @@
       "evidence": "artifacts/ci-parity-20261009/chainstate-clock/"
     },
     "src/pocx/test/pocx_simd_tests.cpp": {
-      "review": "Unit-package dependency extraction: existing native checks/vectors/generators unchanged; shared runner helpers moved byte-for-byte out of functional staging. Unit-only infrastructure checks extracted from previously passing full infrastructure suite.",
-      "sha256": "42fd551e4ca385416be838b30fc87bb48e6aa4e4feefa74110564cd4418cb91c"
+      "review": "Unit-package dependency extraction: existing native checks/vectors/generators unchanged; shared runner helpers moved byte-for-byte out of functional staging. Unit-only infrastructure checks extracted from previously passing full infrastructure suite. Store the AVX2/SSE2 nonce-comparison buffers on the heap so both tests fit the inherited 512 KiB stack limit. All lanes, nonce bytes, expected outputs and assertions are unchanged.",
+      "sha256": "93739730b531f130c48fa80e2a5e45d71641ee47f89e430b197a5478e9e81558"
     },
     "src/pocx/test/pocx_tests.cpp": {
       "review": "Unit-package dependency extraction: existing native checks/vectors/generators unchanged; shared runner helpers moved byte-for-byte out of functional staging. Unit-only infrastructure checks extracted from previously passing full infrastructure suite.",
