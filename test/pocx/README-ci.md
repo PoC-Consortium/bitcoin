@@ -8,6 +8,59 @@ not passing evidence until it has actually executed successfully.
 
 ## Current local checkpoints
 
+The previous-release PoCX unit run exposed two SIMD test fixtures whose full
+nonce buffers exceeded the inherited 512 KiB stack. The separate PoCX test file
+now allocates those buffers on the heap. All lanes, input bytes, comparisons and
+assertions remain unchanged. One C++ file was recompiled in a private copy of the
+retained build. The repaired randomized run passed 762 unit cases, ten Qt methods,
+16 kernel cases and six auxiliary executables. The AVX2 and SSE2 nonce comparisons
+executed ten and six assertions respectively. The ten reviewed PoW exclusions
+remain explicit. Independent evidence is under
+`artifacts/ci-parity-20261010/inherited-previous-releases-native-simd-repaired-ctest-checkpoint/`.
+The original Bitcoin baseline and old failed native build were preserved.
+
+That fixture change makes two historical PoCX unit passes pending a targeted
+refresh in the owned unit, wallet-disabled, IPC-disabled and inherited no-wallet
+profiles. Their unaffected cases and immutable historical reports remain retained.
+The current case report identifies these two cases individually; an older pass
+does not validate the changed source. Original Bitcoin baselines need no replay.
+Queued profiles retain their pinned inputs and need source freshness checked
+after execution. The repaired previous-release profile already uses the new file.
+
+The original-first Windows UCRT cross-build/deploy pair and the native MSVCRT
+build/deploy recovery passed independent inspection of their paired PE payloads
+and generated installers. Evidence is under
+`artifacts/ci-parity-20261010/inherited-win64-ucrt-complete-build-pair-checkpoint/`
+and `inherited-win64-msvcrt-deploy-corrected-build-pair-checkpoint/` in the same
+artifact directory. No Windows target tests were executed. These native packages
+also contain the older SIMD fixture object and require a targeted refresh before
+they represent the current source. Their original cross-build baselines remain
+valid; actual Windows runtime remains unverified.
+
+The missing inherited original ASan functional mode retained 451 first-transport
+passes and seven explicit inactive entries. Its sole failure was the unchanged
+WalletMigration benchmark trying to remove a relative `mockable` directory in
+the local read-only source checkout. That case passed from writable scratch
+space with the same binary, assertions and sanitizer settings. Only the missing
+second transport is running; the successful first-transport cases, including the
+long database-crash scenario, were not replayed. TSan/MSan's still-unrun functional
+modes use the same local working-directory correction after that run. Complete
+sanitizer functional and full inherited entrypoint proofs remain required.
+
+The still-running owned PoCX ASan profile has completed its CTest phases. Its
+frozen older SIMD fixture reports an AddressSanitizer stack overflow. The kernel
+executable also reached the unchanged 2,400 second deadline during its final
+`btck_chainman_regtest_tests` case, after the in-memory chain case took about
+1,228 seconds. Its unfinished Boost report is empty, so no complete kernel leaf
+success is inferred. These failures remain required work; the SIMD fix in another
+toolchain does not establish ASan success, and the kernel timeout needs investigation.
+The current-revision Clang18/mold reproduction independently passed original
+CTest (739 unit, nine Qt, 16 kernel and six auxiliary), then hit the same local
+WalletMigration working-directory failure in its first functional transport.
+Its 451 passes and seven inactive rows remain retained; the missing second
+transport and matching native recipe have not run. Neither reproduction claims
+a successful historical pull-request range or full entrypoint.
+
 Some inherited unit/kernel checkpoints initially stripped `BOOST_TEST_RANDOM=1`.
 Their original nonrandomized evidence remains valid within that scope. The
 no-wallet pair and original i686/previous-release checkpoints now also have
