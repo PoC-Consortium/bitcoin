@@ -67,15 +67,14 @@ or functional replay. Their checkpoints are under
 These scoped runtime proofs do not establish the complete inherited sanitizer
 build/install entrypoints or matching PoCX execution.
 
-The remaining original ASan Qt and auxiliary runtime conditions and TSan
-auxiliary runtime condition also passed independent verification using retained
-binaries: nine ASan Qt methods, six ASan auxiliary executables and six TSan
-auxiliary executables. These actual CTest runs use the inherited 512 KiB stack
+The remaining original ASan Qt and ASan/TSan/MSan auxiliary runtime conditions
+also passed independent verification using retained binaries: nine ASan Qt
+methods and six auxiliary executables for each of the three sanitizers. These actual CTest runs use the inherited 512 KiB stack
 and 2400 second deadline. The independent export checks the original source and
 build snapshots, exact commands, JUnit results, Qt method output and loaded
 library hashes. Unit, kernel and functional cases were not replayed, and no
 C++ compilation was needed. Evidence is under
-`artifacts/ci-parity-20261010/inherited-{asan,tsan}-original-remaining-ctest-checkpoint/`.
+`artifacts/ci-parity-20261010/inherited-{asan,tsan,msan}-original-remaining-ctest-checkpoint/`.
 These checkpoints establish only their recorded runtime conditions; complete
 inherited recipe/build/install execution remains required.
 
