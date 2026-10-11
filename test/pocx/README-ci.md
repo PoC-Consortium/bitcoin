@@ -57,6 +57,16 @@ This verifies the randomized framework condition; the complete inherited
 sanitizer build/install entrypoints and remaining framework conditions still
 require their own proof.
 
+The corresponding original TSan and MSan randomized runtime conditions also
+passed independent verification. TSan passed 737 unit cases and 16 kernel cases;
+its two DEBUG-only unit cases remain configuration inactive. MSan passed 739 unit
+cases and 16 kernel cases. Both used actual Boost seeds, the inherited 512 KiB
+test stack and 2400 second deadlines, with zero compilation and no Qt, auxiliary
+or functional replay. Their checkpoints are under
+`artifacts/ci-parity-20261010/randomized-{tsan,msan}-original-checkpoint/`.
+These scoped runtime proofs do not establish the complete inherited sanitizer
+build/install entrypoints or matching PoCX execution.
+
 Inherited functional profiles using `--usecli` now distinguish source-defined
 CLI incompatibilities from unexpected skips. A skipped case is configuration
 inactive only when its executed test class explicitly sets `supports_cli=False`
