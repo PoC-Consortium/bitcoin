@@ -156,9 +156,16 @@ CTest (739 unit, nine Qt, 16 kernel and six auxiliary), then hit the same local
 WalletMigration working-directory failure in its first functional transport.
 Its 451 passes and seven inactive rows remain retained; the missing second
 transport subsequently passed independent reconciliation. The matching frozen
-native recipe is compiling with one heavy worker and its original baseline is
-not being repeated. Neither reproduction claims
-a successful historical pull-request range or full entrypoint.
+native recipe finished its build and unit/Qt steps, then its kernel executable
+exceeded the unchanged 180second revision deadline. Its numeric Boost report is
+empty, so no complete kernel leaf passes are inferred. Auxiliary and functional
+execution did not start. Independent failure evidence is under
+`artifacts/ci-parity-20261010/native-revision-kernel-timeout-checkpoint/`.
+This is a current-revision reproduction failure; the required historical ancestor
+range remains a separately unverified condition. The original baseline was not
+replayed. The queued quality-performance repair also needs to satisfy this recipe
+without extending its deadline. Neither reproduction claims a successful
+historical pull-request range or full entrypoint.
 
 Some inherited unit/kernel checkpoints initially stripped `BOOST_TEST_RANDOM=1`.
 Their original nonrandomized evidence remains valid within that scope. The
