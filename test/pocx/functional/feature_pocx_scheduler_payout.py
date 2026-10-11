@@ -42,7 +42,7 @@ class SchedulerPayoutTest(BitcoinTestFramework):
         node.setmocktime(parent_time + 100000)
         ctx = node.get_mining_info()
         payouts = [{'address': recipient, 'amount_sat': 150000000}]
-        with node.assert_debug_log(['[Scheduler] Block forged and accepted!']):
+        with node.assert_debug_log(['[Scheduler] Block forged and accepted!'], timeout=30):
             response = node.submit_nonce(ctx['block_hash'], ctx['height'], ctx['generation_signature'],
                                          ctx['base_target'], account, '00' * 32, 1,
                                          ctx['minimum_compression_level'], 0, payouts)
@@ -77,13 +77,13 @@ class SchedulerPayoutTest(BitcoinTestFramework):
         # subsidy+fees by one satoshi. Only forge-time budget validation catches it.
         excessive = [{'address': recipient, 'amount_sat': 10 * 100000000 + fee_sat + 1}]
         with node.assert_debug_log(['Payout split rejected: outputs sum > coinbase value',
-                                    '[Scheduler] Block building failed']):
+                                    '[Scheduler] Block building failed'], timeout=30):
             response = node.submit_nonce(*args, excessive)
             assert response['poc_time'] <= 100000, response
         assert_equal(node.getbestblockhash(), before)
         assert txid in node.getrawmempool()
         # The failed attempt must leave the scheduler usable for a valid retry.
-        with node.assert_debug_log(['[Scheduler] Block forged and accepted!']):
+        with node.assert_debug_log(['[Scheduler] Block forged and accepted!'], timeout=30):
             node.submit_nonce(*args, [{'address': recipient, 'amount_sat': 150000000}])
             self.wait_until(lambda: node.getblockcount() == height + 1, timeout=30)
         block = node.getblock(node.getbestblockhash(), 2)

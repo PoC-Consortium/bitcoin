@@ -38339,23 +38339,23 @@
   {
     "source": "test/functional/wallet_groups.py",
     "classification": "adapted",
-    "execution": "passed",
+    "execution": "unverified",
     "gates": [],
     "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
     "baseline_revision": "5de2720ca47b3a753081e5ce545113cd3b616018",
     "follow_up": "M2: scenario/case parity; M3: consensus gaps; M4: drift/CI",
     "baseline_sha256": "6415b01530ca3856893d4a7f9835e9ea602d13fb3ecc34c19ade35228dea3b5e",
     "upstream_sha256": "6415b01530ca3856893d4a7f9835e9ea602d13fb3ecc34c19ade35228dea3b5e",
-    "reason": "Single explicit opt-in to per-block native observer/producer clock coordination for original clean-chain generation. AST exactly identical after removing this assignment: all assertions, amounts, scenarios, generation counts, forks, wallet operations and order retained. Startup uses coordinated fixture time for VerifyDB. Execution pending. Add50 native funding blocks before original 500-coin/10,000-output stress fixture. Preserve all output amounts/counts, grouped/non-grouped fee thresholds, APS checks and ~100-input selection scenario.",
+    "reason": "Single explicit opt-in to per-block native observer/producer clock coordination for original clean-chain generation. AST exactly identical after removing this assignment: all assertions, amounts, scenarios, generation counts, forks, wallet operations and order retained. Startup uses coordinated fixture time for VerifyDB. Execution pending. Add50 native funding blocks before original 500-coin/10,000-output stress fixture. Preserve all output amounts/counts, grouped/non-grouped fee thresholds, APS checks and ~100-input selection scenario. Synchronize wallet peers after each generated funding block before advancing the next PoCX proof clock. Preserve the original run_test body, all grouping/APS/fee assertions, original generation counts and the additional native funding fixture. Both transports independently passed under ASan with512KiB stack and timeout factor40. Other configurations require focused source refresh; no Bitcoin baseline replay.",
     "replacement": "test/pocx/functional/wallet_groups.py",
-    "current_sha256": "b2306a13d54cc6fc71f966f8916647c677fdc7aca2bae481ede1dd150019ea2f",
+    "current_sha256": "586af7b80bdbea2d360c4ea08809e72599dd2fb1bf0b15cbdeeb2f905643c36e",
     "covered_behavior": [
       "wallet_groups"
     ],
     "guarded_case_source": "test/functional/wallet_groups.py",
     "guarded_cases": [],
     "pocx_conditional_lines": [],
-    "profile_status": "Final complete matrix verified for the declared profile; explicit skips remain unverified feature combinations.",
+    "profile_status": "ASan repair passed both transports; final-source and other required configurations remain unverified",
     "upstream_functional_cases": [
       {
         "id": "wallet_groups.py",
@@ -38367,27 +38367,27 @@
         "dynamic": false,
         "execution_by_profile": {
           "pocx": {
-            "status": "passed",
+            "status": "unverified",
             "observed_status": "passed",
             "evidence": "build-pocx-clean/pocx-results-fgwf4s35/results.json",
             "log": "build-pocx-clean/pocx-results-fgwf4s35/wallet_groups.py.log",
             "test": "wallet_groups.py",
             "global_transport": "v1",
             "skip_reason": null,
-            "recorded_tree_matches_current_sources": true,
-            "selected_script_matches_execution": true,
+            "recorded_tree_matches_current_sources": false,
+            "selected_script_matches_execution": false,
             "shared_inputs_match_execution": true
           },
           "pocx-v2": {
-            "status": "passed",
+            "status": "unverified",
             "observed_status": "passed",
             "evidence": "build-pocx-clean/pocx-results-fgwf4s35/results.json",
             "log": "build-pocx-clean/pocx-results-fgwf4s35/v2/wallet_groups.py.log",
             "test": "wallet_groups.py",
             "global_transport": "v2",
             "skip_reason": null,
-            "recorded_tree_matches_current_sources": true,
-            "selected_script_matches_execution": true,
+            "recorded_tree_matches_current_sources": false,
+            "selected_script_matches_execution": false,
             "shared_inputs_match_execution": true
           }
         }
@@ -38404,35 +38404,45 @@
       },
       "pocx": {
         "wallet_groups.py": {
-          "status": "passed",
+          "status": "unverified",
           "observed_status": "passed",
           "evidence": "build-pocx-clean/pocx-results-fgwf4s35/results.json",
           "log": "build-pocx-clean/pocx-results-fgwf4s35/wallet_groups.py.log",
           "test": "wallet_groups.py",
           "global_transport": "v1",
           "skip_reason": null,
-          "recorded_tree_matches_current_sources": true,
-          "selected_script_matches_execution": true,
+          "recorded_tree_matches_current_sources": false,
+          "selected_script_matches_execution": false,
           "shared_inputs_match_execution": true
         }
       },
       "pocx-v2": {
         "wallet_groups.py": {
-          "status": "passed",
+          "status": "unverified",
           "observed_status": "passed",
           "evidence": "build-pocx-clean/pocx-results-fgwf4s35/results.json",
           "log": "build-pocx-clean/pocx-results-fgwf4s35/v2/wallet_groups.py.log",
           "test": "wallet_groups.py",
           "global_transport": "v2",
           "skip_reason": null,
-          "recorded_tree_matches_current_sources": true,
-          "selected_script_matches_execution": true,
+          "recorded_tree_matches_current_sources": false,
+          "selected_script_matches_execution": false,
           "shared_inputs_match_execution": true
         }
       }
     },
     "latest_observed_outcome": "passed",
-    "current_input_outcome": "passed"
+    "current_input_outcome": "unverified",
+    "scoped_ci_repair_evidence": {
+      "profile": "pocx-asan",
+      "transports": [
+        "v1",
+        "v2"
+      ],
+      "status": "passed",
+      "proof": "artifacts/ci-parity-20261010/native-asan-scheduler-wallet-checkpoint/results.json",
+      "proof_sha256": "d24eb5c5b2edeadd2197cae82611eb97df273f71b62831153d2a7dc0b5e354fc"
+    }
   },
   {
     "source": "test/functional/wallet_hd.py",
@@ -45262,53 +45272,63 @@
     "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
     "baseline_revision": "5de2720ca47b3a753081e5ce545113cd3b616018",
     "follow_up": "M2: scenario/case parity; M3: consensus gaps; M4: drift/CI",
-    "execution": "passed",
+    "execution": "unverified",
     "baseline_sha256": null,
     "upstream_sha256": null,
     "classification": "PoCX-specific",
-    "reason": "Byte comparison against upstream v31.1; reused does not imply PoCX-compatible",
+    "reason": "Byte comparison against upstream v31.1; reused does not imply PoCX-compatible Await asynchronous scheduler messages with an explicit30second wait, scaled by the existing profile timeout factor. Preserve over-budget rejection, unchanged chain and mempool checks, fee accounting, proof verification and successful retry assertions. Both transports independently passed under ASan with512KiB stack and timeout factor40. Other configurations require focused source refresh; no Bitcoin baseline replay.",
     "replacement": null,
-    "current_sha256": "d7a9db75e1100c502f3d96a44a4a4fa52ead51219ddf4e26aecfe6903a662e24",
+    "current_sha256": "3f23a96c1496a40c4d9b6cf3ec6ef63b777c5ca34a4b0d64cafee381993f9f19",
     "covered_behavior": [
       "feature_pocx_scheduler_payout"
     ],
     "guarded_case_source": "test/pocx/functional/feature_pocx_scheduler_payout.py",
     "guarded_cases": [],
     "pocx_conditional_lines": [],
-    "profile_status": "Final complete matrix verified for the declared profile; explicit skips remain unverified feature combinations.",
+    "profile_status": "ASan repair passed both transports; final-source and other required configurations remain unverified",
     "upstream_functional_cases": [],
     "execution_by_profile": {
       "pocx": {
         "feature_pocx_scheduler_payout.py": {
-          "status": "passed",
+          "status": "unverified",
           "observed_status": "passed",
           "evidence": "build-pocx-clean/pocx-results-fgwf4s35/results.json",
           "log": "build-pocx-clean/pocx-results-fgwf4s35/feature_pocx_scheduler_payout.py.log",
           "test": "feature_pocx_scheduler_payout.py",
           "global_transport": "v1",
           "skip_reason": null,
-          "recorded_tree_matches_current_sources": true,
-          "selected_script_matches_execution": true,
+          "recorded_tree_matches_current_sources": false,
+          "selected_script_matches_execution": false,
           "shared_inputs_match_execution": true
         }
       },
       "pocx-v2": {
         "feature_pocx_scheduler_payout.py": {
-          "status": "passed",
+          "status": "unverified",
           "observed_status": "passed",
           "evidence": "build-pocx-clean/pocx-results-fgwf4s35/results.json",
           "log": "build-pocx-clean/pocx-results-fgwf4s35/v2/feature_pocx_scheduler_payout.py.log",
           "test": "feature_pocx_scheduler_payout.py",
           "global_transport": "v2",
           "skip_reason": null,
-          "recorded_tree_matches_current_sources": true,
-          "selected_script_matches_execution": true,
+          "recorded_tree_matches_current_sources": false,
+          "selected_script_matches_execution": false,
           "shared_inputs_match_execution": true
         }
       }
     },
     "latest_observed_outcome": "passed",
-    "current_input_outcome": "passed"
+    "current_input_outcome": "unverified",
+    "scoped_ci_repair_evidence": {
+      "profile": "pocx-asan",
+      "transports": [
+        "v1",
+        "v2"
+      ],
+      "status": "passed",
+      "proof": "artifacts/ci-parity-20261010/native-asan-scheduler-wallet-checkpoint/results.json",
+      "proof_sha256": "d24eb5c5b2edeadd2197cae82611eb97df273f71b62831153d2a7dc0b5e354fc"
+    }
   },
   {
     "source": "test/pocx/functional/feature_pocx_scheduler_early_height.py",

@@ -20795,7 +20795,7 @@
       "source": "test/functional/wallet_groups.py",
       "replacement": "test/pocx/functional/wallet_groups.py",
       "source_sha256": "6415b01530ca3856893d4a7f9835e9ea602d13fb3ecc34c19ade35228dea3b5e",
-      "replacement_sha256": "b2306a13d54cc6fc71f966f8916647c677fdc7aca2bae481ede1dd150019ea2f",
+      "replacement_sha256": "586af7b80bdbea2d360c4ea08809e72599dd2fb1bf0b15cbdeeb2f905643c36e",
       "assertion_and_method_accounting": {
         "assert_statements": 1,
         "assertion_calls": 21,
@@ -20805,11 +20805,11 @@
           "run_test"
         ]
       },
-      "review": "Single explicit opt-in to per-block native observer/producer clock coordination for original clean-chain generation. AST exactly identical after removing this assignment: all assertions, amounts, scenarios, generation counts, forks, wallet operations and order retained. Startup uses coordinated fixture time for VerifyDB. Execution pending. Add50 native funding blocks before original 500-coin/10,000-output stress fixture. Preserve all output amounts/counts, grouped/non-grouped fee thresholds, APS checks and ~100-input selection scenario.",
+      "review": "Single explicit opt-in to per-block native observer/producer clock coordination for original clean-chain generation. AST exactly identical after removing this assignment: all assertions, amounts, scenarios, generation counts, forks, wallet operations and order retained. Startup uses coordinated fixture time for VerifyDB. Execution pending. Add50 native funding blocks before original 500-coin/10,000-output stress fixture. Preserve all output amounts/counts, grouped/non-grouped fee thresholds, APS checks and ~100-input selection scenario. Synchronize wallet peers after each generated funding block before advancing the next PoCX proof clock. Preserve the original run_test body, all grouping/APS/fee assertions, original generation counts and the additional native funding fixture. Both transports independently passed under ASan with512KiB stack and timeout factor40. Other configurations require focused source refresh; no Bitcoin baseline replay.",
       "evidence": "build-pocx-clean/pocx-results-fgwf4s35/results.json",
       "execution_by_transport": {
-        "v1": "unverified; prerequisite helper and staging provenance changed",
-        "v2": "unverified; prerequisite helper and staging provenance changed"
+        "v1": "ASan current-source pass; other configurations require targeted refresh",
+        "v2": "ASan current-source pass; other configurations require targeted refresh"
       },
       "execution_status_scope": "Latest owned-runner evidence by declared argument case; historical observations do not establish current-input parity.",
       "latest_observed_outcome": "passed",
@@ -20829,12 +20829,13 @@
               "report": "build-pocx-clean/pocx-results-fgwf4s35/results.json",
               "log": "build-pocx-clean/pocx-results-fgwf4s35/wallet_groups.py.log",
               "skip_reason": null,
-              "selected_script_matches_execution": true,
+              "selected_script_matches_execution": false,
               "shared_inputs_match_execution": false,
               "changed_applicable_inputs": [
                 "test/pocx/functional_environment.py",
                 "test/pocx/stage.py",
-                "test/pocx/verify_functional.py"
+                "test/pocx/verify_functional.py",
+                "test/pocx/functional/wallet_groups.py"
               ],
               "current_input_status": "unverified"
             },
@@ -20846,12 +20847,13 @@
               "report": "build-pocx-clean/pocx-results-fgwf4s35/results.json",
               "log": "build-pocx-clean/pocx-results-fgwf4s35/v2/wallet_groups.py.log",
               "skip_reason": null,
-              "selected_script_matches_execution": true,
+              "selected_script_matches_execution": false,
               "shared_inputs_match_execution": false,
               "changed_applicable_inputs": [
                 "test/pocx/functional_environment.py",
                 "test/pocx/stage.py",
-                "test/pocx/verify_functional.py"
+                "test/pocx/verify_functional.py",
+                "test/pocx/functional/wallet_groups.py"
               ],
               "current_input_status": "unverified"
             }
@@ -20866,6 +20868,16 @@
           "skip_test_if_missing_module",
           "run_test"
         ]
+      },
+      "scoped_ci_repair_evidence": {
+        "profile": "pocx-asan",
+        "transports": [
+          "v1",
+          "v2"
+        ],
+        "status": "passed",
+        "proof": "artifacts/ci-parity-20261010/native-asan-scheduler-wallet-checkpoint/results.json",
+        "proof_sha256": "d24eb5c5b2edeadd2197cae82611eb97df273f71b62831153d2a7dc0b5e354fc"
       }
     },
     "wallet_hd.py": {

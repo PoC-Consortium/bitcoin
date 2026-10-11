@@ -34,6 +34,14 @@ class WalletGroupTest(BitcoinTestFramework):
 
         self.rpc_timeout = 480
 
+    def generate(self, generator, nblocks, *, sync_fun=None, **kwargs):
+        # PoCX mock-clock steps can exceed peer download deadlines. Finish relay
+        # of each block before advancing to the next block's proof time.
+        blocks = []
+        for _ in range(nblocks):
+            blocks.extend(super().generate(generator, 1, sync_fun=sync_fun, **kwargs))
+        return blocks
+
     def skip_test_if_missing_module(self):
         self.skip_if_no_wallet()
 
