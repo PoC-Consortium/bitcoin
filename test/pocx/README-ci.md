@@ -8,6 +8,20 @@ not passing evidence until it has actually executed successfully.
 
 ## Current local checkpoints
 
+The 2026-10-11 source audit found a wider freshness gap than the SIMD file alone.
+Some retained native binaries still use the older
+`src/pocx/test/util/bitcoin_block_fixture.h`. This header is compiled through
+`pocx_test_util`, which supplies unit, Qt and benchmark support. Their historical
+passes remain evidence for the recorded binaries; they do not verify the current
+shared fixture. Current reporting qualifies affected unit/Qt rows, the functional
+benchmark-tool entry and native benchmark aggregate rows as unverified. Actual
+failures, exclusions and inactive rows retain their statuses. Original Bitcoin
+uses its separate support library and its baselines are preserved. Metadata guard
+checks are under
+`artifacts/ci-parity-20261010/shared-fixture-source-freshness-guard-check-v2/`.
+Functional case/helper provenance and current generated build inputs still need
+the remaining source audit before the full matrix can be declared current.
+
 The previous-release PoCX unit run exposed two SIMD test fixtures whose full
 nonce buffers exceeded the inherited 512 KiB stack. The separate PoCX test file
 now allocates those buffers on the heap. All lanes, input bytes, comparisons and
@@ -19,11 +33,11 @@ remain explicit. Independent evidence is under
 `artifacts/ci-parity-20261010/inherited-previous-releases-native-simd-repaired-ctest-checkpoint/`.
 The original Bitcoin baseline and old failed native build were preserved.
 
-That fixture change makes two historical PoCX unit passes pending a targeted
-refresh in the owned unit, wallet-disabled, IPC-disabled and inherited no-wallet
-profiles. Their unaffected cases and immutable historical reports remain retained.
-The current case report identifies these two cases individually; an older pass
-does not validate the changed source. Original Bitcoin baselines need no replay.
+The initial SIMD check identified two historical PoCX unit passes needing a
+targeted refresh in the owned unit, wallet-disabled, IPC-disabled and inherited
+no-wallet profiles. The subsequent shared-fixture audit above also qualifies
+their older compiled support. Immutable historical reports remain retained;
+an older pass does not validate the changed source. Original baselines need no replay.
 Queued profiles retain their pinned inputs and need source freshness checked
 after execution. The repaired previous-release profile already uses the new file.
 
@@ -54,8 +68,9 @@ exporter accepts the actual zero-exit controller label and does not invent
 historical container-log hashes. TSan's missing original functional mode is now
 running; MSan follows it. Full inherited sanitizer entrypoints remain unverified.
 
-The repaired SIMD fixture is now independently verified under ASan, TSan and
-MSan with the inherited 512 KiB runtime stack and `BOOST_TEST_RANDOM=0`.
+The repaired SIMD fixture passed independent verification under ASan, TSan and
+MSan against their retained compiled support, with the inherited 512 KiB runtime
+stack and `BOOST_TEST_RANDOM=0`.
 ASan and MSan each pass 762 unit cases; TSan passes 760, with two DEBUG-only
 cases inactive. All three retain ten justified PoW exclusions. Each repair
 compiled one C++ object and executed only the 17 incomplete SIMD cases, then
@@ -67,7 +82,9 @@ The first repaired executions failed before assertions because their fixture
 scratch directory was read-only. Those failures remain retained; the corrected
 runs mount writable scratch and reuse the same compiled binaries. No original
 baseline, completed suite or full build was replayed. Other framework and full
-entrypoint conditions retain their own status.
+entrypoint conditions retain their own status. These binaries still predate the
+shared-fixture change above, so their full current-source unit coverage remains
+unverified until that support is compiled and tested.
 
 The separate PoCX pruning test now synchronizes connected recipients after each
 generated block before its next 600-second mock-clock step. Under ASan, a peer
@@ -934,13 +951,20 @@ check. Evidence is under
 `artifacts/ci-parity-20261010/inherited-tidy-native-complete-checkpoint/`
 and `inherited-tidy-original-complete-checkpoint-v2/`.
 
-The frozen pair predates the native SIMD test-fixture repair. Current-source
-reporting therefore retains 632 native analysis/check passes and leaves exactly
-the changed SIMD translation unit unverified. Its build/install result also
-needs an incremental refresh. No unchanged original baseline is replayed, and
-this analysis-only profile establishes no unit, Qt, kernel, functional or hosted
-runtime pass. A metadata guard check verifies this selective invalidation under
-`artifacts/ci-parity-20261010/tidy-simd-source-freshness-guard-check/`.
+The frozen pair predates native fixture and test-tool changes. Read-only compiler
+dependency inventories verify all 593 original translation units have unchanged
+project inputs. Native analysis has eleven source-dependency refresh candidates
+and 620 translation units with unchanged project dependencies. Two PoCX CMake
+files also changed. Current native compile variants and generated inputs must be
+compared before reusing analysis, so the current report leaves the 631 translation
+units and dependency gate unverified while retaining the unchanged plugin fixture
+result. The complete frozen pair remains independently recorded as passing.
+Evidence is under `artifacts/ci-parity-20261010/tidy-{bitcoin,pocx}-dependency-inventory/`
+and `tidy-dependency-freshness-guard-check/` in the same artifact directory.
+No analysis or original baseline was replayed for these inventories. Configure
+the final native source once, then reuse matching command/dependency results and
+analyse only the affected inputs. This analysis-only profile establishes no unit,
+Qt, kernel, functional or hosted runtime pass.
 
 Original i686 tracing uses a private, reviewed test view when USDT is enabled.
 BCC compiles BPF for the host ABI, but the 32-bit daemon supplies four-byte
