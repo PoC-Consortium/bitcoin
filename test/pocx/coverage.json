@@ -21007,7 +21007,7 @@
     "upstream_sha256": "ced2595818744c3f46cc13ae6791b670c5df5005fdd304b45867e1ee7047e4dc",
     "reason": "Owned IPC mining adapter preserves generic IPC, template, coinbase and validation checks; explicitly reviews nonce-only PoW submission as inapplicable",
     "replacement": "test/pocx/functional/interface_ipc_mining.py",
-    "current_sha256": "54ad16db02923d0c93b9b327bccaef3cf2870dbce9d51f3b5b68686795036faa",
+    "current_sha256": "6061f9a588a0ba1f5d8a0e5d9fa54f68dcaa667f99cd0aed46d7a6300e3fdd52",
     "covered_behavior": [
       "interface_ipc_mining"
     ],

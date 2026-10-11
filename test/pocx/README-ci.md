@@ -931,3 +931,17 @@ The shared Rust entrypoint delegates only this checker through the separate
 `lint/dispatch.rs`; all other original Python linters run directly. A missing
 owned checker fails. Infrastructure checks exercise real checker exits for
 new violations as well as source-policy rejection; they do not rerun units.
+
+The PoCX IPC mining adaptation supports Python 3.10 as used by the inherited
+previous-release image. Its template wait uses `asyncio.wait_for` with the same
+five-second scaled deadline, mock-clock advancement and task cancellation.
+All other IPC scenarios and assertions are unchanged. On 2026-10-11, IPC mining
+and all five USDT tracing cases passed in both transports against the retained
+GCC12 build, at the inherited 512 KiB runtime stack limit and timeout factor 40.
+The focused tracing invocation restores the baseline's debugfs mount; BCC
+cleanup errors are retained as failures when that prerequisite is absent.
+Twelve repaired rows reconcile with 572 retained passes and four explicitly
+inactive address-dependent rows. Two `mempool_reorg.py` daemon crashes remain
+failed in that profile; this checkpoint does not establish a full profile or
+inherited entrypoint pass. Other configurations require fresh execution of the
+changed IPC helper only; no original Bitcoin baseline was rerun.

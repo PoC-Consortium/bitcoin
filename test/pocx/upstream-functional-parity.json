@@ -10544,7 +10544,7 @@
       "source": "test/functional/interface_ipc_mining.py",
       "replacement": "test/pocx/functional/interface_ipc_mining.py",
       "source_sha256": "ced2595818744c3f46cc13ae6791b670c5df5005fdd304b45867e1ee7047e4dc",
-      "replacement_sha256": "54ad16db02923d0c93b9b327bccaef3cf2870dbce9d51f3b5b68686795036faa",
+      "replacement_sha256": "6061f9a588a0ba1f5d8a0e5d9fa54f68dcaa667f99cd0aed46d7a6300e3fdd52",
       "assertion_and_method_accounting": {
         "assert_statements": 12,
         "assertion_calls": 37,

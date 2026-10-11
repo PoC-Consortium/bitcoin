@@ -58,12 +58,16 @@ class IPCMiningTest(BitcoinTestFramework):
         # Template deadlines use NodeClock. Native forging keeps that clock
         # deterministic, so advance it while retaining a bounded wall timeout.
         task = asyncio.create_task(awaitable)
+
+        async def advance_clock():
+            while not task.done():
+                await asyncio.sleep(0.1)
+                self.nodes[0].bumpmocktime(1)
+            return await task
+
         try:
-            async with asyncio.timeout(5 * self.options.timeout_factor):
-                while not task.done():
-                    await asyncio.sleep(0.1)
-                    self.nodes[0].bumpmocktime(1)
-                return await task
+            # wait_for also supports Python 3.10 in the inherited CI images.
+            return await asyncio.wait_for(advance_clock(), 5 * self.options.timeout_factor)
         finally:
             if not task.done():
                 task.cancel()
