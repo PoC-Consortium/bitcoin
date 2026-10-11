@@ -67,6 +67,18 @@ or functional replay. Their checkpoints are under
 These scoped runtime proofs do not establish the complete inherited sanitizer
 build/install entrypoints or matching PoCX execution.
 
+The remaining original ASan Qt and auxiliary runtime conditions and TSan
+auxiliary runtime condition also passed independent verification using retained
+binaries: nine ASan Qt methods, six ASan auxiliary executables and six TSan
+auxiliary executables. These actual CTest runs use the inherited 512 KiB stack
+and 2400 second deadline. The independent export checks the original source and
+build snapshots, exact commands, JUnit results, Qt method output and loaded
+library hashes. Unit, kernel and functional cases were not replayed, and no
+C++ compilation was needed. Evidence is under
+`artifacts/ci-parity-20261010/inherited-{asan,tsan}-original-remaining-ctest-checkpoint/`.
+These checkpoints establish only their recorded runtime conditions; complete
+inherited recipe/build/install execution remains required.
+
 Inherited functional profiles using `--usecli` now distinguish source-defined
 CLI incompatibilities from unexpected skips. A skipped case is configuration
 inactive only when its executed test class explicitly sets `supports_cli=False`
@@ -588,22 +600,23 @@ reexecutes the already passed native-start gate. Matching PoCX TSan started only
 after that complete original gate passed and is queued behind shared compilation
 capacity. Its runtime and hosted coverage remain unverified.
 
-The original MSan build and runtime unit entrypoint pass all 739 original cases
-across 149 suites, with no failures, skips or exclusions. MSan dependencies,
-including all three selected libevent component archives, and instrumented C++
-controls pass. Its six auxiliary executables and 16 kernel cases also pass;
-the full functional matrix is still running. The first transport independently
-passes all 459 original functional cases without skips; the second remains
-incomplete. Its retained `msan-original-functional-progress/` binds completed
-group logs, case inventories and source/build inputs, with the remaining 459 rows
-explicitly unverified. No completed test or build is replayed when exporting
-these checkpoints. Case-level unit
-checkpoints are retained under
+The complete original owned MSan baseline passes independent verification:
+739 original unit cases across 149 suites, six auxiliary executables, 16 kernel
+cases and all 459 functional cases in each transport, with zero failures, skips
+or unverified applicable cases. Qt is configuration-disabled by the original
+recipe. MSan dependencies, including all three selected libevent component
+archives, and instrumented C++ controls pass. The immutable
+`msan-original-complete-checkpoint/` checks actual outputs and unchanged
+source/build inputs without replaying tests or compilation. Earlier partial
+functional reports remain retained with their original scope. This complete
+owned checkpoint does not establish the separate full inherited entrypoint or
+PoCX sanitizer execution. Case-level unit checkpoints are retained under
 `artifacts/ci-parity-20261010/{tsan,msan}-original-unit-checkpoint/`.
 Their revalidation checks recorded source/build inputs and retained execution
 artifacts without replaying tests. Unit-only reports retain their original scope;
-the separate complete ASan/TSan checkpoints establish their applicable original
-profiles. PoCX sanitizer execution is not established by original-only evidence.
+the separate complete ASan/TSan/MSan checkpoints establish their applicable
+original owned profiles. PoCX sanitizer execution is not established by
+original-only evidence.
 Auxiliary/kernel case reports are retained in the corresponding
 `{tsan,msan}-original-aux-kernel-checkpoint/` directories.
 Controls are prerequisite checks and never count as passing framework cases.
