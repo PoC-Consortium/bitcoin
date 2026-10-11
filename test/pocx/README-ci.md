@@ -1151,3 +1151,27 @@ standard skips remain required in enabled profiles. Evidence is under
 `artifacts/ci-parity-20261010/ipc-functional-source-refresh/` with separate
 `owned-optional`, `owned-standard` and `nowallet` checkpoints. These focused
 updates do not establish other platforms, sanitizers or full inherited entrypoints.
+
+The pending native repairs have a combined, unapplied staging patch under
+`artifacts/ci-parity-20261010/final-native-repair-batch-proposal-v2/`.
+Its fourteen files combine quality caching and independent-vector guards,
+verification-progress estimation, required native includes and the exact i686
+header-size assertion. The source reviews preserve the committed pruning and
+Python3.10 IPC repairs, original inventories, assertions and historical Rust
+fixture oracle. Read-only source drift and Windows recipe integrity checks
+passed on 2026-10-11. The initial failed combined review is retained separately;
+current dependency references were repaired without changing historical results.
+These checks establish staging integrity only. The queued private quality,
+IWYU and i686 compile gates and final-source CI execution remain required.
+
+The independently verified dependency-impact inventory is under
+`artifacts/ci-parity-20261010/final-native-repair-dependency-impact-v2/`.
+It verifies retained dependency files and input hashes for every recorded Clang
+analysis variant. All593 original translation units retain identical dependency
+bytes after resolving only ENABLE_POCX branches and preserving every other
+directive verbatim. The combined native proposal affects344 of631 translation
+units;287 retain identical project dependencies. These are dependency findings,
+not current analysis or framework passes. Before reuse, the final configuration,
+compiler-command variants and generated headers must also match. Affected objects
+must be removed only from private writable build overlays, regardless of mtimes.
+No original baseline, compiler or analysis invocation was replayed for this audit.
