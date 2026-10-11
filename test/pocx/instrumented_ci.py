@@ -216,7 +216,8 @@ def execute(build, kind, directory, output):
     for key, expected in required_options(kind, directory).items():
         actual = cache.get(key)
         if key in ('CMAKE_C_COMPILER', 'CMAKE_CXX_COMPILER'):
-            matches = actual and Path(actual).resolve() == Path(toolchain[expected]['path']).resolve()
+            compiler = shutil.which(actual or '')
+            matches = compiler and Path(compiler).resolve() == Path(toolchain[expected]['path']).resolve()
         else:
             matches = actual == expected
         if not matches:

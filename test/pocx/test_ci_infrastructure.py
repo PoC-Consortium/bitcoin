@@ -303,7 +303,7 @@ class CompilerCacheIdentity(unittest.TestCase):
             guard.start()
             self.addCleanup(guard.stop)
 
-    def validate(self, profile, c_value, cxx_value):
+    def write_cache(self, profile, c_value, cxx_value):
         dependencies = self.directory / 'instrumented' if profile.endswith(('-tsan', '-msan')) else None
         if dependencies is not None:
             dependencies.mkdir(exist_ok=True)
@@ -317,6 +317,10 @@ class CompilerCacheIdentity(unittest.TestCase):
         text += f'CMAKE_C_COMPILER:UNINITIALIZED={c_value}\n'
         text += f'CMAKE_CXX_COMPILER:UNINITIALIZED={cxx_value}\n'
         (self.directory / 'CMakeCache.txt').write_text(text)
+        return dependencies
+
+    def validate(self, profile, c_value, cxx_value):
+        dependencies = self.write_cache(profile, c_value, cxx_value)
         return ci.validate_build(self.directory, profile, dependencies)
 
     def test_bare_names_after_reconfiguration_keep_same_compiler(self):
@@ -332,14 +336,44 @@ class CompilerCacheIdentity(unittest.TestCase):
     def test_wrong_c_or_cxx_compiler_is_rejected(self):
         for profile in ('pocx-asan', 'pocx-tsan', 'pocx-msan'):
             for c, cxx in [('wrong-compiler', 'clang++-22'), ('clang-22', 'wrong-compiler')]:
-                with self.subTest(profile=profile, c=c, cxx=cxx), self.assertRaisesRegex(ValueError, 'compiler'):
+                with self.subTest(profile=profile, c=c, cxx=cxx), self.assertRaisesRegex(ValueError, 'compiler|COMPILER'):
                     self.validate(profile, c, cxx)
 
     def test_missing_c_or_cxx_compiler_is_rejected(self):
         for profile in ('pocx-asan', 'pocx-tsan', 'pocx-msan'):
             for c, cxx in [('missing-compiler', 'clang++-22'), ('clang-22', 'missing-compiler')]:
-                with self.subTest(profile=profile, c=c, cxx=cxx), self.assertRaisesRegex(ValueError, 'compiler'):
+                with self.subTest(profile=profile, c=c, cxx=cxx), self.assertRaisesRegex(ValueError, 'compiler|COMPILER'):
                     self.validate(profile, c, cxx)
+
+
+class RuntimeCompilerCacheIdentity(CompilerCacheIdentity):
+    """Exercise each sanitizer child after the entrypoint's cache validation."""
+    def validate(self, profile, c_value, cxx_value):
+        dependencies = self.write_cache(profile, c_value, cxx_value)
+
+        class ReachedCompileCommandChecks(Exception):
+            pass
+
+        # Stop after real cache validation, before symbol inspection or canary
+        # compilation. Invalid compilers must fail before reaching this point.
+        if profile.endswith('-asan'):
+            with patch.object(sanitizer_ci.subprocess, 'check_output', return_value=''), \
+                    patch.object(sanitizer_ci, 'verify_compile_commands', side_effect=ReachedCompileCommandChecks):
+                try:
+                    sanitizer_ci.instrumentation(self.directory, sanitizer_ci.tools(), self.directory / 'symbols')
+                except ReachedCompileCommandChecks:
+                    return
+        else:
+            kind = profile.rsplit('-', 1)[1]
+            with patch.object(instrumented_ci.resource, 'getrlimit', return_value=(524288, -1)), \
+                    patch.object(instrumented_ci, 'verify_dependencies', return_value={}), \
+                    patch.object(instrumented_ci.subprocess, 'check_output', return_value=''), \
+                    patch.object(instrumented_ci, 'compile_commands', side_effect=ReachedCompileCommandChecks):
+                try:
+                    instrumented_ci.execute(self.directory, kind, dependencies, self.directory / 'proof')
+                except ReachedCompileCommandChecks:
+                    return
+        self.fail('Runtime validator did not reach the required compile-command checks')
 
 
 

@@ -139,7 +139,8 @@ def instrumentation(build, toolchain, output):
     for key, value in expected.items():
         actual = options.get(key)
         if key in ('CMAKE_C_COMPILER', 'CMAKE_CXX_COMPILER'):
-            if not actual or Path(actual).resolve() != Path(toolchain[value]['path']).resolve():
+            compiler = shutil.which(actual or '')
+            if not compiler or Path(compiler).resolve() != Path(toolchain[value]['path']).resolve():
                 raise ValueError('Wrong sanitizer compiler: ' + key)
         elif actual != value:
             raise ValueError('Wrong sanitizer build setting: ' + key)
