@@ -441,6 +441,65 @@ class InheritedTest(unittest.TestCase):
             path.write_text('class Probe:\n def skip_test_if_missing_module(self):\n  if condition:\n   self.skip_if_no_wallet()\n')
             self.assertIsNone(functional.disabled_reason(path.name, {'ENABLE_WALLET':'OFF'}, functional.inherited_options({}), root=root))
 
+    def test_cli_opt_outs_require_cli_profile_and_explicit_executed_source(self):
+        cli = functional.inherited_options({'TEST_RUNNER_EXTRA': '--usecli --previous-releases'})
+        rpc = functional.inherited_options({'TEST_RUNNER_EXTRA': '--previous-releases'})
+        for native, names in [(False, ['feature_dbcrash.py', 'mining_getblocktemplate_longpoll.py',
+                                       'interface_rest.py', 'interface_rpc.py', 'rpc_rawtransaction.py']),
+                              (True, ['mining_getblocktemplate_longpoll.py', 'interface_rest.py', 'wallet_migration.py'])]:
+            for name in names:
+                with self.subTest(native=native, name=name):
+                    state, reason = functional.classify(name, 'Skipped', {}, cli, native=native)
+                    self.assertEqual(state, 'configuration-disabled')
+                    self.assertIn('supports_cli=False', reason)
+                    self.assertIn(name, reason)
+                    self.assertEqual(functional.classify(name, 'Skipped', {}, rpc, native=native)[0], 'unverified')
+                    self.assertEqual(functional.classify(name, 'Failed', {}, cli, native=native)[0], 'failed')
+        self.assertEqual(functional.classify('p2p_ping.py', 'Skipped', {}, cli)[0], 'unverified')
+
+    def test_cli_guard_does_not_execute_modules_or_accept_ambiguous_opt_outs(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            path = root / 'test/functional/feature_probe.py'
+            path.parent.mkdir(parents=True)
+            profile = functional.inherited_options({'TEST_RUNNER_EXTRA': '--usecli'})
+            prefix = 'raise RuntimeError("do not import test modules")\n'
+            suffix = '\nif __name__ == "__main__":\n Probe(__file__).main()\n'
+            for body in ['self.supports_cli = False',
+                         'if condition:\n   self.supports_cli = False',
+                         'self.supports_cli = False\n  self.supports_cli = True',
+                         'return\n  self.supports_cli = False',
+                         'if condition:\n   return\n  self.supports_cli = False',
+                         'self.supports_cli = 0']:
+                with self.subTest(body=body):
+                    path.write_text(prefix + 'class Probe(BitcoinTestFramework):\n def set_test_params(self):\n  ' + body + suffix)
+                    state, _ = functional.classify(path.name, 'Skipped', {}, profile, root=root)
+                    self.assertEqual(state, 'configuration-disabled' if body == 'self.supports_cli = False' else 'unverified')
+            for source in [
+                    'class Helper(BitcoinTestFramework):\n def set_test_params(self):\n  self.supports_cli = False\nclass Probe(BitcoinTestFramework):\n pass',
+                    'class Probe(Other, BitcoinTestFramework):\n def set_test_params(self):\n  self.supports_cli = False',
+                    'class Probe(Parent):\n def set_test_params(self):\n  self.supports_cli = False',
+                    'class Probe(BitcoinTestFramework):\n def set_test_params(self):\n  self.supports_cli = False\n def run_test(self):\n  self.supports_cli = True']:
+                with self.subTest(source=source):
+                    path.write_text(prefix + source + suffix)
+                    self.assertEqual(functional.classify(path.name, 'Skipped', {}, profile, root=root)[0], 'unverified')
+
+    def test_cli_mixins_must_resolve_without_overriding_runtime_setup(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            path = root / 'test/functional/feature_probe.py'
+            path.parent.mkdir(parents=True)
+            profile = functional.inherited_options({'TEST_RUNNER_EXTRA': '--usecli'})
+            for body in ['def helper(self):\n  pass', 'def setup(self):\n  pass',
+                         'def __init__(self):\n  pass', 'def set_test_params(self):\n  pass',
+                         'def helper(self):\n  self.supports_cli = True']:
+                with self.subTest(body=body):
+                    path.write_text('class Mixin:\n ' + body + '\nclass Probe(Mixin, BitcoinTestFramework):\n'
+                                    ' def set_test_params(self):\n  self.supports_cli = False\n'
+                                    'if __name__ == "__main__":\n Probe(__file__).main()\n')
+                    state, _ = functional.classify(path.name, 'Skipped', {}, profile, root=root)
+                    self.assertEqual(state, 'configuration-disabled' if body == 'def helper(self):\n  pass' else 'unverified')
+
     def test_native_inherited_wallet_guards_require_disabled_wallet(self):
         profile = functional.inherited_options({})
         for name, origin in [

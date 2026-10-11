@@ -19,7 +19,7 @@
     "ci/test/03_test_script.sh": "cfd9e9583398dee9527a2fb7ea099104a8cab53f7bf5ccdceb3f4e84425ebb8b",
     "test/pocx/ci/inherited_test_script.sh": "25b6f367bed45e7c7d040ae2a82bba21b278790d83c536ade4d7b7a835273930",
     "test/pocx/inherited_ci.py": "9044f35b052ac10391e5b854efd2851bf162ee55a901c270b17e006e0fbd8744",
-    "test/pocx/inherited_functional.py": "1a6b54bf4c50a2188d6834e269cab43aabc012625e0cfaf5d7d2e8d89ee88b85",
+    "test/pocx/inherited_functional.py": "6fc43cec5640b33de7e34d236a4ded1276720d70171fb5bf899d96f0297802c7",
     "test/pocx/inherited_tests.py": "b1fb1313f9c510735ecbf42cf7d092201031d8516051e463351b233125af3a74",
     "test/pocx/revision_ci.py": "4ae8bac50834eb3d9bb3a883b6d8897c51730f6989e981bcd589c14fbd7e0998",
     "test/pocx/test_windows_cross.py": "fe09e5b453625b7c849f4c9177392f9b7c72931f530a21e353101d6b36ebbe57",
@@ -75,5 +75,10 @@
     "selector": "test/pocx/framework/bcc_headers.py",
     "scope": "Only verified BCC0.18/Linux6.12/x86_64. Original assertions and BPF text retained; compiler warnings remain enabled. Original source and binary builds immutable, private verified compatibility imports only.",
     "runtime_status": "Compiler canary passed with identical BPF instructions; affected domain reruns remain required."
+  },
+  "inherited_cli_guard_review": {
+    "previous_sha256": "1a6b54bf4c50a2188d6834e269cab43aabc012625e0cfaf5d7d2e8d89ee88b85",
+    "sha256": "6fc43cec5640b33de7e34d236a4ded1276720d70171fb5bf899d96f0297802c7",
+    "review": "Record an original or separate native functional CLI opt-out only when --usecli is requested and the statically identified executed test class has one unconditional literal self.supports_cli=False assignment. Unused helper classes, conditional values, overwrites, inherited or ambiguous classes, and non-CLI profiles cannot justify this exclusion. Failed cases and missing enabled prerequisites remain red or unverified. Original test assertions, selections and commands are unchanged; these cases remain required in the already retained non-CLI profiles. Frozen running jobs remain unchanged; their raw reports will be retained independently. An explicitly declared opt-out in a class with plain mixins is accepted only after statically resolving each mixin and rejecting inherited/decorated classes or runtime setup/dispatch/CLI attribute overrides."
   }
 }

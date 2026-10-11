@@ -7,8 +7,8 @@
     ".github/workflows/ci.yml": "0faba4651593cda133121fbfc2d31edc32084be95872812dac72dbf1e20bb3dd",
     "test/pocx/build_configuration.py": "c9df217b325f1e3dfd8cd14e002f542bd78aa084b410e8f3b18d18a261a36456",
     "test/pocx/ci_evidence.py": "8f0c10ed4d1f455a940e8787c655b5fc20c35622d7ff1bbb744f79afb2dc1243",
-    "test/pocx/inherited_ci.py": "f4159b0177030cd881e55a9ce876e864f694cf5bdce4cda6d9fdf96af59cd42f",
-    "test/pocx/inherited_functional.py": "1a6b54bf4c50a2188d6834e269cab43aabc012625e0cfaf5d7d2e8d89ee88b85",
+    "test/pocx/inherited_ci.py": "9044f35b052ac10391e5b854efd2851bf162ee55a901c270b17e006e0fbd8744",
+    "test/pocx/inherited_functional.py": "6fc43cec5640b33de7e34d236a4ded1276720d70171fb5bf899d96f0297802c7",
     "test/pocx/inherited_tests.py": "b1fb1313f9c510735ecbf42cf7d092201031d8516051e463351b233125af3a74",
     "test/pocx/process_tree.py": "12639a920fa4a656eec4f14ea02c4aaf1fe997cfc18c7df2566e82a1d3ab3f29",
     "test/pocx/test_process_tree.py": "c2b1bc492945a007e023614d6e2529e231a3e94cdf41696ae4588bb6d2a9a64c",
@@ -64,5 +64,20 @@
     }
   },
   "original_failure_reporting_review": "Retain parsed original functional case results before rejecting a failed aggregate/exit, and explicitly record missing original case/transport evidence as unverified. Counts and CSV remain available on failure. Fail-fast original-before-native gating, assertions, selections and successful execution commands are unchanged. Infrastructure fixtures cover actual failed aggregates and abnormal exits; this is not new target-platform runtime evidence.",
-  "inherited_feature_guard_review": "Recognize unconditional feature guards inherited by a single test class through an unambiguous single-base chain in sibling source modules, without importing or executing those modules. Record the actual declaration source; child overrides, conditional guards, ambiguous classes/bases and cycles remain unverified. Missing enabled prerequisites and failed cases remain failures or unverified. Three existing native wallet-dependent scripts inherit their original skip guard; no test is newly disabled. Existing run commands, original-first ordering, selections, assertions and builds are unchanged."
+  "inherited_feature_guard_review": "Recognize unconditional feature guards inherited by a single test class through an unambiguous single-base chain in sibling source modules, without importing or executing those modules. Record the actual declaration source; child overrides, conditional guards, ambiguous classes/bases and cycles remain unverified. Missing enabled prerequisites and failed cases remain failures or unverified. Three existing native wallet-dependent scripts inherit their original skip guard; no test is newly disabled. Existing run commands, original-first ordering, selections, assertions and builds are unchanged.",
+  "inherited_cli_guard_review": {
+    "previous_sha256": "1a6b54bf4c50a2188d6834e269cab43aabc012625e0cfaf5d7d2e8d89ee88b85",
+    "sha256": "6fc43cec5640b33de7e34d236a4ded1276720d70171fb5bf899d96f0297802c7",
+    "review": "Record an original or separate native functional CLI opt-out only when --usecli is requested and the statically identified executed test class has one unconditional literal self.supports_cli=False assignment. Unused helper classes, conditional values, overwrites, inherited or ambiguous classes, and non-CLI profiles cannot justify this exclusion. Failed cases and missing enabled prerequisites remain red or unverified. Original test assertions, selections and commands are unchanged; these cases remain required in the already retained non-CLI profiles. Frozen running jobs remain unchanged; their raw reports will be retained independently. An explicitly declared opt-out in a class with plain mixins is accepted only after statically resolving each mixin and rejecting inherited/decorated classes or runtime setup/dispatch/CLI attribute overrides."
+  },
+  "cli_consumer_dependency_review": {
+    "scope": "Synchronize the exact reviewed dependency hashes. No target-platform runtime execution is inferred. Frozen active jobs remain unchanged.",
+    "updates": {
+      "test/pocx/inherited_ci.py": {
+        "previous_sha256": "f4159b0177030cd881e55a9ce876e864f694cf5bdce4cda6d9fdf96af59cd42f",
+        "sha256": "9044f35b052ac10391e5b854efd2851bf162ee55a901c270b17e006e0fbd8744",
+        "review": "a0fb62aaed: add the already reviewed old-BCC header compatibility helper to the inherited source guard; original recipes unchanged."
+      }
+    }
+  }
 }

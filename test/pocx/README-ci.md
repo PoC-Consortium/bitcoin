@@ -57,6 +57,17 @@ This verifies the randomized framework condition; the complete inherited
 sanitizer build/install entrypoints and remaining framework conditions still
 require their own proof.
 
+Inherited functional profiles using `--usecli` now distinguish source-defined
+CLI incompatibilities from unexpected skips. A skipped case is configuration
+inactive only when its executed test class explicitly sets `supports_cli=False`
+unconditionally. The report identifies the declaring source. These cases remain
+required in non-CLI profiles; failures and missing enabled prerequisites still
+reject the profile. Original assertions, selections and execution commands are
+unchanged. Regression fixtures cover conditional assignments, overwritten values,
+unused helpers and ambiguous classes. Windows consumer review pins also include
+the previously reviewed Boost runtime verification and old-BCC dependency guard.
+This reporting correction does not establish target-platform execution evidence.
+
 The owned Ubuntu24/GCC13 prerequisite-complete optional functional pair is now
 locally verified with both transports and zero skips: Bitcoin passed 918 rows
 (459 per transport), and PoCX passed 590 rows (295 per transport). The PoCX rows

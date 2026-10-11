@@ -205,6 +205,86 @@ def class_guards(path, cls, seen=frozenset(), *, inherited=True):
     return class_guards(parent, classes[0], seen) if len(classes) == 1 else {}
 
 
+def cli_bases(module, cls, root, native):
+    """Allow resolved plain mixins that cannot replace CLI setup or dispatch."""
+    if (cls.decorator_list or cls.keywords or not all(isinstance(base, ast.Name) for base in cls.bases) or
+            sum(base.id == 'BitcoinTestFramework' for base in cls.bases) != 1):
+        return False
+    for base in cls.bases:
+        if base.id == 'BitcoinTestFramework':
+            continue
+        declarations = [node for node in module.body if isinstance(node, ast.ClassDef) and node.name == base.id]
+        if not declarations:
+            imports = [(node, alias) for node in module.body if isinstance(node, ast.ImportFrom)
+                       for alias in node.names if (alias.asname or alias.name) == base.id]
+            if len(imports) != 1:
+                return False
+            node, alias = imports[0]
+            parts = (node.module or '').split('.')
+            if node.level or len(parts) != 2 or parts[0] != 'test_framework' or not parts[1].isidentifier():
+                return False
+            parent = root / ('test/pocx/framework' if native else 'test/functional/test_framework') / (parts[1] + '.py')
+            if not parent.is_file():
+                return False
+            declarations = [node for node in ast.parse(parent.read_text()).body
+                            if isinstance(node, ast.ClassDef) and node.name == alias.name]
+        if (len(declarations) != 1 or declarations[0].bases or declarations[0].decorator_list or
+                declarations[0].keywords):
+            return False
+        for node in ast.walk(declarations[0]):
+            if (isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and
+                    (node.name.startswith('__') or node.name in ('set_test_params', 'main', 'setup')) or
+                    isinstance(node, ast.Attribute) and node.attr == 'supports_cli'):
+                return False
+    return True
+
+
+def cli_unsupported(path, *, root=ROOT, native=False):
+    """Recognize the executed class's explicit, unconditional CLI opt-out.
+
+    Do not import tests or infer an opt-out from an unused helper, a conditional
+    assignment, an inherited method, or a value subsequently overwritten.
+    """
+    module = ast.parse(path.read_text())
+    entries = [node for node in module.body if isinstance(node, ast.If) and
+               isinstance(node.test, ast.Compare) and
+               isinstance(node.test.left, ast.Name) and node.test.left.id == '__name__' and
+               len(node.test.ops) == len(node.test.comparators) == 1 and
+               isinstance(node.test.ops[0], ast.Eq) and
+               isinstance(node.test.comparators[0], ast.Constant) and
+               node.test.comparators[0].value == '__main__']
+    if len(entries) != 1 or len(entries[0].body) != 1 or entries[0].orelse:
+        return False
+    statement = entries[0].body[0]
+    call = statement.value if isinstance(statement, ast.Expr) else None
+    if not (isinstance(call, ast.Call) and not call.args and not call.keywords and
+            isinstance(call.func, ast.Attribute) and call.func.attr == 'main' and
+            isinstance(call.func.value, ast.Call) and isinstance(call.func.value.func, ast.Name)):
+        return False
+    classes = [node for node in module.body if isinstance(node, ast.ClassDef) and
+               node.name == call.func.value.func.id]
+    if len(classes) != 1:
+        return False
+    cls = classes[0]
+    if not cli_bases(module, cls, root, native):
+        return False
+    methods = [node for node in cls.body if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and
+               node.name == 'set_test_params']
+    if len(methods) != 1 or not isinstance(methods[0], ast.FunctionDef) or methods[0].decorator_list:
+        return False
+    writes = [node for node in ast.walk(cls) if isinstance(node, ast.Attribute) and
+              isinstance(node.value, ast.Name) and node.value.id == 'self' and
+              node.attr == 'supports_cli' and isinstance(node.ctx, (ast.Store, ast.Del))]
+    for statement in methods[0].body:
+        if any(isinstance(node, (ast.Return, ast.Raise)) for node in ast.walk(statement)):
+            return False
+        if (isinstance(statement, ast.Assign) and len(statement.targets) == 1 and
+                len(writes) == 1 and statement.targets[0] is writes[0] and
+                isinstance(statement.value, ast.Constant) and statement.value.value is False):
+            return True
+    return False
+
+
 def disabled_reason(name, options, profile, *, native=False, root=ROOT):
     if name in PREVIOUS and not profile['previous_releases']:
         return 'Previous-release execution explicitly disabled by this profile; required in the optional profile'
@@ -215,6 +295,8 @@ def disabled_reason(name, options, profile, *, native=False, root=ROOT):
         path = root / 'test/functional' / name
     if not path.is_file():
         raise ValueError('Missing reviewed functional source: ' + name)
+    if profile['use_cli'] and cli_unsupported(path, root=root, native=native):
+        return '--usecli requested; explicit supports_cli=False in ' + str(path.relative_to(root))
     guards = {}
     classes = [node for node in ast.parse(path.read_text()).body if isinstance(node, ast.ClassDef)]
     for cls in classes:
