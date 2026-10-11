@@ -19,8 +19,35 @@ failures, exclusions and inactive rows retain their statuses. Original Bitcoin
 uses its separate support library and its baselines are preserved. Metadata guard
 checks are under
 `artifacts/ci-parity-20261010/shared-fixture-source-freshness-guard-check-v2/`.
-Functional case/helper provenance and current generated build inputs still need
-the remaining source audit before the full matrix can be declared current.
+Current generated build inputs still need comparison before retained native
+analysis can represent the final source and configuration.
+
+The functional source audit now binds each retained pass to its own raw
+execution report, including composite reports with later IPC/pruning repairs.
+It verifies the staged case, shared helpers and data hashes independently; a
+newer composite snapshot cannot make older case executions current. Eleven raw
+reports were reconciled without running a test or compiler. Two helper changes
+only make existing imports explicit: self-alias imports and redundant public
+re-exports from the preceding wildcard import. AST comparison and unchanged
+upstream module hashes establish those bindings without a full functional replay.
+Changes to bindings, assertions or custom wildcard exports are rejected by the
+metadata regression checks.
+
+This preserves 2,016 source-current case/transport rows across five recorded
+conditions. Another 94 historical pass rows require targeted refresh: 36 in the
+owned optional profile, 32 in the owned standard profile and 26 in inherited
+no-wallet. Existing benchmark-fixture and pruning qualifications remain separate.
+The current functional report therefore retains 550/526/356 passes in those
+three profiles, two focused ASan pruning passes, and 582 previous-release passes.
+Previous-release reorg still has two recorded failures; its private repair proof
+has not yet been promoted to the production source. Source-current case inputs
+alone do not establish binary, runner, full-entrypoint or target-platform parity.
+Evidence is under
+`artifacts/ci-parity-20261010/native-functional-case-source-audit-v3/` and
+`functional-case-input-freshness-guard-check/` in the same artifact directory.
+Original Bitcoin evidence and all failures, exclusions and inactive rows remain
+unchanged. Pending native repairs should be integrated together before the final
+source/configuration rebuild, to avoid successive full refreshes.
 
 The previous-release PoCX unit run exposed two SIMD test fixtures whose full
 nonce buffers exceeded the inherited 512 KiB stack. The separate PoCX test file
@@ -50,6 +77,20 @@ artifact directory. No Windows target tests were executed. These native packages
 also contain the older SIMD fixture object and require a targeted refresh before
 they represent the current source. Their original cross-build baselines remain
 valid; actual Windows runtime remains unverified.
+
+The UCRT installer containing the refreshed SIMD unit object was regenerated
+without a C++ compilation. Its local exporter then failed because the toolchain
+sets its strip program outside `CMakeCache.txt`. Independent recovery uses the
+actual generated deploy command, verifies the unchanged build/source snapshot
+and original package, and reproduces the stripped unit payload byte for byte.
+The PE timestamp is reproduced through `SOURCE_DATE_EPOCH`; no payload bytes are
+edited to force a match. Both the initial exporter failure and a diagnostic
+comparison affected by strip timestamps remain retained. Recovery evidence is
+under
+`artifacts/ci-parity-20261010/windows-simd-freshness-v2/ucrt/deploy-recovery-checkpoint-v2/`.
+Neither the deploy target nor the Bitcoin baseline was replayed. This remains
+an artifact checkpoint with the older shared fixture, and establishes zero
+Windows target test passes. Current-source build/deploy coverage stays unverified.
 
 The missing inherited original ASan functional mode retained 451 first-transport
 passes and seven explicit inactive entries. Its sole failure was the unchanged
@@ -114,7 +155,9 @@ The current-revision Clang18/mold reproduction independently passed original
 CTest (739 unit, nine Qt, 16 kernel and six auxiliary), then hit the same local
 WalletMigration working-directory failure in its first functional transport.
 Its 451 passes and seven inactive rows remain retained; the missing second
-transport and matching native recipe have not run. Neither reproduction claims
+transport subsequently passed independent reconciliation. The matching frozen
+native recipe is compiling with one heavy worker and its original baseline is
+not being repeated. Neither reproduction claims
 a successful historical pull-request range or full entrypoint.
 
 Some inherited unit/kernel checkpoints initially stripped `BOOST_TEST_RANDOM=1`.
