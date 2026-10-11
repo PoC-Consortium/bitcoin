@@ -68,6 +68,38 @@ an older pass does not validate the changed source. Original baselines need no r
 Queued profiles retain their pinned inputs and need source freshness checked
 after execution. The repaired previous-release profile already uses the new file.
 
+The owned GCC13 unit SIMD refresh compiled successfully, but its local driver
+stopped because CMake also refreshed the unchanged client-version source. A
+separate recovery verifies that exactly those two translation units were compiled
+and only the unit executable and client-version archive changed. It reuses the
+compiled binary and executes only the two unreached nonce-comparison cases.
+Independent inspection confirms ten AVX2 and six SSE2 assertions, an 8 MiB stack,
+no Boost randomization and no C++ compilation or Bitcoin baseline replay during
+recovery. The malformed original two-case filter and diagnostic recovery attempts
+selected no cases; those setup failures remain retained. The corrected Boost
+selection uses one suite component with two comma-separated leaf names, and the
+numeric report must contain both cases with their full assertion counts.
+Evidence is under
+`artifacts/ci-parity-20261010/owned-simd-freshness/unit/post-build-recovery-v4/checkpoint/`.
+This establishes two case executions only. Its unchanged shared test support
+still uses the older fixture, so full current-source unit coverage stays unverified.
+
+The native inherited i686 recipe now has an actual build failure before any
+framework tests started. Its `CompressedHeader` layout occupies 260 bytes on
+this four-byte-aligned uint64 ABI, while the native-only assertion requires the
+264-byte layout used on eight-byte-aligned ABIs. The original Bitcoin baseline
+remains passing and unchanged. Independent failure evidence is under
+`artifacts/ci-parity-20261010/native-i686-compressed-header-build-failure-checkpoint/`.
+A private proposed repair retains an exact size assertion for both supported
+alignments and keeps the maximum per-header memory size at 264 bytes. It changes
+no fields, serialization or runtime logic, and its Bitcoin/OFF source projection
+is identical. The single failed translation unit is queued for compilation with
+the retained i686 toolchain and warning policy under
+`artifacts/ci-parity-20261010/native-i686-header-layout-canary/`.
+The proposal is not yet production code, and a full repaired i686 recipe remains
+required. Unstarted framework tests remain unverified rather than being labeled
+as test-case failures.
+
 The original-first Windows UCRT cross-build/deploy pair and the native MSVCRT
 build/deploy recovery passed independent inspection of their paired PE payloads
 and generated installers. Evidence is under
