@@ -4,10 +4,15 @@
 """Checks for the separately delivered combined CI entry points."""
 import json
 import configparser
+import os
 from pathlib import Path
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
+import ci
+import instrumented_ci
+import sanitizer_ci
 from common import ROOT
 from ci_evidence import artifact_paths, build_snapshot, require_unchanged, source_snapshot, verify_report, verify_steps
 
@@ -276,6 +281,66 @@ case "$CI_CONTAINER_CAP" in *--privileged*) ;; *) exit 23 ;; esac
         artifact.unlink()
         with self.assertRaisesRegex(ValueError, 'artifact missing or changed'):
             verify_report(root, report, output)
+
+
+class CompilerCacheIdentity(unittest.TestCase):
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temp.cleanup)
+        self.directory = Path(self.temp.name)
+        self.bin = self.directory / 'bin'
+        self.bin.mkdir()
+        for name in ('clang-22', 'clang++-22', 'wrong-compiler'):
+            p = self.bin / name
+            p.write_text('#!/bin/sh\nexit 99\n')
+            p.chmod(0o755)
+        self.environment = patch.dict(os.environ, PATH=str(self.bin))
+        self.environment.start()
+        self.addCleanup(self.environment.stop)
+        toolchain = {name: {'path': str(self.bin / name)} for name in ('clang-22', 'clang++-22')}
+        for module in (instrumented_ci, sanitizer_ci):
+            guard = patch.object(module, 'tools', return_value=toolchain)
+            guard.start()
+            self.addCleanup(guard.stop)
+
+    def validate(self, profile, c_value, cxx_value):
+        dependencies = self.directory / 'instrumented' if profile.endswith(('-tsan', '-msan')) else None
+        if dependencies is not None:
+            dependencies.mkdir(exist_ok=True)
+            (dependencies / 'preparation.json').write_text(json.dumps({'prefix': str(dependencies / 'prefix')}))
+        options = ci.options(profile, dependencies)
+        options['BUILD_KERNEL_TEST'] = 'ON'
+        options.setdefault('BUILD_GUI_TESTS', 'ON')
+        text = ''.join(f'{key}:STRING={value}\n' for key, value in options.items()
+                       if key not in ('CMAKE_C_COMPILER', 'CMAKE_CXX_COMPILER'))
+        text += f'CMAKE_HOME_DIRECTORY:INTERNAL={ci.ROOT}\n'
+        text += f'CMAKE_C_COMPILER:UNINITIALIZED={c_value}\n'
+        text += f'CMAKE_CXX_COMPILER:UNINITIALIZED={cxx_value}\n'
+        (self.directory / 'CMakeCache.txt').write_text(text)
+        return ci.validate_build(self.directory, profile, dependencies)
+
+    def test_bare_names_after_reconfiguration_keep_same_compiler(self):
+        for profile in ('pocx-asan', 'pocx-tsan', 'pocx-msan'):
+            with self.subTest(profile=profile):
+                self.validate(profile, 'clang-22', 'clang++-22')
+
+    def test_absolute_compilers_remain_valid(self):
+        for profile in ('pocx-asan', 'pocx-tsan', 'pocx-msan'):
+            with self.subTest(profile=profile):
+                self.validate(profile, str(self.bin / 'clang-22'), str(self.bin / 'clang++-22'))
+
+    def test_wrong_c_or_cxx_compiler_is_rejected(self):
+        for profile in ('pocx-asan', 'pocx-tsan', 'pocx-msan'):
+            for c, cxx in [('wrong-compiler', 'clang++-22'), ('clang-22', 'wrong-compiler')]:
+                with self.subTest(profile=profile, c=c, cxx=cxx), self.assertRaisesRegex(ValueError, 'compiler'):
+                    self.validate(profile, c, cxx)
+
+    def test_missing_c_or_cxx_compiler_is_rejected(self):
+        for profile in ('pocx-asan', 'pocx-tsan', 'pocx-msan'):
+            for c, cxx in [('missing-compiler', 'clang++-22'), ('clang-22', 'missing-compiler')]:
+                with self.subTest(profile=profile, c=c, cxx=cxx), self.assertRaisesRegex(ValueError, 'compiler'):
+                    self.validate(profile, c, cxx)
+
 
 
 if __name__ == '__main__':

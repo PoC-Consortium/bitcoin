@@ -144,13 +144,15 @@ def validate_build(build, profile, instrumented_directory=None):
         from sanitizer_ci import tools
         toolchain = tools()
         for key in ('CMAKE_C_COMPILER', 'CMAKE_CXX_COMPILER'):
-            if not actual.get(key) or Path(actual[key]).resolve() != Path(toolchain[expected[key]]['path']).resolve():
+            compiler = shutil.which(actual.get(key, ''))
+            if not compiler or Path(compiler).resolve() != Path(toolchain[expected[key]]['path']).resolve():
                 raise ValueError('Wrong CI sanitizer compiler: ' + key)
     if profile.endswith(('-tsan', '-msan')):
         from instrumented_ci import tools
         toolchain = tools(profile.rsplit('-', 1)[1])
         for key in ('CMAKE_C_COMPILER', 'CMAKE_CXX_COMPILER'):
-            if not actual.get(key) or Path(actual[key]).resolve() != Path(toolchain[expected[key]]['path']).resolve():
+            compiler = shutil.which(actual.get(key, ''))
+            if not compiler or Path(compiler).resolve() != Path(toolchain[expected[key]]['path']).resolve():
                 raise ValueError('Wrong CI instrumented compiler: ' + key)
     return cache
 
