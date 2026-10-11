@@ -44,7 +44,7 @@ has not yet been promoted to the production source. Source-current case inputs
 alone do not establish binary, runner, full-entrypoint or target-platform parity.
 Evidence is under
 `artifacts/ci-parity-20261010/native-functional-case-source-audit-v3/` and
-`functional-case-input-freshness-guard-check/` in the same artifact directory.
+`functional-case-input-freshness-guard-check-v2/` in the same artifact directory.
 Original Bitcoin evidence and all failures, exclusions and inactive rows remain
 unchanged. Pending native repairs should be integrated together before the final
 source/configuration rebuild, to avoid successive full refreshes.
