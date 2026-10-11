@@ -19115,23 +19115,23 @@
   {
     "source": "test/functional/feature_pruning.py",
     "classification": "adapted",
-    "execution": "passed",
+    "execution": "unverified",
     "gates": [],
     "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
     "baseline_revision": "5de2720ca47b3a753081e5ce545113cd3b616018",
     "follow_up": "M2: scenario/case parity; M3: consensus gaps; M4: drift/CI",
     "baseline_sha256": "2a5e2e3326a7273949d1d4888a60733902c93df1d4e53a8c247eada8d259c55c",
     "upstream_sha256": "2a5e2e3326a7273949d1d4888a60733902c93df1d4e53a8c247eada8d259c55c",
-    "reason": "Preserve entire pruning scenario sequence and all original counts/limits/assertions:950k large block scripts,995/1000height cutoff,550MiB target,12stale-fork rounds,288block undo reorg,300block competing branch,220large extension, redownload/reorg back, manual height/timestamp boundaries and exact file existence, prune rescan errors, filter-index false positive on missing genesis data, undo-presence pruneheight invariance and invalid startup options. Native proofs/signatures replace PoW solving; all block intervals at least600seconds keep native base target at the regtest ceiling and equal work per block for original length-based forks. Receiving clocks advance to generated blocks; assert every native submission succeeds and exact new tip. Native genesis BIP158 collision is independently verified with original BIP158 hash helper; no runtime-learned expected values. No scenario excluded. Native15second timestamp-pruning window replaces Bitcoin7200seconds. Actual genesis output scripts are captured before pruning and independently establish the known BIP158 false positive. The 300block reorg and233block redownload retain all pruning-size/file/undo assertions; peer reconnects remove stale-header synchronization pinning. Both private runs passed (native-fixture-review-n8el1h1w); owned evidence remains required. Complete eight-job candidate exposed an async fixture race: node2 could miss some24block stale branches when advancing600seconds while native120second downloads were pending. Synchronize node1/node2 after every stale block, before advancing time or announcing node0's25block replacement. This restores the explicitly required stale-body storage/pruned-redownload precondition; all original counts,550MiB thresholds and rejection/assertion checks remain unchanged. Retained failed/interrupted candidate: artifacts/functional-green-20261009/complete-selection-matrix-final-candidate-interruption.json.",
+    "reason": "Preserve entire pruning scenario sequence and all original counts/limits/assertions:950k large block scripts,995/1000height cutoff,550MiB target,12stale-fork rounds,288block undo reorg,300block competing branch,220large extension, redownload/reorg back, manual height/timestamp boundaries and exact file existence, prune rescan errors, filter-index false positive on missing genesis data, undo-presence pruneheight invariance and invalid startup options. Native proofs/signatures replace PoW solving; all block intervals at least600seconds keep native base target at the regtest ceiling and equal work per block for original length-based forks. Receiving clocks advance to generated blocks; assert every native submission succeeds and exact new tip. Native genesis BIP158 collision is independently verified with original BIP158 hash helper; no runtime-learned expected values. No scenario excluded. Native15second timestamp-pruning window replaces Bitcoin7200seconds. Actual genesis output scripts are captured before pruning and independently establish the known BIP158 false positive. The 300block reorg and233block redownload retain all pruning-size/file/undo assertions; peer reconnects remove stale-header synchronization pinning. Both private runs passed (native-fixture-review-n8el1h1w); owned evidence remains required. Complete eight-job candidate exposed an async fixture race: node2 could miss some24block stale branches when advancing600seconds while native120second downloads were pending. Synchronize node1/node2 after every stale block, before advancing time or announcing node0's25block replacement. This restores the explicitly required stale-body storage/pruned-redownload precondition; all original counts,550MiB thresholds and rejection/assertion checks remain unchanged. Retained failed/interrupted candidate: artifacts/functional-green-20261009/complete-selection-matrix-final-candidate-interruption.json. Synchronize every connected recipient after each block before the next600second fixture clock step; ASan showed120second block-download expiration before peer validation. Keep original block counts, pruning sizes, fork/redownload/rescan scenarios and every existing assertion. Both transports independently passed with512KiB stack, timeout factor40, previous releases and network addresses; other configurations need only targeted pruning refreshes. No Bitcoin baseline replay required.",
     "replacement": "test/pocx/functional/feature_pruning.py",
-    "current_sha256": "7fa4de176e711e35ac940cb573aa54bef962c81bf426c24f815d43cd00d77953",
+    "current_sha256": "0a690e8a70e90270bed9549dc207e32c52289b3960184506d183631f6a0fbf7e",
     "covered_behavior": [
       "feature_pruning"
     ],
     "guarded_case_source": "test/functional/feature_pruning.py",
     "guarded_cases": [],
     "pocx_conditional_lines": [],
-    "profile_status": "Final complete matrix verified for the declared profile; explicit skips remain unverified feature combinations.",
+    "profile_status": "Current pruning source verified in ASan only; other required configurations need targeted refresh",
     "upstream_functional_cases": [
       {
         "id": "feature_pruning.py",
@@ -19143,27 +19143,27 @@
         "dynamic": false,
         "execution_by_profile": {
           "pocx": {
-            "status": "passed",
+            "status": "unverified",
             "observed_status": "passed",
             "evidence": "build-pocx-clean/pocx-results-fgwf4s35/results.json",
             "log": "build-pocx-clean/pocx-results-fgwf4s35/feature_pruning.py.log",
             "test": "feature_pruning.py",
             "global_transport": "v1",
             "skip_reason": null,
-            "recorded_tree_matches_current_sources": true,
-            "selected_script_matches_execution": true,
+            "recorded_tree_matches_current_sources": false,
+            "selected_script_matches_execution": false,
             "shared_inputs_match_execution": true
           },
           "pocx-v2": {
-            "status": "passed",
+            "status": "unverified",
             "observed_status": "passed",
             "evidence": "build-pocx-clean/pocx-results-fgwf4s35/results.json",
             "log": "build-pocx-clean/pocx-results-fgwf4s35/v2/feature_pruning.py.log",
             "test": "feature_pruning.py",
             "global_transport": "v2",
             "skip_reason": null,
-            "recorded_tree_matches_current_sources": true,
-            "selected_script_matches_execution": true,
+            "recorded_tree_matches_current_sources": false,
+            "selected_script_matches_execution": false,
             "shared_inputs_match_execution": true
           }
         }
@@ -19180,35 +19180,45 @@
       },
       "pocx": {
         "feature_pruning.py": {
-          "status": "passed",
+          "status": "unverified",
           "observed_status": "passed",
           "evidence": "build-pocx-clean/pocx-results-fgwf4s35/results.json",
           "log": "build-pocx-clean/pocx-results-fgwf4s35/feature_pruning.py.log",
           "test": "feature_pruning.py",
           "global_transport": "v1",
           "skip_reason": null,
-          "recorded_tree_matches_current_sources": true,
-          "selected_script_matches_execution": true,
+          "recorded_tree_matches_current_sources": false,
+          "selected_script_matches_execution": false,
           "shared_inputs_match_execution": true
         }
       },
       "pocx-v2": {
         "feature_pruning.py": {
-          "status": "passed",
+          "status": "unverified",
           "observed_status": "passed",
           "evidence": "build-pocx-clean/pocx-results-fgwf4s35/results.json",
           "log": "build-pocx-clean/pocx-results-fgwf4s35/v2/feature_pruning.py.log",
           "test": "feature_pruning.py",
           "global_transport": "v2",
           "skip_reason": null,
-          "recorded_tree_matches_current_sources": true,
-          "selected_script_matches_execution": true,
+          "recorded_tree_matches_current_sources": false,
+          "selected_script_matches_execution": false,
           "shared_inputs_match_execution": true
         }
       }
     },
     "latest_observed_outcome": "passed",
-    "current_input_outcome": "passed"
+    "current_input_outcome": "unverified",
+    "scoped_ci_repair_evidence": {
+      "profile": "pocx-asan",
+      "transports": [
+        "v1",
+        "v2"
+      ],
+      "status": "passed",
+      "proof": "artifacts/ci-parity-20261010/native-asan-pruning-peer-sync-checkpoint/results.json",
+      "proof_sha256": "080d48eaa44f8d0e2d239bc6c543b2e1a3bf7f08eeb0047c2021a0faf023689e"
+    }
   },
   {
     "source": "test/functional/feature_rbf.py",

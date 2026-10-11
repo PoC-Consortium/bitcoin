@@ -92,6 +92,8 @@ class PruneTest(BitcoinTestFramework):
             header = node.getblockheader(blocks[-1])
             assert_equal(header['base_target'], (1 << 58) // 120)
             assert_equal(header['time'], timestamp)
+            if sync_fun:
+                sync_fun()
         sync_fun() if sync_fun else self.sync_all()
         return blocks
 
@@ -114,12 +116,16 @@ class PruneTest(BitcoinTestFramework):
             self.import_deterministic_coinbase_privkeys()
 
     def create_big_chain(self):
+        # Native600second fixture steps exceed the120second download timer.
+        # Let every connected recipient finish each block before the next step;
+        # keep isolated fork generation and all original pruning sizes/counts.
         # Start by creating some coinbases we can spend later
-        self.generate(self.nodes[1], 200, sync_fun=lambda: self.sync_blocks(self.nodes[0:2]))
-        self.generate(self.nodes[0], 150, sync_fun=self.no_op)
+        self.generate(self.nodes[1], 200, sync_fun=lambda: self.sync_blocks(self.nodes[0:5], wait=0.05))
+        self.generate(self.nodes[0], 150, sync_fun=lambda: self.sync_blocks(self.nodes[0:5], wait=0.05))
 
         # Then mine enough full blocks to create more than 550MiB of data
-        mine_large_blocks(self.nodes[0], 645, self.nodes)
+        mine_large_blocks(self.nodes[0], 645, self.nodes,
+                          sync_fun=lambda: self.sync_blocks(self.nodes[0:5], wait=0.05))
 
         self.sync_blocks(self.nodes[0:5])
 
@@ -152,7 +158,8 @@ class PruneTest(BitcoinTestFramework):
         self.log.info(f"Though we're already using more than 550MiB, current usage: {calc_usage(self.prunedir)}")
         self.log.info("Mining 25 more blocks should cause the first block file to be pruned")
         # Pruning doesn't run until we're allocating another chunk, 20 full blocks past the height cutoff will ensure this
-        mine_large_blocks(self.nodes[0], 25, self.nodes)
+        mine_large_blocks(self.nodes[0], 25, self.nodes,
+                          sync_fun=lambda: self.sync_blocks(self.nodes[0:3], wait=0.05))
 
         # Wait for blk00000.dat to be pruned
         self.wait_until(lambda: not os.path.isfile(os.path.join(self.prunedir, "blk00000.dat")), timeout=30)
@@ -234,7 +241,8 @@ class PruneTest(BitcoinTestFramework):
 
         self.log.info("Mine 220 more large blocks so we have requisite history")
 
-        mine_large_blocks(self.nodes[0], 220, self.nodes)
+        mine_large_blocks(self.nodes[0], 220, self.nodes,
+                          sync_fun=lambda: self.sync_blocks(self.nodes[0:3], wait=0.05))
         self.sync_blocks(self.nodes[0:3], timeout=120)
 
         usage = calc_usage(self.prunedir)

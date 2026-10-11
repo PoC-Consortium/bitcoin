@@ -69,6 +69,22 @@ runs mount writable scratch and reuse the same compiled binaries. No original
 baseline, completed suite or full build was replayed. Other framework and full
 entrypoint conditions retain their own status.
 
+The separate PoCX pruning test now synchronizes connected recipients after each
+generated block before its next 600-second mock-clock step. Under ASan, a peer
+could still be validating the preceding block when that step expired its
+120-second download timer. This caused both transport executions to lose peers.
+The repair preserves the 950 kB blocks, pruning limits, all fork/reorg/redownload
+and rescan scenarios, isolated branches and every existing assertion. Both full
+pruning transport cases passed against the retained ASan binary with the same
+512 KiB stack, timeout factor40, previous releases and network-address fixtures.
+Independent source/build/assertion inspection is under
+`artifacts/ci-parity-20261010/native-asan-pruning-peer-sync-checkpoint/`.
+These are two verified case/transport rows; the other588 ASan functional rows
+are not established by this focused checkpoint. Other profiles need targeted
+pruning execution for the changed source, while unrelated cases and original
+Bitcoin baselines remain reusable. No C++ compilation or baseline replay was
+needed for this repair.
+
 The still-running owned PoCX ASan profile's frozen original execution retains
 its older SIMD stack-overflow failure. Its kernel executable also reached the
 unchanged 2,400 second deadline during its final
