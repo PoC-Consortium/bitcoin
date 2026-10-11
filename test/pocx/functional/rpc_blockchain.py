@@ -27,6 +27,7 @@ import http.client
 import os
 import subprocess
 
+from test_framework.authproxy import JSONRPCException
 from test_framework.blocktools import (
     POCX_MAX_FUTURE_BLOCK_TIME as MAX_FUTURE_BLOCK_TIME,
     TIME_GENESIS_BLOCK,
@@ -523,6 +524,11 @@ class BlockchainTest(BitcoinTestFramework):
             self.generatetoaddress(self.nodes[0], 1, self.wallet.get_address(), sync_fun=self.no_op)
         except (ConnectionError, http.client.BadStatusLine):
             pass  # The node already shut down before response
+        except JSONRPCException as error:
+            # Native generation reads the tip after submission. Shutdown may
+            # already have stopped HTTP admission before that final read.
+            assert_equal(error.error['code'], -342)
+            assert '503 Service Unavailable' in error.error['message']
         self.log.debug('Node should stop at this height...')
         self.nodes[0].wait_until_stopped()
         self.start_node(0)

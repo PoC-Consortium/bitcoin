@@ -8,6 +8,7 @@ from decimal import Decimal
 import re
 
 from test_framework.blocktools import COINBASE_MATURITY
+from test_framework.messages import tx_from_hex
 from test_framework.netutil import test_ipv6_local
 from test_framework.test_framework import BitcoinTestFramework
 from test_framework.util import (
@@ -267,12 +268,23 @@ class TestBitcoinCli(BitcoinTestFramework):
             w2.encryptwallet(password)
             payment_txids = [w1.sendtoaddress(w2.getnewaddress(), amounts[1]),
                              w1.sendtoaddress(w3.getnewaddress(), amounts[2])]
-            # Native reward destinations are P2WPKH. A one-input/two-output
-            # P2WPKH spend is141vbytes at the original20sat/vbyte fallback fee.
+            # Native rewards use P2WPKH. Fee estimation reserves a full
+            # low-R signature; a shorter actual DER signature can reduce vsize.
+            # Check actual serialization and the original exact fee separately.
             for txid in payment_txids:
-                payment = w1.gettransaction(txid, verbose=True)['decoded']
+                payment_info = w1.gettransaction(txid, verbose=True)
+                payment = payment_info['decoded']
+                signed = tx_from_hex(payment_info['hex'])
                 assert_equal(len(payment['vin']), 1)
-                assert_equal(payment['vsize'], 141)
+                assert_equal(len(payment['vout']), 2)
+                assert_equal(payment['vsize'], signed.get_vsize())
+                assert_equal(len(signed.wit.vtxinwit[0].scriptWitness.stack), 2)
+                assert_equal(len(signed.wit.vtxinwit[0].scriptWitness.stack[1]), 33)
+                # Wallet descriptor estimation assumes a 71-byte low-R
+                # signature, including the sighash byte.
+                signed.wit.vtxinwit[0].scriptWitness.stack[0] = bytes(71)
+                assert_equal(signed.get_vsize(), 141)
+                assert_equal(-payment_info['fee'], Decimal('0.0002') * 141 / 1000)
 
             # Mine a block to confirm; adds a block reward (50 BTC) to the default wallet.
             self.generate(self.nodes[0], 1)

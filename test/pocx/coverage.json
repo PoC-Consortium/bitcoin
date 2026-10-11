@@ -15097,23 +15097,23 @@
   {
     "source": "test/functional/feature_assumeutxo.py",
     "classification": "adapted",
-    "execution": "passed",
+    "execution": "unverified",
     "gates": [],
     "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
     "baseline_revision": "5de2720ca47b3a753081e5ce545113cd3b616018",
     "follow_up": "M2: scenario/case parity; M3: consensus gaps; M4: drift/CI",
     "baseline_sha256": "e6add4fb5efe1a29d7d1071302da5a6b4cfced5b034269d44c0a4c98014b1855",
     "upstream_sha256": "e6add4fb5efe1a29d7d1071302da5a6b4cfced5b034269d44c0a4c98014b1855",
-    "reason": "Preserve all original assumeUTXO scenarios and assertions. Reproduce snapshot height299 with original34self-transfers,334chain transactions, common native cached199block funding and deterministic600second timestamps. Native299block/UTXO commitments are independently reconstructed and must be compiled into native regtest parameters; do not bypass validation. Real validated native branch replaces two PoW fork headers. Per-branch base-target/generation-signature checks replace fixed PoW bits/target equality. Use native test-network magic name and scale snapshot-coinbase spend24.99 to9.99 for native10reward, preserving0.01fee. All malformed snapshot cases, counts, prior invalidation, fork-work gates, background sync, indices, blockfile segmentation, mempool, services and restarts remain required. Functional-only native regtest height299 commitment amendment, independently reconstructed from both scenario chains and all snapshot bytes. Bitcoin preprocessed translation unit byte-identical; native preprocessed delta consists only of the two299hash literals. Evidence: artifacts/functional-green-20261009/native-assumeutxo-preprocessing-review.json and native-assumeutxo-vectors.json. All mainnet/testnet/signet/height110/height200 parameters and proof fixture bytes unchanged. Independently derive pinned298rollback and four corrupted-snapshot hashes from raw/serialized records. Preserve EOF-after-one-coin corruption precondition by truncating the native malformed two-coin group after its first coin. Provide known prevout amount when signing the native WPKH snapshot coin. Independently predict NORMAL/ASSUMED file allocation from native block sizes,64KiB limits and cursor operations, then compare every stored block byte in every expected file and reject extra files/records. Keep divergent298block branch at600second cadence and assert lower chainwork than snapshot before import.",
+    "reason": "Preserve all original assumeUTXO scenarios and assertions. Reproduce snapshot height299 with original34self-transfers,334chain transactions, common native cached199block funding and deterministic600second timestamps. Native299block/UTXO commitments are independently reconstructed and must be compiled into native regtest parameters; do not bypass validation. Real validated native branch replaces two PoW fork headers. Per-branch base-target/generation-signature checks replace fixed PoW bits/target equality. Use native test-network magic name and scale snapshot-coinbase spend24.99 to9.99 for native10reward, preserving0.01fee. All malformed snapshot cases, counts, prior invalidation, fork-work gates, background sync, indices, blockfile segmentation, mempool, services and restarts remain required. Functional-only native regtest height299 commitment amendment, independently reconstructed from both scenario chains and all snapshot bytes. Bitcoin preprocessed translation unit byte-identical; native preprocessed delta consists only of the two299hash literals. Evidence: artifacts/functional-green-20261009/native-assumeutxo-preprocessing-review.json and native-assumeutxo-vectors.json. All mainnet/testnet/signet/height110/height200 parameters and proof fixture bytes unchanged. Independently derive pinned298rollback and four corrupted-snapshot hashes from raw/serialized records. Preserve EOF-after-one-coin corruption precondition by truncating the native malformed two-coin group after its first coin. Provide known prevout amount when signing the native WPKH snapshot coin. Independently predict NORMAL/ASSUMED file allocation from native block sizes,64KiB limits and cursor operations, then compare every stored block byte in every expected file and reject extra files/records. Keep divergent298block branch at600second cadence and assert lower chainwork than snapshot before import. Build the competing native fork while disconnected, then reconnect and verify the original most-work reorg. Proof clock advancement during setup cannot expire an in-flight sanitizer block download. Both transports independently passed under TSan with512KiB stack and timeout factor40. Other configurations require focused source refresh; no Bitcoin baseline replay.",
     "replacement": "test/pocx/functional/feature_assumeutxo.py",
-    "current_sha256": "0e8c3593169ebb1efff722a2031ff91a6648130b885791bf2156af862c0be3cf",
+    "current_sha256": "916ec0e10345537613886ecee228a4a9165850c7706fbeabca79f667a2f6df40",
     "covered_behavior": [
       "feature_assumeutxo"
     ],
     "guarded_case_source": "test/functional/feature_assumeutxo.py",
     "guarded_cases": [],
     "pocx_conditional_lines": [],
-    "profile_status": "Final complete matrix verified for the declared profile; explicit skips remain unverified feature combinations.",
+    "profile_status": "TSan repair passed both transports; final-source and other required configurations remain unverified",
     "upstream_functional_cases": [
       {
         "id": "feature_assumeutxo.py",
@@ -15125,27 +15125,27 @@
         "dynamic": false,
         "execution_by_profile": {
           "pocx": {
-            "status": "passed",
+            "status": "unverified",
             "observed_status": "passed",
             "evidence": "build-pocx-clean/pocx-results-fgwf4s35/results.json",
             "log": "build-pocx-clean/pocx-results-fgwf4s35/feature_assumeutxo.py.log",
             "test": "feature_assumeutxo.py",
             "global_transport": "v1",
             "skip_reason": null,
-            "recorded_tree_matches_current_sources": true,
-            "selected_script_matches_execution": true,
+            "recorded_tree_matches_current_sources": false,
+            "selected_script_matches_execution": false,
             "shared_inputs_match_execution": true
           },
           "pocx-v2": {
-            "status": "passed",
+            "status": "unverified",
             "observed_status": "passed",
             "evidence": "build-pocx-clean/pocx-results-fgwf4s35/results.json",
             "log": "build-pocx-clean/pocx-results-fgwf4s35/v2/feature_assumeutxo.py.log",
             "test": "feature_assumeutxo.py",
             "global_transport": "v2",
             "skip_reason": null,
-            "recorded_tree_matches_current_sources": true,
-            "selected_script_matches_execution": true,
+            "recorded_tree_matches_current_sources": false,
+            "selected_script_matches_execution": false,
             "shared_inputs_match_execution": true
           }
         }
@@ -15162,35 +15162,45 @@
       },
       "pocx": {
         "feature_assumeutxo.py": {
-          "status": "passed",
+          "status": "unverified",
           "observed_status": "passed",
           "evidence": "build-pocx-clean/pocx-results-fgwf4s35/results.json",
           "log": "build-pocx-clean/pocx-results-fgwf4s35/feature_assumeutxo.py.log",
           "test": "feature_assumeutxo.py",
           "global_transport": "v1",
           "skip_reason": null,
-          "recorded_tree_matches_current_sources": true,
-          "selected_script_matches_execution": true,
+          "recorded_tree_matches_current_sources": false,
+          "selected_script_matches_execution": false,
           "shared_inputs_match_execution": true
         }
       },
       "pocx-v2": {
         "feature_assumeutxo.py": {
-          "status": "passed",
+          "status": "unverified",
           "observed_status": "passed",
           "evidence": "build-pocx-clean/pocx-results-fgwf4s35/results.json",
           "log": "build-pocx-clean/pocx-results-fgwf4s35/v2/feature_assumeutxo.py.log",
           "test": "feature_assumeutxo.py",
           "global_transport": "v2",
           "skip_reason": null,
-          "recorded_tree_matches_current_sources": true,
-          "selected_script_matches_execution": true,
+          "recorded_tree_matches_current_sources": false,
+          "selected_script_matches_execution": false,
           "shared_inputs_match_execution": true
         }
       }
     },
     "latest_observed_outcome": "passed",
-    "current_input_outcome": "passed"
+    "current_input_outcome": "unverified",
+    "scoped_ci_repair_evidence": {
+      "profile": "pocx-tsan",
+      "transports": [
+        "v1",
+        "v2"
+      ],
+      "status": "passed",
+      "proof": "artifacts/ci-parity-20261010/native-tsan-assumeutxo-checkpoint-v2/results.json",
+      "proof_sha256": "45232a1d362a90bbe7af9f1842e248e7f9f32d1dcbafc352b00f45f2b01fa63c"
+    }
   },
   {
     "source": "test/functional/feature_assumevalid.py",
@@ -20714,23 +20724,23 @@
   {
     "source": "test/functional/interface_bitcoin_cli.py",
     "classification": "adapted",
-    "execution": "passed",
+    "execution": "unverified",
     "gates": [],
     "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
     "baseline_revision": "5de2720ca47b3a753081e5ce545113cd3b616018",
     "follow_up": "M2: scenario/case parity; M3: consensus gaps; M4: drift/CI",
     "baseline_sha256": "a5c8ca71ee55ba6b92ae3272d7006f528382006d3c85e7184d41388824f22025",
     "upstream_sha256": "a5c8ca71ee55ba6b92ae3272d7006f528382006d3c85e7184d41388824f22025",
-    "reason": "Explicit synchronized native clean-chain generation preserves clock across original CLI restarts. Native maturity balance uses10coin reward. Scale two original payments9/31 to1.8/6.2 to retain the same single-input/change spending pattern with corresponding native witness-input fee; expected remaining balance incorporates native10coin matured reward. Native CLI currency label BTCX/kvB replaces BTC/kvB. Preserve all original CLI JSON parsing, named arguments, proxies, stdin/password, loaded/unloaded/multiwallet balances, generating/error/height accounting, netinfo and stopped-node version assertions. Native reward destination is P2WPKH: assert both original payment transactions have exactly one input and141vbytes; independently calculate aggregate fee as2*141*20sat/vB, retain exact remaining-balance assertions. Before original stopped-node version/RPC-wait checks, explicitly record the final direct-CLI-forged timestamp for startup VerifyDB; direct CLI block generation stays unchanged.",
+    "reason": "Explicit synchronized native clean-chain generation preserves clock across original CLI restarts. Native maturity balance uses10coin reward. Scale two original payments9/31 to1.8/6.2 to retain the same single-input/change spending pattern with corresponding native witness-input fee; expected remaining balance incorporates native10coin matured reward. Native CLI currency label BTCX/kvB replaces BTC/kvB. Preserve all original CLI JSON parsing, named arguments, proxies, stdin/password, loaded/unloaded/multiwallet balances, generating/error/height accounting, netinfo and stopped-node version assertions. Native reward destination is P2WPKH: assert both original payment transactions have exactly one input and141vbytes; independently calculate aggregate fee as2*141*20sat/vB, retain exact remaining-balance assertions. Before original stopped-node version/RPC-wait checks, explicitly record the final direct-CLI-forged timestamp for startup VerifyDB; direct CLI block generation stays unchanged. Validate actual signed transaction vsize independently, retain the exact maximum signature size and fee/balance assertions; valid shorter DER signatures may produce140vB while the wallet correctly estimates141vB. Both transports independently passed under TSan with512KiB stack and timeout factor40. Other configurations require focused source refresh; no Bitcoin baseline replay.",
     "replacement": "test/pocx/functional/interface_bitcoin_cli.py",
-    "current_sha256": "8e7b56ee5b027c25288eda1082102a52a67550681882a855c3ee03fe89defc54",
+    "current_sha256": "11503c0e1127de3ac3ab37925c18590cb5713dc5cec095a782b5629b7ed75066",
     "covered_behavior": [
       "interface_bitcoin_cli"
     ],
     "guarded_case_source": "test/functional/interface_bitcoin_cli.py",
     "guarded_cases": [],
     "pocx_conditional_lines": [],
-    "profile_status": "Final complete matrix verified for the declared profile; explicit skips remain unverified feature combinations.",
+    "profile_status": "TSan repair passed both transports; final-source and other required configurations remain unverified",
     "upstream_functional_cases": [
       {
         "id": "interface_bitcoin_cli.py",
@@ -20742,27 +20752,27 @@
         "dynamic": false,
         "execution_by_profile": {
           "pocx": {
-            "status": "passed",
+            "status": "unverified",
             "observed_status": "passed",
             "evidence": "build-pocx-clean/pocx-results-fgwf4s35/results.json",
             "log": "build-pocx-clean/pocx-results-fgwf4s35/interface_bitcoin_cli.py.log",
             "test": "interface_bitcoin_cli.py",
             "global_transport": "v1",
             "skip_reason": null,
-            "recorded_tree_matches_current_sources": true,
-            "selected_script_matches_execution": true,
+            "recorded_tree_matches_current_sources": false,
+            "selected_script_matches_execution": false,
             "shared_inputs_match_execution": true
           },
           "pocx-v2": {
-            "status": "passed",
+            "status": "unverified",
             "observed_status": "passed",
             "evidence": "build-pocx-clean/pocx-results-fgwf4s35/results.json",
             "log": "build-pocx-clean/pocx-results-fgwf4s35/v2/interface_bitcoin_cli.py.log",
             "test": "interface_bitcoin_cli.py",
             "global_transport": "v2",
             "skip_reason": null,
-            "recorded_tree_matches_current_sources": true,
-            "selected_script_matches_execution": true,
+            "recorded_tree_matches_current_sources": false,
+            "selected_script_matches_execution": false,
             "shared_inputs_match_execution": true
           }
         }
@@ -20779,35 +20789,45 @@
       },
       "pocx": {
         "interface_bitcoin_cli.py": {
-          "status": "passed",
+          "status": "unverified",
           "observed_status": "passed",
           "evidence": "build-pocx-clean/pocx-results-fgwf4s35/results.json",
           "log": "build-pocx-clean/pocx-results-fgwf4s35/interface_bitcoin_cli.py.log",
           "test": "interface_bitcoin_cli.py",
           "global_transport": "v1",
           "skip_reason": null,
-          "recorded_tree_matches_current_sources": true,
-          "selected_script_matches_execution": true,
+          "recorded_tree_matches_current_sources": false,
+          "selected_script_matches_execution": false,
           "shared_inputs_match_execution": true
         }
       },
       "pocx-v2": {
         "interface_bitcoin_cli.py": {
-          "status": "passed",
+          "status": "unverified",
           "observed_status": "passed",
           "evidence": "build-pocx-clean/pocx-results-fgwf4s35/results.json",
           "log": "build-pocx-clean/pocx-results-fgwf4s35/v2/interface_bitcoin_cli.py.log",
           "test": "interface_bitcoin_cli.py",
           "global_transport": "v2",
           "skip_reason": null,
-          "recorded_tree_matches_current_sources": true,
-          "selected_script_matches_execution": true,
+          "recorded_tree_matches_current_sources": false,
+          "selected_script_matches_execution": false,
           "shared_inputs_match_execution": true
         }
       }
     },
     "latest_observed_outcome": "passed",
-    "current_input_outcome": "passed"
+    "current_input_outcome": "unverified",
+    "scoped_ci_repair_evidence": {
+      "profile": "pocx-tsan",
+      "transports": [
+        "v1",
+        "v2"
+      ],
+      "status": "passed",
+      "proof": "artifacts/ci-parity-20261010/native-tsan-cli-shutdown-checkpoint/results.json",
+      "proof_sha256": "b29b6e5558db3d63eae0bb66c411cea6208c12f671c4a1de2c3f3ceb50d765b0"
+    }
   },
   {
     "source": "test/functional/interface_http.py",
@@ -25863,23 +25883,23 @@
   {
     "source": "test/functional/p2p_eviction.py",
     "classification": "adapted",
-    "execution": "passed",
+    "execution": "unverified",
     "gates": [],
     "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
     "baseline_revision": "5de2720ca47b3a753081e5ce545113cd3b616018",
     "follow_up": "M2: scenario/case parity; M3: consensus gaps; M4: drift/CI",
     "baseline_sha256": "13372de69468b2a20ed3e4d2f18b2bdb84c4dc76c50b34c7e39a473513423209",
     "upstream_sha256": "13372de69468b2a20ed3e4d2f18b2bdb84c4dc76c50b34c7e39a473513423209",
-    "reason": "Replace only four block-providing peer protection fixtures with signed real native proofs/10coin coinbases on active parent. Advance observer to actual deadline before the unchanged P2P block acceptance call. Preserve original32connection cap,21inbound/20protected accounting,4 block providers,4 transaction providers, ping-time/netgroup/age selection and exact eviction assertions.",
+    "reason": "Replace only four block-providing peer protection fixtures with signed real native proofs/10coin coinbases on active parent. Advance observer to actual deadline before the unchanged P2P block acceptance call. Preserve original32connection cap,21inbound/20protected accounting,4 block providers,4 transaction providers, ping-time/netgroup/age selection and exact eviction assertions. Verify the already committed live-clock eviction adaptation under TSan; correct stale coverage source accounting. Preserve every original protection and eviction assertion. Both transports independently passed under TSan with512KiB stack and timeout factor40. Other configurations require focused source refresh; no Bitcoin baseline replay.",
     "replacement": "test/pocx/functional/p2p_eviction.py",
-    "current_sha256": "d4370a3d60a8bc527836898453cdb04a45f33d2df9c16c0e9795d6dafdd8b36e",
+    "current_sha256": "5053092162b1c8b4b811e501fb8681d1038ee33c62c3d25a4bae27168e7bb58a",
     "covered_behavior": [
       "p2p_eviction"
     ],
     "guarded_case_source": "test/functional/p2p_eviction.py",
     "guarded_cases": [],
     "pocx_conditional_lines": [],
-    "profile_status": "Final complete matrix verified for the declared profile; explicit skips remain unverified feature combinations.",
+    "profile_status": "TSan repair passed both transports; final-source and other required configurations remain unverified",
     "upstream_functional_cases": [
       {
         "id": "p2p_eviction.py",
@@ -25891,27 +25911,27 @@
         "dynamic": false,
         "execution_by_profile": {
           "pocx": {
-            "status": "passed",
+            "status": "unverified",
             "observed_status": "passed",
             "evidence": "build-pocx-clean/pocx-results-fgwf4s35/results.json",
             "log": "build-pocx-clean/pocx-results-fgwf4s35/p2p_eviction.py.log",
             "test": "p2p_eviction.py",
             "global_transport": "v1",
             "skip_reason": null,
-            "recorded_tree_matches_current_sources": true,
-            "selected_script_matches_execution": true,
+            "recorded_tree_matches_current_sources": false,
+            "selected_script_matches_execution": false,
             "shared_inputs_match_execution": true
           },
           "pocx-v2": {
-            "status": "passed",
+            "status": "unverified",
             "observed_status": "passed",
             "evidence": "build-pocx-clean/pocx-results-fgwf4s35/results.json",
             "log": "build-pocx-clean/pocx-results-fgwf4s35/v2/p2p_eviction.py.log",
             "test": "p2p_eviction.py",
             "global_transport": "v2",
             "skip_reason": null,
-            "recorded_tree_matches_current_sources": true,
-            "selected_script_matches_execution": true,
+            "recorded_tree_matches_current_sources": false,
+            "selected_script_matches_execution": false,
             "shared_inputs_match_execution": true
           }
         }
@@ -25928,35 +25948,45 @@
       },
       "pocx": {
         "p2p_eviction.py": {
-          "status": "passed",
+          "status": "unverified",
           "observed_status": "passed",
           "evidence": "build-pocx-clean/pocx-results-fgwf4s35/results.json",
           "log": "build-pocx-clean/pocx-results-fgwf4s35/p2p_eviction.py.log",
           "test": "p2p_eviction.py",
           "global_transport": "v1",
           "skip_reason": null,
-          "recorded_tree_matches_current_sources": true,
-          "selected_script_matches_execution": true,
+          "recorded_tree_matches_current_sources": false,
+          "selected_script_matches_execution": false,
           "shared_inputs_match_execution": true
         }
       },
       "pocx-v2": {
         "p2p_eviction.py": {
-          "status": "passed",
+          "status": "unverified",
           "observed_status": "passed",
           "evidence": "build-pocx-clean/pocx-results-fgwf4s35/results.json",
           "log": "build-pocx-clean/pocx-results-fgwf4s35/v2/p2p_eviction.py.log",
           "test": "p2p_eviction.py",
           "global_transport": "v2",
           "skip_reason": null,
-          "recorded_tree_matches_current_sources": true,
-          "selected_script_matches_execution": true,
+          "recorded_tree_matches_current_sources": false,
+          "selected_script_matches_execution": false,
           "shared_inputs_match_execution": true
         }
       }
     },
     "latest_observed_outcome": "passed",
-    "current_input_outcome": "passed"
+    "current_input_outcome": "unverified",
+    "scoped_ci_repair_evidence": {
+      "profile": "pocx-tsan",
+      "transports": [
+        "v1",
+        "v2"
+      ],
+      "status": "passed",
+      "proof": "artifacts/ci-parity-20261010/native-tsan-current-eviction-checkpoint-v2/results.json",
+      "proof_sha256": "a348922ef823952e9c133eec1fc644458fa4fd997621f61fae9d72b8c431384a"
+    }
   },
   {
     "source": "test/functional/p2p_feefilter.py",
@@ -30391,23 +30421,23 @@
   {
     "source": "test/functional/rpc_blockchain.py",
     "classification": "adapted",
-    "execution": "passed",
+    "execution": "unverified",
     "gates": [],
     "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
     "baseline_revision": "5de2720ca47b3a753081e5ce545113cd3b616018",
     "follow_up": "M2: scenario/case parity; M3: consensus gaps; M4: drift/CI",
     "baseline_sha256": "35969192462a87e9568910013304edc8288c3c11f07ec365d060ff3b5e036f7f",
     "upstream_sha256": "35969192462a87e9568910013304edc8288c3c11f07ec365d060ff3b5e036f7f",
-    "reason": "Preserve original blockchain RPC methods/assertions, adapting header fields/hash serialization to native286bytes with zero signature, fixed600second block history to strictly increasing native times,10coin/500block subsidy to2000total at height200, real native competing/header-only/missing-undo proofs, and native reference/base-target difficulty ratio. Retain exact pruning fields and errors, chain/UTXO statistics, invalidate/reconsider, wait APIs, stop207, deployment144/287 threshold, all getblock verbosity/fee/prevout/coinbase/undo/disk checks, verificationprogress boundaries and uint32 timestamp maximum. Year2106 checks six increasing timestamps ending exactly uint32max and independently reconstructed11block median instead of impossible six equal native forging timestamps. Specific partial PoW exclusion: getnetworkhashps hash-rate and Bitcoin retarget-window tests, since that RPC is intentionally absent; assert method-not-found instead. No other coverage excluded. Native future-time startup assertions use the existing15second PoCX constant, retaining exact boundary and boundary-plus-one rejection.",
+    "reason": "Preserve original blockchain RPC methods/assertions, adapting header fields/hash serialization to native286bytes with zero signature, fixed600second block history to strictly increasing native times,10coin/500block subsidy to2000total at height200, real native competing/header-only/missing-undo proofs, and native reference/base-target difficulty ratio. Retain exact pruning fields and errors, chain/UTXO statistics, invalidate/reconsider, wait APIs, stop207, deployment144/287 threshold, all getblock verbosity/fee/prevout/coinbase/undo/disk checks, verificationprogress boundaries and uint32 timestamp maximum. Year2106 checks six increasing timestamps ending exactly uint32max and independently reconstructed11block median instead of impossible six equal native forging timestamps. Specific partial PoW exclusion: getnetworkhashps hash-rate and Bitcoin retarget-window tests, since that RPC is intentionally absent; assert method-not-found instead. No other coverage excluded. Native future-time startup assertions use the existing15second PoCX constant, retaining exact boundary and boundary-plus-one rejection. Accept only the precise non-JSON HTTP503 shutdown response (-342) during stopatheight; retain original connection-error handling, restart and exact stopped height assertions. Both transports independently passed under TSan with512KiB stack and timeout factor40. Other configurations require focused source refresh; no Bitcoin baseline replay.",
     "replacement": "test/pocx/functional/rpc_blockchain.py",
-    "current_sha256": "e8aed35ad6f47987205048b757716e80d382c8ed89f71a972454e081d3f30125",
+    "current_sha256": "f05900f1af15831c901c78c06f108af8778803abc97b023a7bf16ea7df9227f7",
     "covered_behavior": [
       "rpc_blockchain"
     ],
     "guarded_case_source": "test/functional/rpc_blockchain.py",
     "guarded_cases": [],
     "pocx_conditional_lines": [],
-    "profile_status": "Final complete matrix verified for the declared profile; explicit skips remain unverified feature combinations.",
+    "profile_status": "TSan repair passed both transports; final-source and other required configurations remain unverified",
     "upstream_functional_cases": [
       {
         "id": "rpc_blockchain.py",
@@ -30421,15 +30451,15 @@
         "dynamic": false,
         "execution_by_profile": {
           "pocx": {
-            "status": "passed",
+            "status": "unverified",
             "observed_status": "passed",
             "evidence": "build-pocx-clean/pocx-results-fgwf4s35/results.json",
             "log": "build-pocx-clean/pocx-results-fgwf4s35/rpc_blockchain.py.log",
             "test": "rpc_blockchain.py",
             "global_transport": "v1",
             "skip_reason": null,
-            "recorded_tree_matches_current_sources": true,
-            "selected_script_matches_execution": true,
+            "recorded_tree_matches_current_sources": false,
+            "selected_script_matches_execution": false,
             "shared_inputs_match_execution": true
           }
         }
@@ -30446,15 +30476,15 @@
         "dynamic": false,
         "execution_by_profile": {
           "pocx-v2": {
-            "status": "passed",
+            "status": "unverified",
             "observed_status": "passed",
             "evidence": "build-pocx-clean/pocx-results-fgwf4s35/results.json",
             "log": "build-pocx-clean/pocx-results-fgwf4s35/v2/rpc_blockchain.py.log",
             "test": "rpc_blockchain.py",
             "global_transport": "v2",
             "skip_reason": null,
-            "recorded_tree_matches_current_sources": true,
-            "selected_script_matches_execution": true,
+            "recorded_tree_matches_current_sources": false,
+            "selected_script_matches_execution": false,
             "shared_inputs_match_execution": true
           }
         }
@@ -30477,35 +30507,45 @@
       },
       "pocx": {
         "rpc_blockchain.py": {
-          "status": "passed",
+          "status": "unverified",
           "observed_status": "passed",
           "evidence": "build-pocx-clean/pocx-results-fgwf4s35/results.json",
           "log": "build-pocx-clean/pocx-results-fgwf4s35/rpc_blockchain.py.log",
           "test": "rpc_blockchain.py",
           "global_transport": "v1",
           "skip_reason": null,
-          "recorded_tree_matches_current_sources": true,
-          "selected_script_matches_execution": true,
+          "recorded_tree_matches_current_sources": false,
+          "selected_script_matches_execution": false,
           "shared_inputs_match_execution": true
         }
       },
       "pocx-v2": {
         "rpc_blockchain.py": {
-          "status": "passed",
+          "status": "unverified",
           "observed_status": "passed",
           "evidence": "build-pocx-clean/pocx-results-fgwf4s35/results.json",
           "log": "build-pocx-clean/pocx-results-fgwf4s35/v2/rpc_blockchain.py.log",
           "test": "rpc_blockchain.py",
           "global_transport": "v2",
           "skip_reason": null,
-          "recorded_tree_matches_current_sources": true,
-          "selected_script_matches_execution": true,
+          "recorded_tree_matches_current_sources": false,
+          "selected_script_matches_execution": false,
           "shared_inputs_match_execution": true
         }
       }
     },
     "latest_observed_outcome": "passed",
-    "current_input_outcome": "passed"
+    "current_input_outcome": "unverified",
+    "scoped_ci_repair_evidence": {
+      "profile": "pocx-tsan",
+      "transports": [
+        "v1",
+        "v2"
+      ],
+      "status": "passed",
+      "proof": "artifacts/ci-parity-20261010/native-tsan-cli-shutdown-checkpoint/results.json",
+      "proof_sha256": "b29b6e5558db3d63eae0bb66c411cea6208c12f671c4a1de2c3f3ceb50d765b0"
+    }
   },
   {
     "source": "test/functional/rpc_createmultisig.py",

@@ -414,6 +414,10 @@ class AssumeutxoTest(BitcoinTestFramework):
         fork_point = SNAPSHOT_BASE_HEIGHT - 1
         forking_node_old_height = forking_node.getblockcount()
         forking_node_old_chainwork = int(forking_node.getblockchaininfo()['chainwork'], 16)
+        # Building the native fork advances mocktime by proof deadlines. Keep
+        # that setup separate from block download so outstanding requests cannot
+        # expire between locally generated blocks on slower sanitizer builds.
+        self.disconnect_nodes(snapshot_node.index, forking_node.index)
         forking_node.invalidateblock(forking_node.getblockhash(fork_point + 1))
 
         self.log.info("Mine one more block than original chain to make the new chain have most work")
@@ -421,6 +425,7 @@ class AssumeutxoTest(BitcoinTestFramework):
         assert int(forking_node.getblockchaininfo()['chainwork'], 16) > forking_node_old_chainwork
 
         self.log.info("Snapshot node should reorg to the most-work chain without the snapshot block")
+        self.connect_nodes(snapshot_node.index, forking_node.index)
         self.sync_blocks(nodes=(snapshot_node, forking_node))
 
     def assert_only_network_limited_service(self, node):

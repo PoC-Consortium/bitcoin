@@ -6098,7 +6098,7 @@
       "source": "test/functional/feature_assumeutxo.py",
       "replacement": "test/pocx/functional/feature_assumeutxo.py",
       "source_sha256": "e6add4fb5efe1a29d7d1071302da5a6b4cfced5b034269d44c0a4c98014b1855",
-      "replacement_sha256": "c2b782921627ad04359291e1a09eb6f9c916205f2b8107b4564acbd39e16c65c",
+      "replacement_sha256": "916ec0e10345537613886ecee228a4a9165850c7706fbeabca79f667a2f6df40",
       "assertion_and_method_accounting": {
         "assert_statements": 17,
         "assertion_calls": 85,
@@ -6125,11 +6125,11 @@
           "check_tx_counts"
         ]
       },
-      "review": "Preserve all original assumeUTXO scenarios and assertions. Reproduce snapshot height299 with original34self-transfers,334chain transactions, common native cached199block funding and deterministic600second timestamps. Native299block/UTXO commitments are independently reconstructed and must be compiled into native regtest parameters; do not bypass validation. Real validated native branch replaces two PoW fork headers. Per-branch base-target/generation-signature checks replace fixed PoW bits/target equality. Use native test-network magic name and scale snapshot-coinbase spend24.99 to9.99 for native10reward, preserving0.01fee. All malformed snapshot cases, counts, prior invalidation, fork-work gates, background sync, indices, blockfile segmentation, mempool, services and restarts remain required. Functional-only native regtest height299 commitment amendment, independently reconstructed from both scenario chains and all snapshot bytes. Bitcoin preprocessed translation unit byte-identical; native preprocessed delta consists only of the two299hash literals. Evidence: artifacts/functional-green-20261009/native-assumeutxo-preprocessing-review.json and native-assumeutxo-vectors.json. All mainnet/testnet/signet/height110/height200 parameters and proof fixture bytes unchanged. Independently derive pinned298rollback and four corrupted-snapshot hashes from raw/serialized records. Preserve EOF-after-one-coin corruption precondition by truncating the native malformed two-coin group after its first coin. Provide known prevout amount when signing the native WPKH snapshot coin. Independently predict NORMAL/ASSUMED file allocation from native block sizes,64KiB limits and cursor operations, then compare every stored block byte in every expected file and reject extra files/records. Keep divergent298block branch at600second cadence and assert lower chainwork than snapshot before import.",
+      "review": "Preserve all original assumeUTXO scenarios and assertions. Reproduce snapshot height299 with original34self-transfers,334chain transactions, common native cached199block funding and deterministic600second timestamps. Native299block/UTXO commitments are independently reconstructed and must be compiled into native regtest parameters; do not bypass validation. Real validated native branch replaces two PoW fork headers. Per-branch base-target/generation-signature checks replace fixed PoW bits/target equality. Use native test-network magic name and scale snapshot-coinbase spend24.99 to9.99 for native10reward, preserving0.01fee. All malformed snapshot cases, counts, prior invalidation, fork-work gates, background sync, indices, blockfile segmentation, mempool, services and restarts remain required. Functional-only native regtest height299 commitment amendment, independently reconstructed from both scenario chains and all snapshot bytes. Bitcoin preprocessed translation unit byte-identical; native preprocessed delta consists only of the two299hash literals. Evidence: artifacts/functional-green-20261009/native-assumeutxo-preprocessing-review.json and native-assumeutxo-vectors.json. All mainnet/testnet/signet/height110/height200 parameters and proof fixture bytes unchanged. Independently derive pinned298rollback and four corrupted-snapshot hashes from raw/serialized records. Preserve EOF-after-one-coin corruption precondition by truncating the native malformed two-coin group after its first coin. Provide known prevout amount when signing the native WPKH snapshot coin. Independently predict NORMAL/ASSUMED file allocation from native block sizes,64KiB limits and cursor operations, then compare every stored block byte in every expected file and reject extra files/records. Keep divergent298block branch at600second cadence and assert lower chainwork than snapshot before import. Build the competing native fork while disconnected, then reconnect and verify the original most-work reorg. Proof clock advancement during setup cannot expire an in-flight sanitizer block download. Both transports independently passed under TSan with512KiB stack and timeout factor40.",
       "evidence": "build-pocx-clean/pocx-results-fgwf4s35/results.json",
       "execution_by_transport": {
-        "v1": "unverified; prerequisite helper and staging provenance changed",
-        "v2": "unverified; prerequisite helper and staging provenance changed"
+        "v1": "TSan current-source pass; other configurations require targeted refresh",
+        "v2": "TSan current-source pass; other configurations require targeted refresh"
       },
       "execution_status_scope": "Latest owned-runner evidence by declared argument case; historical observations do not establish current-input parity.",
       "latest_observed_outcome": "passed",
@@ -6149,12 +6149,13 @@
               "report": "build-pocx-clean/pocx-results-fgwf4s35/results.json",
               "log": "build-pocx-clean/pocx-results-fgwf4s35/feature_assumeutxo.py.log",
               "skip_reason": null,
-              "selected_script_matches_execution": true,
+              "selected_script_matches_execution": false,
               "shared_inputs_match_execution": false,
               "changed_applicable_inputs": [
                 "test/pocx/functional_environment.py",
                 "test/pocx/stage.py",
-                "test/pocx/verify_functional.py"
+                "test/pocx/verify_functional.py",
+                "test/pocx/functional/feature_assumeutxo.py"
               ],
               "current_input_status": "unverified"
             },
@@ -6166,12 +6167,13 @@
               "report": "build-pocx-clean/pocx-results-fgwf4s35/results.json",
               "log": "build-pocx-clean/pocx-results-fgwf4s35/v2/feature_assumeutxo.py.log",
               "skip_reason": null,
-              "selected_script_matches_execution": true,
+              "selected_script_matches_execution": false,
               "shared_inputs_match_execution": false,
               "changed_applicable_inputs": [
                 "test/pocx/functional_environment.py",
                 "test/pocx/stage.py",
-                "test/pocx/verify_functional.py"
+                "test/pocx/verify_functional.py",
+                "test/pocx/functional/feature_assumeutxo.py"
               ],
               "current_input_status": "unverified"
             }
@@ -6184,7 +6186,7 @@
       },
       "replacement_assertion_and_method_accounting": {
         "assert_statements": 15,
-        "assertion_calls": 103,
+        "assertion_calls": 91,
         "function_names": [
           "set_test_params",
           "setup_network",
@@ -6209,7 +6211,17 @@
           "check_tx_counts"
         ]
       },
-      "lint_binding_review": "Unused imports removed and unused assignment targets renamed; all remaining runtime AST, calls and assertions unchanged."
+      "lint_binding_review": "Unused imports removed and unused assignment targets renamed; all remaining runtime AST, calls and assertions unchanged.",
+      "scoped_ci_repair_evidence": {
+        "profile": "pocx-tsan",
+        "transports": [
+          "v1",
+          "v2"
+        ],
+        "status": "passed",
+        "proof": "artifacts/ci-parity-20261010/native-tsan-assumeutxo-checkpoint-v2/results.json",
+        "proof_sha256": "45232a1d362a90bbe7af9f1842e248e7f9f32d1dcbafc352b00f45f2b01fa63c"
+      }
     },
     "feature_assumevalid.py": {
       "source": "test/functional/feature_assumevalid.py",
@@ -10317,7 +10329,7 @@
       "source": "test/functional/interface_bitcoin_cli.py",
       "replacement": "test/pocx/functional/interface_bitcoin_cli.py",
       "source_sha256": "a5c8ca71ee55ba6b92ae3272d7006f528382006d3c85e7184d41388824f22025",
-      "replacement_sha256": "8e7b56ee5b027c25288eda1082102a52a67550681882a855c3ee03fe89defc54",
+      "replacement_sha256": "11503c0e1127de3ac3ab37925c18590cb5713dc5cec095a782b5629b7ed75066",
       "assertion_and_method_accounting": {
         "assert_statements": 20,
         "assertion_calls": 104,
@@ -10330,11 +10342,11 @@
           "run_test"
         ]
       },
-      "review": "Explicit synchronized native clean-chain generation preserves clock across original CLI restarts. Native maturity balance uses10coin reward. Scale two original payments9/31 to1.8/6.2 to retain the same single-input/change spending pattern with corresponding native witness-input fee; expected remaining balance incorporates native10coin matured reward. Native CLI currency label BTCX/kvB replaces BTC/kvB. Preserve all original CLI JSON parsing, named arguments, proxies, stdin/password, loaded/unloaded/multiwallet balances, generating/error/height accounting, netinfo and stopped-node version assertions. Native reward destination is P2WPKH: assert both original payment transactions have exactly one input and141vbytes; independently calculate aggregate fee as2*141*20sat/vB, retain exact remaining-balance assertions. Before original stopped-node version/RPC-wait checks, explicitly record the final direct-CLI-forged timestamp for startup VerifyDB; direct CLI block generation stays unchanged.",
+      "review": "Explicit synchronized native clean-chain generation preserves clock across original CLI restarts. Native maturity balance uses10coin reward. Scale two original payments9/31 to1.8/6.2 to retain the same single-input/change spending pattern with corresponding native witness-input fee; expected remaining balance incorporates native10coin matured reward. Native CLI currency label BTCX/kvB replaces BTC/kvB. Preserve all original CLI JSON parsing, named arguments, proxies, stdin/password, loaded/unloaded/multiwallet balances, generating/error/height accounting, netinfo and stopped-node version assertions. Native reward destination is P2WPKH: assert both original payment transactions have exactly one input and141vbytes; independently calculate aggregate fee as2*141*20sat/vB, retain exact remaining-balance assertions. Before original stopped-node version/RPC-wait checks, explicitly record the final direct-CLI-forged timestamp for startup VerifyDB; direct CLI block generation stays unchanged. Validate actual signed transaction vsize independently, retain the exact maximum signature size and fee/balance assertions; valid shorter DER signatures may produce140vB while the wallet correctly estimates141vB. Both transports independently passed under TSan with512KiB stack and timeout factor40.",
       "evidence": "build-pocx-clean/pocx-results-fgwf4s35/results.json",
       "execution_by_transport": {
-        "v1": "unverified; prerequisite helper and staging provenance changed",
-        "v2": "unverified; prerequisite helper and staging provenance changed"
+        "v1": "TSan current-source pass; other configurations require targeted refresh",
+        "v2": "TSan current-source pass; other configurations require targeted refresh"
       },
       "execution_status_scope": "Latest owned-runner evidence by declared argument case; historical observations do not establish current-input parity.",
       "latest_observed_outcome": "passed",
@@ -10354,12 +10366,13 @@
               "report": "build-pocx-clean/pocx-results-fgwf4s35/results.json",
               "log": "build-pocx-clean/pocx-results-fgwf4s35/interface_bitcoin_cli.py.log",
               "skip_reason": null,
-              "selected_script_matches_execution": true,
+              "selected_script_matches_execution": false,
               "shared_inputs_match_execution": false,
               "changed_applicable_inputs": [
                 "test/pocx/functional_environment.py",
                 "test/pocx/stage.py",
-                "test/pocx/verify_functional.py"
+                "test/pocx/verify_functional.py",
+                "test/pocx/functional/interface_bitcoin_cli.py"
               ],
               "current_input_status": "unverified"
             },
@@ -10371,12 +10384,13 @@
               "report": "build-pocx-clean/pocx-results-fgwf4s35/results.json",
               "log": "build-pocx-clean/pocx-results-fgwf4s35/v2/interface_bitcoin_cli.py.log",
               "skip_reason": null,
-              "selected_script_matches_execution": true,
+              "selected_script_matches_execution": false,
               "shared_inputs_match_execution": false,
               "changed_applicable_inputs": [
                 "test/pocx/functional_environment.py",
                 "test/pocx/stage.py",
-                "test/pocx/verify_functional.py"
+                "test/pocx/verify_functional.py",
+                "test/pocx/functional/interface_bitcoin_cli.py"
               ],
               "current_input_status": "unverified"
             }
@@ -10385,7 +10399,7 @@
       ],
       "replacement_assertion_and_method_accounting": {
         "assert_statements": 20,
-        "assertion_calls": 106,
+        "assertion_calls": 111,
         "function_names": [
           "cli_get_info_string_to_dict",
           "set_test_params",
@@ -10394,6 +10408,16 @@
           "test_echojson_positional_equals",
           "run_test"
         ]
+      },
+      "scoped_ci_repair_evidence": {
+        "profile": "pocx-tsan",
+        "transports": [
+          "v1",
+          "v2"
+        ],
+        "status": "passed",
+        "proof": "artifacts/ci-parity-20261010/native-tsan-cli-shutdown-checkpoint/results.json",
+        "proof_sha256": "b29b6e5558db3d63eae0bb66c411cea6208c12f671c4a1de2c3f3ceb50d765b0"
       }
     },
     "interface_http.py": {
@@ -12867,11 +12891,11 @@
           "run_test"
         ]
       },
-      "review": "Use signed native proofs and 10coin coinbases for the four block-providing peers. Bootstrap the original200-block funding layout in the past using the existing independently checked helper, then preserve the real clock for ping measurements and eviction. Require each proof deadline to be in the past and the observer clock to remain real before submission. Preserve every original32connection/21inbound protection precondition,4 block providers,4 transaction providers,8 lowest-ping protections, netgroup/age selection and both exact eviction assertions. Frozen mocktime had collapsed all minimum pings to zero; Clang17/libc++ exposed the resulting sort-tie dependency in both transports.",
+      "review": "Use signed native proofs and 10coin coinbases for the four block-providing peers. Bootstrap the original200-block funding layout in the past using the existing independently checked helper, then preserve the real clock for ping measurements and eviction. Require each proof deadline to be in the past and the observer clock to remain real before submission. Preserve every original32connection/21inbound protection precondition,4 block providers,4 transaction providers,8 lowest-ping protections, netgroup/age selection and both exact eviction assertions. Frozen mocktime had collapsed all minimum pings to zero; Clang17/libc++ exposed the resulting sort-tie dependency in both transports. Verify the already committed live-clock eviction adaptation under TSan; correct stale coverage source accounting. Preserve every original protection and eviction assertion. Both transports independently passed under TSan with512KiB stack and timeout factor40.",
       "evidence": "build-pocx-clean/pocx-results-fgwf4s35/results.json",
       "execution_by_transport": {
-        "v1": "unverified; prerequisite helper and staging provenance changed",
-        "v2": "unverified; prerequisite helper and staging provenance changed"
+        "v1": "TSan current-source pass; other configurations require targeted refresh",
+        "v2": "TSan current-source pass; other configurations require targeted refresh"
       },
       "execution_status_scope": "Latest owned-runner evidence by declared argument case; historical observations do not establish current-input parity.",
       "latest_observed_outcome": "passed",
@@ -12891,12 +12915,13 @@
               "report": "build-pocx-clean/pocx-results-fgwf4s35/results.json",
               "log": "build-pocx-clean/pocx-results-fgwf4s35/p2p_eviction.py.log",
               "skip_reason": null,
-              "selected_script_matches_execution": true,
+              "selected_script_matches_execution": false,
               "shared_inputs_match_execution": false,
               "changed_applicable_inputs": [
                 "test/pocx/functional_environment.py",
                 "test/pocx/stage.py",
-                "test/pocx/verify_functional.py"
+                "test/pocx/verify_functional.py",
+                "test/pocx/functional/p2p_eviction.py"
               ],
               "current_input_status": "unverified"
             },
@@ -12908,12 +12933,13 @@
               "report": "build-pocx-clean/pocx-results-fgwf4s35/results.json",
               "log": "build-pocx-clean/pocx-results-fgwf4s35/v2/p2p_eviction.py.log",
               "skip_reason": null,
-              "selected_script_matches_execution": true,
+              "selected_script_matches_execution": false,
               "shared_inputs_match_execution": false,
               "changed_applicable_inputs": [
                 "test/pocx/functional_environment.py",
                 "test/pocx/stage.py",
-                "test/pocx/verify_functional.py"
+                "test/pocx/verify_functional.py",
+                "test/pocx/functional/p2p_eviction.py"
               ],
               "current_input_status": "unverified"
             }
@@ -12921,12 +12947,13 @@
         }
       ],
       "replacement_assertion_and_method_accounting": {
-        "assert_statements": 1,
-        "assertion_calls": 1,
+        "assert_statements": 2,
+        "assertion_calls": 2,
         "function_names": [
           "on_ping",
           "on_ping",
           "set_test_params",
+          "setup_network",
           "run_test"
         ]
       },
@@ -12941,6 +12968,16 @@
           "v2"
         ],
         "full_profile_promoted": false
+      },
+      "scoped_ci_repair_evidence": {
+        "profile": "pocx-tsan",
+        "transports": [
+          "v1",
+          "v2"
+        ],
+        "status": "passed",
+        "proof": "artifacts/ci-parity-20261010/native-tsan-current-eviction-checkpoint-v2/results.json",
+        "proof_sha256": "a348922ef823952e9c133eec1fc644458fa4fd997621f61fae9d72b8c431384a"
       }
     },
     "p2p_feefilter.py": {
@@ -15902,7 +15939,7 @@
       "source": "test/functional/rpc_blockchain.py",
       "replacement": "test/pocx/functional/rpc_blockchain.py",
       "source_sha256": "35969192462a87e9568910013304edc8288c3c11f07ec365d060ff3b5e036f7f",
-      "replacement_sha256": "f1e2a2ce4d46990d9ad253dc08aaa186618ac4615265a9abeaf0f0b7bcf02f20",
+      "replacement_sha256": "f05900f1af15831c901c78c06f108af8778803abc97b023a7bf16ea7df9227f7",
       "assertion_and_method_accounting": {
         "assert_statements": 31,
         "assertion_calls": 140,
@@ -15938,11 +15975,11 @@
           "move_block_file"
         ]
       },
-      "review": "Preserve original blockchain RPC methods/assertions, adapting header fields/hash serialization to native286bytes with zero signature, fixed600second block history to strictly increasing native times,10coin/500block subsidy to2000total at height200, real native competing/header-only/missing-undo proofs, and native reference/base-target difficulty ratio. Retain exact pruning fields and errors, chain/UTXO statistics, invalidate/reconsider, wait APIs, stop207, deployment144/287 threshold, all getblock verbosity/fee/prevout/coinbase/undo/disk checks, verificationprogress boundaries and uint32 timestamp maximum. Year2106 checks six increasing timestamps ending exactly uint32max and independently reconstructed11block median instead of impossible six equal native forging timestamps. Specific partial PoW exclusion: getnetworkhashps hash-rate and Bitcoin retarget-window tests, since that RPC is intentionally absent; assert method-not-found instead. No other coverage excluded. Native future-time startup assertions use the existing15second PoCX constant, retaining exact boundary and boundary-plus-one rejection.",
+      "review": "Preserve original blockchain RPC methods/assertions, adapting header fields/hash serialization to native286bytes with zero signature, fixed600second block history to strictly increasing native times,10coin/500block subsidy to2000total at height200, real native competing/header-only/missing-undo proofs, and native reference/base-target difficulty ratio. Retain exact pruning fields and errors, chain/UTXO statistics, invalidate/reconsider, wait APIs, stop207, deployment144/287 threshold, all getblock verbosity/fee/prevout/coinbase/undo/disk checks, verificationprogress boundaries and uint32 timestamp maximum. Year2106 checks six increasing timestamps ending exactly uint32max and independently reconstructed11block median instead of impossible six equal native forging timestamps. Specific partial PoW exclusion: getnetworkhashps hash-rate and Bitcoin retarget-window tests, since that RPC is intentionally absent; assert method-not-found instead. No other coverage excluded. Native future-time startup assertions use the existing15second PoCX constant, retaining exact boundary and boundary-plus-one rejection. Accept only the precise non-JSON HTTP503 shutdown response (-342) during stopatheight; retain original connection-error handling, restart and exact stopped height assertions. Both transports independently passed under TSan with512KiB stack and timeout factor40.",
       "evidence": "build-pocx-clean/pocx-results-fgwf4s35/results.json",
       "execution_by_transport": {
-        "v1": "unverified; prerequisite helper and staging provenance changed",
-        "v2": "unverified; prerequisite helper and staging provenance changed"
+        "v1": "TSan current-source pass; other configurations require targeted refresh",
+        "v2": "TSan current-source pass; other configurations require targeted refresh"
       },
       "execution_status_scope": "Latest owned-runner evidence by declared argument case; historical observations do not establish current-input parity.",
       "latest_observed_outcome": "passed",
@@ -15962,12 +15999,13 @@
               "report": "build-pocx-clean/pocx-results-fgwf4s35/results.json",
               "log": "build-pocx-clean/pocx-results-fgwf4s35/rpc_blockchain.py.log",
               "skip_reason": null,
-              "selected_script_matches_execution": true,
+              "selected_script_matches_execution": false,
               "shared_inputs_match_execution": false,
               "changed_applicable_inputs": [
                 "test/pocx/functional_environment.py",
                 "test/pocx/stage.py",
-                "test/pocx/verify_functional.py"
+                "test/pocx/verify_functional.py",
+                "test/pocx/functional/rpc_blockchain.py"
               ],
               "current_input_status": "unverified"
             },
@@ -15979,12 +16017,13 @@
               "report": "build-pocx-clean/pocx-results-fgwf4s35/results.json",
               "log": "build-pocx-clean/pocx-results-fgwf4s35/v2/rpc_blockchain.py.log",
               "skip_reason": null,
-              "selected_script_matches_execution": true,
+              "selected_script_matches_execution": false,
               "shared_inputs_match_execution": false,
               "changed_applicable_inputs": [
                 "test/pocx/functional_environment.py",
                 "test/pocx/stage.py",
-                "test/pocx/verify_functional.py"
+                "test/pocx/verify_functional.py",
+                "test/pocx/functional/rpc_blockchain.py"
               ],
               "current_input_status": "unverified"
             }
@@ -16004,12 +16043,13 @@
               "report": "build-pocx-clean/pocx-results-fgwf4s35/results.json",
               "log": "build-pocx-clean/pocx-results-fgwf4s35/rpc_blockchain.py.log",
               "skip_reason": null,
-              "selected_script_matches_execution": true,
+              "selected_script_matches_execution": false,
               "shared_inputs_match_execution": false,
               "changed_applicable_inputs": [
                 "test/pocx/functional_environment.py",
                 "test/pocx/stage.py",
-                "test/pocx/verify_functional.py"
+                "test/pocx/verify_functional.py",
+                "test/pocx/functional/rpc_blockchain.py"
               ],
               "current_input_status": "unverified"
             },
@@ -16021,12 +16061,13 @@
               "report": "build-pocx-clean/pocx-results-fgwf4s35/results.json",
               "log": "build-pocx-clean/pocx-results-fgwf4s35/v2/rpc_blockchain.py.log",
               "skip_reason": null,
-              "selected_script_matches_execution": true,
+              "selected_script_matches_execution": false,
               "shared_inputs_match_execution": false,
               "changed_applicable_inputs": [
                 "test/pocx/functional_environment.py",
                 "test/pocx/stage.py",
-                "test/pocx/verify_functional.py"
+                "test/pocx/verify_functional.py",
+                "test/pocx/functional/rpc_blockchain.py"
               ],
               "current_input_status": "unverified"
             }
@@ -16040,8 +16081,8 @@
         }
       ],
       "replacement_assertion_and_method_accounting": {
-        "assert_statements": 30,
-        "assertion_calls": 144,
+        "assert_statements": 31,
+        "assertion_calls": 141,
         "function_names": [
           "set_test_params",
           "run_test",
@@ -16073,7 +16114,17 @@
           "move_block_file"
         ]
       },
-      "lint_binding_review": "Unused imports removed and unused assignment targets renamed; all remaining runtime AST, calls and assertions unchanged."
+      "lint_binding_review": "Unused imports removed and unused assignment targets renamed; all remaining runtime AST, calls and assertions unchanged.",
+      "scoped_ci_repair_evidence": {
+        "profile": "pocx-tsan",
+        "transports": [
+          "v1",
+          "v2"
+        ],
+        "status": "passed",
+        "proof": "artifacts/ci-parity-20261010/native-tsan-cli-shutdown-checkpoint/results.json",
+        "proof_sha256": "b29b6e5558db3d63eae0bb66c411cea6208c12f671c4a1de2c3f3ceb50d765b0"
+      }
     },
     "rpc_createmultisig.py": {
       "source": "test/functional/rpc_createmultisig.py",
