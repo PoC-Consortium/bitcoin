@@ -1161,8 +1161,9 @@ Python3.10 IPC repairs, original inventories, assertions and historical Rust
 fixture oracle. Read-only source drift and Windows recipe integrity checks
 passed on 2026-10-11. The initial failed combined review is retained separately;
 current dependency references were repaired without changing historical results.
-These checks establish staging integrity only. The queued private quality,
-IWYU and i686 compile gates and final-source CI execution remain required.
+These structural checks establish staging integrity only. The private quality,
+IWYU and i686 repair checks subsequently passed; final-source CI execution
+remains required.
 
 The independently verified dependency-impact inventory is under
 `artifacts/ci-parity-20261010/final-native-repair-dependency-impact-v2/`.
@@ -1198,8 +1199,36 @@ ordinary directories cannot be used for deletion, and that absent compiler
 invocations cannot establish a refresh. A real disposable OverlayFS preflight
 then invalidated all412 affected retained objects in its private upper layer;
 the original and native lower builds and frozen source remained unchanged.
-The full native current-revision recipe is queued behind terminal successful
-quality-cache, IWYU and i686 private gates. It will compare final configuration
-inputs before object reuse, preserve the180-second kernel deadline and run both
-functional transports. This is a local current-revision reproduction; historical
-ancestor-range and other configuration/platform evidence remain required.
+The full native current-revision recipe is running after independently verified
+quality-cache, IWYU and i686 private checks. It compares final configuration
+inputs before object reuse, preserves the180-second kernel deadline and requires
+both functional transports. This is a local current-revision reproduction;
+historical ancestor-range and other configuration/platform evidence remain required.
+
+The private ASan quality-cache check verified eight independent inputs, four
+invalid-pointer guards and16384 concurrent comparisons. Its compiled prototype
+matches the proposed production code apart from full-line comments. Enforced
+IWYU covered77 compile entries/50 distinct translation units with zero required
+include edits. The exact ABI-aware header assertion compiled into an i686 ELF32
+object. Evidence and independent verification are bound under
+`native-private-gate-status-recovery/`; these results are private repair checks,
+not complete framework or CI passes.
+
+Disk exhaustion interrupted host status writes after these three checks passed
+and caused46 of154 Alpine unit suite entries to fail. The truncated controllers,
+raw failures and source/build evidence are retained. Completed functional scratch
+databases were removed according to the existing artifact policy, preserving
+17908 nondatabase evidence files byte for byte and leaving frozen builds intact.
+The new `final-native-revision-refresh-v2/` invocation uses the independently
+verified raw repair results while retaining the interrupted host bookkeeping.
+The unstarted prior invocation and its pinned inputs remain unchanged. A separate
+read-only observer will audit final compiler commands and generated dependencies
+before accepting retained objects. No original baseline was replayed.
+
+The separate no-wallet SIMD attempt selected no tests because its compound
+Boost filter was malformed. `nowallet-simd-filter-recovery/` reused the successfully
+rebuilt binary read-only and executed the two missing cases individually with
+the required randomization and8MiB stack:16 assertions passed. Independent
+reconciliation retained700 unrelated unit passes within the prior checkpoint's
+scope; current fixture and final-source qualifications still apply. The original
+selection failure remains recorded, and no additional compilation was needed.
