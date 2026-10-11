@@ -44,7 +44,20 @@ Alpine leaves `CI_LIMIT_STACK_SIZE` unset and uses the original 8 MiB stack;
 the i686/previous-release 512 KiB limit does not apply. Evidence is under
 `artifacts/ci-parity-20261010/inherited-alpine-original-ctest-checkpoint/` and
 `artifacts/ci-parity-20261010/randomized-alpine-original-checkpoint/`.
-Its original full functional baseline and matching PoCX execution remain required.
+Its complete applicable original functional baseline is now independently
+verified in both transports: 850 passes and 68 configuration-inactive rows.
+The inactive rows comprise 54 explicit upstream CLI incompatibilities, ten
+previous-release rows and four special-address rows; the latter fixtures are
+disabled by this inherited profile and remain required in enabled profiles.
+Together with the verified randomized CTest results, the complete original
+runtime checkpoint records 1,620 passes and 68 justified inactive rows, with
+zero failures, unexpected skips or unverified cases. Evidence is under
+`artifacts/ci-parity-20261010/inherited-alpine-original-functional-cli-checkpoint/`
+and `artifacts/ci-parity-20261010/inherited-alpine-original-complete-runtime-checkpoint/`.
+The frozen entrypoint's historical CLI-classification failure is retained;
+these framework proofs do not claim that the whole inherited entrypoint passed.
+The matching PoCX recipe has cleared this baseline gate and entered the shared
+build queue. Its execution and independent verification remain required.
 
 The original ASan build also passed the missing inherited randomized runtime
 condition: 739 unit cases and all 16 kernel cases, with zero skips, actual seeds,
