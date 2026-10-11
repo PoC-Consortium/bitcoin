@@ -1232,3 +1232,40 @@ the required randomization and8MiB stack:16 assertions passed. Independent
 reconciliation retained700 unrelated unit passes within the prior checkpoint's
 scope; current fixture and final-source qualifications still apply. The original
 selection failure remains recorded, and no additional compilation was needed.
+The corrected native revision candidate completed the full CTest phase on
+2026-10-11: 762 unit cases, 10 Qt cases, 16 kernel cases and six auxiliary checks
+passed; ten PoW-only unit cases remain individually justified exclusions. The
+kernel ran 20703 assertions in 32.84 seconds within the unchanged 180 second limit.
+`final-native-revision-ctest-checkpoint-v3/` independently binds the raw cases to
+the frozen candidate. The continued build retained 843 validated objects and
+compiled 21 remaining or generated-input objects. Its full functional recipe and
+terminal object audit remain in progress; these CTest results do not establish
+full production or other configuration parity.
+
+Three additional PoCX functional repairs passed TSan in both transports using
+the retained binary, 512KiB stack and timeout factor 40. CLI checks now compare
+actual serialized vsize while preserving exact maximum-signature fee and balance
+assertions. The shutdown test accepts only its precise HTTP 503/-342 response and
+still verifies the stopped height after restart. AssumeUTXO builds its competing
+fork offline before reconnecting and testing the original most-work reorg.
+Evidence is independently reconciled under `native-tsan-cli-shutdown-checkpoint/`
+and `native-tsan-assumeutxo-checkpoint-v2/`. The already committed live-clock
+eviction adaptation also passed both transports under
+`native-tsan-current-eviction-checkpoint-v2/`; an earlier private-copy selection
+failure is retained. No original test source or meaningful assertion changed,
+and no compiler, baseline or additional Actions run was invoked for these checks.
+The scheduler/wallet repairs also passed both transports under TSan, independently
+verified in `native-tsan-scheduler-wallet-checkpoint-v2/`. The scoped composite
+`tsan-focused-functional-repairs-checkpoint/` records twelve passing executions
+(ten adapted original cases and two PoCX-only cases), with identical retained
+binaries and execution conditions.
+
+The earlier full native TSan functional run remains a recorded failure:
+572 of 590 executions passed; ten failures explicitly reported disk exhaustion,
+and eight exposed timing or fixture issues. Focused repair proofs retain their
+own scope and do not overwrite that historical result. The native C++ staging
+was rebased onto the functional repairs under
+`final-native-repair-batch-proposal-v6/`; its C++ is byte-identical to the tested
+V5 candidate. `final-native-source-view-v3/` independently verifies 3451 tracked
+files, 712 preserved original test files, drift and Windows recipe integrity.
+All earlier running jobs, source views and pinned inputs remain unchanged.
