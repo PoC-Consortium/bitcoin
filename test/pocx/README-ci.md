@@ -912,6 +912,25 @@ Evidence is under
 `artifacts/ci-parity-20261010/inherited-iwyu-original-complete-checkpoint-v3/`.
 PoCX analysis and the complete paired entrypoint remain required.
 
+The inherited LLVM22 clang-tidy original-first pair completed on 2026-10-11.
+Independent inspection verifies the frozen native build/install, analysis of
+631 unique translation units and dependency check, with no reported diagnostics.
+The native custom-plugin object was already built: its byte-identical plugin
+and unchanged fixture sources reuse the verified original fixture result;
+this is zero new native fixture executions. The original checkpoint retains
+593 analyzed translation units, its actual plugin fixture execution and dependency
+check. Evidence is under
+`artifacts/ci-parity-20261010/inherited-tidy-native-complete-checkpoint/`
+and `inherited-tidy-original-complete-checkpoint-v2/`.
+
+The frozen pair predates the native SIMD test-fixture repair. Current-source
+reporting therefore retains 632 native analysis/check passes and leaves exactly
+the changed SIMD translation unit unverified. Its build/install result also
+needs an incremental refresh. No unchanged original baseline is replayed, and
+this analysis-only profile establishes no unit, Qt, kernel, functional or hosted
+runtime pass. A metadata guard check verifies this selective invalidation under
+`artifacts/ci-parity-20261010/tidy-simd-source-freshness-guard-check/`.
+
 Original i686 tracing uses a private, reviewed test view when USDT is enabled.
 BCC compiles BPF for the host ABI, but the 32-bit daemon supplies four-byte
 pointers and `size_t` arguments. Reading them directly into the original
