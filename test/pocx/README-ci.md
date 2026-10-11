@@ -1175,3 +1175,31 @@ not current analysis or framework passes. Before reuse, the final configuration,
 compiler-command variants and generated headers must also match. Affected objects
 must be removed only from private writable build overlays, regardless of mtimes.
 No original baseline, compiler or analysis invocation was replayed for this audit.
+
+The complete candidate tree is frozen under
+`artifacts/ci-parity-20261010/final-native-source-view-v1/`:3451 tracked files,
+including712 original test files preserved from the reviewed tree. Independent
+read-only drift, Windows recipe and source/Git metadata checks passed. The view
+shares only immutable Git objects; source files, index and HEAD are independent.
+It remains a candidate, with no production or framework success inferred.
+
+The revision build has no compile database. Its actual CMake Makefile recipes
+and compiler dependency files are retained instead under
+`artifacts/ci-parity-20261010/revision-final-source-dependency-inventory-v1/`.
+The730 compiled original objects retain identical OFF code dependencies. Of864
+compiled native objects,412 have changed project dependencies and452 retain
+unchanged dependencies. Forty additional recipes per mode were never built;
+they establish no test coverage. Current commands and generated inputs still
+require comparison after configuration.
+
+Six infrastructure guards verify that changed sources with old timestamps,
+changed compiler flags and changed generated headers require rebuilding, that
+ordinary directories cannot be used for deletion, and that absent compiler
+invocations cannot establish a refresh. A real disposable OverlayFS preflight
+then invalidated all412 affected retained objects in its private upper layer;
+the original and native lower builds and frozen source remained unchanged.
+The full native current-revision recipe is queued behind terminal successful
+quality-cache, IWYU and i686 private gates. It will compare final configuration
+inputs before object reuse, preserve the180-second kernel deadline and run both
+functional transports. This is a local current-revision reproduction; historical
+ancestor-range and other configuration/platform evidence remain required.
