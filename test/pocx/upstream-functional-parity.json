@@ -7144,7 +7144,7 @@
         }
       ],
       "dependencies": {
-        "test/pocx/framework/test_framework.py": "ea89c485b4ec374f62b0a28eb177f9ec5a5f67d2a4c0d54ee4d896ce99928f0b",
+        "test/pocx/framework/test_framework.py": "2333960a1a41d03b9c62a584e7d2ebfe49e6ce5cb82afbf92b72731f195d8a8a",
         "test/functional/test_framework/test_node.py": "59799d482ecf3aeb7f5ec2fa52ffe839f4e377ac0a903bf22daa5ecfaaa5d2ac",
         "test/pocx/framework/blocktools.py": "b87707eb61097f1b7cf651a5c81ccd2570ca505e809bcd4a1026aede6afc1ceb",
         "test/functional/test_framework/messages.py": "c786651a517a49dd084b1d76072f755d40c5483f5be53b7322ca4f3403548b26"
@@ -10145,7 +10145,7 @@
         }
       ],
       "dependencies": {
-        "test/pocx/framework/test_framework.py": "ea89c485b4ec374f62b0a28eb177f9ec5a5f67d2a4c0d54ee4d896ce99928f0b",
+        "test/pocx/framework/test_framework.py": "2333960a1a41d03b9c62a584e7d2ebfe49e6ce5cb82afbf92b72731f195d8a8a",
         "test/functional/test_framework/test_node.py": "59799d482ecf3aeb7f5ec2fa52ffe839f4e377ac0a903bf22daa5ecfaaa5d2ac"
       },
       "adapted_assertion_and_method_accounting": {
@@ -11362,7 +11362,7 @@
       "latest_observed_outcome": "passed",
       "current_input_outcome": "passed",
       "dependencies": {
-        "test/pocx/framework/test_framework.py": "ea89c485b4ec374f62b0a28eb177f9ec5a5f67d2a4c0d54ee4d896ce99928f0b",
+        "test/pocx/framework/test_framework.py": "2333960a1a41d03b9c62a584e7d2ebfe49e6ce5cb82afbf92b72731f195d8a8a",
         "test/functional/test_framework/test_node.py": "59799d482ecf3aeb7f5ec2fa52ffe839f4e377ac0a903bf22daa5ecfaaa5d2ac",
         "test/pocx/framework/blocktools.py": "b87707eb61097f1b7cf651a5c81ccd2570ca505e809bcd4a1026aede6afc1ceb",
         "test/functional/test_framework/messages.py": "c786651a517a49dd084b1d76072f755d40c5483f5be53b7322ca4f3403548b26"
@@ -19691,7 +19691,7 @@
       "latest_observed_outcome": "passed",
       "current_input_outcome": "passed",
       "dependencies": {
-        "test/pocx/framework/test_framework.py": "ea89c485b4ec374f62b0a28eb177f9ec5a5f67d2a4c0d54ee4d896ce99928f0b",
+        "test/pocx/framework/test_framework.py": "2333960a1a41d03b9c62a584e7d2ebfe49e6ce5cb82afbf92b72731f195d8a8a",
         "test/functional/test_framework/test_node.py": "59799d482ecf3aeb7f5ec2fa52ffe839f4e377ac0a903bf22daa5ecfaaa5d2ac",
         "test/pocx/framework/blocktools.py": "b87707eb61097f1b7cf651a5c81ccd2570ca505e809bcd4a1026aede6afc1ceb",
         "test/pocx/framework/wallet_compatibility.py": "9df8dd702518891b76acd8a34509382f91efce6005e1d1c66785437a372dff50",
@@ -21924,7 +21924,7 @@
       "latest_observed_outcome": "passed",
       "current_input_outcome": "passed",
       "dependencies": {
-        "test/pocx/framework/test_framework.py": "ea89c485b4ec374f62b0a28eb177f9ec5a5f67d2a4c0d54ee4d896ce99928f0b",
+        "test/pocx/framework/test_framework.py": "2333960a1a41d03b9c62a584e7d2ebfe49e6ce5cb82afbf92b72731f195d8a8a",
         "test/functional/test_framework/test_node.py": "59799d482ecf3aeb7f5ec2fa52ffe839f4e377ac0a903bf22daa5ecfaaa5d2ac",
         "test/pocx/framework/test_node.py": "a4935df6cd38842cbd8577dbd839d931f464bd69f6a9f8419c6bdcc4bf5bb6a1",
         "test/pocx/framework/blocktools.py": "b87707eb61097f1b7cf651a5c81ccd2570ca505e809bcd4a1026aede6afc1ceb",
@@ -24162,7 +24162,7 @@
       "replacement_sha256": "b87707eb61097f1b7cf651a5c81ccd2570ca505e809bcd4a1026aede6afc1ceb",
       "copied_upstream_alias": "test_framework/bitcoin_blocktools.py",
       "dependencies": {
-        "test/pocx/framework/test_framework.py": "ea89c485b4ec374f62b0a28eb177f9ec5a5f67d2a4c0d54ee4d896ce99928f0b",
+        "test/pocx/framework/test_framework.py": "2333960a1a41d03b9c62a584e7d2ebfe49e6ce5cb82afbf92b72731f195d8a8a",
         "test/pocx/framework/test_node.py": "a4935df6cd38842cbd8577dbd839d931f464bd69f6a9f8419c6bdcc4bf5bb6a1",
         "test/pocx/framework/messages.py": "f93a7e32521a57c7e5b49214c8bb949b4bc1d1d33eb12ce724462edd37d45898",
         "src/chain.h": "556ee891313051c191ea17edd45c0dc50cdd1299e4ea374997165a0dcd4a581b",
@@ -26159,7 +26159,7 @@
   },
   "native_forging_clock": {
     "sources": {
-      "test/pocx/framework/test_framework.py": "ea89c485b4ec374f62b0a28eb177f9ec5a5f67d2a4c0d54ee4d896ce99928f0b",
+      "test/pocx/framework/test_framework.py": "2333960a1a41d03b9c62a584e7d2ebfe49e6ce5cb82afbf92b72731f195d8a8a",
       "test/pocx/framework/blocktools.py": "b87707eb61097f1b7cf651a5c81ccd2570ca505e809bcd4a1026aede6afc1ceb"
     },
     "review": "Opt-in synchronized forging obtains an unsubmitted real native proof on active parent at parent_time+1. Existing builder verifies tip, height, mempool, clock, proof hash and parent preservation. Independently bound preview time using uint64 quality, target decrease20percent and integer time bending. Set actors to max(actual proof deadline, existing clocks), preserving explicit scenario advances and stopped-node startup clock. Original generation RPC/body/amount and sync calls retained. Avoid expiring unrelated block downloads by advancing worst-case579seconds for an actual102second proof. Historical200-block funding remains explicitly paced at the independent worst-case interval to keep its genesis-target invariant and backdating bound. Its complete per-block target,10-coin reward,script allocation,tip age,IBD and verifychain checks remain unchanged. Ordinary scenario generation uses actual deadlines. Historical funded tip is20h plus one bound interval before real time, retaining the asserted24h usability and leaving room for the original orphan scenario170 additional funding coinbases plus cleanup blocks. Per-block proof bounds and real-clock eligibility assertions remain active. Connected generation previews explicitly allow legitimate incoming/replacement mempool transactions while retaining empty-body, proof hash, active-parent, height, deadline, clock and normal mining assertions. Strict mempool equality remains the default for quiescent explicit constructors. The added equality is not an original Bitcoin assertion and previously raced with asynchronous wallet transaction relay. A native mining regression injects a real valid transaction after the unsubmitted preview RPC, requires unchanged tip/height, then verifies the actual mining RPC includes exactly that transaction and empties the mempool. All original100block wrapper assertions remain intact. Failed full candidate and owned-group cleanup retained in complete-selection-matrix-final-third-interruption.json. Explicitmixednodeclasses retain defaultnativeclass for existing consumers; only reviewedcompatibilityadapters select the unchangedBitcoinTestNode for priorBitcoinreleases. NewBitcoinproofconstructor uses an unchangedaliased upstreammessages module and identicalcoinbases; it does not affect nativeforging. Currentexecution remains unverified.",
@@ -26256,5 +26256,29 @@
     "historical_fixture_oracle_preserved": true,
     "private_canary_actual_status": "pending; no pass inferred",
     "current_ci_execution": "unverified; original kernel fixture and timeout remain unchanged"
+  },
+  "fixture_timeout_isolation_review": {
+    "scope": "Only private PoCX pre-funded chain setup uses at least the normal60-second RPC timeout scaled by the profile. Scenario nodes keep their exact requested startup/RPC timeouts, including deliberate failure cases. Original Bitcoin runner and assertions are unchanged.",
+    "base_framework_sha256": "ea89c485b4ec374f62b0a28eb177f9ec5a5f67d2a4c0d54ee4d896ce99928f0b",
+    "framework_sha256": "2333960a1a41d03b9c62a584e7d2ebfe49e6ce5cb82afbf92b72731f195d8a8a",
+    "only_changed_method": "_initialize_chain_pocx",
+    "only_changed_argument": "Fixture TestNode timewait",
+    "all_other_class_members_unchanged": true,
+    "original_startup_failure_test_sha256": "2917a04d7817b8b3a4aebdf21e5df88148cd9ce9ce7ea6c0419ee8c429430c7f",
+    "focused_msan_validation": {
+      "status": "passed",
+      "transports": [
+        "v1",
+        "v2"
+      ],
+      "cases_passed": 2,
+      "timeout_factor": 40,
+      "runtime_stack_bytes": 524288,
+      "actual_compilers_executed": 0,
+      "retained_binary_scope": "Previously compiled instrumented MSan binaries; focused Python fixture repair only. Full current MSan profile remains unverified.",
+      "raw_case_report_sha256": "8fe8c8dcb976e98d289ebc03e6ed49b9cccadfe498259f4609d8a649c46acd9e"
+    },
+    "existing_successful_dependency_records": "Updated current framework dependency reference only. Scenario assertions, source files and all historical execution/oracle fields remain unchanged. Prior successful fixture setup remains the same code path with a larger setup-only bound.",
+    "full_current_profile_or_hosted_pass_inferred": false
   }
 }

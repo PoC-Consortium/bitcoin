@@ -1082,7 +1082,9 @@ class BitcoinTestFramework(metaclass=BitcoinTestMetaClass):
         fixture_dir = get_datadir_path(fixture_root, 0)
         self.nodes = [TestNode(0, fixture_dir, chain=self.chain,
                               extra_conf=['bind=127.0.0.1'], extra_args=[],
-                              rpchost=None, timewait=self.rpc_timeout,
+                              # Fixture mining precedes the scenario; deliberately short
+                              # startup/RPC timeouts belong only to its actual nodes.
+                              rpchost=None, timewait=max(self.rpc_timeout, int(60 * self.options.timeout_factor)),
                               timeout_factor=self.options.timeout_factor,
                               binaries=self.get_binaries(), coverage_dir=None,
                               cwd=self.options.tmpdir, uses_wallet=False)]
