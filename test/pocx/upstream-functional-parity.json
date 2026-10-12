@@ -14793,7 +14793,7 @@
       "source": "test/functional/p2p_outbound_eviction.py",
       "replacement": "test/pocx/functional/p2p_outbound_eviction.py",
       "source_sha256": "3b7d2bb4ac628a40728e94a1953f966e13c2c1022e552025314f9ad6e6501f84",
-      "replacement_sha256": "f51c62862d3841b316aa3f3ef504e3a31d9cc45d22becb0dd6b6bf8b34d5558d",
+      "replacement_sha256": "79302b4eb27ceb9ce397d9fa84aea57d1335b93e80a4faccc70a58d86a770aa5",
       "assertion_and_method_accounting": {
         "assert_statements": 0,
         "assertion_calls": 0,
@@ -14806,11 +14806,11 @@
           "run_test"
         ]
       },
-      "review": "Preserve original protected/unprotected/mixed/block-relay-only outbound-peer scenarios,4 protected slots,20minute chain-sync and2minute header-response timeout increments, and every disconnect/non-disconnect assertion. Protected, mixed and block-relay-only scenarios capture starting clock again after their native generation, before timing original1201/121second waits. Native forging advances time by a proof deadline, so a pre-generation saved clock cannot measure those waits correctly. Original repeated catchup scenario timing and every timeout increment remain unchanged.",
+      "review": "Preserve original protected/unprotected/mixed/block-relay-only outbound-peer scenarios,4 protected slots,20minute chain-sync and2minute header-response timeout increments, and every disconnect/non-disconnect assertion. Protected, mixed and block-relay-only scenarios capture starting clock again after their native generation, before timing original1201/121second waits. Native forging advances time by a proof deadline, so a pre-generation saved clock cannot measure those waits correctly. Original repeated catchup scenario timing and every timeout increment remain unchanged. Start the scenario clock at max(wall time, existing native fixture clock, tip timestamp), rather than rewinding the future-funded PoCX chain. This prevents a native proof preview from briefly advancing years and racing peer eviction under CLI/multiprocess execution. All four scenario methods and original1201/121-second timeout steps are byte unchanged from the previous reviewed adaptation. Add an explicit initial tip/clock bound. Bitcoin source is unchanged.",
       "evidence": "build-pocx-clean/pocx-results-fgwf4s35/results.json",
       "execution_by_transport": {
-        "v1": "unverified; prerequisite helper and staging provenance changed",
-        "v2": "unverified; prerequisite helper and staging provenance changed"
+        "v1": "unverified; focused native clock repair pending",
+        "v2": "unverified; focused native clock repair pending"
       },
       "execution_status_scope": "Latest owned-runner evidence by declared argument case; historical observations do not establish current-input parity.",
       "latest_observed_outcome": "passed",
@@ -14870,6 +14870,19 @@
           "test_outbound_eviction_blocks_relay_only",
           "run_test"
         ]
+      },
+      "native_clock_repair_focused_evidence": {
+        "proof": "artifacts/ci-parity-20261010/alpine-focused-outbound-listener-port-checkpoint-v4/results.json",
+        "sha256": "a63ad44e4fd082adb01444a3043fbd6b4d2f610fb7e7b9df4849c059268576eb",
+        "counts_by_transport": {
+          "v1": {
+            "passed": 1
+          },
+          "v2": {
+            "passed": 1
+          }
+        },
+        "scope": "Alpine retained V8 binary and dependencies, CLI/multiprocess, timeout factor40, private reserved ports. Other configurations require source/build/environment reconciliation."
       }
     },
     "p2p_permissions.py": {

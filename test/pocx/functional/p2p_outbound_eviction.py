@@ -248,7 +248,13 @@ class P2POutEvict(BitcoinTestFramework):
 
 
     def run_test(self):
-        self.nodes[0].setmocktime(int(time.time()))
+        node = self.nodes[0]
+        tip_time = node.getblockheader(node.getbestblockhash())['time']
+        # Native cached blocks may be ahead of wall time. Rewinding their clock
+        # makes proof generation jump forward across peer-eviction deadlines.
+        # Start at the fixture clock and retain every upstream timeout step.
+        node.setmocktime(max(int(time.time()), node.mocktime or 0, tip_time))
+        assert node.mocktime >= tip_time
         self.test_outbound_eviction_unprotected()
         self.test_outbound_eviction_protected()
         self.test_outbound_eviction_mixed()
