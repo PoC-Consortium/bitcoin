@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # Copyright (c) 2026 The Bitcoin PoCX developers
 # Distributed under the MIT software license; see COPYING.
-"""Record Windows cross-built unit inputs without executing the foreign binary.
+"""Record Windows/macOS cross-built unit inputs without executing the foreign binary.
 
 Runtime discovery and assertion proof are deliberately absent. A target-host
 consumer must verify the exported binary, inputs and complete runtime inventory.
@@ -20,9 +20,10 @@ def snapshot(binary, inputs, cache, source):
     build = cache.resolve().parent
     build_configuration.require_source(cache.read_text(), source)
     options, system = unit_matrix.configuration(build)
-    if (options.get('target_system') != 'Windows' or options.get('ENABLE_POCX') != 'ON' or
+    target = options.get('target_system')
+    if (target not in ('Windows', 'Darwin') or options.get('ENABLE_POCX') != 'ON' or
             options.get('BUILD_TESTS') != 'ON' or 'set(CMAKE_CROSSCOMPILING "TRUE")' not in system.read_text()):
-        raise ValueError('Deferred discovery requires a Windows cross-built PoCX unit target')
+        raise ValueError('Deferred discovery requires a Windows/macOS cross-built PoCX unit target')
     paths = {Path(line).resolve() for line in inputs.read_text().splitlines() if line}
     if not paths:
         raise ValueError('Empty evaluated cross-unit source selection')
@@ -35,7 +36,7 @@ def snapshot(binary, inputs, cache, source):
         else:
             raise ValueError('Cross-unit input outside the source/build trees: ' + str(path))
         sources[name] = sha256(path)
-    return {'format': 1, 'kind': 'windows-cross-unit-inputs',
+    return {'format': 1, 'kind': ('windows' if target == 'Windows' else 'darwin') + '-cross-unit-inputs',
         'execution_status': 'not executed; runtime discovery required on target host',
         'runtime_inventory': None, 'binary_sha256': sha256(binary),
         'input_manifest_sha256': sha256(inputs), 'cache_sha256': sha256(cache),
@@ -50,7 +51,8 @@ def main():
     record = snapshot(args.binary, args.inputs, args.cache, args.source)
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(record, indent=2) + '\n')
-    print('Recorded Windows cross-unit inputs; runtime discovery remains unverified.', flush=True)
+    print('Recorded ' + record['build_options']['target_system'] +
+          ' cross-unit inputs; runtime discovery remains unverified.', flush=True)
 
 
 if __name__ == '__main__':

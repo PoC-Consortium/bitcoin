@@ -92,9 +92,9 @@ else()
   set(unit_test_include "${CMAKE_CURRENT_BINARY_DIR}/discovered.cmake")
 endif()
 set(unit_inputs "${unit_discovery_dir}/unit-inputs.txt")
-if(CMAKE_CROSSCOMPILING AND CMAKE_SYSTEM_NAME STREQUAL "Windows")
-  # The Windows artifact consumer discovers and runs all cases on Windows.
-  # Executing this foreign PE binary on the Linux builder is invalid.
+if(CMAKE_CROSSCOMPILING AND CMAKE_SYSTEM_NAME MATCHES "^(Windows|Darwin)$")
+  # Discover and run cross-built cases on their target host.
+  # Windows and macOS binaries cannot execute on the Linux builder.
   list(APPEND POCX_UNIT_INPUTS "${PROJECT_SOURCE_DIR}/test/pocx/record_cross_unit.py")
 endif()
 file(GENERATE OUTPUT "${unit_inputs}"
@@ -102,7 +102,7 @@ file(GENERATE OUTPUT "${unit_inputs}"
   CONTENT "$<JOIN:$<FILTER:$<TARGET_PROPERTY:test_pocx,SOURCES>,EXCLUDE,[.]rule$>,\n>\n$<JOIN:${POCX_UNIT_INPUTS},\n>\n")
 set_property(TARGET test_pocx APPEND PROPERTY LINK_DEPENDS "${unit_inputs}"
   "${PROJECT_BINARY_DIR}/CMakeCache.txt" ${POCX_UNIT_INPUTS})
-if(CMAKE_CROSSCOMPILING AND CMAKE_SYSTEM_NAME STREQUAL "Windows")
+if(CMAKE_CROSSCOMPILING AND CMAKE_SYSTEM_NAME MATCHES "^(Windows|Darwin)$")
   add_custom_command(TARGET test_pocx POST_BUILD
     COMMAND ${Python3_EXECUTABLE} ${PROJECT_SOURCE_DIR}/test/pocx/record_cross_unit.py
       --binary $<TARGET_FILE:test_pocx> --output "${unit_discovery_dir}/cross-build.json"

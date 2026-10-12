@@ -43,6 +43,21 @@ class CrossUnitTest(unittest.TestCase):
             self.assertEqual(record['sources'], {'source/fixture.cpp': sha256(root / 'fixture.cpp'),
                                                 'build/generated.h': sha256(build / 'generated.h')})
 
+    def test_darwin_deferred_record_preserves_inputs_without_runtime_discovery(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root, build, binary, inputs, cache, system = self.fixture(directory)
+            system.write_text(system.read_text().replace('"Windows"', '"Darwin"')
+                              .replace('"x86_64"', '"arm64"'))
+            target = build / 'test_pocx'
+            binary.rename(target)
+            record = record_cross_unit.snapshot(target, inputs, cache, root)
+            self.assertEqual(record['kind'], 'darwin-cross-unit-inputs')
+            self.assertEqual(record['build_options']['target_system'], 'Darwin')
+            self.assertEqual(record['binary_sha256'], sha256(target))
+            self.assertIsNone(record['runtime_inventory'])
+            self.assertIn('not executed', record['execution_status'])
+            self.assertEqual(set(record['sources']), {'source/fixture.cpp', 'build/generated.h'})
+
     def test_wrong_consensus_host_and_empty_or_external_inputs_rejected(self):
         with tempfile.TemporaryDirectory() as directory:
             root, _, binary, inputs, cache, system = self.fixture(directory)

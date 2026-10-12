@@ -9,7 +9,7 @@
     "ci/test/00_setup_env_win64_msvcrt.sh": "5870e8ebc1618952d45794038e7dc9eadd593f0a23c878ee2463349f521936fa",
     "ci/test/02_run_container.py": "84e4a1adb04972ec0d3c74a598f0995fde6465592c62f84139db41fcab6a7b65",
     "src/CMakeLists.txt": "9838b770ffdfc39dd194291915e07ebfaa91799a31e02d3619bcfa19d0f45031",
-    "src/pocx/test/CMakeLists.txt": "69d4088b8a67a02717f77299f2d5935beb4579a6c4a1cbd471a4375e1c7ca3b1",
+    "src/pocx/test/CMakeLists.txt": "e72fe6ae53c2b5b452a1410ed0d978a0f09f75cb3d1829d671e721b1badb5f3e",
     "src/pocx/test/kernel/CMakeLists.txt": "be88d68df30ffa911eb34faa18cb001b93dcc3da0d58d0c2e5ff9af8e389df40",
     "test/download_utils.py": "7ac35f3379c301f421b53ccb6d67cd3a8ab9e9869fd4032ee153e298a08013b2",
     "test/get_previous_releases.py": "31f38a771099df6b3b4280c4ee56d9b40eb6dd0aac6642f3595d4cea738df5b4",
@@ -29,14 +29,14 @@
     "test/pocx/manifest.json": "aafe0bce90e53758ca8cc00e62de5b98e2f02b302c2227be1a3b6f7d8177221b",
     "test/pocx/process_tree.py": "12639a920fa4a656eec4f14ea02c4aaf1fe997cfc18c7df2566e82a1d3ab3f29",
     "test/pocx/qt_parity.py": "ad4d9087e2058b42d33291b71f324677c32ffdf6276687519d3c8078e8187ace",
-    "test/pocx/record_cross_unit.py": "b6fd82f31216e35ca534c5290eea1b2d44bf5fbbbbdddc1e0e68e8350bb0a28e",
+    "test/pocx/record_cross_unit.py": "7e475dc0ee4b1a5bbbe122a8c38718ff1ca01e078c0f63826d25a7510e0bd9fc",
     "test/pocx/rpc_coverage.py": "3d6afe81054a7acc05c634a54967d167eb4223205b421c7db2f3ce4406da6723",
     "test/pocx/run_bitcoin_functional.py": "79d2454c38479b74769917f19153793d50e26b489de0599aff7ef908d62e0e03",
     "test/pocx/run_qt.py": "7f2634e51b9b625a85b645f90c86db0e58d4b97cf0e6937b695744b25621b9fc",
     "test/pocx/stage.py": "2b86aabfee94c796e8f5b82af15415fb740de87b96bf76c4b702af81e3d3015b",
     "test/pocx/test_artifact_functional_view.py": "450f4a123046cce47669d266268192deccada9081923c2611630336bcc20df9c",
     "test/pocx/test_cross_kernel.py": "6e4b82a58d7f248c4bebe35d3df39d92dfee31b42b17b56fc46ede613a36b477",
-    "test/pocx/test_cross_unit.py": "81bbd22bd9a4f3403f5fa2ae4552c392a3f97d6895d4f038b17cabcae43ab824",
+    "test/pocx/test_cross_unit.py": "3ed89c11e3f175ffa065618c8238b4fd4d194c2c7a3aeed9d4be6211d4989955",
     "test/pocx/test_inherited_ci.py": "620ce78bcfe05f4a02521ffc30c9b83e2c8a2881e73fd01cdeaab0d11c8bbb16",
     "test/pocx/test_processor_configuration.py": "4842fab8bccab3fc89dcab45a5b78b78ca04973a10bd950b8064d9290d8a260d",
     "test/pocx/test_qt_infrastructure.py": "15cb1066af6da72a000ff19cef46f2f4c689ac523623086e31ea2ea43c7a707f",
@@ -209,7 +209,7 @@
     "sources": {
       "src/pocx/test/CMakeLists.txt": {
         "previous_sha256": "b442ec2b07c2f11c2aafa7c781af0222bc53201d140901f09722dcc16bc8aba0",
-        "sha256": "69d4088b8a67a02717f77299f2d5935beb4579a6c4a1cbd471a4375e1c7ca3b1"
+        "sha256": "e72fe6ae53c2b5b452a1410ed0d978a0f09f75cb3d1829d671e721b1badb5f3e"
       },
       "src/pocx/test/windows-deploy.cmake": {
         "previous_sha256": null,
