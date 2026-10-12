@@ -76,9 +76,14 @@ static std::vector<CTransactionRef> PopulateBenchmarkMempool(TestChain100Setup& 
     const size_t requested = num_transactions;
     size_t attempts{0};
     std::vector<CTransactionRef> mempool_transactions;
-    std::deque<std::pair<COutPoint, CAmount>> unspent_prevouts, undo_info;
+    struct UnspentOutput {
+        COutPoint prevout;
+        CAmount normalized_amount;
+        CAmount native_amount;
+    };
+    std::deque<UnspentOutput> unspent_prevouts, undo_info;
     std::transform(m_coinbase_txns.begin(), m_coinbase_txns.end(), std::back_inserter(unspent_prevouts),
-        [](const auto& tx){ return std::make_pair(COutPoint(tx->GetHash(), 0), tx->vout[0].nValue * SUBSIDY_SCALE); });
+        [](const auto& tx){ return UnspentOutput{COutPoint(tx->GetHash(), 0), tx->vout[0].nValue * SUBSIDY_SCALE, tx->vout[0].nValue}; });
     while (num_transactions > 0 && !unspent_prevouts.empty()) {
         // Fail explicitly if a future policy change prevents constructing the
         // full workload; a short/empty mempool must never count as success.
@@ -93,21 +98,25 @@ static std::vector<CTransactionRef> PopulateBenchmarkMempool(TestChain100Setup& 
         CAmount native_total_in{0};
         for (size_t n{0}; n < num_inputs; ++n) {
             if (unspent_prevouts.empty()) break;
-            const auto& [prevout, amount] = unspent_prevouts.front();
-            undo_info.emplace_back(prevout, amount);
+            const auto& [prevout, amount, native_amount] = unspent_prevouts.front();
+            undo_info.push_back({prevout, amount, native_amount});
             mtx.vin.emplace_back(prevout, CScript());
             total_in += amount;
-            native_total_in += amount / SUBSIDY_SCALE;
+            native_total_in += native_amount;
             unspent_prevouts.pop_front();
         }
         const size_t num_outputs = det_rand.randrange(25) + 1;
         // Retain original arithmetic in normalized fixture units, converting
         // to native satoshis only when writing actual transaction outputs.
         const CAmount fee = 100 * det_rand.randrange(30);
-        const CAmount amount_per_output = (total_in - fee) / num_outputs;
+        const CAmount amount_per_output = (total_in - fee) / static_cast<CAmount>(num_outputs);
+        // Keep the normalized graph deterministic, but spend the exact native
+        // outputs. Repeated scaling truncation must not manufacture satoshis.
+        assert(native_total_in >= fee / SUBSIDY_SCALE);
+        const CAmount native_amount_per_output = (native_total_in - fee / SUBSIDY_SCALE) / static_cast<CAmount>(num_outputs);
         for (size_t n{0}; n < num_outputs; ++n) {
             CScript spk = CScript() << CScriptNum(num_transactions + n);
-            mtx.vout.emplace_back(amount_per_output / SUBSIDY_SCALE, spk);
+            mtx.vout.emplace_back(native_amount_per_output, spk);
         }
         CTransactionRef ptx = MakeTransactionRef(mtx);
         bool success{true};
@@ -115,7 +124,7 @@ static std::vector<CTransactionRef> PopulateBenchmarkMempool(TestChain100Setup& 
             LOCK2(cs_main, m_node.mempool->cs);
             LockPoints lp;
             auto changeset = m_node.mempool->GetChangeSet();
-            changeset->StageAddition(ptx, /*fee=*/(native_total_in - num_outputs * (amount_per_output / SUBSIDY_SCALE)),
+            changeset->StageAddition(ptx, /*fee=*/(native_total_in - static_cast<CAmount>(num_outputs) * native_amount_per_output),
                     /*time=*/0, /*entry_height=*/1, /*entry_sequence=*/0,
                     /*spends_coinbase=*/false, /*sigops_cost=*/4, lp);
             if (changeset->CheckMemPoolPolicyLimits()) {
@@ -124,8 +133,8 @@ static std::vector<CTransactionRef> PopulateBenchmarkMempool(TestChain100Setup& 
             } else {
                 success = false;
                 // Add the inputs back to unspent prevouts
-                for (const auto& [prevout, amount] : undo_info) {
-                    unspent_prevouts.emplace_back(prevout, amount);
+                for (const auto& output : undo_info) {
+                    unspent_prevouts.push_back(output);
                     std::swap(unspent_prevouts.back(), unspent_prevouts[det_rand.randrange(unspent_prevouts.size())]);
                 }
             }
@@ -137,7 +146,7 @@ static std::vector<CTransactionRef> PopulateBenchmarkMempool(TestChain100Setup& 
                 // it can be used to build a more complex transaction graph. Insert randomly into
                 // unspent_prevouts for extra randomness in the resulting structures.
                 for (size_t n{0}; n < num_outputs; ++n) {
-                    unspent_prevouts.emplace_back(COutPoint(ptx->GetHash(), n), amount_per_output);
+                    unspent_prevouts.push_back({COutPoint(ptx->GetHash(), n), amount_per_output, native_amount_per_output});
                     std::swap(unspent_prevouts.back(), unspent_prevouts[det_rand.randrange(unspent_prevouts.size())]);
                 }
             }
