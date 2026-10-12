@@ -171,9 +171,13 @@ BOOST_AUTO_TEST_CASE(scalar_independent_known_vectors)
     std::atomic<size_t> failures{0};
     std::barrier first_calculation{static_cast<std::ptrdiff_t>(cold.size())};
     std::vector<std::thread> workers;
+    workers.reserve(cold.size());
     for (size_t worker = 0; worker < 8; ++worker) {
         workers.emplace_back([&, worker] {
+            // Distinct input addresses exercise the cache's value-based identity.
+            // NOLINTNEXTLINE(performance-unnecessary-copy-initialization)
             const auto copies = vectors;
+            // NOLINTNEXTLINE(performance-unnecessary-copy-initialization)
             const auto fresh = cold[worker];
             first_calculation.arrive_and_wait();
             uint64_t first_quality{0};

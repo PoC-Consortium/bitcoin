@@ -51534,7 +51534,7 @@
     "classification": "PoCX-specific",
     "reason": "Byte comparison against upstream v31.1; reused does not imply PoCX-compatible",
     "replacement": null,
-    "current_sha256": "a3495ba421c645753062a0768417326667725dac79dbbe4539027bfd7943129f",
+    "current_sha256": "b531e28da4eef8fc92b7d867415ca3b8b88866fe7caa68c813f2c644535e22db",
     "covered_behavior": [
       "pocx_real_proof_tests"
     ],
