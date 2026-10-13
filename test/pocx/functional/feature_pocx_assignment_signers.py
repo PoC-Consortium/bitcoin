@@ -181,7 +181,9 @@ class AssignmentSignersTest(BitcoinTestFramework):
         parent, height = node.getbestblockhash(), node.getblockcount()
         if split_sat:
             args.append([{'address': self.mining, 'amount_sat': split_sat}])
-        with node.assert_debug_log(['[Scheduler] Block forged and accepted!']):
+        # The tip becomes visible before the scheduler finishes submission and
+        # writes its acceptance log, so wait for that asynchronous completion.
+        with node.assert_debug_log(['[Scheduler] Block forged and accepted!'], timeout=30):
             response = node.submit_nonce(*args)
             assert response['poc_time'] <= 100000, response
             self.wait_until(lambda: node.getblockcount() == height + 1, timeout=30)

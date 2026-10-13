@@ -35,6 +35,8 @@ Start a few nodes:
       "assumevalid hash not in headers" and "below minimum chainwork".
 """
 
+import time
+
 from test_framework.blocktools import (
     COINBASE_MATURITY,
     add_witness_commitment,
@@ -125,6 +127,14 @@ class AssumeValidTest(BitcoinTestFramework):
         self.start_node(3, extra_args=[f"-assumevalid={block102.hash_hex}"])
         self.start_node(4, extra_args=[f"-assumevalid={block102.hash_hex}"])
         self.start_node(5)
+
+        # The fivefold native burial chain takes longer to verify under MSan.
+        # Hold protocol time while delivering it; this scenario tests the
+        # script-verification work gate, not block-download timeout behavior.
+        # Include the extra header in node3's longer competing branch.
+        protocol_time = max(int(time.time()), self.blocks[-1].nTime + 600)
+        for node in self.nodes:
+            node.setmocktime(protocol_time)
 
         # nodes[0]
         self.log.info("Send blocks to node0. Block 102 will be rejected.")

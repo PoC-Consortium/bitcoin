@@ -54,6 +54,14 @@ class NodeNetworkLimitedTest(BitcoinTestFramework):
         self.disconnect_nodes(0, 2)
         self.disconnect_nodes(1, 2)
 
+    def generate_synced(self, miner, count, peers):
+        # Finish each download before the next native forging clock jump.
+        # Keep intentionally disconnected historical-block observers isolated.
+        blocks = []
+        for _ in range(count):
+            blocks.extend(self.generate(miner, 1, sync_fun=lambda: self.sync_blocks(peers)))
+        return blocks
+
     def setup_network(self):
         self.add_nodes(self.num_nodes, self.extra_args)
         self.start_nodes()
@@ -69,6 +77,7 @@ class NodeNetworkLimitedTest(BitcoinTestFramework):
         # Connect and generate block to ensure IBD=false
         self.connect_nodes(1, 0)
         self.connect_nodes(1, 2)
+        self.sync_blocks()
         self.generate(miner, 1)
 
         # Verify peers are out of IBD
@@ -82,7 +91,7 @@ class NodeNetworkLimitedTest(BitcoinTestFramework):
         # Mine blocks and sync the pruned node. Surpass the NETWORK_NODE_LIMITED threshold.
         # Blocks deeper than the threshold are considered "historical blocks"
         num_historial_blocks = 12
-        self.generate(miner, NODE_NETWORK_LIMITED_MIN_BLOCKS + num_historial_blocks, sync_fun=self.no_op)
+        self.generate_synced(miner, NODE_NETWORK_LIMITED_MIN_BLOCKS + num_historial_blocks, [miner, pruned_node])
         self.sync_blocks([miner, pruned_node])
 
         # Connect full_node to prune_node and check peers don't disconnect right away.
@@ -133,7 +142,7 @@ class NodeNetworkLimitedTest(BitcoinTestFramework):
 
         self.log.info("Mine enough blocks to reach the NODE_NETWORK_LIMITED range.")
         self.connect_nodes(0, 1)
-        blocks = self.generate(self.nodes[1], 292, sync_fun=lambda: self.sync_blocks([self.nodes[0], self.nodes[1]]))
+        blocks = self.generate_synced(self.nodes[1], 292, [self.nodes[0], self.nodes[1]])
 
         self.log.info("Make sure we can max retrieve block at tip-288.")
         node.send_getdata_for_block(blocks[1])  # last block in valid range

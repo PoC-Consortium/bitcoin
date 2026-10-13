@@ -73,8 +73,11 @@ class MiningTest(BitcoinTestFramework):
         genesis_time = self.nodes[0].getblockheader(self.nodes[0].getblockhash(0))['time']
         for t in range(genesis_time + 600, genesis_time + 201 * 600, 600):
             for receiver in self.nodes:
-                receiver.setmocktime(t)
+                receiver.setmocktime(max(receiver.mocktime or 0, t))
             self.generate(self.wallet, 1, sync_fun=self.no_op)
+            # Do not advance the mock clock while peers still download this block.
+            self.sync_blocks()
+        t = max(receiver.mocktime for receiver in self.nodes)
         mining_info = self.nodes[0].get_mining_info()
         assert_equal(mining_info['blocks'], 200)
         assert_equal(mining_info['currentblocktx'], 0)
@@ -380,7 +383,8 @@ class MiningTest(BitcoinTestFramework):
         coinbase_tx.vin[0].nSequence = 2**32 - 2
 
         block = create_pocx_block(node, coinbase=coinbase_tx, tmpl=tmpl)
-        node.setmocktime(max(node.mocktime, block.nTime + 1))
+        for receiver in self.nodes:
+            receiver.setmocktime(max(receiver.mocktime or 0, block.nTime + 1))
 
         self.log.info("getblocktemplate: segwit rule must be set")
         assert_raises_rpc_error(-8, "getblocktemplate must be called with the segwit rule set", node.getblocktemplate, {})
@@ -455,7 +459,9 @@ class MiningTest(BitcoinTestFramework):
         assert chain_tip(block.hash_hex, status='active', branchlen=0) in node.getchaintips()
 
         # Building a few blocks should give the same results
-        self.generatetoaddress(node, 10, node.get_deterministic_priv_key().address)
+        self.sync_blocks()
+        for _ in range(10):
+            self.generatetoaddress(node, 1, node.get_deterministic_priv_key().address)
         assert_raises_rpc_error(-25, 'time-too-old', lambda: node.submitheader(hexdata=CBlockHeader(bad_block_time).serialize().hex()))
         assert_raises_rpc_error(-25, 'bad-prevblk', lambda: node.submitheader(hexdata=CBlockHeader(bad_block2).serialize().hex()))
         node.submitheader(hexdata=CBlockHeader(block).serialize().hex())

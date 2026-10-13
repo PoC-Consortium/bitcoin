@@ -15277,8 +15277,8 @@
           "test": "feature_assumevalid.py",
           "global_transport": "v1",
           "skip_reason": null,
-          "recorded_tree_matches_current_sources": true,
-          "selected_script_matches_execution": true,
+          "recorded_tree_matches_current_sources": false,
+          "selected_script_matches_execution": false,
           "shared_inputs_match_execution": true
         }
       },
@@ -15291,14 +15291,19 @@
           "test": "feature_assumevalid.py",
           "global_transport": "v2",
           "skip_reason": null,
-          "recorded_tree_matches_current_sources": true,
-          "selected_script_matches_execution": true,
+          "recorded_tree_matches_current_sources": false,
+          "selected_script_matches_execution": false,
           "shared_inputs_match_execution": true
         }
       }
     },
     "latest_observed_outcome": "passed",
-    "current_input_outcome": "passed"
+    "current_input_outcome": "unverified",
+    "protocol_timing_repair_review": {
+      "scope": "Separate PoCX adapter scheduling and protocol-clock repair; original assertions and production inputs retained. Historical profile observations remain historical; full candidate matrix verification pending.",
+      "selected_source_sha256": "b275a4b0399a9d1022bace0dcb5090e91d41474656847d8ec3ff8953948eac6e",
+      "msan_focused_proof": "/home/johnny/Code/bitcoin-pocx/bitcoin-tests-m0-m1-20261007/artifacts/ci-parity-20261010/msan-protocol-timing-focused-v2/results.json"
+    }
   },
   {
     "source": "test/functional/feature_bind_extra.py",
@@ -23942,8 +23947,8 @@
           "test": "mining_basic.py",
           "global_transport": "v1",
           "skip_reason": null,
-          "recorded_tree_matches_current_sources": true,
-          "selected_script_matches_execution": true,
+          "recorded_tree_matches_current_sources": false,
+          "selected_script_matches_execution": false,
           "shared_inputs_match_execution": true
         }
       },
@@ -23956,14 +23961,19 @@
           "test": "mining_basic.py",
           "global_transport": "v2",
           "skip_reason": null,
-          "recorded_tree_matches_current_sources": true,
-          "selected_script_matches_execution": true,
+          "recorded_tree_matches_current_sources": false,
+          "selected_script_matches_execution": false,
           "shared_inputs_match_execution": true
         }
       }
     },
     "latest_observed_outcome": "passed",
-    "current_input_outcome": "passed"
+    "current_input_outcome": "unverified",
+    "protocol_timing_repair_review": {
+      "scope": "Separate PoCX adapter scheduling and protocol-clock repair; original assertions and production inputs retained. Historical profile observations remain historical; full candidate matrix verification pending.",
+      "selected_source_sha256": "51dac365c466f19dca9e111b295831ff56549d834a2ef98d70249dafc7631ff1",
+      "msan_focused_proof": "/home/johnny/Code/bitcoin-pocx/bitcoin-tests-m0-m1-20261007/artifacts/ci-parity-20261010/msan-protocol-timing-focused-v2/results.json"
+    }
   },
   {
     "source": "test/functional/mining_getblocktemplate_longpoll.py",
@@ -28376,8 +28386,8 @@
           "test": "p2p_node_network_limited.py",
           "global_transport": "v1",
           "skip_reason": null,
-          "recorded_tree_matches_current_sources": true,
-          "selected_script_matches_execution": true,
+          "recorded_tree_matches_current_sources": false,
+          "selected_script_matches_execution": false,
           "shared_inputs_match_execution": true
         }
       },
@@ -28390,14 +28400,19 @@
           "test": "p2p_node_network_limited.py",
           "global_transport": "v2",
           "skip_reason": null,
-          "recorded_tree_matches_current_sources": true,
-          "selected_script_matches_execution": true,
+          "recorded_tree_matches_current_sources": false,
+          "selected_script_matches_execution": false,
           "shared_inputs_match_execution": true
         }
       }
     },
     "latest_observed_outcome": "passed",
-    "current_input_outcome": "passed"
+    "current_input_outcome": "unverified",
+    "protocol_timing_repair_review": {
+      "scope": "Separate PoCX adapter scheduling and protocol-clock repair; original assertions and production inputs retained. Historical profile observations remain historical; full candidate matrix verification pending.",
+      "selected_source_sha256": "350cba0064dba650125812aa37feb04ca75627d32b320b27f403f82eea5e246a",
+      "msan_focused_proof": "/home/johnny/Code/bitcoin-pocx/bitcoin-tests-m0-m1-20261007/artifacts/ci-parity-20261010/msan-protocol-timing-focused-v2/results.json"
+    }
   },
   {
     "source": "test/functional/p2p_opportunistic_1p1c.py",
@@ -47428,7 +47443,7 @@
     "classification": "PoCX-specific",
     "reason": "Byte comparison against upstream v31.1; reused does not imply PoCX-compatible",
     "replacement": null,
-    "current_sha256": "459c7981e08f1929cf8636dbc01084e1b56680b2316749a91e19e140df4a1bd2",
+    "current_sha256": "4db4a9d67c2d8531ddee6a4be9489fca1a640c6f748b2f69d58d4484dc1a44fe",
     "covered_behavior": [
       "feature_pocx_assignment_signers"
     ],
@@ -47447,8 +47462,8 @@
           "test": "feature_pocx_assignment_signers.py",
           "global_transport": "v1",
           "skip_reason": null,
-          "recorded_tree_matches_current_sources": true,
-          "selected_script_matches_execution": true,
+          "recorded_tree_matches_current_sources": false,
+          "selected_script_matches_execution": false,
           "shared_inputs_match_execution": true
         }
       },
@@ -47461,14 +47476,19 @@
           "test": "feature_pocx_assignment_signers.py",
           "global_transport": "v2",
           "skip_reason": null,
-          "recorded_tree_matches_current_sources": true,
-          "selected_script_matches_execution": true,
+          "recorded_tree_matches_current_sources": false,
+          "selected_script_matches_execution": false,
           "shared_inputs_match_execution": true
         }
       }
     },
     "latest_observed_outcome": "passed",
-    "current_input_outcome": "passed"
+    "current_input_outcome": "unverified",
+    "protocol_timing_repair_review": {
+      "scope": "Separate PoCX adapter scheduling and protocol-clock repair; original assertions and production inputs retained. Historical profile observations remain historical; full candidate matrix verification pending.",
+      "selected_source_sha256": "4db4a9d67c2d8531ddee6a4be9489fca1a640c6f748b2f69d58d4484dc1a44fe",
+      "msan_focused_proof": null
+    }
   },
   {
     "source": "test/pocx/functional/mempool_packages.py",
