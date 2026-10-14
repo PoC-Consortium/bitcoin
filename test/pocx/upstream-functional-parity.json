@@ -21286,7 +21286,7 @@
       "source": "test/functional/wallet_keypool_topup.py",
       "replacement": "test/pocx/functional/wallet_keypool_topup.py",
       "source_sha256": "0eee8f81b6d324324334bc7b4311dc3bc856e92e89ac84aac5222dfb735a786d",
-      "replacement_sha256": "35bbadbf1f0e50f6603eafddccf0e273b87df6524313d6a0ea723ecb63336990",
+      "replacement_sha256": "ec633df9b687b7f2625bf1927dabeb73695be4a9ad4454c048b2345b388636f9",
       "assertion_and_method_accounting": {
         "assert_statements": 4,
         "assertion_calls": 6,
@@ -21296,11 +21296,11 @@
           "run_test"
         ]
       },
-      "review": "Only opt the clean-chain fixture into per-block native deadline-aware generation. Preserve all original keypool100/110 derivations, backup/restart/restore branches, output types,15-coin balances and every assertion unchanged. Runtime verification pending. Five mature native10-coin coinbases reproduce original initial50-coin funding; original10/5-coin payments and15-coin restore balances remain unchanged.",
+      "review": "Only opt the clean-chain fixture into per-block native deadline-aware generation. Preserve all original keypool100/110 derivations, backup/restart/restore branches, output types,15-coin balances and every assertion unchanged. Focused verification passed in reviewed configurations; broader CI remains pending. Five mature native10-coin coinbases reproduce original initial50-coin funding; original10/5-coin payments and15-coin restore balances remain unchanged. Synchronize all connected peers after each initial funding block before advancing the next proof clock; preserves all10 assertion expressions and wallet behavior. 14focusednative executions now independently verified; full CI completion remains separate.",
       "evidence": "build-pocx-clean/pocx-results-fgwf4s35/results.json",
       "execution_by_transport": {
-        "v1": "unverified; prerequisite helper and staging provenance changed",
-        "v2": "unverified; prerequisite helper and staging provenance changed"
+        "v1": "focused passes in7reviewed configurations; broader required CI/runtime combinations remain unverified",
+        "v2": "focused passes in7reviewed configurations; broader required CI/runtime combinations remain unverified"
       },
       "diagnostic_evidence": {
         "scope": "Private immutable fixture diagnostics only; owned-runner full matrix still required. Freshness recorded per case.",
@@ -21347,12 +21347,13 @@
               "report": "build-pocx-clean/pocx-results-fgwf4s35/results.json",
               "log": "build-pocx-clean/pocx-results-fgwf4s35/wallet_keypool_topup.py.log",
               "skip_reason": null,
-              "selected_script_matches_execution": true,
+              "selected_script_matches_execution": false,
               "shared_inputs_match_execution": false,
               "changed_applicable_inputs": [
                 "test/pocx/functional_environment.py",
                 "test/pocx/stage.py",
-                "test/pocx/verify_functional.py"
+                "test/pocx/verify_functional.py",
+                "test/pocx/functional/wallet_keypool_topup.py"
               ],
               "current_input_status": "unverified"
             },
@@ -21364,12 +21365,13 @@
               "report": "build-pocx-clean/pocx-results-fgwf4s35/results.json",
               "log": "build-pocx-clean/pocx-results-fgwf4s35/v2/wallet_keypool_topup.py.log",
               "skip_reason": null,
-              "selected_script_matches_execution": true,
+              "selected_script_matches_execution": false,
               "shared_inputs_match_execution": false,
               "changed_applicable_inputs": [
                 "test/pocx/functional_environment.py",
                 "test/pocx/stage.py",
-                "test/pocx/verify_functional.py"
+                "test/pocx/verify_functional.py",
+                "test/pocx/functional/wallet_keypool_topup.py"
               ],
               "current_input_status": "unverified"
             }
@@ -26330,5 +26332,23 @@
     },
     "existing_successful_dependency_records": "Updated current framework dependency reference only. Scenario assertions, source files and all historical execution/oracle fields remain unchanged. Prior successful fixture setup remains the same code path with a larger setup-only bound.",
     "full_current_profile_or_hosted_pass_inferred": false
+  },
+  "native_ci_keypool_clock_review": {
+    "scope": "Separate PoCX wallet adapter candidate only; original Bitcoin source and assertions unchanged.",
+    "observed_failure": "V17 ASan v1 peer block-download timeout during initial funding; v2 completed all wallet assertions.",
+    "repair": "Wait for peer synchronization after each of the same105funding blocks before the next mocktime advance.",
+    "assertion_expressions_preserved": 10,
+    "runtime_verification": "14focusedexecutions passed across7recorded configurations, both transports; each independently verified. Required whole CI/platform gaps remain incomplete.",
+    "evidence": "artifacts/ci-parity-20261010/asan-keypool-clock-failure-diagnosis-v1/results.json",
+    "focused_configuration_profiles": [
+      "asan",
+      "standard",
+      "optional",
+      "tsan",
+      "msan",
+      "previous",
+      "i686"
+    ],
+    "whole_CI_pass_inferred": false
   }
 }

@@ -38922,27 +38922,27 @@
         "dynamic": false,
         "execution_by_profile": {
           "pocx": {
-            "status": "passed",
+            "status": "unverified",
             "observed_status": "passed",
             "evidence": "build-pocx-clean/pocx-results-fgwf4s35/results.json",
             "log": "build-pocx-clean/pocx-results-fgwf4s35/wallet_keypool_topup.py.log",
             "test": "wallet_keypool_topup.py",
             "global_transport": "v1",
             "skip_reason": null,
-            "recorded_tree_matches_current_sources": true,
-            "selected_script_matches_execution": true,
+            "recorded_tree_matches_current_sources": false,
+            "selected_script_matches_execution": false,
             "shared_inputs_match_execution": true
           },
           "pocx-v2": {
-            "status": "passed",
+            "status": "unverified",
             "observed_status": "passed",
             "evidence": "build-pocx-clean/pocx-results-fgwf4s35/results.json",
             "log": "build-pocx-clean/pocx-results-fgwf4s35/v2/wallet_keypool_topup.py.log",
             "test": "wallet_keypool_topup.py",
             "global_transport": "v2",
             "skip_reason": null,
-            "recorded_tree_matches_current_sources": true,
-            "selected_script_matches_execution": true,
+            "recorded_tree_matches_current_sources": false,
+            "selected_script_matches_execution": false,
             "shared_inputs_match_execution": true
           }
         }
@@ -38959,35 +38959,43 @@
       },
       "pocx": {
         "wallet_keypool_topup.py": {
-          "status": "passed",
+          "status": "unverified",
           "observed_status": "passed",
           "evidence": "build-pocx-clean/pocx-results-fgwf4s35/results.json",
           "log": "build-pocx-clean/pocx-results-fgwf4s35/wallet_keypool_topup.py.log",
           "test": "wallet_keypool_topup.py",
           "global_transport": "v1",
           "skip_reason": null,
-          "recorded_tree_matches_current_sources": true,
-          "selected_script_matches_execution": true,
+          "recorded_tree_matches_current_sources": false,
+          "selected_script_matches_execution": false,
           "shared_inputs_match_execution": true
         }
       },
       "pocx-v2": {
         "wallet_keypool_topup.py": {
-          "status": "passed",
+          "status": "unverified",
           "observed_status": "passed",
           "evidence": "build-pocx-clean/pocx-results-fgwf4s35/results.json",
           "log": "build-pocx-clean/pocx-results-fgwf4s35/v2/wallet_keypool_topup.py.log",
           "test": "wallet_keypool_topup.py",
           "global_transport": "v2",
           "skip_reason": null,
-          "recorded_tree_matches_current_sources": true,
-          "selected_script_matches_execution": true,
+          "recorded_tree_matches_current_sources": false,
+          "selected_script_matches_execution": false,
           "shared_inputs_match_execution": true
         }
       }
     },
     "latest_observed_outcome": "passed",
-    "current_input_outcome": "passed"
+    "current_input_outcome": "unverified",
+    "candidate_review": {
+      "scope": "Initial native funding synchronization changed; prior native observations remain historical.",
+      "preserved_assertion_expressions": 10,
+      "current_runtime_status": "full CI matrix remains unverified",
+      "original_Bitcoin_observations_unchanged": true,
+      "focused_runtime_status": "passed14executions across7configurations; both transports",
+      "whole_CI_pass_inferred": false
+    }
   },
   {
     "source": "test/functional/wallet_labels.py",

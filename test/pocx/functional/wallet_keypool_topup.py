@@ -35,7 +35,9 @@ class KeypoolRestoreTest(BitcoinTestFramework):
         wallet_path = self.nodes[1].wallets_path / self.default_wallet_name / self.wallet_data_filename
         wallet_backup_path = self.nodes[1].datadir_path / "wallet.bak"
         # Five mature native10-coin rewards reproduce the original50-coin funding.
-        self.generate(self.nodes[0], COINBASE_MATURITY + 5)
+        # Finish peer downloads before the next native proof advances mocktime.
+        for _ in range(COINBASE_MATURITY + 5):
+            self.generate(self.nodes[0], 1)
 
         self.log.info("Make backup of wallet")
         self.stop_node(1)
