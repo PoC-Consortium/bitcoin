@@ -1,0 +1,6 @@
+framework,original_inventory,original_baseline_passed,original_unchanged_passes,original_unchanged_logic_passes,original_adapted_passes,original_justified_exclusions,original_inactive_under_pocx,original_skipped_under_pocx,original_failed_under_pocx,original_unverified_under_pocx,native_case_rows,native_passes,pocx_only_passes,pocx_only_inactive,pocx_only_failures,original_named_benchmark_slots
+auxiliary,6,6,6,0,0,0,0,0,0,0,6,6,0,0,0,0
+functional,918,918,508,0,408,2,0,0,0,0,590,590,48,0,0,346
+kernel,16,16,0,10,6,0,0,0,0,0,16,16,0,0,0,0
+qt,9,9,7,0,2,0,0,0,0,0,10,10,1,0,0,0
+unit,739,739,524,0,205,10,0,0,0,0,772,762,33,0,0,0

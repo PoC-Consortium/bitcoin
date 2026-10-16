@@ -6,7 +6,27 @@ matching PoCX jobs. The scheduled/manual feature jobs include both sides of the
 Qt, kernel, wallet-disabled and IPC-disabled configurations. A configured job is
 not passing evidence until it has actually executed successfully.
 
-## Current local checkpoints
+## Current-machine milestone and platform handover (2026-10-16)
+
+The corrected current-machine scope completed on 2026-10-15: 49/49 conditions
+and 135 required framework/configuration entries verified. The final owned
+PoCX ASan entrypoint passed all 590 functional entries, and independent
+case-level reconciliation completed. Configuration-inactive cases, reviewed
+PoW exclusions and the minimal profiles' optional skips remain explicit;
+the latter have passing coverage in enabled profiles.
+
+Ten target-native platform conditions remain deferred: six Windows, two
+macOS ARM64 and two Linux ARM. Intermediate-history verification and fuzz
+modernization are separate work. This milestone does not claim hosted or
+target-native execution that has not happened.
+
+Read [README-platform-handover.md](README-platform-handover.md) for clone,
+dependency, native-runner and artifact-transfer instructions. Portable status
+and count records are in [handover/status.json](handover/status.json).
+The checkpoints below are historical investigation notes, not the current
+work queue or current-source status.
+
+## Historical local checkpoints (2026-10-11)
 
 The 2026-10-11 source audit found a wider freshness gap than the SIMD file alone.
 Some retained native binaries still use the older
