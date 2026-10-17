@@ -79,7 +79,9 @@ class BumpFeeTest(BitcoinTestFramework):
 
         # fund rbf node with 10 coins of 0.001 btc (100,000 satoshis)
         self.log.info("Mining blocks...")
-        self.generate(peer_node, 110)
+        # Let relay finish before advancing the coordinated PoCX clock again.
+        for _ in range(110):
+            self.generate(peer_node, 1)
         for _ in range(25):
             peer_node.sendtoaddress(rbf_node_address, 0.001)
         self.sync_all()

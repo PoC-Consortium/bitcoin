@@ -107,7 +107,9 @@ def main():
     started = time.monotonic()
     with tempfile.TemporaryDirectory(prefix='qt-config-', dir=build) as config:
         env = {key: value for key, value in os.environ.items() if not key.startswith('QTEST_')}
-        env.update(QT_QPA_PLATFORM='minimal', XDG_CONFIG_HOME=config)
+        # Windows QtTest otherwise routes its plain method results only to
+        # OutputDebugString when this headless process has no console.
+        env.update(QT_QPA_PLATFORM='minimal', XDG_CONFIG_HOME=config, QT_FORCE_STDERR_LOGGING='1')
         with (output / 'ctest.log').open('w') as log:
             execution = subprocess.run(command, env=env, stdout=log, stderr=subprocess.STDOUT)
     report.update(command=command, exit_code=execution.returncode, seconds=time.monotonic() - started)

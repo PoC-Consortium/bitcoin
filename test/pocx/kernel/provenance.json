@@ -23,7 +23,7 @@
     "test/pocx/kernel/reference.rs": "af1cb2d2abd1b353f508a4891acbeab8b2e85e1b777ffe973cd091a0df89b5b7",
     "test/pocx/kernel/verify_fixtures.py": "f93ed8f7fbd1e60f4aa837a8f9d20b4bc68bee5977a5c674b026f2df00245b55",
     "test/pocx/vectors/Cargo.lock": "2a959ccaa2c4c3fbddef9b0328e9c21a111ec13739bfc1beb441a194760e3786",
-    "src/pocx/test/kernel/fixture_generator.cpp": "f8068cac4ef12f25d3ba326e95837d2b4dc5bb12a2bc5f3e0099af02f3f62067",
+    "src/pocx/test/kernel/fixture_generator.cpp": "ff4bd90b4be6380ef547e68c04a913b601e5df46bf9987c0f72091301d3cc42e",
     "test/pocx/kernel/render_fixtures.py": "fc4034af16dc364d5c18143dd8e9e8fe7b2392f5e50325498d9b099b3d00ce03",
     "src/pocx/test/kernel/test_kernel.cpp": "cc6dfb7c2e3efa767b9061e62ca9bd8c3704e09fbf222d0d9b71cea5f47cb373",
     "src/pocx/test/kernel/CMakeLists.txt": "be88d68df30ffa911eb34faa18cb001b93dcc3da0d58d0c2e5ff9af8e389df40"
@@ -109,5 +109,14 @@
     "existing_case_execution_records_remain_historical": true,
     "actual_tests_or_compilations_launched": 0,
     "full_current_source_pass_inferred": false
+  },
+  "windows_binary_output_review": {
+    "repair": "Use std::ios::binary to emit existing JSON LF bytes on Windows; fixture_sha256 and all vectors unchanged.",
+    "failed_file_sha256": "b06259ff6ffd724495fa9e6c99ad0d9e661ffb8efba6d7b7e17081f94a776ae8",
+    "crlf_count": 213,
+    "normalized_sha256": "0069f80997408a2a13739afe46775c4a5e2cc799a8b963006fdd30c299a7d35f",
+    "historical_generator_source_sha256": "f8068cac4ef12f25d3ba326e95837d2b4dc5bb12a2bc5f3e0099af02f3f62067",
+    "current_generator_source_sha256": "ff4bd90b4be6380ef547e68c04a913b601e5df46bf9987c0f72091301d3cc42e",
+    "runtime_status": "Actual rebuilt generator and kernel runtime pending; historical reference execution unchanged."
   }
 }

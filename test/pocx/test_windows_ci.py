@@ -105,7 +105,7 @@ class WindowsCITest(unittest.TestCase):
                 names = {Path(cmd[2].removeprefix('-inputresource:')).name for cmd in manifest}
                 self.assertEqual(names, {'bitcoind.exe', 'bitcoin-cli.exe', 'test_bitcoin.exe'} |
                                  ({'test_pocx.exe'} if consensus == 'pocx' else set()))
-                runtime = [(cmd, env) for cmd, env in calls if any(arg.endswith('/inherited_tests.py') for arg in cmd)]
+                runtime = [(cmd, env) for cmd, env in calls if any(Path(arg).name == 'inherited_tests.py' for arg in cmd)]
                 self.assertEqual([cmd[cmd.index('--phase') + 1] for cmd, _ in runtime], ['ctest', 'functional'])
                 for cmd, env in runtime:
                     self.assertEqual(cmd[cmd.index('--config') + 1], 'Release')
@@ -113,7 +113,7 @@ class WindowsCITest(unittest.TestCase):
                     self.assertEqual(env['DIR_UNIT_TEST_DATA'], str(root / 'unit_test_data'))
                 self.assertEqual(runtime[0][0][-2:], ['--timeout', '2400'])
                 self.assertEqual(runtime[1][0][-2:], ['--timeout-factor', '40'])
-                lifecycle = [cmd for cmd, _ in calls if any(arg.endswith('/test_process_tree.py') for arg in cmd)]
+                lifecycle = [cmd for cmd, _ in calls if any(Path(arg).name == 'test_process_tree.py' for arg in cmd)]
                 self.assertEqual(len(lifecycle), 1 if consensus == 'bitcoin' else 0)
                 if lifecycle:
                     self.assertLess([cmd for cmd, _ in calls].index(lifecycle[0]), [cmd for cmd, _ in calls].index(runtime[0][0]))
@@ -135,7 +135,7 @@ class WindowsCITest(unittest.TestCase):
             for kwargs in ({'configure_codes': (1, 2)}, {'build_codes': (1, 2)},
                            {'failure': lambda cmd: cmd[0] == 'mt.exe'},
                            {'failure': lambda cmd: '--phase' in cmd and 'ctest' in cmd},
-                           {'failure': lambda cmd: any(arg.endswith('/test_process_tree.py') for arg in cmd)}):
+                           {'failure': lambda cmd: any(Path(arg).name == 'test_process_tree.py' for arg in cmd)}):
                 with self.subTest(kwargs=kwargs), self.assertRaises(subprocess.CalledProcessError):
                     self.phase(root, 'bitcoin', **kwargs)
 

@@ -118,7 +118,8 @@ def run_phase(payload, row, output, assets, *, environment=None, timeout=2400, e
     env = {key: value for key, value in (os.environ if environment is None else environment).items()
            if not key.startswith(('BOOST_TEST_', 'QTEST_')) and key != 'SECP256K1_TEST_ITERS'}
     temp = short_tmpdir(output)
-    env.update(QT_QPA_PLATFORM='minimal', XDG_CONFIG_HOME=str(temp), TMP=str(temp), TEMP=str(temp), TMPDIR=str(temp))
+    env.update(QT_QPA_PLATFORM='minimal', XDG_CONFIG_HOME=str(temp), TMP=str(temp), TEMP=str(temp), TMPDIR=str(temp),
+               QT_FORCE_STDERR_LOGGING='1')
     env['PATH'] = str(payload / 'bin') + os.pathsep + env.get('PATH', os.defpath)
     def check_binary(name):
         path = payload / name

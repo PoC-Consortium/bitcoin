@@ -60,7 +60,7 @@ def source_snapshot(root):
     instrumented = root / 'test/pocx/instrumented-ci.json'
     if instrumented.is_file():
         paths.update(root / name for name in json.loads(instrumented.read_text())['source_sha256'])
-    return {str(path.relative_to(root)): sha256(path) for path in sorted(paths)}
+    return {path.relative_to(root).as_posix(): sha256(path) for path in sorted(paths)}
 
 
 def build_snapshot(build):
@@ -102,7 +102,7 @@ def build_snapshot(build):
     binaries = [path for path in paths if path.is_relative_to(build / 'bin')]
     if not binaries:
         raise ValueError('CI execution has no built binaries')
-    return {str(path.relative_to(build)): sha256(path) for path in sorted(paths)}
+    return {path.relative_to(build).as_posix(): sha256(path) for path in sorted(paths)}
 
 
 def require_unchanged(label, recorded, current):

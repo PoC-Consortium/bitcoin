@@ -41,6 +41,8 @@ RECIPE_SOURCES.update({'test/pocx/pocx_bootstrap.py', 'test/pocx/original_usdt.p
 RECIPE_SOURCES.update('test/pocx/bitcoin_baseline/usdt/interface_usdt_' + name + '.py' for name in
                       ('coinselection', 'mempool', 'net', 'utxocache', 'validation'))
 UPSTREAM_RECIPE_SHA256 = 'cfd9e9583398dee9527a2fb7ea099104a8cab53f7bf5ccdceb3f4e84425ebb8b'
+RECIPE_SOURCES.update({'test/pocx/original_windows.py', 'test/pocx/test_original_windows.py',
+    'test/pocx/bitcoin_baseline/windows/review.json', 'test/pocx/bitcoin_baseline/windows/rpc_signer.py'})
 UPSTREAM_REVISION_RECIPE_SHA256 = '7d6c921986188b726f82bb08a782be738f6dfc2460d1f64272ae8bd8715d040b'
 EVIDENCE_PREFIXES = ('pocx-inherited-', 'bitcoin-unit-', 'pocx-unit-', 'pocx-results-')
 EVIDENCE_SUFFIXES = {'.json', '.xml', '.csv', '.log', '.txt'}

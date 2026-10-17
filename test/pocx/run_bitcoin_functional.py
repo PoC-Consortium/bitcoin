@@ -82,7 +82,10 @@ def read_cases(path, expected):
         reader = csv.reader(stream)
         if next(reader, None) != ['test', 'status', 'duration(seconds)']:
             raise ValueError('Unexpected upstream results CSV schema')
-        rows = list(reader)
+        # The unchanged upstream Windows writer produces CRCRLF separators.
+        # Ignore only empty physical records; every case and terminal summary
+        # still has to match the complete inventory below.
+        rows = [row for row in reader if row]
     if any(len(row) != 3 for row in rows):
         raise ValueError('Malformed upstream result row')
     summaries = [row for row in rows if row[0] == 'ALL']

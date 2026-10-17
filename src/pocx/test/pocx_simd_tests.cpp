@@ -779,6 +779,9 @@ BOOST_AUTO_TEST_CASE(sse2_detection)
     // Just test that detection works without crashing
     bool have_sse2 = HaveSSE2();
     BOOST_TEST_MESSAGE("SSE2 available: " << (have_sse2 ? "yes" : "no"));
+#if defined(__x86_64__) || defined(__amd64__) || defined(_M_X64)
+    BOOST_CHECK(have_sse2);
+#endif
 }
 
 #ifdef ENABLE_SSE2

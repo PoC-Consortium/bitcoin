@@ -188,9 +188,16 @@ class WindowsArtifactsTest(unittest.TestCase):
                 artifacts.relative_name(name)
         with tempfile.TemporaryDirectory() as directory:
             root, builds, bundle = self.fixture(directory)
-            source = builds[0] / 'bin/bitcoind.exe'
-            (builds[0] / 'bin/BITCOIND.exe').write_bytes(source.read_bytes())
-            with self.assertRaisesRegex(ValueError, 'Case-colliding'):
+            # Windows cannot store both spellings as distinct directory entries.
+            # Simulate the case-sensitive producer's second relative filename
+            # while exercising the real exporter and collision rejection.
+            alternate = builds[0] / artifacts.AUXILIARY[0]
+            relative_to = Path.relative_to
+            def producer_name(path, *args, **kwargs):
+                if path == alternate and args == (builds[0],):
+                    return Path('bin/BITCOIND.exe')
+                return relative_to(path, *args, **kwargs)
+            with patch.object(Path, 'relative_to', producer_name), self.assertRaisesRegex(ValueError, 'Case-colliding'):
                 self.export(root, builds, bundle)
 
     def test_native_provenance_cannot_claim_discovery_or_omit_generated_inputs(self):

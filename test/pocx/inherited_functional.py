@@ -12,6 +12,7 @@ import argparse
 from collections import Counter
 import csv
 import json
+import hashlib
 import math
 import os
 from pathlib import Path
@@ -28,6 +29,8 @@ import functional_execution
 import build_configuration
 import rpc_coverage
 import original_usdt
+import original_windows
+import process_tree
 from verify_functional import verify_current_inputs, dependency_hashes
 
 GUARDS = {
@@ -65,7 +68,7 @@ def original_groups(expected, options):
             ('legacy-utxo', [LEGACY_UTXO], True)]
 
 
-def original_command(build, output, group, mode, jobs, factor, profile, *, windows=False):
+def original_command(build, output, group, mode, jobs, factor, profile, *, windows=False, root=None):
     name, _, direct = group
     common = ['--timeout-factor=' + str(factor), '--' + mode + 'transport']
     if profile['use_cli']:
@@ -79,9 +82,15 @@ def original_command(build, output, group, mode, jobs, factor, profile, *, windo
         return [sys.executable, str(build / 'test/functional' / LEGACY_UTXO),
             '--configfile=' + str(build / 'test/config.ini'), '--tmpdir=' + str(directory),
             '--cachedir=' + str(build / 'test/cache'), '--portseed=0', '--randomseed=0', *common]
+    scratch = output / mode
+    if windows:
+        # Reports retain their descriptive paths; node databases need room for
+        # original long wallet names under the Windows MAX_PATH limit.
+        identity = hashlib.sha256(str(output.resolve()).encode()).hexdigest()[:8]
+        scratch = (ROOT if root is None else root) / ('build-ft-' + identity + '-' + mode)
     command = [sys.executable, str(build / 'test/functional/test_runner.py'), '--jobs=' + str(jobs),
         '--extended', '--resultsfile=' + str(output / (mode + '.csv')),
-        '--tmpdirprefix=' + str(output / mode), '--combinedlogslen=100', *common]
+        '--tmpdirprefix=' + str(scratch), '--combinedlogslen=100', *common]
     if name != 'complete':
         raise ValueError('Unknown original functional group')
     if profile.get('coverage'):
@@ -313,6 +322,20 @@ def disabled_reason(name, options, profile, *, native=False, root=ROOT):
         return ', '.join(reasons) + '; unconditional guard in ' + ', '.join(origins)
     if 'skip_if_platform_not_linux' in guards and options.get('target_system') != 'Linux':
         return 'Original tracing guard requires Linux; target is ' + options['target_system']
+    if 'skip_if_platform_not_posix' in guards and options.get('target_system') == 'Windows':
+        return 'Original platform guard requires POSIX; target is Windows'
+    if options.get('target_system') == 'Windows' and name == 'tool_bitcoin.py':
+        # This reviewed upstream test explicitly cannot capture _wexecvp output
+        # on Windows. Recognize only its exact pre-existing platform guard.
+        expected_guard = ast.parse('''def skip_test_if_missing_module(self):
+    if platform.system() == "Windows":
+        raise SkipTest("Test does not currently work on windows")
+''').body[0]
+        for cls in classes:
+            for method in cls.body:
+                if isinstance(method, ast.FunctionDef) and method.name == expected_guard.name:
+                    if ast.dump(method) == ast.dump(expected_guard):
+                        return 'Original platform guard disables unsupported Windows _wexecvp output capture'
     return None
 
 
@@ -365,9 +388,16 @@ def run(build, output, options, jobs, factor, *, environment=None, selected_conf
         log = output / (name + '.log')
         start = time.monotonic()
         with log.open('w') as stream:
-            result = subprocess.run(command, env=child_env, cwd=ROOT, stdout=stream, stderr=subprocess.STDOUT)
+            control = None
+            if os.name == 'nt' and options.get('target_system') == 'Windows':
+                control = process_tree.execute(command, cwd=ROOT, env=child_env, log=stream, timeout=2400 * factor)
+                result = subprocess.CompletedProcess(command, control['returncode'])
+            else:
+                result = subprocess.run(command, env=child_env, cwd=ROOT, stdout=stream, stderr=subprocess.STDOUT)
         report['runs'].append({'name': name, 'command': command, 'returncode': result.returncode,
                                'seconds': time.monotonic() - start, 'log_sha256': sha256(log)})
+        if control is not None:
+            report['runs'][-1].update(process_control=control['process_control'], timed_out=control['timed_out'])
         save()
         return result, log
     save()
@@ -429,7 +459,12 @@ def run(build, output, options, jobs, factor, *, environment=None, selected_conf
             expected = original_inventory(ROOT / 'test/functional/test_runner.py', benchmarks, options['BUILD_BENCH'] == 'ON')
             report['expected_cases'] = expected
             runtime_build = build
-            if original_usdt.required(paths['bitcoind'], options):
+            signer = build / 'test/functional/rpc_signer.py'
+            if options.get('target_system') == 'Windows' and signer.is_file():
+                adapted = original_windows.replacements(ROOT)['rpc_signer.py']
+                if sha256(signer) != sha256(adapted):
+                    runtime_build, report['original_windows_staging'] = original_windows.stage(build, output)
+            elif original_usdt.required(paths['bitcoind'], options):
                 runtime_build, report['original_usdt_staging'] = original_usdt.stage(build, output)
             for mode in profile['transports']:
                 for group in original_groups(expected, options):
@@ -453,7 +488,10 @@ def run(build, output, options, jobs, factor, *, environment=None, selected_conf
                     if not group[2] and (result.returncode != 0 or summary[1] != 'Passed'):
                         raise ValueError('Original functional runner failed')
             if runtime_build != build:
-                if original_usdt.verify(runtime_build, build) != report['original_usdt_staging']:
+                if 'original_windows_staging' in report:
+                    if original_windows.verify(runtime_build, build) != report['original_windows_staging']:
+                        raise ValueError('Original Windows staging changed during execution')
+                elif original_usdt.verify(runtime_build, build) != report['original_usdt_staging']:
                     raise ValueError('Original USDT staging changed during execution')
         counts = Counter(row['status'] for row in report['cases'])
         report['counts'] = dict(counts)

@@ -136,6 +136,29 @@ class InfrastructureTest(unittest.TestCase):
             self.assertIn({'source': 'test/pocx/upstream-functional-parity.json',
                            'reason': 'native forging clock dependency inventory requires review'}, check_drift.check(ROOT))
 
+    def test_windows_fixtures_preserve_owned_multiwallet(self):
+        from stage import original_windows
+        manifest_path = Path(self.temp.name) / 'manifest.json'
+        manifest_path.write_text(json.dumps(self.manifest))
+        cache = (BUILD / 'CMakeCache.txt').read_text()
+        config = 'Release' if 'CMAKE_CONFIGURATION_TYPES:' in cache else None
+        with patch('stage.os', type('WindowsPlatform', (), {'name': 'nt'})):
+            tree, _, provenance = stage(BUILD, manifest_path, selected_config=config)
+        self.assertEqual(provenance['files']['wallet_multiwallet.py']['source'],
+                         'test/pocx/functional/wallet_multiwallet.py')
+        self.assertEqual(sha256(tree / 'wallet_multiwallet.py'),
+                         sha256(OWNED / 'functional/wallet_multiwallet.py'))
+        self.assertEqual(provenance['files']['rpc_signer.py']['source'], original_windows.REPLACEMENT)
+
+    def test_windows_fixture_cannot_silently_drop_a_selected_case(self):
+        self.manifest['tests'].pop('wallet_multiwallet.py')
+        manifest_path = Path(self.temp.name) / 'manifest.json'
+        manifest_path.write_text(json.dumps(self.manifest))
+        cache = (BUILD / 'CMakeCache.txt').read_text()
+        config = 'Release' if 'CMAKE_CONFIGURATION_TYPES:' in cache else None
+        with patch('stage.os', type('WindowsPlatform', (), {'name': 'nt'})), self.assertRaisesRegex(ValueError, 'retain its selected case'):
+            stage(BUILD, manifest_path, selected_config=config)
+
     def test_empty_selection(self):
         self.manifest['tests'] = {}
         self.manifest['reused_tests'] = []

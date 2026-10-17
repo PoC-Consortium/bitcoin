@@ -9,12 +9,33 @@ import re
 import subprocess
 import tempfile
 import unittest
+from unittest.mock import patch
 import xml.etree.ElementTree as ET
 
 import boost_runtime
 
 
 class BoostRuntimeTests(unittest.TestCase):
+    def test_native_ctest_log_decoding_preserves_bytes_and_rejects_invalid_xml(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'ctest.log'
+            text = 'März\n<TestResult>unchanged</TestResult>\n'
+            path.write_bytes(text.encode('utf-8'))
+            self.assertEqual(boost_runtime.read_log(path), text)
+            raw = text.encode('cp1252')
+            path.write_bytes(raw)
+            with patch('boost_runtime.sys.platform', 'win32'):
+                self.assertEqual(boost_runtime.read_log(path).encode('utf-8', errors='surrogateescape'), raw)
+                self.assertEqual(path.read_bytes(), raw)
+                path.write_bytes(b'\x81\n<TestResult>valid</TestResult>')
+                self.assertEqual(boost_runtime.read_log(path).encode('utf-8', errors='surrogateescape'), path.read_bytes())
+                path.write_bytes(b'<TestResult>\x81</TestResult>')
+                with self.assertRaises((UnicodeEncodeError, ET.ParseError)):
+                    ET.fromstring(boost_runtime.read_log(path))
+            path.write_bytes(raw)
+            with patch('boost_runtime.sys.platform', 'linux'), self.assertRaises(UnicodeDecodeError):
+                boost_runtime.read_log(path)
+
     def test_only_randomization_survives_inherited_boost_options(self):
         original = {'PATH': '/bin', 'BOOST_TEST_RANDOM': '0007',
                     'BOOST_TEST_RUN_FILTERS': 'missing', 'BOOST_TEST_CATCH_SYSTEM_ERRORS': 'no',

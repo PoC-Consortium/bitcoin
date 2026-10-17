@@ -30,7 +30,7 @@ def check(root):
                 if name.endswith(('.cpp', '.h'))}
     if len(original) != 15:
         issues.append({'source': 'test/pocx/qt-baseline.json', 'reason': 'original Qt source inventory changed'})
-    owned = {str(path.relative_to(root)) for path in (root / 'src/pocx/test/qt').iterdir()
+    owned = {path.relative_to(root).as_posix() for path in (root / 'src/pocx/test/qt').iterdir()
              if path.is_file()}
     if owned != set(review['owned_sources']):
         issues.append({'source': 'src/pocx/test/qt', 'reason': 'owned Qt source inventory changed since review'})

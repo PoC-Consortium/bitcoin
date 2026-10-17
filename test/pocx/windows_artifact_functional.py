@@ -18,7 +18,7 @@ from pathlib import Path
 import sys
 import time
 
-from common import ROOT, sha256
+from common import ROOT, sha256, short_tmpdir
 import artifact_functional_view as views
 import functional_environment
 from functional_cases import selected_cases, upstream_cases
@@ -51,7 +51,16 @@ def verify_child(report, directory, view, options, jobs, factor, environment, *,
     if native:
         proof_record = report.get('native_proof', {})
         proof_path = Path(proof_record.get('path', ''))
-        if (proof_path.is_symlink() or not proof_path.resolve().is_relative_to(view.resolve()) or
+        # The Windows runner uses the same build-specific short scratch root
+        # for notification paths as for native builds. Accept only its direct
+        # results child, retaining the hash and all subsequent input checks.
+        short_parent = short_tmpdir(view).resolve() if os.name == 'nt' else view.resolve()
+        short_proof = (proof_path.name == 'results.json' and
+                       proof_path.parent.name.startswith('pocx-results-') and
+                       proof_path.parent.parent.resolve() == short_parent and
+                       not proof_path.parent.is_symlink())
+        if (proof_path.is_symlink() or
+                not (proof_path.resolve().is_relative_to(view.resolve()) or short_proof) or
                 not proof_path.is_file() or sha256(proof_path) != proof_record.get('sha256')):
             raise ValueError('Missing or changed native functional proof')
         proof = json.loads(proof_path.read_text())
@@ -93,7 +102,7 @@ def verify_child(report, directory, view, options, jobs, factor, environment, *,
         expected = functional.original_inventory(root / 'test/functional/test_runner.py', benchmarks, enabled)
         for mode in ('v1', 'v2'):
             for group in functional.original_groups(expected, options):
-                command = functional.original_command(view, directory, group, mode, jobs, factor, profile, windows=True)
+                command = functional.original_command(view, directory, group, mode, jobs, factor, profile, windows=True, root=root)
                 if group[2]:
                     runs = [run for run in report['runs'] if run['name'] == mode + '-legacy-utxo']
                     if len(runs) != 1:

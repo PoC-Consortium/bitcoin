@@ -8,6 +8,7 @@ import json
 from pathlib import Path
 import subprocess
 import tempfile
+from types import SimpleNamespace
 import unittest
 from unittest.mock import patch
 
@@ -119,10 +120,16 @@ class ArtifactFunctionalTest(unittest.TestCase):
                         (not bench and case == 'tool_bench_sanity_check.py') else 'Passed', 0.1])
                 writer.writerow(['ALL', 'Passed', 0.1])
             return subprocess.CompletedProcess(command, 0)
+        def controlled(command, **kwargs):
+            result = run(command, env=kwargs['env'], stdout=kwargs['log'])
+            return {'returncode': result.returncode, 'timed_out': False,
+                    'process_control': {'kind': 'windows-job', 'cleanup_complete': True,
+                                        'invocation': command}}
         with patch.object(functional, 'ROOT', root), patch.object(functional, 'dependency_hashes', return_value={}), \
                 patch.object(functional.functional_execution, 'binary_paths', return_value=paths), \
                 patch.object(functional.subprocess, 'check_output', return_value='Alpha\nBeta\n'), \
-                patch.object(functional.subprocess, 'run', side_effect=run):
+                patch.object(functional.subprocess, 'run', side_effect=run), \
+                patch.object(functional.process_tree, 'execute', side_effect=controlled):
             try:
                 functional.run(build, output, options, 3, 7.5, environment=env)
             except ValueError:
@@ -269,6 +276,31 @@ class ArtifactFunctionalTest(unittest.TestCase):
                     'counts': {'passed': 2}, 'cases': [{'case': spec['id'], 'transport': mode, 'effective_transport': mode,
                         'status': 'passed', 'reason': '', 'execution_status': 'passed', 'seconds': 0.1} for mode in ('v1', 'v2')]}
                 self.assertEqual(len(artifact.verify_child(report, execution, view, options, 3, 7.5, {}, root=root)), 2)
+                scratch = root / 'short-scratch'
+                short_proof = scratch / 'pocx-results-fixture' / 'results.json'
+                short_proof.parent.mkdir(parents=True)
+                short_proof.write_bytes(proof_path.read_bytes())
+                original_record = deepcopy(report['native_proof'])
+                with patch.object(artifact, 'os', SimpleNamespace(name='nt')), \
+                        patch.object(artifact, 'short_tmpdir', return_value=scratch):
+                    report['native_proof'] = {'path': str(short_proof), 'sha256': sha256(short_proof)}
+                    self.assertEqual(len(artifact.verify_child(report, execution, view, options, 3, 7.5, {}, root=root)), 2)
+                    for invalid in (root / 'outside' / 'pocx-results-fixture' / 'results.json',
+                                    scratch / 'unrelated' / 'results.json',
+                                    scratch / 'pocx-results-fixture' / 'nested' / 'results.json'):
+                        invalid.parent.mkdir(parents=True, exist_ok=True)
+                        invalid.write_bytes(short_proof.read_bytes())
+                        report['native_proof'] = {'path': str(invalid), 'sha256': sha256(invalid)}
+                        with self.assertRaisesRegex(ValueError, 'Missing or changed native functional proof'):
+                            artifact.verify_child(report, execution, view, options, 3, 7.5, {}, root=root)
+                    report['native_proof'] = {'path': str(short_proof), 'sha256': '0' * 64}
+                    with self.assertRaisesRegex(ValueError, 'Missing or changed native functional proof'):
+                        artifact.verify_child(report, execution, view, options, 3, 7.5, {}, root=root)
+                    report['native_proof']['sha256'] = sha256(short_proof)
+                    with patch.object(Path, 'is_symlink', return_value=True), \
+                            self.assertRaisesRegex(ValueError, 'Missing or changed native functional proof'):
+                        artifact.verify_child(report, execution, view, options, 3, 7.5, {}, root=root)
+                report['native_proof'] = original_record
                 results.pop()
                 proof_path.write_text(json.dumps({'provenance': provenance, 'results': results}))
                 report['native_proof']['sha256'] = sha256(proof_path)

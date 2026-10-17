@@ -8,6 +8,7 @@ block hashes may change. Keys, descriptors, raw transactions, labels, amounts,
 conflicts, abandonment and all other records remain byte for byte unchanged.
 """
 from io import BytesIO
+from contextlib import closing
 import hashlib
 import os
 from pathlib import Path
@@ -130,7 +131,8 @@ class WalletChainContext:
 
 
 def read_wallet_dump(path):
-    lines = Path(path).read_bytes().splitlines(keepends=True)
+    # The Windows wallet tool emits CRLF but hashes canonical LF lines.
+    lines = Path(path).read_bytes().replace(b'\r\n', b'\n').splitlines(keepends=True)
     if len(lines) < 3 or lines[:2] != [b'BITCOIN_CORE_WALLET_DUMP,1\n', b'format,bdb\n']:
         raise ValueError('Expected a version 1 Berkeley DB wallet dump')
     checksum = hashlib.sha256(hashlib.sha256(b''.join(lines[:-1])).digest()).hexdigest()
@@ -158,7 +160,7 @@ def rebase_wallet_file(path, context, *, bitcoin_wallet=None):
     with path.open('rb') as stream:
         magic = stream.read(16)
     if magic == b'SQLite format 3\x00':
-        with sqlite3.connect(path) as database:
+        with closing(sqlite3.connect(path)) as database, database:
             database.execute('BEGIN IMMEDIATE')
             original = database.execute('SELECT key, value FROM main ORDER BY key').fetchall()
             updated = context.records(original)

@@ -5,12 +5,14 @@
 import argparse
 import configparser
 import json
+import os
 from pathlib import Path
 import shutil
 import subprocess
 
 from common import ROOT, OWNED, sha256, short_tmpdir as short_tmpdir, build_options
 import build_configuration
+import original_windows
 
 
 def unique_object(pairs):
@@ -25,7 +27,7 @@ def unique_object(pairs):
 def framework_sources(root):
     """Include the upstream cryptographic test vectors alongside Python modules."""
     directory = root / 'test/functional'
-    return {str(path.relative_to(directory)): path
+    return {path.relative_to(directory).as_posix(): path
             for path in sorted((directory / 'test_framework').rglob('*'))
             if path.is_file() and path.suffix in ('.py', '.csv') and '__pycache__' not in path.parts}
 
@@ -85,6 +87,14 @@ def stage(build, manifest_path=None, *, selected_config=None):
         if name in sources:
             raise ValueError(f"Conflicting destination: {name}")
         sources[name] = ROOT / "test/functional" / name
+    if os.name == 'nt':
+        for name, source in original_windows.replacements(ROOT).items():
+            if name in manifest['tests']:
+                # Owned PoCX adaptations retain their own scenarios and fixtures.
+                continue
+            if name not in manifest['reused_tests']:
+                raise ValueError('Windows fixture replacement must retain its selected case')
+            sources[name] = source
     for dest, source in sources.items():
         if Path(dest).is_absolute() or ".." in Path(dest).parts or not source.is_file():
             raise ValueError(f"Invalid or missing source: {dest}: {source}")
@@ -98,7 +108,7 @@ def stage(build, manifest_path=None, *, selected_config=None):
         out = temporary / dest
         out.parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(source, out)
-        hashes[dest] = {"source": str(source.relative_to(ROOT)), "sha256": sha256(source)}
+        hashes[dest] = {"source": source.relative_to(ROOT).as_posix(), "sha256": sha256(source)}
     config = configparser.ConfigParser()
     config.read(build / "test/config.ini")
     config["environment"]["SRCDIR"] = str(ROOT)
@@ -111,7 +121,8 @@ def stage(build, manifest_path=None, *, selected_config=None):
                   'staging_helpers': {name: sha256(ROOT / name) for name in (
                       'test/pocx/stage.py', 'test/pocx/build_configuration.py',
                       'test/pocx/functional_execution.py', 'test/pocx/functional_environment.py',
-                      'test/pocx/process_tree.py')}}
+                      'test/pocx/process_tree.py', 'test/pocx/original_windows.py',
+                      original_windows.REVIEW, original_windows.REPLACEMENT)}}
     (temporary / "provenance.json").write_text(json.dumps(provenance, indent=2) + "\n")
     if target.exists():
         shutil.rmtree(target)

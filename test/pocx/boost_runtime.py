@@ -3,9 +3,27 @@
 # Distributed under the MIT software license; see COPYING.
 """Preserve the CI Boost randomization setting without inheriting test filters."""
 import re
+import sys
 
 MAX_SEED = 2**32 - 1
 SEED_MESSAGE = 'Test cases order is shuffled using seed: '
+
+
+def read_log(path):
+    """Read raw CTest evidence without replacing or discarding any bytes.
+
+    Windows CTest mixes localized metadata and arbitrary binary test output
+    with UTF-8 Boost XML. Surrogate escaping preserves non-UTF-8 bytes outside
+    the XML reports losslessly; malformed report XML still fails its parser.
+    Raw files stay unchanged and remain bound by their byte hashes.
+    """
+    data = path.read_bytes()
+    try:
+        return data.decode('utf-8')
+    except UnicodeDecodeError:
+        if sys.platform != 'win32':
+            raise
+        return data.decode('utf-8', errors='surrogateescape')
 
 
 def random_seed(environment):

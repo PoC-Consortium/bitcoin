@@ -6,15 +6,19 @@
     ".github/ci-windows.py": "9cec268ddaf98292b2067ae07ff99e8290a6e1a2e3a97aac9814c6642542e27b",
     ".github/workflows/ci.yml": "0faba4651593cda133121fbfc2d31edc32084be95872812dac72dbf1e20bb3dd",
     "test/pocx/build_configuration.py": "c9df217b325f1e3dfd8cd14e002f542bd78aa084b410e8f3b18d18a261a36456",
-    "test/pocx/ci_evidence.py": "8f0c10ed4d1f455a940e8787c655b5fc20c35622d7ff1bbb744f79afb2dc1243",
-    "test/pocx/inherited_ci.py": "9044f35b052ac10391e5b854efd2851bf162ee55a901c270b17e006e0fbd8744",
-    "test/pocx/inherited_functional.py": "6fc43cec5640b33de7e34d236a4ded1276720d70171fb5bf899d96f0297802c7",
+    "test/pocx/ci_evidence.py": "3300f6b9e2510e1725351fccb10b306f4dfac020595f38f30735373b9f34538d",
+    "test/pocx/inherited_ci.py": "e0dc7430cc00fa964f74549a0a4b831a52cd5cee07f9ac7900185398ab598334",
+    "test/pocx/inherited_functional.py": "38faa96c36ca54baabc9206725858729ca41ac78d235d1bb7bd3c299d25bc897",
     "test/pocx/inherited_tests.py": "b1fb1313f9c510735ecbf42cf7d092201031d8516051e463351b233125af3a74",
     "test/pocx/process_tree.py": "12639a920fa4a656eec4f14ea02c4aaf1fe997cfc18c7df2566e82a1d3ab3f29",
     "test/pocx/test_process_tree.py": "c2b1bc492945a007e023614d6e2529e231a3e94cdf41696ae4588bb6d2a9a64c",
-    "test/pocx/test_windows_ci.py": "13a91129fb07c1faa40412488372899923a798b8bfa73e21ee88d61d86f39750",
+    "test/pocx/test_windows_ci.py": "9fe03a9cad21112bd7a964f22e100748463a3dcb6c2190c65b1032bed24b7317",
     "test/pocx/unit_assets.py": "1c34c321789b13246532e2d702b2212a5812cdd88bd4f6289945aa7f5680f992",
-    "test/pocx/windows_ci.py": "afdf67bd94635fd2e3e75aa0b1f522f687672913ecafb1ca926e6bd0484a3d80"
+    "test/pocx/windows_ci.py": "bec35450318ba0465e1be89370cda825f300cf2be6d76481a1600941e93c9909",
+    "test/pocx/original_windows.py": "2598717ba1d532ebe4444d5cec2ae88f6cfed8132e514658600a71f551336e15",
+    "test/pocx/test_original_windows.py": "d1ae65726b2ff2017ff72e5026ac80a6c3e6584c4c0c8df4b0e9e0d946c730f3",
+    "test/pocx/bitcoin_baseline/windows/review.json": "f541b15bbe06f200838f6ba17cacfe279ac723fbc71a1b6994c822e45219a6e6",
+    "test/pocx/bitcoin_baseline/windows/rpc_signer.py": "ea682c6093604670612eeae9936a9a3d4d0af232fe798d9edf7eea979c01639d"
   },
   "preserved_recipe": [
     "Visual Studio 2026 preset and all original standard options",
@@ -78,6 +82,27 @@
         "sha256": "9044f35b052ac10391e5b854efd2851bf162ee55a901c270b17e006e0fbd8744",
         "review": "a0fb62aaed: add the already reviewed old-BCC header compatibility helper to the inherited source guard; original recipes unchanged."
       }
+    }
+  },
+  "windows_path_portability_review": {
+    "scope": "Canonical slash-separated repository/source keys and portable filename assertions on Windows; source selection, assertions, flags and historical execution fields unchanged. Current Windows runtime still requires execution; previous Linux runtime records are historical and no new pass is inferred. Revalidate Linux drift/staging/evidence infrastructure.",
+    "sources": {
+      "test/pocx/ci_evidence.py": {
+        "previous_sha256": "8f0c10ed4d1f455a940e8787c655b5fc20c35622d7ff1bbb744f79afb2dc1243",
+        "sha256": "3300f6b9e2510e1725351fccb10b306f4dfac020595f38f30735373b9f34538d"
+      },
+      "test/pocx/test_windows_ci.py": {
+        "previous_sha256": "13a91129fb07c1faa40412488372899923a798b8bfa73e21ee88d61d86f39750",
+        "sha256": "9fe03a9cad21112bd7a964f22e100748463a3dcb6c2190c65b1032bed24b7317"
+      }
+    }
+  },
+  "windows_functional_native_review": {
+    "scope": "Windows native follow-up: short unique source-owned data paths preserve original long wallet names; blank CRCRLF CSV separators ignored but exact inventories/statuses remain required; exact independently localized OS error2 signer expectation in AST-guarded owned view; pre-existing POSIX/Windows unsupported guards reported disabled, never passed; Windows job owns original functional descendants. All upstream source files, assertions, selections and production behavior unchanged. Seven focused Bitcoin reproductions passed; complete original/native platform pairs still require execution. Linux behavior unchanged except portable CSV record handling/source-provenance expansion; revalidate infrastructure.",
+    "sources": {
+      "test/pocx/inherited_ci.py": "e0dc7430cc00fa964f74549a0a4b831a52cd5cee07f9ac7900185398ab598334",
+      "test/pocx/inherited_functional.py": "38faa96c36ca54baabc9206725858729ca41ac78d235d1bb7bd3c299d25bc897",
+      "test/pocx/windows_ci.py": "bec35450318ba0465e1be89370cda825f300cf2be6d76481a1600941e93c9909"
     }
   }
 }

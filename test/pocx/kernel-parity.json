@@ -153,7 +153,7 @@
     "src/pocx/regtest/proof.cpp": "53ee3c70548de5e20e01774e9921cdb36a57b5400ffb99de1990f849e3bb0fa3",
     "src/pocx/regtest/proof.h": "470b7ff274c07c0a619ecdeec9e58d7a7dee65ed1d7dbae8614fdeb58b902e54",
     "src/pocx/test/kernel/CMakeLists.txt": "be88d68df30ffa911eb34faa18cb001b93dcc3da0d58d0c2e5ff9af8e389df40",
-    "src/pocx/test/kernel/fixture_generator.cpp": "f8068cac4ef12f25d3ba326e95837d2b4dc5bb12a2bc5f3e0099af02f3f62067",
+    "src/pocx/test/kernel/fixture_generator.cpp": "ff4bd90b4be6380ef547e68c04a913b601e5df46bf9987c0f72091301d3cc42e",
     "src/pocx/test/kernel/test_kernel.cpp": "cc6dfb7c2e3efa767b9061e62ca9bd8c3704e09fbf222d0d9b71cea5f47cb373",
     "src/primitives/block.cpp": "7f2c51c31459e7ef26a3b02e680502889016392b20ac2ad912d03c2021fd6489",
     "src/primitives/block.h": "b791e3f8a070602d614dbb48874bf2c7beca5c6052f57b6e69793b4b5a8a66f3",
@@ -163,7 +163,7 @@
     "test/pocx/build_configuration.py": "c9df217b325f1e3dfd8cd14e002f542bd78aa084b410e8f3b18d18a261a36456",
     "test/pocx/kernel/fixtures.json": "0069f80997408a2a13739afe46775c4a5e2cc799a8b963006fdd30c299a7d35f",
     "test/pocx/kernel/parity.json": "6c05a2fdf6713ab0e1f2ae041e2183b6d611e678056882561a3bfcdd12b15410",
-    "test/pocx/kernel/provenance.json": "0a4b42e0f13b9f2b6ddc31ab6add8a80968b81d1ccfb2804bf0639a86db8e4b2",
+    "test/pocx/kernel/provenance.json": "14b9d4aae50bf4468c6583d99d666189b87811cb08c00e7bf0911ce9fccf09d2",
     "test/pocx/kernel/reference.rs": "af1cb2d2abd1b353f508a4891acbeab8b2e85e1b777ffe973cd091a0df89b5b7",
     "test/pocx/kernel/render_fixtures.py": "fc4034af16dc364d5c18143dd8e9e8fe7b2392f5e50325498d9b099b3d00ce03",
     "test/pocx/kernel/verify_fixtures.py": "f93ed8f7fbd1e60f4aa837a8f9d20b4bc68bee5977a5c674b026f2df00245b55",
@@ -174,8 +174,8 @@
     "test/pocx/vectors/Cargo.lock": "2a959ccaa2c4c3fbddef9b0328e9c21a111ec13739bfc1beb441a194760e3786",
     "test/pocx/build_environment.py": "8cffde16fefe5b9b9505108abfe447a878625fb9bdedd7356919af10bbd22be3",
     "test/pocx/test_build_environment.py": "eebf4597ae5fa2530f2b15934ec1d74c91e6acae0328b2e0d24d61167170e276",
-    "test/pocx/boost_runtime.py": "f33c4b65c9065f1c34cb2671ff2e8fe3c5012a513adc74d8591dd949842b7764",
-    "test/pocx/test_boost_runtime.py": "17cd6a99197dcfb5d05ad8ab375734a6079826819833999a29580d7d9a185d68"
+    "test/pocx/boost_runtime.py": "57400a695af148d372e1d290eceb55c3c1271949df21a3e95548026d7034f982",
+    "test/pocx/test_boost_runtime.py": "0e27a10de5f2c903f57c83e903587e6648f2cbcb2028f90c0fea30e69937ec2e"
   },
   "execution_inputs": {
     "src/CMakeLists.txt": "9838b770ffdfc39dd194291915e07ebfaa91799a31e02d3619bcfa19d0f45031",
@@ -202,7 +202,7 @@
     "src/pocx/regtest/proof.cpp": "53ee3c70548de5e20e01774e9921cdb36a57b5400ffb99de1990f849e3bb0fa3",
     "src/pocx/regtest/proof.h": "470b7ff274c07c0a619ecdeec9e58d7a7dee65ed1d7dbae8614fdeb58b902e54",
     "src/pocx/test/kernel/CMakeLists.txt": "be88d68df30ffa911eb34faa18cb001b93dcc3da0d58d0c2e5ff9af8e389df40",
-    "src/pocx/test/kernel/fixture_generator.cpp": "f8068cac4ef12f25d3ba326e95837d2b4dc5bb12a2bc5f3e0099af02f3f62067",
+    "src/pocx/test/kernel/fixture_generator.cpp": "ff4bd90b4be6380ef547e68c04a913b601e5df46bf9987c0f72091301d3cc42e",
     "src/pocx/test/kernel/test_kernel.cpp": "cc6dfb7c2e3efa767b9061e62ca9bd8c3704e09fbf222d0d9b71cea5f47cb373",
     "src/primitives/block.cpp": "7f2c51c31459e7ef26a3b02e680502889016392b20ac2ad912d03c2021fd6489",
     "src/primitives/block.h": "b791e3f8a070602d614dbb48874bf2c7beca5c6052f57b6e69793b4b5a8a66f3",
@@ -211,7 +211,7 @@
     "src/validation.cpp": "380eae4c8e044e4c8180587da29720bd835752970958f07d4887085f84f4a2ca",
     "test/pocx/build_configuration.py": "c9df217b325f1e3dfd8cd14e002f542bd78aa084b410e8f3b18d18a261a36456",
     "test/pocx/kernel/fixtures.json": "0069f80997408a2a13739afe46775c4a5e2cc799a8b963006fdd30c299a7d35f",
-    "test/pocx/kernel/provenance.json": "0a4b42e0f13b9f2b6ddc31ab6add8a80968b81d1ccfb2804bf0639a86db8e4b2",
+    "test/pocx/kernel/provenance.json": "14b9d4aae50bf4468c6583d99d666189b87811cb08c00e7bf0911ce9fccf09d2",
     "test/pocx/kernel/reference.rs": "af1cb2d2abd1b353f508a4891acbeab8b2e85e1b777ffe973cd091a0df89b5b7",
     "test/pocx/kernel/render_fixtures.py": "fc4034af16dc364d5c18143dd8e9e8fe7b2392f5e50325498d9b099b3d00ce03",
     "test/pocx/kernel/verify_fixtures.py": "f93ed8f7fbd1e60f4aa837a8f9d20b4bc68bee5977a5c674b026f2df00245b55",
@@ -222,8 +222,8 @@
     "test/pocx/vectors/Cargo.lock": "2a959ccaa2c4c3fbddef9b0328e9c21a111ec13739bfc1beb441a194760e3786",
     "test/pocx/build_environment.py": "8cffde16fefe5b9b9505108abfe447a878625fb9bdedd7356919af10bbd22be3",
     "test/pocx/test_build_environment.py": "eebf4597ae5fa2530f2b15934ec1d74c91e6acae0328b2e0d24d61167170e276",
-    "test/pocx/boost_runtime.py": "f33c4b65c9065f1c34cb2671ff2e8fe3c5012a513adc74d8591dd949842b7764",
-    "test/pocx/test_boost_runtime.py": "17cd6a99197dcfb5d05ad8ab375734a6079826819833999a29580d7d9a185d68"
+    "test/pocx/boost_runtime.py": "57400a695af148d372e1d290eceb55c3c1271949df21a3e95548026d7034f982",
+    "test/pocx/test_boost_runtime.py": "0e27a10de5f2c903f57c83e903587e6648f2cbcb2028f90c0fea30e69937ec2e"
   },
   "review_notes": {
     "checks": "All original check sites retained, with native expected fixture values and explicit zero legacy PoW accessor contract. Four additional check sites strengthen truncation, ProcessBlock acceptance and lookup-read validity.",
@@ -272,5 +272,21 @@
     "existing_case_execution_records_remain_historical": true,
     "actual_tests_or_compilations_launched": 0,
     "full_current_source_pass_inferred": false
+  },
+  "windows_ctest_log_review": {
+    "scope": "Windows CTest mixes ANSI metadata, UTF-8 XML and arbitrary binary diagnostics. Prefer UTF-8; on Windows preserve otherwise undecodable bytes reversibly with surrogateescape. No replacement/discard, raw byte hashes unchanged. XML, assertion, inventory and seed checks remain strict; malformed XML rejected. Runtime verification pending.",
+    "sources": {
+      "test/pocx/boost_runtime.py": "57400a695af148d372e1d290eceb55c3c1271949df21a3e95548026d7034f982",
+      "test/pocx/test_boost_runtime.py": "0e27a10de5f2c903f57c83e903587e6648f2cbcb2028f90c0fea30e69937ec2e"
+    }
+  },
+  "windows_binary_output_review": {
+    "repair": "Use std::ios::binary to emit existing JSON LF bytes on Windows; fixture_sha256 and all vectors unchanged.",
+    "failed_file_sha256": "b06259ff6ffd724495fa9e6c99ad0d9e661ffb8efba6d7b7e17081f94a776ae8",
+    "crlf_count": 213,
+    "normalized_sha256": "0069f80997408a2a13739afe46775c4a5e2cc799a8b963006fdd30c299a7d35f",
+    "historical_generator_source_sha256": "f8068cac4ef12f25d3ba326e95837d2b4dc5bb12a2bc5f3e0099af02f3f62067",
+    "current_generator_source_sha256": "ff4bd90b4be6380ef547e68c04a913b601e5df46bf9987c0f72091301d3cc42e",
+    "runtime_status": "Actual rebuilt generator and kernel runtime pending; historical reference execution unchanged."
   }
 }

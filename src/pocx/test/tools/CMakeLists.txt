@@ -48,7 +48,13 @@ add_executable(pocx_chainstate_test_clock
 target_link_libraries(pocx_chainstate_test_clock PRIVATE core_interface ${clock_kernel})
 add_windows_application_manifest(pocx_chainstate_test_clock)
 
-file(GENERATE OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/clock-kernel-sources.txt"
+# Object library paths vary by configuration with generators such as Visual
+# Studio. Keep each inventory beside its configuration's other generated files.
+set(kernel_inventory_directory "${CMAKE_CURRENT_BINARY_DIR}")
+if(CMAKE_CONFIGURATION_TYPES)
+  string(APPEND kernel_inventory_directory "/$<CONFIG>")
+endif()
+file(GENERATE OUTPUT "${kernel_inventory_directory}/clock-kernel-sources.txt"
   CONTENT "$<JOIN:$<TARGET_PROPERTY:${clock_kernel},SOURCES>,\n>\n")
-file(GENERATE OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/original-kernel-sources.txt"
+file(GENERATE OUTPUT "${kernel_inventory_directory}/original-kernel-sources.txt"
   CONTENT "$<JOIN:$<TARGET_PROPERTY:bitcoinkernel,SOURCES>,\n>\n")

@@ -198,7 +198,7 @@ namespace pocx {
 namespace crypto {
 
 bool HaveSSE2() {
-#if defined(__x86_64__) || defined(__amd64__)
+#if defined(__x86_64__) || defined(__amd64__) || defined(_M_X64)
     return true;
 #else
     return false;

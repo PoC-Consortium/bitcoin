@@ -1489,7 +1489,7 @@
       "source": "test/functional/wallet_multiwallet.py",
       "replacement": "test/pocx/functional/wallet_multiwallet.py",
       "source_sha256": "8241af7710a2cf97fe19ce17f59f681a0db9d96f87ae9cf7d0a83ae8b7c30279",
-      "replacement_sha256": "c8966821d82eb1a348185718c8b17083fce32f75f9e90812dc81739fe2aa0029",
+      "replacement_sha256": "f5be9fbd63819d86e000b8b29be81b5285c4db44a2d8928cbbce66e6e36b9300",
       "assertion_and_method_accounting": {
         "assert_statements": 5,
         "assertion_calls": 56,
@@ -9807,7 +9807,7 @@
       ],
       "dependencies": {
         "contrib/signet/miner": "2df980a48e688a9e1b54f1764772edd941c0e7008bcc99faa65546d263e8dffe",
-        "test/pocx/kernel/provenance.json": "0a4b42e0f13b9f2b6ddc31ab6add8a80968b81d1ccfb2804bf0639a86db8e4b2",
+        "test/pocx/kernel/provenance.json": "14b9d4aae50bf4468c6583d99d666189b87811cb08c00e7bf0911ce9fccf09d2",
         "src/pocx/rpc/mining.cpp": "5b79761cb582dbbf1e581366ee1e99cc24b7768685845d2e79f92901c619d959",
         "src/kernel/chainparams.cpp": "8dfb7f1f5a8e98af703bfb492fd9d70bb619e66cf7a087279ad9e63ccc3ff348"
       },
@@ -15450,7 +15450,7 @@
       "source": "test/functional/p2p_sendheaders.py",
       "replacement": "test/pocx/functional/p2p_sendheaders.py",
       "source_sha256": "5b59c0ae7fcb972cba6e5e2b524f0a80ee59db485b3b31384799d3a1e92d88e4",
-      "replacement_sha256": "15080081bb9ff1457248280592f85c316937544f411485b4faa7a833c8c2f5f6",
+      "replacement_sha256": "d66396a8a4a5c96df9bbf6d90d963acd06f801dbacd25818302d25fd67ada771",
       "assertion_and_method_accounting": {
         "assert_statements": 7,
         "assertion_calls": 4,
@@ -15557,7 +15557,14 @@
           "test_nonnull_locators"
         ]
       },
-      "lint_binding_review": "Rename unused legacy positional PoW time parameter; native block implementation, calls and assertions unchanged."
+      "lint_binding_review": "Rename unused legacy positional PoW time parameter; native block implementation, calls and assertions unchanged.",
+      "mock_clock_download_review": {
+        "repair": "Wait for real node-to-node inflight downloads before advancing native proof mocktime; synthetic peers remain untouched.",
+        "reason": "Observed 178second clock jump30ms after downloadrequest triggers blocktimeout on Windowsv2.",
+        "assertions": "Original assertions, synthetic-peer direct-fetch behavior and reorg sequence preserved.",
+        "focused_execution": "artifacts/windows-session/sendheaders-clock-candidate-01/results.json:bothtransports exit0,timed_outfalse,Windowsjobcleanuptrue",
+        "full_runtime_status": "Full repaired pair pending; previous failed run retained."
+      }
     },
     "p2p_sendtxrcncl.py": {
       "source": "test/functional/p2p_sendtxrcncl.py",
@@ -18589,7 +18596,7 @@
       "dependencies": {
         "src/bitcoin-chainstate.cpp": "2362bfb2fa203ee3946dd4428b56a8537afd45795b4e8757eb66b59d9cbab4a6",
         "src/pocx/test/tools/chainstate_test_clock.cpp": "dd5e91d0c439161e214c28b464e6217c7c1bfb7a61ec4de00ccc2fc647b3995c",
-        "src/pocx/test/tools/CMakeLists.txt": "4cd27482044d49a7c5672c2e20d2f3cb67ba2c1c2e89ddecb47e97021a812048",
+        "src/pocx/test/tools/CMakeLists.txt": "a621109fb2db2f0ab9bb8b91fc80e87166b5cb0782a95395ce83535fc5148688",
         "src/pocx/consensus/regtest_functional_assumeutxo.inc": "9e1abbae3942cc638f94b7c9ad4733dc156e24430873ae099e7d9df08ff34262"
       },
       "adapted_assertion_and_method_accounting": {
@@ -18607,7 +18614,13 @@
         ]
       },
       "clock_linkage_review": "Compile the unchanged original main as a separate CMake source beside the test-only fixture clock. Preserve implicit main success return, input/assertions and existing kernel library selection. Actual GCC14 changed target built using the unchanged verified native archive; affected full chainstate scenario passed in both transports, including future-time rejection, duplicate/malformed blocks and assumeutxo extension. No baseline replay.",
-      "private_kernel_dependency_review": "Register the private static kernel copy link dependencies using target_link_libraries instead of assigning LINK_LIBRARIES directly. CMake then propagates its private dependencies as static link requirements, including bcrypt on Windows, while retaining the original kernel source selection, compilation settings, fixture clock and tool entry point. The Windows reproducer fails on BCryptGenRandom with the previous helper and links with this change; Linux fixture clock and invalid input execute unchanged. Full MSVCRT build/deploy and actual Windows runtime remain separately required."
+      "private_kernel_dependency_review": "Register the private static kernel copy link dependencies using target_link_libraries instead of assigning LINK_LIBRARIES directly. CMake then propagates its private dependencies as static link requirements, including bcrypt on Windows, while retaining the original kernel source selection, compilation settings, fixture clock and tool entry point. The Windows reproducer fails on BCryptGenRandom with the previous helper and links with this change; Linux fixture clock and invalid input execute unchanged. Full MSVCRT build/deploy and actual Windows runtime remain separately required.",
+      "windows_multiconfig_inventory_review": {
+        "change": "Generate kernel source inventories under $<CONFIG> only for multi-configuration generators; retain existing single-configuration paths.",
+        "reason": "VS object library source paths vary by configuration, so one shared file(GENERATE) output is invalid.",
+        "coverage": "No source selection, target interfaces, executable assertions or required features changed.",
+        "runtime_status": "PoCX configure/build/runtime replay pending; historical execution unchanged."
+      }
     },
     "tool_rpcauth.py": {
       "source": "test/functional/tool_rpcauth.py",
@@ -18757,7 +18770,7 @@
       ],
       "dependencies": {
         "contrib/signet/miner": "2df980a48e688a9e1b54f1764772edd941c0e7008bcc99faa65546d263e8dffe",
-        "test/pocx/kernel/provenance.json": "0a4b42e0f13b9f2b6ddc31ab6add8a80968b81d1ccfb2804bf0639a86db8e4b2",
+        "test/pocx/kernel/provenance.json": "14b9d4aae50bf4468c6583d99d666189b87811cb08c00e7bf0911ce9fccf09d2",
         "test/pocx/functional/feature_signet.py": "69b95779ebca236f8c6220a5a5598dde51f4c1c429036b5203711421714af3bc"
       },
       "replacement_assertion_and_method_accounting": {
@@ -19744,7 +19757,7 @@
         "test/pocx/framework/test_framework.py": "2333960a1a41d03b9c62a584e7d2ebfe49e6ce5cb82afbf92b72731f195d8a8a",
         "test/functional/test_framework/test_node.py": "59799d482ecf3aeb7f5ec2fa52ffe839f4e377ac0a903bf22daa5ecfaaa5d2ac",
         "test/pocx/framework/blocktools.py": "b87707eb61097f1b7cf651a5c81ccd2570ca505e809bcd4a1026aede6afc1ceb",
-        "test/pocx/framework/wallet_compatibility.py": "9df8dd702518891b76acd8a34509382f91efce6005e1d1c66785437a372dff50",
+        "test/pocx/framework/wallet_compatibility.py": "32b20a4f39dd49280e5cbe3d7e26fec4f49aa48da18cd7e0670acfd68bd21024",
         "test/functional/test_framework/messages.py": "c786651a517a49dd084b1d76072f755d40c5483f5be53b7322ca4f3403548b26"
       },
       "adapted_assertion_and_method_accounting": {
@@ -19918,7 +19931,7 @@
       "source": "test/functional/wallet_bumpfee.py",
       "replacement": "test/pocx/functional/wallet_bumpfee.py",
       "source_sha256": "5fbbabdbf8e30456dd1ada244abaae034a1c2974b1f08ba47b91177087cc3f65",
-      "replacement_sha256": "493c3c35bce69620ef72eacf9f164464d3425b97702e3e29ba8ad52b86b9a0e3",
+      "replacement_sha256": "e3c2d84197459ad4debaafd8a966cb282c5a4ba52b3ae107dc9914fc2d2540db",
       "assertion_and_method_accounting": {
         "assert_statements": 41,
         "assertion_calls": 91,
@@ -19957,7 +19970,7 @@
           "check_sequence"
         ]
       },
-      "review": "Single explicit opt-in to per-block native observer/producer clock coordination for original clean-chain generation. AST exactly identical after removing this assignment: all assertions, amounts, scenarios, generation counts, forks, wallet operations and order retained. Startup uses coordinated fixture time for VerifyDB. Execution pending.",
+      "review": "Owned clean-chain clock coordination retained. Initial 110-block funding synchronizes each block before further mocktime advancement to prevent pending peer downloads expiring. All 110 blocks and original fee-bump assertions and scenarios retained. Isolated UCRT Windows execution passed both transports; full pair revalidation pending.",
       "evidence": "build-pocx-clean/pocx-results-fgwf4s35/results.json",
       "execution_by_transport": {
         "v1": "unverified; prerequisite helper and staging provenance changed",
@@ -20906,7 +20919,7 @@
           "run_test"
         ]
       },
-      "review": "Single explicit opt-in to per-block native observer/producer clock coordination for original clean-chain generation. AST exactly identical after removing this assignment: all assertions, amounts, scenarios, generation counts, forks, wallet operations and order retained. Startup uses coordinated fixture time for VerifyDB. Execution pending. Add50 native funding blocks before original 500-coin/10,000-output stress fixture. Preserve all output amounts/counts, grouped/non-grouped fee thresholds, APS checks and ~100-input selection scenario. Synchronize wallet peers after each generated funding block before advancing the next PoCX proof clock. Preserve the original run_test body, all grouping/APS/fee assertions, original generation counts and the additional native funding fixture. Both transports independently passed under ASan with512KiB stack and timeout factor40. Other configurations require focused source refresh; no Bitcoin baseline replay.",
+      "review": "Owned clean-chain clock coordination retained. Initial 110-block funding synchronizes each block before further mocktime advancement to prevent pending peer downloads expiring. All 110 blocks and original fee-bump assertions and scenarios retained. Isolated UCRT Windows execution passed both transports; full pair revalidation pending. Add50 native funding blocks before original 500-coin/10,000-output stress fixture. Preserve all output amounts/counts, grouped/non-grouped fee thresholds, APS checks and ~100-input selection scenario. Synchronize wallet peers after each generated funding block before advancing the next PoCX proof clock. Preserve the original run_test body, all grouping/APS/fee assertions, original generation counts and the additional native funding fixture. Both transports independently passed under ASan with512KiB stack and timeout factor40. Other configurations require focused source refresh; no Bitcoin baseline replay.",
       "evidence": "build-pocx-clean/pocx-results-fgwf4s35/results.json",
       "execution_by_transport": {
         "v1": "ASan current-source pass; other configurations require targeted refresh",
@@ -20995,7 +21008,7 @@
           "run_test"
         ]
       },
-      "review": "Single explicit opt-in to per-block native observer/producer clock coordination for original clean-chain generation. AST exactly identical after removing this assignment: all assertions, amounts, scenarios, generation counts, forks, wallet operations and order retained. Startup uses coordinated fixture time for VerifyDB. Execution pending. Valid non-HD destination re-encoded to native HRP preserving the witness program. Original HD derivation indices/fingerprints and backup/restore/rescan assertions remain exact.",
+      "review": "Owned clean-chain clock coordination retained. Initial 110-block funding synchronizes each block before further mocktime advancement to prevent pending peer downloads expiring. All 110 blocks and original fee-bump assertions and scenarios retained. Isolated UCRT Windows execution passed both transports; full pair revalidation pending. Valid non-HD destination re-encoded to native HRP preserving the witness program. Original HD derivation indices/fingerprints and backup/restore/rescan assertions remain exact.",
       "evidence": "build-pocx-clean/pocx-results-fgwf4s35/results.json",
       "execution_by_transport": {
         "v1": "unverified; prerequisite helper and staging provenance changed",
@@ -21151,7 +21164,7 @@
           "run_test"
         ]
       },
-      "review": "Single explicit opt-in to per-block native observer/producer clock coordination for original clean-chain generation. AST exactly identical after removing this assignment: all assertions, amounts, scenarios, generation counts, forks, wallet operations and order retained. Startup uses coordinated fixture time for VerifyDB. Execution pending. Choose one sufficient preselected UTXO explicitly because native tx IDs change listunspent ordering. Preserve original1-coin payment, fee bump, replacement/removal and all valid/invalid Merkle-proof checks.",
+      "review": "Owned clean-chain clock coordination retained. Initial 110-block funding synchronizes each block before further mocktime advancement to prevent pending peer downloads expiring. All 110 blocks and original fee-bump assertions and scenarios retained. Isolated UCRT Windows execution passed both transports; full pair revalidation pending. Choose one sufficient preselected UTXO explicitly because native tx IDs change listunspent ordering. Preserve original1-coin payment, fee bump, replacement/removal and all valid/invalid Merkle-proof checks.",
       "evidence": "build-pocx-clean/pocx-results-fgwf4s35/results.json",
       "execution_by_transport": {
         "v1": "unverified; prerequisite helper and staging provenance changed",
@@ -21705,7 +21718,7 @@
           "test_label"
         ]
       },
-      "review": "Single explicit opt-in to per-block native observer/producer clock coordination for original clean-chain generation. AST exactly identical after removing this assignment: all assertions, amounts, scenarios, generation counts, forks, wallet operations and order retained. Startup uses coordinated fixture time for VerifyDB. Execution pending.",
+      "review": "Owned clean-chain clock coordination retained. Initial 110-block funding synchronizes each block before further mocktime advancement to prevent pending peer downloads expiring. All 110 blocks and original fee-bump assertions and scenarios retained. Isolated UCRT Windows execution passed both transports; full pair revalidation pending.",
       "evidence": "build-pocx-clean/pocx-results-fgwf4s35/results.json",
       "execution_by_transport": {
         "v1": "unverified; prerequisite helper and staging provenance changed",
@@ -21980,7 +21993,7 @@
         "test/functional/test_framework/test_node.py": "59799d482ecf3aeb7f5ec2fa52ffe839f4e377ac0a903bf22daa5ecfaaa5d2ac",
         "test/pocx/framework/test_node.py": "a4935df6cd38842cbd8577dbd839d931f464bd69f6a9f8419c6bdcc4bf5bb6a1",
         "test/pocx/framework/blocktools.py": "b87707eb61097f1b7cf651a5c81ccd2570ca505e809bcd4a1026aede6afc1ceb",
-        "test/pocx/framework/wallet_compatibility.py": "9df8dd702518891b76acd8a34509382f91efce6005e1d1c66785437a372dff50",
+        "test/pocx/framework/wallet_compatibility.py": "32b20a4f39dd49280e5cbe3d7e26fec4f49aa48da18cd7e0670acfd68bd21024",
         "test/pocx/framework/wallet_migration_fixtures.py": "50a03e6973aa0ef1c18f284d53c0b279e689ec63ac26a3e95546b04ee2ad4bbf",
         "test/functional/test_framework/messages.py": "c786651a517a49dd084b1d76072f755d40c5483f5be53b7322ca4f3403548b26",
         "src/rpc/mining.cpp": "43a0c08407392af60475990ed3fffd4dc5f384f83fc9ab9d613004284f83e80e",
@@ -24224,7 +24237,7 @@
         "src/pocx/consensus/signature.cpp": "866c14307754479278dd46307a847994669d6b572e1011d09a1d8b3fb84fae69",
         "src/kernel/chainparams.cpp": "8dfb7f1f5a8e98af703bfb492fd9d70bb619e66cf7a087279ad9e63ccc3ff348",
         "src/rpc/mining.cpp": "43a0c08407392af60475990ed3fffd4dc5f384f83fc9ab9d613004284f83e80e",
-        "test/pocx/stage.py": "2b86aabfee94c796e8f5b82af15415fb740de87b96bf76c4b702af81e3d3015b",
+        "test/pocx/stage.py": "d0cc068182448b8a9119a824b875e23e75959518b44b3f3b396f1e4147ec15b4",
         "test/functional/test_framework/key.py": "1f48819cbecacb5916a32a4930b4576ab362c190fa552342378e5c809a6bae77",
         "test/functional/test_framework/crypto/secp256k1.py": "cab75b7335f839b88eb8517b417715858e538aaf0071f6c01ec4eb3e1867f246",
         "src/pocx/consensus/difficulty.cpp": "9769f411840097321c9dce8b715922152003ff6a18273905bc5060146f563e56",
@@ -24664,12 +24677,12 @@
   },
   "execution_infrastructure": {
     "sources": {
-      "test/pocx/test_runner.py": "db4a02aba7f1a992487f2ebb48b32ec6e2b06bca9dfea27f9fca9365978a62ce",
+      "test/pocx/test_runner.py": "9e8ef776b44f7f956690f79d424e6de022805b8f82cd4e5a11db007b1d7dc628",
       "test/pocx/functional_results.py": "4355a7bd0f08ada20a7d82587160a10c0493041205d92b3ab7fb4335459e4613",
       "test/pocx/update_inventory.py": "c8816297f36f3fe265c2deb660797b302fce1aaf165fa696130c0f184814ba6c",
       "test/pocx/functional_cases.py": "903124835dc4e3d902036a6789a72727f82ff334a2c0c236cc2ee2a49ef4b68f",
-      "test/pocx/stage.py": "2b86aabfee94c796e8f5b82af15415fb740de87b96bf76c4b702af81e3d3015b",
-      "test/pocx/verify_functional.py": "f15b101b3c535ae7330c015a905b2dcefde106194ea04f7f7a6e56ef3c825eae",
+      "test/pocx/stage.py": "d0cc068182448b8a9119a824b875e23e75959518b44b3f3b396f1e4147ec15b4",
+      "test/pocx/verify_functional.py": "a821e05f9b3b50f6a7dee9b9f92e566d3d63b5090c1f3bb2bce264603f6a2145",
       "test/pocx/functional-profile-skips.json": "668fa3587439eb4c93e296926730507a72664af478e8ed9f913e9f2a9902d5c0",
       "test/pocx/functional_environment.py": "0b9a8336bc866a3f7d145fc32933f00172113b24cc50563f54121a6d9256c10e",
       "test/pocx/functional_execution.py": "def9cf30faa9360b9cb419e270f7476bd5f622021a4a1765dd138439e1cb941f",
@@ -24677,7 +24690,12 @@
       "test/pocx/process_tree.py": "12639a920fa4a656eec4f14ea02c4aaf1fe997cfc18c7df2566e82a1d3ab3f29",
       "test/pocx/rpc_coverage.py": "3d6afe81054a7acc05c634a54967d167eb4223205b421c7db2f3ce4406da6723",
       "test/pocx/functional_retention.py": "651d64473a6e8bd1834316a30dae83806aca25b06ec91dae01d994e86f6251d2",
-      "test/pocx/pocx_bootstrap.py": "72e0a27abe139a6079220174cc1c103c173a0f632c1aa6034ddcc2075d58322d"
+      "test/pocx/pocx_bootstrap.py": "72e0a27abe139a6079220174cc1c103c173a0f632c1aa6034ddcc2075d58322d",
+      "test/pocx/original_windows.py": "2598717ba1d532ebe4444d5cec2ae88f6cfed8132e514658600a71f551336e15",
+      "test/pocx/test_original_windows.py": "d1ae65726b2ff2017ff72e5026ac80a6c3e6584c4c0c8df4b0e9e0d946c730f3",
+      "test/pocx/bitcoin_baseline/windows/review.json": "f541b15bbe06f200838f6ba17cacfe279ac723fbc71a1b6994c822e45219a6e6",
+      "test/pocx/bitcoin_baseline/windows/rpc_signer.py": "ea682c6093604670612eeae9936a9a3d4d0af232fe798d9edf7eea979c01639d",
+      "test/pocx/bitcoin_baseline/windows/wallet_multiwallet.py": "8bd68b3037529c28dfa8f1fbbf0621e5e81b7b0a50f8b8553973cc3c21e2107b"
     },
     "review": "Explicit global v1/v2 execution identities and separate output directories; matrix requires every selected file in both modes exactly once, executed flags must match labels, only terminal successful exits count as passing. Historical reports remain v1-only. Inventory retains separate pocx and pocx-v2 fields and rejects invalid reports before writing a snapshot. Functional CI defaults to both modes; single-mode execution must be requested explicitly. Timeout/process-group cleanup, build locks and staged module-origin checks retained. This reviews orchestration/evidence integrity, not full upstream test migration. New-format evidence must retain its runner source attestation, and every result must have a staged source record. Fault tests verify each rejection preserves the previous snapshot. Reviewed upstream case argument expansion without importing the upstream runner; canonical filename/argument identities and format3 evidence keep nontransport variants separate. Filename filters include every variant and --case selects an exact declared case. Concurrent port slots use spaced seeds derived from staged upstream constants and return only after owned group cleanup; real socket fault verification holds a case across600callbacks past the old seed-wrap boundary. Dynamic benchmark selection fails explicitly pending build-specific expansion. Reviewed fuzz inventory extraction recognizes whole-source FUZZ_TARGET_DESERIALIZE declarations without counting the wrapper macro parameter as a target. It preserves all functional case/mode evidence handling and adds explicit sanitizer-runtime options and optional gcov instrumentation to fuzz evidence. Registration-wrapper and default/CLI plus v1/v2 inventory regression checks pass; this does not approve remaining upstream migration. Unit completion review: only the optional pocx-kernel auxiliary CTest timeout is increased from180 to900 seconds for full native proof revalidation on disk reads. All other profile timeouts, functional orchestration, assertions and failure propagation remain unchanged. Reviewed staging of both unchanged upstream ElligatorSwift CSV vector files alongside Python modules, hashed in execution provenance and inventory; no test scenario substitutions. Stage source itself now guarded. Format4 records upstream exit77 as skipped with a required reason; skips never count as passes and still make the runner exit nonzero. Historical format1..3 semantics retained. Case identity, matrix completeness and source attestations required unchanged. Reviewed complete unchanged data and mock-signer resources in support_copies, independently matching pinned upstream; constrained destinations/sources to their corresponding data or mocks subtree. Reviewed explicit support_replacements overlay of reviewed data/mock resources; destination must already have an upstream support copy and source must resolve within OWNED. Original and owned resource hashes guarded separately. Inventory records native resource sources and skip reasons. Serialize only the unchanged rpc_bind --ipv4 literal-port resource across transport copies. Port seeds cannot isolate upstream fixed32171/32172. All case identities, commands, assertions and both transport executions remain required; independent cases retain concurrency. A real-socket regression protects mutual exclusion and independent progress. Complete failed run h7pqxrn2 and diagnosis rpc-bind-fixed-port-race.json retained. Windows previous-release prerequisite discovery requires .exe filenames while retaining platform-independent logical release keys. Staging and current-input verification now additionally bind functional_environment.py, so prerequisite-helper drift rejects saved reports. Linux and simulated-Windows filename checks pass; no Windows domain execution is inferred.",
     "runtime_evidence": [
@@ -26234,7 +26252,7 @@
   "owned_framework_additions": {
     "test_framework/wallet_compatibility.py": {
       "source": "test/pocx/framework/wallet_compatibility.py",
-      "sha256": "9df8dd702518891b76acd8a34509382f91efce6005e1d1c66785437a372dff50",
+      "sha256": "32b20a4f39dd49280e5cbe3d7e26fec4f49aa48da18cd7e0670acfd68bd21024",
       "dependencies": {
         "test/pocx/framework/address.py": "75f5b4fcc0f9d826de28e35eac00425e8a10f678af54f6c5676737e0529a6550",
         "test/functional/test_framework/segwit_addr.py": "fbeb2a01fdae651877262c4902d237dd28d56f0e35b0fc137d3dd97854b18b08",
@@ -26246,7 +26264,7 @@
       "source": "test/pocx/framework/wallet_migration_fixtures.py",
       "sha256": "50a03e6973aa0ef1c18f284d53c0b279e689ec63ac26a3e95546b04ee2ad4bbf",
       "dependencies": {
-        "test/pocx/framework/wallet_compatibility.py": "9df8dd702518891b76acd8a34509382f91efce6005e1d1c66785437a372dff50",
+        "test/pocx/framework/wallet_compatibility.py": "32b20a4f39dd49280e5cbe3d7e26fec4f49aa48da18cd7e0670acfd68bd21024",
         "test/pocx/framework/blocktools.py": "b87707eb61097f1b7cf651a5c81ccd2570ca505e809bcd4a1026aede6afc1ceb",
         "test/pocx/framework/test_node.py": "a4935df6cd38842cbd8577dbd839d931f464bd69f6a9f8419c6bdcc4bf5bb6a1",
         "test/functional/test_framework/test_node.py": "59799d482ecf3aeb7f5ec2fa52ffe839f4e377ac0a903bf22daa5ecfaaa5d2ac",
@@ -26350,5 +26368,25 @@
       "i686"
     ],
     "whole_CI_pass_inferred": false
+  },
+  "windows_path_portability_review": {
+    "scope": "Canonical slash-separated repository/source keys and portable filename assertions on Windows; source selection, assertions, flags and historical execution fields unchanged. Current Windows runtime still requires execution; previous Linux runtime records are historical and no new pass is inferred. Revalidate Linux drift/staging/evidence infrastructure.",
+    "sources": {
+      "test/pocx/stage.py": {
+        "previous_sha256": "2b86aabfee94c796e8f5b82af15415fb740de87b96bf76c4b702af81e3d3015b",
+        "sha256": "d8e5852fe6237df53a2375e3d6dc46a113cb78e3ab0a38be2d8d836225ee7e88"
+      },
+      "test/pocx/verify_functional.py": {
+        "previous_sha256": "f15b101b3c535ae7330c015a905b2dcefde106194ea04f7f7a6e56ef3c825eae",
+        "sha256": "27db5179b1de15cedb8bdfe655a54e24739bf790063c1e76b4d48127b33be369"
+      }
+    }
+  },
+  "windows_functional_native_review": {
+    "scope": "Windows native follow-up: short unique source-owned data paths preserve original long wallet names; blank CRCRLF CSV separators ignored but exact inventories/statuses remain required; exact independently localized OS error2 signer expectation in AST-guarded owned view; pre-existing POSIX/Windows unsupported guards reported disabled, never passed; Windows job owns original functional descendants. All upstream source files, assertions, selections and production behavior unchanged. Seven focused Bitcoin reproductions passed; complete original/native platform pairs still require execution. Linux behavior unchanged except portable CSV record handling/source-provenance expansion; revalidate infrastructure.",
+    "sources": {
+      "test/pocx/stage.py": "d0cc068182448b8a9119a824b875e23e75959518b44b3f3b396f1e4147ec15b4",
+      "test/pocx/verify_functional.py": "a821e05f9b3b50f6a7dee9b9f92e566d3d63b5090c1f3bb2bce264603f6a2145"
+    }
   }
 }

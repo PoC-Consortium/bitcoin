@@ -174,7 +174,8 @@ int main(int argc, char** argv)
         UniValue chain(UniValue::VARR);
         for (const auto& block : Chain(*regtest, 206, true)) chain.push_back(Hex(block));
         output.pushKV("regtest", chain);
-        std::ofstream file(argv[1]);
+        // Fixture provenance hashes canonical LF bytes on every platform.
+        std::ofstream file(argv[1], std::ios::binary);
         Require(static_cast<bool>(file), "Cannot open fixture output");
         file << output.write(2) << '\n';
         Require(static_cast<bool>(file), "Cannot write fixture output");

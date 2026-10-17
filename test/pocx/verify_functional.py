@@ -11,6 +11,7 @@ from collections import Counter
 import argparse
 import hashlib
 import json
+import os
 from pathlib import Path
 import subprocess
 import sys
@@ -25,6 +26,7 @@ import functional_execution
 import build_configuration
 import process_tree
 import rpc_coverage
+import original_windows
 
 
 def digest(path):
@@ -92,7 +94,14 @@ def verify_current_inputs(report, build):
         sources[dest] = OWNED / source
     for name in manifest['reused_tests']:
         sources[name] = ROOT / 'test/functional' / name
-    current = {name: {'source': str(path.relative_to(ROOT)), 'sha256': digest(path)} for name, path in sources.items()}
+    if os.name == 'nt':
+        for name, source in original_windows.replacements(ROOT).items():
+            if name in manifest['tests']:
+                continue
+            if name not in manifest['reused_tests']:
+                raise ValueError('Windows fixture replacement must retain its selected case')
+            sources[name] = source
+    current = {name: {'source': path.relative_to(ROOT).as_posix(), 'sha256': digest(path)} for name, path in sources.items()}
     if current != provenance['files']:
         raise ValueError('Selected functional source/resource snapshot changed')
     paths = functional_execution.binary_paths(build, cache, selected_config)
@@ -101,7 +110,8 @@ def verify_current_inputs(report, build):
             raise ValueError('Missing functional build configuration')
         required_helpers = ('test/pocx/stage.py', 'test/pocx/build_configuration.py',
                             'test/pocx/functional_execution.py', 'test/pocx/functional_environment.py',
-                            'test/pocx/process_tree.py')
+                            'test/pocx/process_tree.py', 'test/pocx/original_windows.py',
+                            original_windows.REVIEW, original_windows.REPLACEMENT)
         if provenance.get('staging_helpers') != {name: digest(ROOT / name) for name in required_helpers}:
             raise ValueError('Missing or stale functional staging helper provenance')
         if not {'bitcoind', 'bitcoin-cli'}.issubset(provenance['binaries']):

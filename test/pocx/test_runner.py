@@ -18,7 +18,7 @@ import tempfile
 import time
 import pocx_bootstrap as pocx_bootstrap
 from stage import stage, sha256
-from common import exclusive_lock
+from common import exclusive_lock, short_tmpdir
 import functional_environment
 import functional_execution
 import functional_retention
@@ -150,7 +150,8 @@ def main():
                     if row['selection'] == 'EXTENDED_SCRIPTS'}
         dispatch = sorted(selection, key=lambda spec: spec['id'] not in extended)
         cases = [(spec, mode) for spec in dispatch for mode in modes]
-        results_dir = Path(tempfile.mkdtemp(prefix="pocx-results-", dir=build))
+        results_parent = short_tmpdir(build) if os.name == 'nt' else build
+        results_dir = Path(tempfile.mkdtemp(prefix="pocx-results-", dir=results_parent))
         coverage_directories = {}
         if args.coverage:
             provenance.update(format_version=10, rpc_coverage=True,

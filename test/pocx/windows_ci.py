@@ -30,6 +30,8 @@ REVIEW_SOURCES = {'.github/ci-windows.py', '.github/workflows/ci.yml',
     'test/pocx/build_configuration.py', 'test/pocx/process_tree.py',
     'test/pocx/test_windows_ci.py', 'test/pocx/test_process_tree.py'}
 MANIFEST_SKIPS = {'fuzz.exe', 'bench_bitcoin.exe', 'test_bitcoin-qt.exe', 'bitcoin-chainstate.exe'}
+REVIEW_SOURCES.update({'test/pocx/original_windows.py', 'test/pocx/test_original_windows.py',
+    'test/pocx/bitcoin_baseline/windows/review.json', 'test/pocx/bitcoin_baseline/windows/rpc_signer.py'})
 
 
 def verify_recipe(root=ROOT):

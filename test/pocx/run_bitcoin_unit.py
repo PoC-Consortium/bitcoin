@@ -65,7 +65,7 @@ def main():
         result = subprocess.run(command, env=env, stdout=log, stderr=subprocess.STDOUT)
     shutil.copyfile(build / 'Testing/Temporary/LastTest.log', output / 'boost.log')
     report.update(command=command, returncode=result.returncode,
-                  boost_runtime=boost_runtime.record(env, (output / 'boost.log').read_text()),
+                  boost_runtime=boost_runtime.record(env, boost_runtime.read_log(output / 'boost.log')),
                   **{name + '_sha256': sha256(output / name) for name in ('junit.xml', 'boost.log')})
     result_path = output / 'results.json'
     result_path.write_text(json.dumps(report, indent=2) + '\n')

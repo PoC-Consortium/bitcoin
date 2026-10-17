@@ -88,7 +88,7 @@ def main():
         'selected': selected, 'registered': sorted(registered),
         'binary': str(binary), 'binary_sha256': evidence['binary_sha256'],
         'execution_helpers': helpers, 'target_system_sha256': initial_system_sha256,
-        'boost_runtime': boost_runtime.record(env, (results / 'boost.log').read_text()),
+        'boost_runtime': boost_runtime.record(env, boost_runtime.read_log(results / 'boost.log')),
         'junit.xml_sha256': sha256(results / 'junit.xml'), 'boost.log_sha256': sha256(results / 'boost.log'),
         'unit_build_provenance': str(provenance), 'unit_build_provenance_sha256': initial_provenance_sha256,
         'test_sources': evidence['sources'],

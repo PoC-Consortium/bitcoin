@@ -13,27 +13,27 @@
     "src/pocx/test/kernel/CMakeLists.txt": "be88d68df30ffa911eb34faa18cb001b93dcc3da0d58d0c2e5ff9af8e389df40",
     "test/download_utils.py": "7ac35f3379c301f421b53ccb6d67cd3a8ab9e9869fd4032ee153e298a08013b2",
     "test/get_previous_releases.py": "31f38a771099df6b3b4280c4ee56d9b40eb6dd0aac6642f3595d4cea738df5b4",
-    "test/pocx/artifact_functional_view.py": "bde152ec119ddcf16a2f034c947d7322f7c29609a4cc0f873c006ec5467e57c6",
+    "test/pocx/artifact_functional_view.py": "c3321fe6b856a30839b4d1b1f5c9fbfc6174099c6e1b867d45d61c25ff18d4c5",
     "test/pocx/build_configuration.py": "c9df217b325f1e3dfd8cd14e002f542bd78aa084b410e8f3b18d18a261a36456",
-    "test/pocx/ci_evidence.py": "8f0c10ed4d1f455a940e8787c655b5fc20c35622d7ff1bbb744f79afb2dc1243",
+    "test/pocx/ci_evidence.py": "3300f6b9e2510e1725351fccb10b306f4dfac020595f38f30735373b9f34538d",
     "test/pocx/functional_cases.py": "903124835dc4e3d902036a6789a72727f82ff334a2c0c236cc2ee2a49ef4b68f",
     "test/pocx/functional_environment.py": "0b9a8336bc866a3f7d145fc32933f00172113b24cc50563f54121a6d9256c10e",
     "test/pocx/functional_results.py": "4355a7bd0f08ada20a7d82587160a10c0493041205d92b3ab7fb4335459e4613",
-    "test/pocx/inherited-ci.json": "4a19dc6be91263ea32e1e4900070e2345e1d3413aa7bf94360cb9e6500069803",
-    "test/pocx/inherited_ci.py": "9044f35b052ac10391e5b854efd2851bf162ee55a901c270b17e006e0fbd8744",
-    "test/pocx/inherited_functional.py": "6fc43cec5640b33de7e34d236a4ded1276720d70171fb5bf899d96f0297802c7",
-    "test/pocx/kernel-parity.json": "98c543c69ac95bf0d764aaed9e2cd4de596f3e752c7f08db4344b130e5935955",
+    "test/pocx/inherited-ci.json": "8014792220840886c1456d8c6ddcff7a97c001ae4879603e63139be60edd990e",
+    "test/pocx/inherited_ci.py": "e0dc7430cc00fa964f74549a0a4b831a52cd5cee07f9ac7900185398ab598334",
+    "test/pocx/inherited_functional.py": "38faa96c36ca54baabc9206725858729ca41ac78d235d1bb7bd3c299d25bc897",
+    "test/pocx/kernel-parity.json": "b85edb4d60dea8d59269f5b2aa371e39e2bc034c0a32d7f687bdf8d435618408",
     "test/pocx/kernel/fixtures.json": "0069f80997408a2a13739afe46775c4a5e2cc799a8b963006fdd30c299a7d35f",
-    "test/pocx/kernel/provenance.json": "0a4b42e0f13b9f2b6ddc31ab6add8a80968b81d1ccfb2804bf0639a86db8e4b2",
+    "test/pocx/kernel/provenance.json": "14b9d4aae50bf4468c6583d99d666189b87811cb08c00e7bf0911ce9fccf09d2",
     "test/pocx/kernel_parity.py": "56345a332de96ed52218b5220fce286e2d97f4e9e540b3d2adf72223d795ed34",
     "test/pocx/manifest.json": "aafe0bce90e53758ca8cc00e62de5b98e2f02b302c2227be1a3b6f7d8177221b",
     "test/pocx/process_tree.py": "12639a920fa4a656eec4f14ea02c4aaf1fe997cfc18c7df2566e82a1d3ab3f29",
-    "test/pocx/qt_parity.py": "ad4d9087e2058b42d33291b71f324677c32ffdf6276687519d3c8078e8187ace",
+    "test/pocx/qt_parity.py": "e4df50d17ffdfd4d3cd6c06451a7bed501b2e1d63c7b6028c7d2031a68e0d492",
     "test/pocx/record_cross_unit.py": "7e475dc0ee4b1a5bbbe122a8c38718ff1ca01e078c0f63826d25a7510e0bd9fc",
     "test/pocx/rpc_coverage.py": "3d6afe81054a7acc05c634a54967d167eb4223205b421c7db2f3ce4406da6723",
-    "test/pocx/run_bitcoin_functional.py": "79d2454c38479b74769917f19153793d50e26b489de0599aff7ef908d62e0e03",
-    "test/pocx/run_qt.py": "7f2634e51b9b625a85b645f90c86db0e58d4b97cf0e6937b695744b25621b9fc",
-    "test/pocx/stage.py": "2b86aabfee94c796e8f5b82af15415fb740de87b96bf76c4b702af81e3d3015b",
+    "test/pocx/run_bitcoin_functional.py": "93d744064986ba146c1aa9b21ab8d277819d63bf216e3780848aec67957cf4db",
+    "test/pocx/run_qt.py": "a0aa5adb2f7260986f2514bd67abcbc0dbcfff7a93244f95228a7edaf7a0bbf6",
+    "test/pocx/stage.py": "d0cc068182448b8a9119a824b875e23e75959518b44b3f3b396f1e4147ec15b4",
     "test/pocx/test_artifact_functional_view.py": "450f4a123046cce47669d266268192deccada9081923c2611630336bcc20df9c",
     "test/pocx/test_cross_kernel.py": "6e4b82a58d7f248c4bebe35d3df39d92dfee31b42b17b56fc46ede613a36b477",
     "test/pocx/test_cross_unit.py": "3ed89c11e3f175ffa065618c8238b4fd4d194c2c7a3aeed9d4be6211d4989955",
@@ -42,25 +42,29 @@
     "test/pocx/test_qt_infrastructure.py": "15cb1066af6da72a000ff19cef46f2f4c689ac523623086e31ea2ea43c7a707f",
     "test/pocx/test_rpc_coverage.py": "29b65f5e94a4f61dd2323bc00dc1b173d488c36451f91abccef8ccfb4ecc087b",
     "test/pocx/test_windows_artifact_ci.py": "2d78c5455c3447046567902b80454e81f508dab0b71f1bff4e3c7cce3793a01f",
-    "test/pocx/test_windows_artifact_functional.py": "834b0df31e6cb55075e7f47b8769340743a86eafc9ba22084d43b8677b54b56e",
+    "test/pocx/test_windows_artifact_functional.py": "d3b3cad9239f774dcc5272bf7f24b5dcfe69789fe7e385b657da2b05b77637cd",
     "test/pocx/test_windows_artifact_tests.py": "2ef315af92d86ed4f6fff5e88d0f7b90653308a3ea60dfda2cc969ed518c6319",
     "test/pocx/test_windows_artifact_unit.py": "c541c014843b0ced5bfb8a35f32e9be715ee82c51cc41b284af488720b6bfd3c",
-    "test/pocx/test_windows_artifacts.py": "a243151b9ad0cfb25d48d031c305b13d97094975b9142f88d91d86fde2813c5b",
+    "test/pocx/test_windows_artifacts.py": "53615afa9bebe4d12e50590cb0ec5dc5d4b0e6fb816559ce09631d62f9acfe23",
     "test/pocx/test_windows_cross.py": "fe09e5b453625b7c849f4c9177392f9b7c72931f530a21e353101d6b36ebbe57",
     "test/pocx/unit_assets.py": "1c34c321789b13246532e2d702b2212a5812cdd88bd4f6289945aa7f5680f992",
     "test/pocx/unit_build.py": "e53b2493f8f3a9cc7dc14aa53e21ac5c0b2599a1dd9ce87c4d09187f48b44420",
-    "test/pocx/unit_matrix.py": "ac430dbc42959c520a5b2d546689070f241763d02c23f89bc25e7486f88fb37a",
+    "test/pocx/unit_matrix.py": "a4f259236e1f9e67b1ec94c5c991e35d8f163fc705ca49c9f5e78e613026b1c5",
     "test/pocx/unit_parity.py": "64613ed3815c4cd59fd5352c2af2412f7826e0a1dfd184fbc7d00649a3257b6d",
-    "test/pocx/upstream-functional-parity.json": "d44b8dfb7e3ad30eefdd18b8d243d261f4b0338a9f510adfa842789f3eee14fb",
-    "test/pocx/verify_functional.py": "f15b101b3c535ae7330c015a905b2dcefde106194ea04f7f7a6e56ef3c825eae",
+    "test/pocx/upstream-functional-parity.json": "3d809b35337286afa90435e86bc1fdd784d081fae0f1cb2c03e5ba7a255d8b5b",
+    "test/pocx/verify_functional.py": "a821e05f9b3b50f6a7dee9b9f92e566d3d63b5090c1f3bb2bce264603f6a2145",
     "test/pocx/windows_artifact_ci.py": "71b0b4970ec735c3cd381854ffb5533d5125d1e3b405e785591e4f3050b71f56",
-    "test/pocx/windows_artifact_functional.py": "531f68a41395ecc75208d552a43f106a7d2f336971bc57b358560ed4910f02a4",
-    "test/pocx/windows_artifact_tests.py": "658aea57c8c750d2acef35508405868785df6f2b278e4806abc8be97262b3e52",
+    "test/pocx/windows_artifact_functional.py": "d46c9c09b31026078ce6904f7b6656fa6f47b461b42a19bcb17f76f0ed69aced",
+    "test/pocx/windows_artifact_tests.py": "b2cd5a4a4d4ca2e9371b746d25bc2eefbec69be473830ebb4ec48399904b6109",
     "test/pocx/windows_artifact_unit.py": "b0e19d4ac7efaae98e344741034cc664fc41b0d11e20f87a4d898c62d5714c7a",
-    "test/pocx/windows_artifacts.py": "853c3adabdc949874a6df4b0cd2f12bc51eaf3ad371cf5d2f94e790d9c24c43d",
+    "test/pocx/windows_artifacts.py": "b7f09b1b57a497911b69c0f5d6ddddbc834ee030c487408d02aed01b7fbb3a52",
     "test/pocx/windows_cross.py": "92e2796dc4101adb5bb0788b9e9407f075c0ee81ce5bf659c996ab710c54e35c",
     "src/pocx/test/windows-deploy.cmake": "65ae4f3244a3a4ef22bc9a1d111d865068104581050bd309dd74c8082b069d22",
-    "test/pocx/test_windows_deploy.py": "c1ace66244af695744f677a6cc56ddd539dfaed9108e755a9cfada2f69629094"
+    "test/pocx/test_windows_deploy.py": "c1ace66244af695744f677a6cc56ddd539dfaed9108e755a9cfada2f69629094",
+    "test/pocx/original_windows.py": "2598717ba1d532ebe4444d5cec2ae88f6cfed8132e514658600a71f551336e15",
+    "test/pocx/test_original_windows.py": "d1ae65726b2ff2017ff72e5026ac80a6c3e6584c4c0c8df4b0e9e0d946c730f3",
+    "test/pocx/bitcoin_baseline/windows/review.json": "f541b15bbe06f200838f6ba17cacfe279ac723fbc71a1b6994c822e45219a6e6",
+    "test/pocx/bitcoin_baseline/windows/rpc_signer.py": "ea682c6093604670612eeae9936a9a3d4d0af232fe798d9edf7eea979c01639d"
   },
   "execution_status": "unverified; target-host execution still required",
   "runtime_contract": [
@@ -303,5 +307,73 @@
     "actual_tests_or_compilations_launched": 0,
     "full_current_source_pass_inferred": false
   },
-  "functional_clock_manifest_review": "Refresh the separate PoCX functional manifest binding after the reviewed outbound-eviction, protocol-clock synchronization, and keypool peer-readiness repairs. Original Bitcoin test sources, inventories, and assertions remain unchanged. Existing Windows execution records retain their recorded binary, source, and environment scope. This metadata update changes no compiler inputs, Windows build settings, exporter checks, or test assertions, and infers no Windows runtime pass."
+  "functional_clock_manifest_review": "Refresh the separate PoCX functional manifest binding after the reviewed outbound-eviction, protocol-clock synchronization, and keypool peer-readiness repairs. Original Bitcoin test sources, inventories, and assertions remain unchanged. Existing Windows execution records retain their recorded binary, source, and environment scope. This metadata update changes no compiler inputs, Windows build settings, exporter checks, or test assertions, and infers no Windows runtime pass.",
+  "windows_path_portability_review": {
+    "scope": "Canonical slash-separated repository/source keys and portable filename assertions on Windows; source selection, assertions, flags and historical execution fields unchanged. Current Windows runtime still requires execution; previous Linux runtime records are historical and no new pass is inferred. Revalidate Linux drift/staging/evidence infrastructure.",
+    "sources": {
+      "test/pocx/ci_evidence.py": {
+        "previous_sha256": "8f0c10ed4d1f455a940e8787c655b5fc20c35622d7ff1bbb744f79afb2dc1243",
+        "sha256": "3300f6b9e2510e1725351fccb10b306f4dfac020595f38f30735373b9f34538d"
+      },
+      "test/pocx/qt_parity.py": {
+        "previous_sha256": "ad4d9087e2058b42d33291b71f324677c32ffdf6276687519d3c8078e8187ace",
+        "sha256": "e4df50d17ffdfd4d3cd6c06451a7bed501b2e1d63c7b6028c7d2031a68e0d492"
+      },
+      "test/pocx/stage.py": {
+        "previous_sha256": "2b86aabfee94c796e8f5b82af15415fb740de87b96bf76c4b702af81e3d3015b",
+        "sha256": "d8e5852fe6237df53a2375e3d6dc46a113cb78e3ab0a38be2d8d836225ee7e88"
+      },
+      "test/pocx/upstream-functional-parity.json": {
+        "previous_sha256": "d44b8dfb7e3ad30eefdd18b8d243d261f4b0338a9f510adfa842789f3eee14fb",
+        "sha256": "ed83ca97508c28dd46b2b0e05ceb82860cb547edec1df1f6793725b1a97a0bda"
+      },
+      "test/pocx/verify_functional.py": {
+        "previous_sha256": "f15b101b3c535ae7330c015a905b2dcefde106194ea04f7f7a6e56ef3c825eae",
+        "sha256": "27db5179b1de15cedb8bdfe655a54e24739bf790063c1e76b4d48127b33be369"
+      }
+    }
+  },
+  "windows_default_ipc_review": {
+    "source": "test/pocx/unit_matrix.py",
+    "previous_sha256": "ac430dbc42959c520a5b2d546689070f241763d02c23f89bc25e7486f88fb37a",
+    "sha256": "874dfe71715a931eb61cf96413ca5edace70ea9eb36850e4608ceb0c746b848d",
+    "scope": "Reflect original CMake NOT WIN32 effective OFF on a fresh default configure with no cache preference; reject malformed preferences. Coverage selection follows effective compiled settings; no original assertions or platform prerequisites weakened. Runtime execution pending."
+  },
+  "windows_ctest_log_review": {
+    "scope": "Windows CTest mixes ANSI metadata, UTF-8 XML and arbitrary binary diagnostics. Prefer UTF-8; on Windows preserve otherwise undecodable bytes reversibly with surrogateescape. No replacement/discard, raw byte hashes unchanged. XML, assertion, inventory and seed checks remain strict; malformed XML rejected. Runtime verification pending.",
+    "sources": {
+      "test/pocx/unit_matrix.py": "a4f259236e1f9e67b1ec94c5c991e35d8f163fc705ca49c9f5e78e613026b1c5",
+      "test/pocx/run_bitcoin_unit.py": "38c5ea4f66da9f6691c626344cc42a2a8bee92cf3790a9202dc0a950473827d9",
+      "test/pocx/run_unit.py": "6937dc61863c0661393972d8da6811a5d2e01d4fc3a05795b0e23211286d8117",
+      "test/pocx/boost_runtime.py": "57400a695af148d372e1d290eceb55c3c1271949df21a3e95548026d7034f982",
+      "test/pocx/test_boost_runtime.py": "0e27a10de5f2c903f57c83e903587e6648f2cbcb2028f90c0fea30e69937ec2e"
+    }
+  },
+  "windows_method_logging_review": {
+    "scope": "Force QtTest plain result logging to captured stderr on headless Windows via QT_FORCE_STDERR_LOGGING=1; Qt source otherwise routes results to OutputDebugString. Same tests, assertions, exact method inventory and fail/skip rejection preserved. Raw successful process exit with missing method evidence remains rejected. Focused native execution pending.",
+    "sources": {
+      "test/pocx/run_qt.py": "a0aa5adb2f7260986f2514bd67abcbc0dbcfff7a93244f95228a7edaf7a0bbf6",
+      "test/pocx/windows_artifact_tests.py": "b2cd5a4a4d4ca2e9371b746d25bc2eefbec69be473830ebb4ec48399904b6109"
+    }
+  },
+  "windows_functional_native_review": {
+    "scope": "Windows native follow-up: short unique source-owned data paths preserve original long wallet names; blank CRCRLF CSV separators ignored but exact inventories/statuses remain required; exact independently localized OS error2 signer expectation in AST-guarded owned view; pre-existing POSIX/Windows unsupported guards reported disabled, never passed; Windows job owns original functional descendants. All upstream source files, assertions, selections and production behavior unchanged. Seven focused Bitcoin reproductions passed; complete original/native platform pairs still require execution. Linux behavior unchanged except portable CSV record handling/source-provenance expansion; revalidate infrastructure.",
+    "sources": {
+      "test/pocx/artifact_functional_view.py": "c3321fe6b856a30839b4d1b1f5c9fbfc6174099c6e1b867d45d61c25ff18d4c5",
+      "test/pocx/inherited-ci.json": "2c0bbfbd3c64b28ed2e6db28cf74830961048f4aca6fb767641a7a7e592476c0",
+      "test/pocx/inherited_ci.py": "e0dc7430cc00fa964f74549a0a4b831a52cd5cee07f9ac7900185398ab598334",
+      "test/pocx/inherited_functional.py": "38faa96c36ca54baabc9206725858729ca41ac78d235d1bb7bd3c299d25bc897",
+      "test/pocx/run_bitcoin_functional.py": "93d744064986ba146c1aa9b21ab8d277819d63bf216e3780848aec67957cf4db",
+      "test/pocx/stage.py": "d0cc068182448b8a9119a824b875e23e75959518b44b3f3b396f1e4147ec15b4",
+      "test/pocx/upstream-functional-parity.json": "b5d50a0b64aec7e5087e4a407c3be203ae3840cf145d69cb1d4a3eea57ecd3c7",
+      "test/pocx/verify_functional.py": "a821e05f9b3b50f6a7dee9b9f92e566d3d63b5090c1f3bb2bce264603f6a2145",
+      "test/pocx/windows_artifacts.py": "b7f09b1b57a497911b69c0f5d6ddddbc834ee030c487408d02aed01b7fbb3a52"
+    }
+  },
+  "kernel_fixture_binary_output_review_binding": {
+    "source": "test/pocx/kernel-parity.json",
+    "previous_review_sha256": "64247ac0fe01479fc5bbe4f6cb16fc5b2173782dddbfcad03e782ed4013f870e",
+    "current_review_sha256": "b85edb4d60dea8d59269f5b2aa371e39e2bc034c0a32d7f687bdf8d435618408",
+    "reason": "Bind the already-reviewed Windows binary-mode fixture-output repair; fixture checksum/vectors and historical execution remain unchanged."
+  }
 }

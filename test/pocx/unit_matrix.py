@@ -56,7 +56,10 @@ def configuration(build, selected_config=None):
     # ON; the effective value is OFF while the NOT WIN32 condition is false.
     if options['target_system'] == 'Windows' and 'ENABLE_IPC' not in options:
         preferences = re.findall(r'^ENABLE_IPC:INTERNAL=(ON|OFF)$', cache, re.M)
-        if len(preferences) == 1:
+        # A fresh configure without -DENABLE_IPC has no cache entry at all:
+        # cmake_dependent_option only caches a preference supplied by the user.
+        # The NOT WIN32 condition still fixes the effective value to OFF.
+        if len(preferences) == 1 or not re.search(r'^ENABLE_IPC:', cache, re.M):
             options['ENABLE_IPC'] = 'OFF'
     return options, files[0]
 
@@ -289,8 +292,8 @@ def verify_execution(root, build, result_path, *, bitcoin=False, lock_held=False
     if (len(tests) != len(suites) or {test.get('name') for test in tests} != suites or
             any(any(test.find(tag) is not None for tag in ('failure', 'error', 'skipped')) for test in tests)):
         raise ValueError('Missing, failed or skipped unit CTest result')
-    log = result_path.with_name('boost.log').read_text()
     import boost_runtime
+    log = boost_runtime.read_log(result_path.with_name('boost.log'))
     runtime = boost_runtime.verify(log, report.get('boost_runtime'), len(suites))
     leaves = leaf_results(log, suites)
     if set(leaves) != expected['expected']:

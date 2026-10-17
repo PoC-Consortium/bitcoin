@@ -256,6 +256,12 @@ class SendHeadersTest(BitcoinTestFramework):
             previous = int(generator.getbestblockhash(), 16)
             height = generator.getblockcount() + 1
             block = self.native_block(previous, create_coinbase(height, script_pubkey=script), 0)
+            # Drain real node downloads before advancing the native proof clock.
+            # Synthetic peers retain their original direct-fetch scenarios.
+            self.wait_until(lambda: all(
+                not peer.get('inflight', [])
+                for node in self.nodes[:2] for peer in node.getpeerinfo()
+                if any(f'testnode{i}' in peer['subver'] for i in (0, 1))))
             self.advance_clock(block.nTime)
             assert_equal(generator.submitblock(block.serialize().hex()), None)
             assert_equal(generator.getbestblockhash(), block.hash_hex)

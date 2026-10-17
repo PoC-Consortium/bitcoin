@@ -37,12 +37,13 @@ option(WITH_USDT "Tracing fixture" OFF)
 file(WRITE "${CMAKE_BINARY_DIR}/effective-ipc.txt" "${ENABLE_IPC}")
 ''')
             for target in ('Windows', 'Linux'):
-                for preference in ('ON', 'OFF'):
+                for preference in ('ON', 'OFF', None):
                     with self.subTest(target=target, preference=preference):
-                        build = Path(directory) / (target + '-' + preference)
+                        build = Path(directory) / (target + '-' + (preference or 'default'))
                         subprocess.run(['cmake', '-S', str(source), '-B', str(build), '-G', 'Ninja',
                                         '-DCMAKE_SYSTEM_NAME=' + target, '-DCMAKE_SYSTEM_PROCESSOR=x86_64',
-                                        '-DENABLE_IPC=' + preference], capture_output=True, text=True, check=True)
+                                        *(['-DENABLE_IPC=' + preference] if preference else [])],
+                                       capture_output=True, text=True, check=True)
                         effective = (build / 'effective-ipc.txt').read_text()
                         options, _ = unit_matrix.configuration(build)
                         self.assertEqual(options['ENABLE_IPC'], effective)
@@ -52,11 +53,15 @@ file(WRITE "${CMAKE_BINARY_DIR}/effective-ipc.txt" "${ENABLE_IPC}")
                         self.assertEqual(ipc_cases <= inventory['applicable'], effective == 'ON')
                         if target == 'Windows':
                             cache = (build / 'CMakeCache.txt').read_text()
-                            self.assertIn('ENABLE_IPC:INTERNAL=' + preference, cache)
+                            if preference is None:
+                                self.assertNotIn('ENABLE_IPC:', cache)
+                            else:
+                                self.assertIn('ENABLE_IPC:INTERNAL=' + preference, cache)
                             self.assertEqual(effective, 'OFF')
-                            for replacement in ('ENABLE_IPC:INTERNAL=invalid', ''):
-                                (build / 'CMakeCache.txt').write_text(cache.replace(
-                                    'ENABLE_IPC:INTERNAL=' + preference, replacement))
+                            for replacement in ('ENABLE_IPC:INTERNAL=invalid',):
+                                modified = (cache.replace('ENABLE_IPC:INTERNAL=' + preference, replacement)
+                                            if preference else cache + '\n' + replacement + '\n')
+                                (build / 'CMakeCache.txt').write_text(modified)
                                 invalid, _ = unit_matrix.configuration(build)
                                 with self.assertRaisesRegex(ValueError, 'ENABLE_IPC'):
                                     unit_matrix.inventory(ROOT, invalid, bitcoin=True)

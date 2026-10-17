@@ -52,6 +52,10 @@ REVIEW_SOURCES = {'.github/ci-windows-cross.py', 'src/pocx/test/CMakeLists.txt',
     'test/get_previous_releases.py', 'test/download_utils.py'}
 
 
+REVIEW_SOURCES.update({'test/pocx/original_windows.py', 'test/pocx/test_original_windows.py',
+    'test/pocx/bitcoin_baseline/windows/review.json', 'test/pocx/bitcoin_baseline/windows/rpc_signer.py'})
+
+
 def verify_recipe(root=ROOT):
     review = json.loads((root / 'test/pocx/windows-artifacts.json').read_text())
     if (set(review['source_sha256']) != REVIEW_SOURCES or

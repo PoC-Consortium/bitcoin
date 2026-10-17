@@ -33,7 +33,7 @@ def check(root):
                    ('test/functional/data', '**/*.py'),
                    ('src/test/util', '*'), ('src/test/kernel', '*'),
                    ('src/pocx/test', '**/*.cpp'), ('test/pocx/functional', '*.py')]
-    current = {str(path.relative_to(root)) for directory, pattern in directories
+    current = {path.relative_to(root).as_posix() for directory, pattern in directories
                for path in (root / directory).glob(pattern) if path.is_file()}
     known_paths = known.keys() | {entry['replacement'] for entry in entries if entry.get('replacement')}
     for source in sorted(current - known_paths):
@@ -65,7 +65,7 @@ def check(root):
             issues.append({'source': source, 'reason': 'source changed since reviewed fork baseline',
                            'replacement': entry.get('replacement')})
     provenance = json.loads((root / 'test/pocx/framework-provenance.json').read_text())
-    resources = {str(path.relative_to(root)) for path in
+    resources = {path.relative_to(root).as_posix() for path in
                  (root / 'test/functional/test_framework').rglob('*.csv')}
     reviewed_resources = {source for source in provenance if source.endswith('.csv')}
     for source in sorted(resources ^ reviewed_resources):
@@ -121,6 +121,9 @@ def check(root):
                          'test/pocx/rpc_coverage.py',
                          'test/pocx/stage.py', 'test/pocx/verify_functional.py',
                          'test/pocx/functional-profile-skips.json'}
+    execution_sources.update({'test/pocx/original_windows.py', 'test/pocx/test_original_windows.py',
+        'test/pocx/bitcoin_baseline/windows/review.json', 'test/pocx/bitcoin_baseline/windows/rpc_signer.py',
+        'test/pocx/bitcoin_baseline/windows/wallet_multiwallet.py'})
     reviewed_execution = functional.get('execution_infrastructure', {}).get('sources', {})
     for source in sorted(execution_sources ^ reviewed_execution.keys()):
         issues.append({'source': source, 'reason': 'functional execution infrastructure requires review'})

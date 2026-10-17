@@ -18,6 +18,7 @@ import tempfile
 from common import ROOT, build_options, sha256
 import build_configuration
 import windows_artifacts
+import original_windows
 
 COMPONENTS = {
     'ENABLE_WALLET': 'ENABLE_WALLET', 'BUILD_BENCH': 'BUILD_BENCH',
@@ -59,6 +60,8 @@ def relocated_config(text, options, root, destination):
     if config.defaults() or set(config.sections()) != {'environment', 'components'}:
         raise ValueError('Unexpected producer functional configuration sections')
     environment = config['environment']
+    # This view is exclusively for verified MinGW cross-artifact pairs.
+    environment['POCX_WINDOWS_MINGW'] = 'true'
     if environment.get('EXEEXT') != '.exe':
         raise ValueError('Windows functional configuration requires EXEEXT=.exe')
     if set(config['components']) - {name.lower() for name in COMPONENTS}:
@@ -124,6 +127,12 @@ def inputs(bundle, consensus, destination, *, root=ROOT, revision=None):
             files['test/functional/' + path.relative_to(directory).as_posix()] = path
     if 'test/functional/test_runner.py' not in files:
         raise ValueError('Original functional runner missing')
+    adaptations = {}
+    if 'test/functional/rpc_signer.py' in files:
+        for name, path in original_windows.replacements(root).items():
+            files['test/functional/' + name] = path
+            adaptations[name] = {'source': path.relative_to(root).as_posix(), 'sha256': sha256(path),
+                                 'original_sha256': sha256(root / 'test/functional' / name)}
     hashes = {name: hashlib.sha256(value).hexdigest() if isinstance(value, bytes) else sha256(value)
               for name, value in files.items()}
     manifest = {'format': 1, 'kind': 'windows-artifact-functional-runtime-view',
@@ -133,7 +142,7 @@ def inputs(bundle, consensus, destination, *, root=ROOT, revision=None):
         'functional_support_sha256': pair['functional_support_sha256'],
         'producer_cache_sha256': row['files']['provenance/CMakeCache.txt'],
         'cache_relocations': cache_paths, 'configuration_relocations': config_paths,
-        'files': hashes}
+        'files': hashes, 'windows_fixture_adaptations': adaptations}
     return files, manifest
 
 
