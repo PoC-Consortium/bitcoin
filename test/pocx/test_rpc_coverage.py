@@ -88,19 +88,21 @@ class CoverageTest(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, 'unrecorded'):
                 rpc_coverage.verify(report)
 
-    def test_previous_release_arguments_preserve_coverage_and_extend_slow_case(self):
+    def test_previous_release_arguments_preserve_coverage_and_original_slow_case_exclusion(self):
         for exclusion in ('--exclude feature_dbcrash', '--exclude=feature_dbcrash'):
             profile = inherited_functional.inherited_options({'TEST_RUNNER_EXTRA':
                 '--previous-releases --coverage --extended ' + exclusion})
             self.assertTrue(profile['coverage'])
-            self.assertEqual(profile['selection_extensions'], ['feature_dbcrash.py'])
+            self.assertEqual(profile['case_selection']['excluded'], ['feature_dbcrash.py'])
             original = inherited_functional.original_command(Path('/build'), Path('/out'),
                 ('complete', [], False), 'v1', 4, 40, profile)
             native = inherited_functional.native_command(Path('/build'), 4, 40, profile,
                 {'PREVIOUS_RELEASES_DIR': '/releases'})
             for command in (original, native):
                 self.assertIn('--coverage', command)
-                self.assertFalse(any(arg.startswith('--exclude') for arg in command))
+            self.assertIn('--exclude=feature_dbcrash.py', original)
+            scope = json.loads(native[native.index('--inherited-selection') + 1])
+            self.assertEqual(scope['excluded'], ['feature_dbcrash.py'])
         for exclusion in ('--exclude wallet_basic', '--exclude=wallet_basic', '--exclude'):
             with self.assertRaises(ValueError):
                 inherited_functional.inherited_options({'TEST_RUNNER_EXTRA': exclusion})

@@ -37,6 +37,13 @@ REVIEW_SOURCES.update({'test/pocx/original_windows.py', 'test/pocx/test_original
 REVIEW_SOURCES.update({'.github/workflows/ci.yml', '.github/workflows/ci-pocx.yml',
     '.github/workflows/ci-product.yml', 'test/pocx/ci_product.py', 'test/pocx/test_product_workflows.py'})
 
+REVIEW_SOURCES.update({'test/pocx/bitcoin_fuzz_ci.py', 'test/pocx/ci_matrix.py', 'test/pocx/upstream-ci-matrix.json'})
+
+REVIEW_SOURCES.update({'test/pocx/common.py', 'test/pocx/runtime_evidence.py', 'test/pocx/ci_logging.py'})
+
+REVIEW_SOURCES.update({'test/pocx/inherited_selection.py', 'test/pocx/inherited_prerequisites.py',
+    'test/pocx/test_inherited_selection.py'})
+
 
 def verify_recipe(root=ROOT):
     review = json.loads((root / 'test/pocx/windows-ci.json').read_text())
@@ -69,10 +76,9 @@ def build_directory(consensus, root=ROOT):
     return root / ('build-bitcoin-baseline' if consensus == 'bitcoin' else 'build')
 
 
-def configure_command(consensus, root=ROOT):
+def configure_command(consensus, root=ROOT, *, paired=False):
     return ['cmake', '-B', str(build_directory(consensus, root)), '-Werror=dev', '--preset', 'vs2026',
-            *upstream_options(root), '-DENABLE_POCX=' + ('OFF' if consensus == 'bitcoin' else 'ON'),
-            '-DBUILD_FUZZ_BINARY=OFF', '-DBUILD_FOR_FUZZING=OFF']
+            *upstream_options(root), *ci_product.configuration_options(consensus, paired=paired)]
 
 
 def validate_jobs(count):
@@ -123,7 +129,7 @@ def run_phase(consensus, count, *, root=ROOT, environment=None, run=subprocess.r
         if check and result.returncode:
             raise subprocess.CalledProcessError(result.returncode, command)
         return result
-    configure = configure_command(consensus, root)
+    configure = configure_command(consensus, root, paired=len(ci_product.selected(env)) == 2)
     if invoke(configure, check=False).returncode:
         print('Generate failure; preserving the upstream single retry.', flush=True)
         sleep(12)
@@ -161,7 +167,7 @@ def main():
     if args.plan:
         print(json.dumps({'status': 'configured only; not executed', 'phases': [
             {'consensus': row['consensus'], 'command': row['command'],
-             'configure_command': configure_command(row['consensus'])} for row in pairs]}, indent=2))
+             'configure_command': configure_command(row['consensus'], paired=len(pairs) == 2)} for row in pairs]}, indent=2))
         return 0
     if os.name != 'nt':
         parser.error('Actual native Windows CI requires a Windows host; use --plan for source inspection')

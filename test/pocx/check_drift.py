@@ -124,6 +124,7 @@ def check(root):
     execution_sources.update({'test/pocx/original_windows.py', 'test/pocx/test_original_windows.py',
         'test/pocx/bitcoin_baseline/windows/review.json', 'test/pocx/bitcoin_baseline/windows/rpc_signer.py',
         'test/pocx/bitcoin_baseline/windows/wallet_multiwallet.py'})
+    execution_sources.update({'test/pocx/inherited_selection.py', 'test/pocx/inherited_prerequisites.py'})
     reviewed_execution = functional.get('execution_infrastructure', {}).get('sources', {})
     for source in sorted(execution_sources ^ reviewed_execution.keys()):
         issues.append({'source': source, 'reason': 'functional execution infrastructure requires review'})

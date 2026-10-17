@@ -75,7 +75,7 @@ class OriginalWindowsTest(unittest.TestCase):
         self.assertEqual(len(set(scratch)), 3)
         self.assertTrue(all(Path(path).parent == ROOT for path in scratch))
         self.assertTrue(all(Path(path).name.startswith('build-ft-') for path in scratch))
-        self.assertTrue(all('--extended' in command and
+        self.assertTrue(all('--extended' not in command and
                             '--exclude=feature_unsupported_utxo_db.py' in command for command in commands))
 
     def test_existing_platform_guards_do_not_count_as_passes(self):

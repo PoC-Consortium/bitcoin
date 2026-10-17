@@ -20,7 +20,7 @@ import inherited_ci
 import ci_product
 
 
-def configure_command(build, consensus):
+def configure_command(build, consensus, *, paired=False):
     if consensus not in ('bitcoin', 'pocx'):
         raise ValueError('Unknown revision consensus configuration')
     return ['cmake', '-B', str(build), '-Werror=dev',
@@ -29,8 +29,7 @@ def configure_command(build, consensus):
             "-DAPPEND_CXXFLAGS='-O3 -g2'", "-DAPPEND_CFLAGS='-O3 -g2'",
             '-DCMAKE_BUILD_TYPE=Debug', '-DCMAKE_COMPILE_WARNING_AS_ERROR=ON',
             '--preset=dev-mode', '-DCMAKE_CXX_FLAGS=-Wno-error=unused-member-function',
-            '-DENABLE_POCX=' + ('OFF' if consensus == 'bitcoin' else 'ON'),
-            '-DBUILD_FUZZ_BINARY=OFF', '-DBUILD_FOR_FUZZING=OFF']
+            *ci_product.configuration_options(consensus, paired=paired)]
 
 
 def build_directory(consensus, root=ROOT):
@@ -58,13 +57,14 @@ def plan(count, environment, root=ROOT):
 def run_phase(consensus, count, *, root=ROOT, run=subprocess.run):
     validate_jobs(count)
     build = build_directory(consensus, root)
+    environment = dict(os.environ, POCX_INHERITED_RECIPE='ancestor')
     def invoke(command, *, check=True):
         print('+ ' + shlex.join(command), flush=True)
-        result = run(command, cwd=root)
+        result = run(command, cwd=root, env=environment)
         if check and result.returncode:
             raise subprocess.CalledProcessError(result.returncode, command)
         return result
-    invoke(configure_command(build, consensus))
+    invoke(configure_command(build, consensus, paired=len(ci_product.selected(environment)) == 2))
     if invoke(['cmake', '--build', str(build), '-j', str(count)], check=False).returncode:
         print('Build failure. Verbose build follows.', flush=True)
         invoke(['cmake', '--build', str(build), '-j1', '--verbose'])
@@ -93,7 +93,7 @@ def main():
     if args.plan:
         print(json.dumps({'status': 'configured only; not executed', 'phases': [
             {'consensus': row['consensus'], 'command': row['command'],
-             'configure_command': configure_command(build_directory(row['consensus']), row['consensus'])}
+             'configure_command': configure_command(build_directory(row['consensus']), row['consensus'], paired=len(pairs) == 2)}
             for row in pairs]}, indent=2))
         return 0
     print('Running selected-product tests on commit ...', flush=True)

@@ -92,7 +92,7 @@ class WindowsArtifactCITest(unittest.TestCase):
                 patch.object(ci.functional, 'run_phase', side_effect=functional):
             try:
                 ci.run_pair(bundle, output, {}, 3, 7.5, root=root, revision='a' * 40,
-                environment={'PREVIOUS_RELEASES_DIR': str(root / 'releases')}, execute=execute, product=product)
+                environment={'TEST_RUNNER_EXTRA': '--extended', 'PREVIOUS_RELEASES_DIR': str(root / 'releases')}, execute=execute, product=product)
             except ValueError:
                 pass
         return json.loads((output / 'results.json').read_text()), calls, output, pair
@@ -109,8 +109,8 @@ class WindowsArtifactCITest(unittest.TestCase):
             native_start = next(i for i, (kind, value) in enumerate(calls) if kind == 'process' and
                                 any('/bundle/pocx/' in arg.replace('\\', '/') for arg in value))
             self.assertGreater(native_start, original_end)
-            self.assertEqual(len(report['cases']), 12)
-            self.assertEqual(len((output / 'cases.csv').read_text().splitlines()), 13)
+            self.assertEqual(len(report['cases']), 11)
+            self.assertEqual(len((output / 'cases.csv').read_text().splitlines()), 12)
 
     def test_manifest_framework_or_functional_baseline_failure_defers_native(self):
         for failure in ('manifest', 'frameworks', 'functional'):
@@ -144,7 +144,7 @@ class WindowsArtifactCITest(unittest.TestCase):
             report, _, _, _ = self.run_fixture(directory)
             native = [row for row in report['cases'] if row['consensus'] == 'pocx' and row['framework'] == 'functional']
             self.assertEqual({row['adaptation'] for row in native}, {'adapted', 'pocx-only', 'excluded'})
-            self.assertEqual(sum(row['status'] == 'reviewed-exclusion' for row in native), 2)
+            self.assertEqual(sum(row['status'] == 'reviewed-exclusion' for row in native), 1)
             self.assertEqual(sum(row['origin'] == 'pocx-only' for row in native), 2)
 
 

@@ -15,6 +15,7 @@ import tempfile
 from common import ROOT, sha256
 import windows_artifacts
 import ci_product
+import runtime_evidence
 
 HOSTS = {'x86_64-w64-mingw32', 'x86_64-w64-mingw32ucrt'}
 BUNDLE_DIRECTORY = 'windows-artifacts'
@@ -74,12 +75,12 @@ def collect_runtime(source, destination):
     source, destination = source.resolve(), destination.resolve()
     if destination.exists() or destination.is_relative_to(source):
         raise ValueError('Use a new evidence destination outside the runtime tree')
-    candidates = set()
-    def add(path):
+    candidates = {}
+    def add(path, relative=None):
         if any(parent.is_symlink() for parent in (path, *path.parents)):
             raise ValueError('Symlinked runtime evidence input')
         if path.is_file():
-            candidates.add(path)
+            candidates[path] = relative if relative is not None else path.relative_to(source)
     def shallow(directory, suffixes):
         if directory.is_symlink():
             raise ValueError('Symlinked runtime evidence directory')
@@ -99,18 +100,15 @@ def collect_runtime(source, destination):
             add(runtime / relative)
         if runtime.is_symlink():
             raise ValueError('Symlinked functional runtime tree')
-        for result in runtime.glob('pocx-results-*'):
-            if result.is_symlink():
-                raise ValueError('Symlinked native functional result tree')
-            add(result / 'results.json')
-            shallow(result, {'.log'})
-            shallow(result / 'v2', {'.log'})
+        for result in runtime_evidence.result_directories(runtime, ('pocx-results-',)):
+            for path in (result / 'results.json', *runtime_evidence.functional_logs(result)):
+                relative = phase.relative_to(source) / 'functional/runtime' / runtime_evidence.relative_path(path, runtime, result)
+                add(path, relative)
     destination.parent.mkdir(parents=True, exist_ok=True)
     temporary = Path(tempfile.mkdtemp(prefix='pocx-windows-evidence-', dir=destination.parent))
     try:
         files = {}
-        for path in sorted(candidates):
-            relative = path.relative_to(source)
+        for path, relative in sorted(candidates.items()):
             target = temporary / relative
             target.parent.mkdir(parents=True, exist_ok=True)
             digest = sha256(path)

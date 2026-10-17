@@ -19,6 +19,8 @@ import tempfile
 import time
 import windows_cross
 import ci_product
+import runtime_evidence
+from ci_logging import run_live
 
 from common import ROOT, sha256
 from ci_evidence import source_snapshot
@@ -49,7 +51,15 @@ EVIDENCE_PREFIXES = ('pocx-inherited-', 'bitcoin-unit-', 'pocx-unit-', 'pocx-res
 EVIDENCE_SUFFIXES = {'.json', '.xml', '.csv', '.log', '.txt'}
 
 RECIPE_SOURCES.update({'.github/workflows/ci.yml', '.github/workflows/ci-pocx.yml',
-    '.github/workflows/ci-product.yml', 'test/pocx/ci_product.py', 'test/pocx/test_product_workflows.py'})
+    '.github/workflows/ci-product.yml', 'test/pocx/ci_product.py', 'test/pocx/test_product_workflows.py',
+    'test/pocx/bitcoin_fuzz_ci.py'})
+
+RECIPE_SOURCES.update({'test/pocx/bitcoin_fuzz_ci.py', 'test/pocx/ci_matrix.py', 'test/pocx/upstream-ci-matrix.json'})
+
+RECIPE_SOURCES.update({'test/pocx/common.py', 'test/pocx/runtime_evidence.py', 'test/pocx/ci_logging.py'})
+
+RECIPE_SOURCES.update({'test/pocx/inherited_selection.py', 'test/pocx/inherited_prerequisites.py',
+    'test/pocx/test_inherited_selection.py'})
 
 
 def iwyu_inputs(root, snapshot):
@@ -103,16 +113,21 @@ def restore_iwyu_inputs(root, inputs, patch_path):
 
 
 def evidence_directories(build):
-    if not build.is_dir():
-        return set()
-    return {path for path in build.iterdir() if path.is_dir() and not path.is_symlink()
-            and path.name.startswith(EVIDENCE_PREFIXES)}
+    return runtime_evidence.result_directories(build, EVIDENCE_PREFIXES)
 
 
 def retain_evidence(build, before, destination):
     """Copy bounded report trees, never functional node data or build products."""
     retained = {}
     for child in sorted(evidence_directories(build) - before):
+        def retain(path):
+            relative = runtime_evidence.relative_path(path, build, child)
+            target = destination / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(path, target)
+            retained[str(relative)] = sha256(target)
+        for path in runtime_evidence.functional_logs(child):
+            retain(path)
         # Keep the raw RPC coverage inputs from both transports. These files
         # have numeric suffixes and sit one level deeper than ordinary logs.
         for directory in (child / 'rpc-coverage', child / 'v2/rpc-coverage'):
@@ -123,21 +138,13 @@ def retain_evidence(build, before, destination):
                         not (path.name == 'rpc_interface.txt' or path.name.startswith('coverage.')) or
                         any(parent.is_symlink() for parent in path.parents if parent != directory)):
                     continue
-                relative = path.relative_to(build)
-                target = destination / relative
-                target.parent.mkdir(parents=True, exist_ok=True)
-                shutil.copyfile(path, target)
-                retained[str(relative)] = sha256(target)
+                retain(path)
         for entry in sorted(child.iterdir()):
             candidates = sorted(entry.iterdir()) if entry.is_dir() and not entry.is_symlink() else [entry]
             for path in candidates:
                 if path.is_symlink() or not path.is_file() or path.suffix not in EVIDENCE_SUFFIXES:
                     continue
-                relative = path.relative_to(build)
-                target = destination / relative
-                target.parent.mkdir(parents=True, exist_ok=True)
-                shutil.copyfile(path, target)
-                retained[str(relative)] = sha256(target)
+                retain(path)
     return retained
 
 
@@ -192,15 +199,16 @@ def plan(environment, root=ROOT):
         if path == root or not path.is_relative_to(root):
             raise ValueError('Use isolated inherited CI directories inside this source worktree')
     pairs = []
-    for name in ci_product.selected(environment):
-        enabled = ci_product.PRODUCTS[name]
+    products = ci_product.selected(environment)
+    for name in products:
         child = dict(environment, HOST=host)
         child['BASE_BUILD_DIR'] = str(build) + ('-bitcoin-baseline' if name == 'bitcoin' else '')
         child['BASE_OUTDIR'] = str(output) + ('-bitcoin-baseline' if name == 'bitcoin' else '')
         # Last command-line definitions win over inherited presets/flags.
-        # Fuzz builds remain a separate package on both sides of this pair.
-        child['BITCOIN_CONFIG'] = (environment.get('BITCOIN_CONFIG', '') +
-            f' -DENABLE_POCX={enabled} -DBUILD_FUZZ_BINARY=OFF -DBUILD_FOR_FUZZING=OFF')
+        # OFF retains upstream fuzz-binary compilation, including explicit
+        # per-profile overrides. PoCX fuzz conversion remains deferred.
+        child['BITCOIN_CONFIG'] = environment.get('BITCOIN_CONFIG', '') + ' ' + ' '.join(
+            ci_product.configuration_options(name, paired=len(products) == 2))
         pairs.append({'consensus': name, 'command': ['bash', str(root / 'test/pocx/ci/inherited_test_script.sh')],
                       'environment': child})
     windows_cross.is_cross_pair(pairs)
@@ -239,7 +247,8 @@ def execute(pairs, output, *, root=ROOT, run=subprocess.run):
             start = time.monotonic()
             try:
                 with log.open('w') as stream:
-                    result = run(item['command'], cwd=root, env=env, stdout=stream, stderr=subprocess.STDOUT)
+                    invoke = run_live if run is subprocess.run else run
+                    result = invoke(item['command'], cwd=root, env=env, stdout=stream, stderr=subprocess.STDOUT)
             finally:
                 if include_inputs is not None:
                     step['iwyu_source_restoration'] = restore_iwyu_inputs(

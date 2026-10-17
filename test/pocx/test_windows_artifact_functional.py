@@ -96,10 +96,11 @@ class ArtifactFunctionalTest(unittest.TestCase):
         (build / 'CMakeCache.txt').write_text('ENABLE_POCX:BOOL=OFF\nBUILD_BENCH:BOOL=' + ('ON' if bench else 'OFF') + '\n')
         paths = {name: build / 'bin' / (name + '.exe') for name in functional.functional_execution.BINARY_NAMES}
         env = {'DOWNLOAD_PREVIOUS_RELEASES': 'true', 'PREVIOUS_RELEASES_DIR': str(root / 'releases')} if previous else {}
+        env['TEST_RUNNER_EXTRA'] = '--extended'
         options = {'ENABLE_POCX': 'OFF', 'BUILD_BENCH': 'ON' if bench else 'OFF', 'target_system': 'Windows'}
         output = root / 'execution'
         calls = []
-        expected = functional.original_inventory(directory / 'test_runner.py', ['Alpha', 'Beta'] if bench else [], bench)
+        expected = functional.original_inventory(directory / 'test_runner.py', ['Alpha', 'Beta'] if bench else [], bench, functional.inherited_options(env)['case_selection'])
         def run(command, **kwargs):
             calls.append(command)
             self.assertEqual(kwargs['env']['PYTHONDONTWRITEBYTECODE'], '1')
@@ -140,24 +141,24 @@ class ArtifactFunctionalTest(unittest.TestCase):
         with patch.object(artifact, 'dependency_hashes', return_value={}):
             return artifact.verify_child(report, output, build, options, 3, 7.5, env, root=root)
 
-    def test_original_windows_inventory_keeps_every_variant_and_both_transports(self):
+    def test_original_windows_inventory_keeps_every_selected_variant_and_default_transport(self):
         with tempfile.TemporaryDirectory() as directory:
             root, build, output, options, env, report, calls = self.original_fixture(directory)
             self.assertEqual(report['status'], 'passed')
             cases = self.verify(root, build, output, options, env, report)
-            self.assertEqual(len(cases), 18)
-            for mode in ('v1', 'v2'):
+            self.assertEqual(len(cases), 9)
+            for mode in ('v1',):
                 self.assertEqual({row['case'] for row in cases if row['transport'] == mode}, set(report['expected_cases']))
                 self.assertIn('wallet_multiwallet.py --usecli', report['expected_cases'])
-            self.assertEqual([row['name'] for row in report['runs']], ['v1', 'v1-legacy-utxo', 'v2', 'v2-legacy-utxo'])
-            self.assertEqual(len(calls), 4)
+            self.assertEqual([row['name'] for row in report['runs']], ['v1', 'v1-legacy-utxo'])
+            self.assertEqual(len(calls), 2)
 
     def test_disabled_benchmarks_keep_source_guarded_case_without_executing_listing(self):
         with tempfile.TemporaryDirectory() as directory:
             root, build, output, options, env, report, _ = self.original_fixture(directory, bench=False)
             self.assertNotIn('benchmark_discovery', report)
             self.assertEqual(report['benchmarks'], [])
-            self.assertEqual(report['counts'], {'passed': 10, 'configuration-disabled': 6})
+            self.assertEqual(report['counts'], {'passed': 5, 'configuration-disabled': 3})
             self.verify(root, build, output, options, env, report)
             disabled = [row for row in report['cases'] if row['case'] == 'tool_bench_sanity_check.py']
             self.assertTrue(all('BUILD_BENCH=OFF' in row['reason'] for row in disabled))
@@ -172,7 +173,7 @@ class ArtifactFunctionalTest(unittest.TestCase):
                         self.verify(root, build, output, options, env, report)
                 else:
                     self.verify(root, build, output, options, env, report)
-                    self.assertEqual(report['counts']['configuration-disabled'], 6)
+                    self.assertEqual(report['counts']['configuration-disabled'], 3)
 
     def test_failed_legacy_process_and_missing_original_case_fail(self):
         for kwargs in ({'legacy_code': 9}, {'omit': 'wallet_multiwallet.py --usecli'}):
@@ -217,8 +218,8 @@ class ArtifactFunctionalTest(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'ASCII-only'):
             functional.original_command(Path('/runtime'), Path('/tmp/₿'), ('legacy-utxo', [functional.LEGACY_UTXO], True),
                 'v1', 3, 7.5, profile, windows=True)
-        with self.assertRaises(ValueError):
-            functional.original_groups(['p2p_ping.py'], {'target_system': 'Windows'})
+        self.assertEqual(functional.original_groups(['p2p_ping.py'], {'target_system': 'Windows'}),
+                         [('complete', ['p2p_ping.py'], False)])
         with self.assertRaises(ValueError):
             functional.original_inventory(Path('unused'), [], None)
         for factor in (0, -1, float('nan'), float('inf'), True):
@@ -241,15 +242,16 @@ class ArtifactFunctionalTest(unittest.TestCase):
             spec = case_spec('p2p_ping.py', [])
             manifest = {'tests': {}, 'reused_tests': ['p2p_ping.py']}
             profile = artifact.execution_profile({}, 7.5)
-            provenance = {'format_version': 9, 'selected_cases': [spec], 'selected_tests': [spec['test']],
-                'transport_modes': ['v1', 'v2'], 'build_configuration': None, 'timeout_factor': 7.5,
+            provenance = {'format_version': 11, 'rpc_coverage': False,
+                'inherited_selection': profile['case_selection'], 'case_transports': {spec['id']: ['v1']}, 'selected_cases': [spec], 'selected_tests': [spec['test']],
+                'transport_modes': ['v1'], 'build_configuration': None, 'timeout_factor': 7.5,
                 'environment_profile': {'previous_releases': False, 'network_addresses': False},
                 'execution_options': {'use_cli': False, 'multiprocess': False},
                 'case_selection': {'selected_cases_sha256': selection_digest([spec])}}
             controller = process_tree.description()
             provenance['process_controller'] = controller
             results = []
-            for mode in ('v1', 'v2'):
+            for mode in ('v1',):
                 flags = ['--timeout-factor=7.5', '--' + mode + 'transport']
                 results.append({'case': spec['id'], 'test': spec['test'], 'case_arguments': [], 'transport': mode,
                     'test_arguments': flags, 'command': ['python3', spec['test'], *flags],
@@ -273,9 +275,9 @@ class ArtifactFunctionalTest(unittest.TestCase):
                     'native_proof': {'path': str(proof_path), 'sha256': sha256(proof_path)},
                     'runs': [{'name': 'native', 'command': functional.native_command(view, 3, 7.5, profile, {}),
                               'returncode': 0, 'seconds': 0.1, 'log_sha256': sha256(log)}],
-                    'counts': {'passed': 2}, 'cases': [{'case': spec['id'], 'transport': mode, 'effective_transport': mode,
-                        'status': 'passed', 'reason': '', 'execution_status': 'passed', 'seconds': 0.1} for mode in ('v1', 'v2')]}
-                self.assertEqual(len(artifact.verify_child(report, execution, view, options, 3, 7.5, {}, root=root)), 2)
+                    'counts': {'passed': 1}, 'cases': [{'case': spec['id'], 'transport': mode, 'effective_transport': mode,
+                        'status': 'passed', 'reason': '', 'execution_status': 'passed', 'seconds': 0.1} for mode in ('v1',)]}
+                self.assertEqual(len(artifact.verify_child(report, execution, view, options, 3, 7.5, {}, root=root)), 1)
                 scratch = root / 'short-scratch'
                 short_proof = scratch / 'pocx-results-fixture' / 'results.json'
                 short_proof.parent.mkdir(parents=True)
@@ -284,7 +286,7 @@ class ArtifactFunctionalTest(unittest.TestCase):
                 with patch.object(artifact, 'os', SimpleNamespace(name='nt')), \
                         patch.object(artifact, 'short_tmpdir', return_value=scratch):
                     report['native_proof'] = {'path': str(short_proof), 'sha256': sha256(short_proof)}
-                    self.assertEqual(len(artifact.verify_child(report, execution, view, options, 3, 7.5, {}, root=root)), 2)
+                    self.assertEqual(len(artifact.verify_child(report, execution, view, options, 3, 7.5, {}, root=root)), 1)
                     for invalid in (root / 'outside' / 'pocx-results-fixture' / 'results.json',
                                     scratch / 'unrelated' / 'results.json',
                                     scratch / 'pocx-results-fixture' / 'nested' / 'results.json'):

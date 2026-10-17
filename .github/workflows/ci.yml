@@ -6,14 +6,6 @@ on:
   push:
     branches: ['**']
     tags-ignore: ['**']
-  workflow_dispatch:
-    inputs:
-      baseline_only:
-        description: 'Run only the original Bitcoin unit diagnostic; this is not full CI'
-        type: boolean
-        default: false
-  schedule:
-    - cron: '19 2 * * 1'
 
 permissions:
   contents: read
@@ -28,4 +20,3 @@ jobs:
     uses: ./.github/workflows/ci-product.yml
     with:
       product: bitcoin
-      baseline_only: ${{ github.event_name == 'workflow_dispatch' && inputs.baseline_only || false }}

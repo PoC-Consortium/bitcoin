@@ -15,10 +15,10 @@
   "execution_status": "unverified for actual inherited POSIX/hosted recipes",
   "source_sha256": {
     ".github/ci-test-each-commit-exec.py": "7d6c921986188b726f82bb08a782be738f6dfc2460d1f64272ae8bd8715d040b",
-    ".github/workflows/ci-pocx.yml": "ea2b11ff35304fe0d1ae65fc02c071860b5e7fd6ec6e520dd4832ff5a7ec0341",
-    ".github/workflows/ci-product.yml": "0aca92bf412d114ea7cfe745bf9c2393dcae4648eaf8ee695ae2a9b9ccd51bd1",
-    ".github/workflows/ci.yml": "25e3550fc74c70ca4ab56a90e7a3d3b776255dbbcd0a71e80ec1df69b061256d",
-    "ci/test/02_run_container.py": "2becef70fc04eaae9b346d9afb3ef6b6590fe6a490b24c4b15ca0ac8c60ca20f",
+    ".github/workflows/ci-pocx.yml": "699f0a58e48d1f6348a65d9b0224d870d569da1088b457195aa78b55703fc88f",
+    ".github/workflows/ci-product.yml": "b5547b12474809b5be68c4df9babf7c16bed7685f0e4a84805c354f4480c5117",
+    ".github/workflows/ci.yml": "178f16dc008944d5158cfe45e84da73c39839949ca82b0a6703805919f05e8a9",
+    "ci/test/02_run_container.py": "5d39f118d96eedda9e90286c4560b705c63e768bed78d4184806faf75c79dc76",
     "ci/test/03_test_script.sh": "cfd9e9583398dee9527a2fb7ea099104a8cab53f7bf5ccdceb3f4e84425ebb8b",
     "ci/test_imagefile": "1474ad98f223b4069eb297e201ea2148621c8a077d8706a34c45a761a23e45b5",
     "test/pocx/bitcoin_baseline/usdt/interface_usdt_coinselection.py": "937ed589df1a6bf42d62ae4b20d4a9a11b00f8b68f712be21d708bfc25e7e2e5",
@@ -29,25 +29,34 @@
     "test/pocx/bitcoin_baseline/usdt/review.json": "3f3fc24dc1c06bf8efac4bc8b8748f2fa2eb77d27b5283ab1cd8c35605f5203a",
     "test/pocx/bitcoin_baseline/windows/review.json": "f541b15bbe06f200838f6ba17cacfe279ac723fbc71a1b6994c822e45219a6e6",
     "test/pocx/bitcoin_baseline/windows/rpc_signer.py": "ea682c6093604670612eeae9936a9a3d4d0af232fe798d9edf7eea979c01639d",
+    "test/pocx/bitcoin_fuzz_ci.py": "efb42ae5a382d15b5964c4b808a89f04eefcbeed0a6ce4ecba44640fda905435",
     "test/pocx/ci/00_setup_env_native_asan_tracing.sh": "caa30536d110b2b66754837ae1dce4398e389747cdd98996d75db2ae949a5f5d",
-    "test/pocx/ci/inherited_runtime_env.sh": "0b8f000c75cea73e06df91589da76f06d5773db321199d3468d68ceb5adb8f91",
+    "test/pocx/ci/inherited_runtime_env.sh": "8b7df8cb2248723207ef035ef360cd14fad617b6b91c2747de983c82fa8274e4",
     "test/pocx/ci/inherited_test_script.sh": "25b6f367bed45e7c7d040ae2a82bba21b278790d83c536ade4d7b7a835273930",
     "test/pocx/ci/test_imagefile": "8611a47495fdc3b331d403ef3ee90cd9a1a20b4e6dcae1795148ba5db7f64d55",
-    "test/pocx/ci_product.py": "50989a8e49ae46323fb972bbd1a8077f4ddb7371b236549083afa0681c72d75c",
+    "test/pocx/ci_logging.py": "4191a50de16f7584bbf61db0068f3b426a5ace1923db5f45556d30f974554661",
+    "test/pocx/ci_matrix.py": "79d842b5789ce4df4b2a0cb9777faf2533980cd30ef1978f3761d3f9c6f3108f",
+    "test/pocx/ci_product.py": "07783ef9d57662bff430b33a446d8b11321e3740226fbb53e31a5c217cd1938c",
+    "test/pocx/common.py": "9c6d49f8ca052427557fd301d9195a00c6e09542dfd7ed63b15e0a4b81e72772",
     "test/pocx/framework/bcc_headers.py": "54c095668335ee50fdb0b2b4842e21eced9c9b2c175652463937f1be05b786ec",
     "test/pocx/framework/bpf_abi.py": "5bb74f7e8fb3bdf815defbbc2d35362690a2e09f8898645ced8fbcac60259571",
-    "test/pocx/inherited_ci.py": "451b7e05f866473c87eaedc25976758a303f1773f533357f03ed0f1488e76061",
-    "test/pocx/inherited_functional.py": "38faa96c36ca54baabc9206725858729ca41ac78d235d1bb7bd3c299d25bc897",
+    "test/pocx/inherited_ci.py": "d1914ddcc689e1a0a5086a80754b47a23e0340dcfdaa4369a9201d1677208310",
+    "test/pocx/inherited_functional.py": "973625dcf2d81fb8720cdb0541dc6ce4201ceb355b7d47f90cdcf47279012200",
+    "test/pocx/inherited_prerequisites.py": "fc24680108346518b53bc32dc2cc626ce74b04d7426145fd3954b9bd61acb2c4",
+    "test/pocx/inherited_selection.py": "9d9b69e92ccf55fad6bb3b003b31aa7d366233bf5dbc88581956a1f140dc767e",
     "test/pocx/inherited_tests.py": "a08946f019b624ecdd5b00709a44fdabf0133dc9de8cc0328ca0c82c70f05d10",
-    "test/pocx/original_usdt.py": "6d16fb36c3d615b6d871486f94ef6019b293b710f3aab71953d6fbbe58c8b67c",
-    "test/pocx/original_windows.py": "2598717ba1d532ebe4444d5cec2ae88f6cfed8132e514658600a71f551336e15",
+    "test/pocx/original_usdt.py": "2dfc1b954ded722a934f70a67e91141540e8449ff725a9e0b7f11a4f7019375b",
+    "test/pocx/original_windows.py": "ab008c9c062aa4516c08bf21e5afe8f01ce9d1ddaef64d7e2731068a291d8c49",
     "test/pocx/pocx_bootstrap.py": "72e0a27abe139a6079220174cc1c103c173a0f632c1aa6034ddcc2075d58322d",
-    "test/pocx/revision_ci.py": "820892e710eb2fca178be77df4568f617603df68f9c265a16f178c8713c087df",
-    "test/pocx/test_bpf_abi.py": "75a17d5360c9958e9dc2146a5031f7d25668cd13c38b70625eb8abee744a0d4a",
-    "test/pocx/test_original_windows.py": "d1ae65726b2ff2017ff72e5026ac80a6c3e6584c4c0c8df4b0e9e0d946c730f3",
-    "test/pocx/test_product_workflows.py": "536e0f1d8b182dfb800751f20d497b55e58ad5c5a055efbba721e995e1d22597",
-    "test/pocx/test_windows_cross.py": "8e424e8bdc6d5e213944db9df22b084cc68b60472b1efe3d8c2ca8d5cbf1bac6",
-    "test/pocx/windows_cross.py": "73b65ca5b7ecb28e07c20a6b0ed563bf4359d5911d4e81df3050a560c8c0d92d"
+    "test/pocx/revision_ci.py": "582d033ed07a3861c82674635411760279868cda4ad5168dd372e4c59dc5d33c",
+    "test/pocx/runtime_evidence.py": "ee1722ab10eba1dde4b66aed7d8f9737de2d171b725cf999b723219b2a5dd1b5",
+    "test/pocx/test_bpf_abi.py": "5c12703a7db6d67143ec11a6082faeabf64a848534ec2b0aa7abec4c29e1f812",
+    "test/pocx/test_inherited_selection.py": "195cf2982f72a156f385d08d504a741b5948f507da2017e121758a6bd8ae44ef",
+    "test/pocx/test_original_windows.py": "27f47f07e52a7381e48ca4d1f77220c1efb073073be7f2fcba13a4c002d8c39f",
+    "test/pocx/test_product_workflows.py": "b8a97fa29a37de2a44a5ac9547680196484a94cb15651a47a47cf061557f3ba2",
+    "test/pocx/test_windows_cross.py": "3ab7f0396721814e68a53ecd8d1a5428bbebf7d2064b1928ef93edf98688392b",
+    "test/pocx/upstream-ci-matrix.json": "2db9d8020ca1d07283cbc27a53e8bb3760bfbbfe4b5a805376f04467e64f3f7a",
+    "test/pocx/windows_cross.py": "aaa5ec71734e514b049cd40bd99f176ca96324569b63566c35d7a264da51e9ce"
   },
   "evidence_retention": "Copy newly created bounded framework report trees into artifacts/pocx-inherited on success and failure; export container reports before cleanup; upload in inherited POSIX jobs",
   "unchanged_upstream_revision_recipe": ".github/ci-test-each-commit-exec.py",
@@ -148,5 +157,111 @@
       }
     },
     "execution_status": "Source organization reviewed; focused infrastructure validation only. Historical platform results do not establish hosted execution of the new workflows."
+  },
+  "upstream_scope_and_ci_repair_review": {
+    "scope": "Match pinned upstream matrices and push/PR events without additional profiles. Restore original Bitcoin fuzz execution and ordinary fuzz-binary compilation; defer ON fuzz explicitly. Keep product independence and frozen-revision native Windows artifact checks. Add bounded short-path failure diagnostics and raw live build output. Repair inherited lint findings. Restore upstream functional BASE/EXTENDED/exclusion and effective transport selections with format11 proofs and complete-selection RPC coverage. Preserve original optional prerequisite omissions as explicit skips, with mandatory ASan tracing. Original test scenarios/assertions and original environment/driver recipes remain unchanged.",
+    "execution_status": "Changed source revision still requires hosted execution; infrastructure checks do not establish a green product pipeline.",
+    "source_changes": {
+      ".github/workflows/ci-pocx.yml": {
+        "previous_sha256": "ea2b11ff35304fe0d1ae65fc02c071860b5e7fd6ec6e520dd4832ff5a7ec0341",
+        "sha256": "699f0a58e48d1f6348a65d9b0224d870d569da1088b457195aa78b55703fc88f"
+      },
+      ".github/workflows/ci-product.yml": {
+        "previous_sha256": "0aca92bf412d114ea7cfe745bf9c2393dcae4648eaf8ee695ae2a9b9ccd51bd1",
+        "sha256": "b5547b12474809b5be68c4df9babf7c16bed7685f0e4a84805c354f4480c5117"
+      },
+      ".github/workflows/ci.yml": {
+        "previous_sha256": "25e3550fc74c70ca4ab56a90e7a3d3b776255dbbcd0a71e80ec1df69b061256d",
+        "sha256": "178f16dc008944d5158cfe45e84da73c39839949ca82b0a6703805919f05e8a9"
+      },
+      "ci/test/02_run_container.py": {
+        "previous_sha256": "2becef70fc04eaae9b346d9afb3ef6b6590fe6a490b24c4b15ca0ac8c60ca20f",
+        "sha256": "5d39f118d96eedda9e90286c4560b705c63e768bed78d4184806faf75c79dc76"
+      },
+      "test/pocx/bitcoin_fuzz_ci.py": {
+        "previous_sha256": null,
+        "sha256": "efb42ae5a382d15b5964c4b808a89f04eefcbeed0a6ce4ecba44640fda905435"
+      },
+      "test/pocx/ci/inherited_runtime_env.sh": {
+        "previous_sha256": "0b8f000c75cea73e06df91589da76f06d5773db321199d3468d68ceb5adb8f91",
+        "sha256": "8b7df8cb2248723207ef035ef360cd14fad617b6b91c2747de983c82fa8274e4"
+      },
+      "test/pocx/ci_logging.py": {
+        "previous_sha256": null,
+        "sha256": "4191a50de16f7584bbf61db0068f3b426a5ace1923db5f45556d30f974554661"
+      },
+      "test/pocx/ci_matrix.py": {
+        "previous_sha256": null,
+        "sha256": "79d842b5789ce4df4b2a0cb9777faf2533980cd30ef1978f3761d3f9c6f3108f"
+      },
+      "test/pocx/ci_product.py": {
+        "previous_sha256": "50989a8e49ae46323fb972bbd1a8077f4ddb7371b236549083afa0681c72d75c",
+        "sha256": "07783ef9d57662bff430b33a446d8b11321e3740226fbb53e31a5c217cd1938c"
+      },
+      "test/pocx/common.py": {
+        "previous_sha256": null,
+        "sha256": "9c6d49f8ca052427557fd301d9195a00c6e09542dfd7ed63b15e0a4b81e72772"
+      },
+      "test/pocx/inherited_ci.py": {
+        "previous_sha256": "451b7e05f866473c87eaedc25976758a303f1773f533357f03ed0f1488e76061",
+        "sha256": "d1914ddcc689e1a0a5086a80754b47a23e0340dcfdaa4369a9201d1677208310"
+      },
+      "test/pocx/inherited_functional.py": {
+        "previous_sha256": "38faa96c36ca54baabc9206725858729ca41ac78d235d1bb7bd3c299d25bc897",
+        "sha256": "973625dcf2d81fb8720cdb0541dc6ce4201ceb355b7d47f90cdcf47279012200"
+      },
+      "test/pocx/inherited_prerequisites.py": {
+        "previous_sha256": null,
+        "sha256": "fc24680108346518b53bc32dc2cc626ce74b04d7426145fd3954b9bd61acb2c4"
+      },
+      "test/pocx/inherited_selection.py": {
+        "previous_sha256": null,
+        "sha256": "9d9b69e92ccf55fad6bb3b003b31aa7d366233bf5dbc88581956a1f140dc767e"
+      },
+      "test/pocx/original_usdt.py": {
+        "previous_sha256": "6d16fb36c3d615b6d871486f94ef6019b293b710f3aab71953d6fbbe58c8b67c",
+        "sha256": "2dfc1b954ded722a934f70a67e91141540e8449ff725a9e0b7f11a4f7019375b"
+      },
+      "test/pocx/original_windows.py": {
+        "previous_sha256": "2598717ba1d532ebe4444d5cec2ae88f6cfed8132e514658600a71f551336e15",
+        "sha256": "ab008c9c062aa4516c08bf21e5afe8f01ce9d1ddaef64d7e2731068a291d8c49"
+      },
+      "test/pocx/revision_ci.py": {
+        "previous_sha256": "820892e710eb2fca178be77df4568f617603df68f9c265a16f178c8713c087df",
+        "sha256": "582d033ed07a3861c82674635411760279868cda4ad5168dd372e4c59dc5d33c"
+      },
+      "test/pocx/runtime_evidence.py": {
+        "previous_sha256": null,
+        "sha256": "ee1722ab10eba1dde4b66aed7d8f9737de2d171b725cf999b723219b2a5dd1b5"
+      },
+      "test/pocx/test_bpf_abi.py": {
+        "previous_sha256": "75a17d5360c9958e9dc2146a5031f7d25668cd13c38b70625eb8abee744a0d4a",
+        "sha256": "5c12703a7db6d67143ec11a6082faeabf64a848534ec2b0aa7abec4c29e1f812"
+      },
+      "test/pocx/test_inherited_selection.py": {
+        "previous_sha256": null,
+        "sha256": "195cf2982f72a156f385d08d504a741b5948f507da2017e121758a6bd8ae44ef"
+      },
+      "test/pocx/test_original_windows.py": {
+        "previous_sha256": "d1ae65726b2ff2017ff72e5026ac80a6c3e6584c4c0c8df4b0e9e0d946c730f3",
+        "sha256": "27f47f07e52a7381e48ca4d1f77220c1efb073073be7f2fcba13a4c002d8c39f"
+      },
+      "test/pocx/test_product_workflows.py": {
+        "previous_sha256": "536e0f1d8b182dfb800751f20d497b55e58ad5c5a055efbba721e995e1d22597",
+        "sha256": "b8a97fa29a37de2a44a5ac9547680196484a94cb15651a47a47cf061557f3ba2"
+      },
+      "test/pocx/test_windows_cross.py": {
+        "previous_sha256": "8e424e8bdc6d5e213944db9df22b084cc68b60472b1efe3d8c2ca8d5cbf1bac6",
+        "sha256": "3ab7f0396721814e68a53ecd8d1a5428bbebf7d2064b1928ef93edf98688392b"
+      },
+      "test/pocx/upstream-ci-matrix.json": {
+        "previous_sha256": null,
+        "sha256": "2db9d8020ca1d07283cbc27a53e8bb3760bfbbfe4b5a805376f04467e64f3f7a"
+      },
+      "test/pocx/windows_cross.py": {
+        "previous_sha256": "73b65ca5b7ecb28e07c20a6b0ed563bf4359d5911d4e81df3050a560c8c0d92d",
+        "sha256": "aaa5ec71734e514b049cd40bd99f176ca96324569b63566c35d7a264da51e9ce"
+      }
+    }
   }
 }

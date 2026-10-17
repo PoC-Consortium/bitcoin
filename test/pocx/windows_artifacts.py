@@ -59,6 +59,11 @@ REVIEW_SOURCES.update({'test/pocx/original_windows.py', 'test/pocx/test_original
 REVIEW_SOURCES.update({'.github/workflows/ci.yml', '.github/workflows/ci-pocx.yml',
     '.github/workflows/ci-product.yml', 'test/pocx/ci_product.py', 'test/pocx/test_product_workflows.py'})
 
+REVIEW_SOURCES.update({'test/pocx/common.py', 'test/pocx/runtime_evidence.py', 'test/pocx/ci_logging.py'})
+
+REVIEW_SOURCES.update({'test/pocx/inherited_selection.py', 'test/pocx/inherited_prerequisites.py',
+    'test/pocx/test_inherited_selection.py'})
+
 
 def verify_recipe(root=ROOT):
     review = json.loads((root / 'test/pocx/windows-artifacts.json').read_text())

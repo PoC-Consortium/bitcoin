@@ -24,6 +24,7 @@ import functional_execution
 import functional_retention
 import process_tree
 import rpc_coverage
+import inherited_selection
 from functional_cases import selected_cases, selection_digest, upstream_cases
 
 
@@ -76,8 +77,11 @@ def main():
     parser.add_argument("--timeout", type=int, default=600)
     parser.add_argument('--timeout-factor', type=float,
                         help='Explicit upstream wait scaling, recorded separately from case identity')
-    parser.add_argument('--transport', choices=['v1', 'v2', 'matrix'], default='v1',
+    transport_group = parser.add_mutually_exclusive_group()
+    transport_group.add_argument('--transport', choices=['v1', 'v2', 'matrix'], default='v1',
                         help='Global upstream transport flag; matrix executes both modes')
+    transport_group.add_argument('--inherited-selection', type=json.loads,
+                                 help='Reviewed inherited job case/transport selection as JSON')
     parser.add_argument('--case', action='append', default=[],
                         help='Exact case ID, e.g. "wallet_multiwallet.py --usecli"; repeatable')
     parser.add_argument('--usecli', action='store_true', help='Preserve inherited global CLI execution')
@@ -95,6 +99,10 @@ def main():
         parser.error('timeout factor must be finite and positive')
     if args.case and args.tests:
         parser.error('Use either filename selection or --case')
+    if args.inherited_selection is not None and (args.case or args.tests):
+        parser.error('Inherited selection cannot be combined with a partial case selection')
+    if args.inherited_selection is not None:
+        inherited_selection.validate(args.inherited_selection)
     if args.previous_releases_dir and not args.previous_releases:
         parser.error('--previous-releases-dir requires --previous-releases')
     build = Path(args.build_dir).resolve()
@@ -113,6 +121,10 @@ def main():
             selection = [case for case in inventory_cases if case['id'] in args.case]
         else:
             selection = [case for case in inventory_cases if case['test'] in tests]
+        case_transports = None
+        if args.inherited_selection is not None:
+            selection, case_transports, _ = inherited_selection.native_selection(
+                manifest, upstream_cases(upstream_runner), args.inherited_selection)
         tests = list(dict.fromkeys(case['test'] for case in selection))
         paths = functional_execution.binary_paths(build, (build / 'CMakeCache.txt').read_text(),
                                                   provenance['build_configuration'])
@@ -132,6 +144,8 @@ def main():
             name: {'path': str(path), 'sha256': sha256(path)} for name, path in previous_binaries.items()}
         provenance['previous_releases_directory'] = str(releases) if args.previous_releases else None
         modes = ['v1', 'v2'] if args.transport == 'matrix' else [args.transport]
+        if case_transports is not None:
+            modes = [mode for mode in ('v1', 'v2') if any(mode in value for value in case_transports.values())]
         provenance.update(format_version=9, process_controller=process_tree.description(),
                           selected_tests=tests, selected_cases=selection, transport_modes=modes,
                           environment_profile=environment_profile,
@@ -144,20 +158,25 @@ def main():
                                   'sha256': sha256(Path(__file__).resolve())})
         provenance.update(execution_options=functional_execution.settings(args.usecli, args.multiprocess),
                           timeout_factor=args.timeout_factor if args.timeout_factor is not None else 1)
+        if case_transports is not None:
+            provenance.update(format_version=11, inherited_selection=args.inherited_selection,
+                              inherited_selection_helper_sha256=sha256(Path(inherited_selection.__file__)),
+                              case_transports=case_transports, rpc_coverage=args.coverage)
         # Start long upstream extended cases early, with both transports next
         #to each other. Preserve the declared selection and every case identity.
         extended = {row['id'] for row in upstream_cases(upstream_runner)
                     if row['selection'] == 'EXTENDED_SCRIPTS'}
         dispatch = sorted(selection, key=lambda spec: spec['id'] not in extended)
-        cases = [(spec, mode) for spec in dispatch for mode in modes]
+        cases = [(spec, mode) for spec in dispatch
+                 for mode in (case_transports[spec['id']] if case_transports is not None else modes)]
         results_parent = short_tmpdir(build) if os.name == 'nt' else build
         results_dir = Path(tempfile.mkdtemp(prefix="pocx-results-", dir=results_parent))
         coverage_directories = {}
         if args.coverage:
-            provenance.update(format_version=10, rpc_coverage=True,
+            provenance.update(format_version=11 if case_transports is not None else 10, rpc_coverage=True,
                               rpc_coverage_helper_sha256=sha256(Path(rpc_coverage.__file__)))
-            for mode in modes:
-                directory = (results_dir if mode == 'v1' else results_dir / 'v2') / 'rpc-coverage'
+            for mode in (['inherited'] if case_transports is not None else modes):
+                directory = (results_dir if mode in ('v1', 'inherited') else results_dir / 'v2') / 'rpc-coverage'
                 directory.mkdir(parents=True)
                 coverage_directories[mode] = directory
         env = {key: value for key, value in os.environ.items()
@@ -188,7 +207,8 @@ def main():
             test_arguments = [*spec['arguments'], *functional_execution.arguments(provenance, spec['arguments']),
                               *functional_environment.arguments(name, environment_profile),
                               *functional_environment.timeout_arguments(provenance),
-                              *(['--coveragedir=' + str(coverage_directories[mode])] if args.coverage else []),
+                              *(['--coveragedir=' + str(coverage_directories[
+                                  'inherited' if case_transports is not None else mode])] if args.coverage else []),
                               f'--{mode}transport']
             command = [sys.executable, str(tree / name), f"--configfile={tree / 'config.ini'}",
                        f"--tmpdir={mode_dir / directory}",

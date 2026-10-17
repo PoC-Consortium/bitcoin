@@ -9807,7 +9807,7 @@
       ],
       "dependencies": {
         "contrib/signet/miner": "2df980a48e688a9e1b54f1764772edd941c0e7008bcc99faa65546d263e8dffe",
-        "test/pocx/kernel/provenance.json": "14b9d4aae50bf4468c6583d99d666189b87811cb08c00e7bf0911ce9fccf09d2",
+        "test/pocx/kernel/provenance.json": "74d6404c219c4eda2bff6b2ea0f97fdb50fd349df0cde53554d0b34cb8057eec",
         "src/pocx/rpc/mining.cpp": "5b79761cb582dbbf1e581366ee1e99cc24b7768685845d2e79f92901c619d959",
         "src/kernel/chainparams.cpp": "8dfb7f1f5a8e98af703bfb492fd9d70bb619e66cf7a087279ad9e63ccc3ff348"
       },
@@ -18770,7 +18770,7 @@
       ],
       "dependencies": {
         "contrib/signet/miner": "2df980a48e688a9e1b54f1764772edd941c0e7008bcc99faa65546d263e8dffe",
-        "test/pocx/kernel/provenance.json": "14b9d4aae50bf4468c6583d99d666189b87811cb08c00e7bf0911ce9fccf09d2",
+        "test/pocx/kernel/provenance.json": "74d6404c219c4eda2bff6b2ea0f97fdb50fd349df0cde53554d0b34cb8057eec",
         "test/pocx/functional/feature_signet.py": "69b95779ebca236f8c6220a5a5598dde51f4c1c429036b5203711421714af3bc"
       },
       "replacement_assertion_and_method_accounting": {
@@ -24677,25 +24677,27 @@
   },
   "execution_infrastructure": {
     "sources": {
-      "test/pocx/test_runner.py": "9e8ef776b44f7f956690f79d424e6de022805b8f82cd4e5a11db007b1d7dc628",
-      "test/pocx/functional_results.py": "4355a7bd0f08ada20a7d82587160a10c0493041205d92b3ab7fb4335459e4613",
+      "test/pocx/test_runner.py": "04f32c045b5e3ff6e6b3d302cea6ff15defdda973f815b1919b25a534922c3af",
+      "test/pocx/functional_results.py": "ae45c2704a11b23688b523b9b273a591a0020176b4f44196e42fef740afb9cfc",
       "test/pocx/update_inventory.py": "c8816297f36f3fe265c2deb660797b302fce1aaf165fa696130c0f184814ba6c",
       "test/pocx/functional_cases.py": "903124835dc4e3d902036a6789a72727f82ff334a2c0c236cc2ee2a49ef4b68f",
       "test/pocx/stage.py": "d0cc068182448b8a9119a824b875e23e75959518b44b3f3b396f1e4147ec15b4",
-      "test/pocx/verify_functional.py": "a821e05f9b3b50f6a7dee9b9f92e566d3d63b5090c1f3bb2bce264603f6a2145",
+      "test/pocx/verify_functional.py": "e74cb543f14c7f8982692389055c7dd3110b5eb4e03e374dcb355ac02c4040e5",
       "test/pocx/functional-profile-skips.json": "668fa3587439eb4c93e296926730507a72664af478e8ed9f913e9f2a9902d5c0",
       "test/pocx/functional_environment.py": "0b9a8336bc866a3f7d145fc32933f00172113b24cc50563f54121a6d9256c10e",
       "test/pocx/functional_execution.py": "def9cf30faa9360b9cb419e270f7476bd5f622021a4a1765dd138439e1cb941f",
       "test/pocx/build_configuration.py": "c9df217b325f1e3dfd8cd14e002f542bd78aa084b410e8f3b18d18a261a36456",
       "test/pocx/process_tree.py": "12639a920fa4a656eec4f14ea02c4aaf1fe997cfc18c7df2566e82a1d3ab3f29",
-      "test/pocx/rpc_coverage.py": "3d6afe81054a7acc05c634a54967d167eb4223205b421c7db2f3ce4406da6723",
+      "test/pocx/rpc_coverage.py": "f611e69b78eba7b95ecbd6a9632b66514c84d1c042110e867943cd9fce0f29e9",
       "test/pocx/functional_retention.py": "651d64473a6e8bd1834316a30dae83806aca25b06ec91dae01d994e86f6251d2",
       "test/pocx/pocx_bootstrap.py": "72e0a27abe139a6079220174cc1c103c173a0f632c1aa6034ddcc2075d58322d",
-      "test/pocx/original_windows.py": "2598717ba1d532ebe4444d5cec2ae88f6cfed8132e514658600a71f551336e15",
-      "test/pocx/test_original_windows.py": "d1ae65726b2ff2017ff72e5026ac80a6c3e6584c4c0c8df4b0e9e0d946c730f3",
+      "test/pocx/original_windows.py": "ab008c9c062aa4516c08bf21e5afe8f01ce9d1ddaef64d7e2731068a291d8c49",
+      "test/pocx/test_original_windows.py": "27f47f07e52a7381e48ca4d1f77220c1efb073073be7f2fcba13a4c002d8c39f",
       "test/pocx/bitcoin_baseline/windows/review.json": "f541b15bbe06f200838f6ba17cacfe279ac723fbc71a1b6994c822e45219a6e6",
       "test/pocx/bitcoin_baseline/windows/rpc_signer.py": "ea682c6093604670612eeae9936a9a3d4d0af232fe798d9edf7eea979c01639d",
-      "test/pocx/bitcoin_baseline/windows/wallet_multiwallet.py": "8bd68b3037529c28dfa8f1fbbf0621e5e81b7b0a50f8b8553973cc3c21e2107b"
+      "test/pocx/bitcoin_baseline/windows/wallet_multiwallet.py": "8bd68b3037529c28dfa8f1fbbf0621e5e81b7b0a50f8b8553973cc3c21e2107b",
+      "test/pocx/inherited_selection.py": "9d9b69e92ccf55fad6bb3b003b31aa7d366233bf5dbc88581956a1f140dc767e",
+      "test/pocx/inherited_prerequisites.py": "fc24680108346518b53bc32dc2cc626ce74b04d7426145fd3954b9bd61acb2c4"
     },
     "review": "Explicit global v1/v2 execution identities and separate output directories; matrix requires every selected file in both modes exactly once, executed flags must match labels, only terminal successful exits count as passing. Historical reports remain v1-only. Inventory retains separate pocx and pocx-v2 fields and rejects invalid reports before writing a snapshot. Functional CI defaults to both modes; single-mode execution must be requested explicitly. Timeout/process-group cleanup, build locks and staged module-origin checks retained. This reviews orchestration/evidence integrity, not full upstream test migration. New-format evidence must retain its runner source attestation, and every result must have a staged source record. Fault tests verify each rejection preserves the previous snapshot. Reviewed upstream case argument expansion without importing the upstream runner; canonical filename/argument identities and format3 evidence keep nontransport variants separate. Filename filters include every variant and --case selects an exact declared case. Concurrent port slots use spaced seeds derived from staged upstream constants and return only after owned group cleanup; real socket fault verification holds a case across600callbacks past the old seed-wrap boundary. Dynamic benchmark selection fails explicitly pending build-specific expansion. Reviewed fuzz inventory extraction recognizes whole-source FUZZ_TARGET_DESERIALIZE declarations without counting the wrapper macro parameter as a target. It preserves all functional case/mode evidence handling and adds explicit sanitizer-runtime options and optional gcov instrumentation to fuzz evidence. Registration-wrapper and default/CLI plus v1/v2 inventory regression checks pass; this does not approve remaining upstream migration. Unit completion review: only the optional pocx-kernel auxiliary CTest timeout is increased from180 to900 seconds for full native proof revalidation on disk reads. All other profile timeouts, functional orchestration, assertions and failure propagation remain unchanged. Reviewed staging of both unchanged upstream ElligatorSwift CSV vector files alongside Python modules, hashed in execution provenance and inventory; no test scenario substitutions. Stage source itself now guarded. Format4 records upstream exit77 as skipped with a required reason; skips never count as passes and still make the runner exit nonzero. Historical format1..3 semantics retained. Case identity, matrix completeness and source attestations required unchanged. Reviewed complete unchanged data and mock-signer resources in support_copies, independently matching pinned upstream; constrained destinations/sources to their corresponding data or mocks subtree. Reviewed explicit support_replacements overlay of reviewed data/mock resources; destination must already have an upstream support copy and source must resolve within OWNED. Original and owned resource hashes guarded separately. Inventory records native resource sources and skip reasons. Serialize only the unchanged rpc_bind --ipv4 literal-port resource across transport copies. Port seeds cannot isolate upstream fixed32171/32172. All case identities, commands, assertions and both transport executions remain required; independent cases retain concurrency. A real-socket regression protects mutual exclusion and independent progress. Complete failed run h7pqxrn2 and diagnosis rpc-bind-fixed-port-race.json retained. Windows previous-release prerequisite discovery requires .exe filenames while retaining platform-independent logical release keys. Staging and current-input verification now additionally bind functional_environment.py, so prerequisite-helper drift rejects saved reports. Linux and simulated-Windows filename checks pass; no Windows domain execution is inferred.",
     "runtime_evidence": [
@@ -26388,5 +26390,46 @@
       "test/pocx/stage.py": "d0cc068182448b8a9119a824b875e23e75959518b44b3f3b396f1e4147ec15b4",
       "test/pocx/verify_functional.py": "a821e05f9b3b50f6a7dee9b9f92e566d3d63b5090c1f3bb2bce264603f6a2145"
     }
+  },
+  "ci_lint_cleanup_review": {
+    "scope": "Remove unused Path import from the Windows fixture helper; scenarios and assertions unchanged. Refresh kernel provenance consumer hash after CRLF-to-LF normalization; actual fixture bytes and historical reviews unchanged."
+  },
+  "inherited_scope_review": {
+    "scope": "Format11 binds each selected case to the effective upstream transport rather than forcing a Cartesian matrix. Retain BASE/EXTENDED selection, upstream feature_dbcrash exclusion, original argument variants and all legitimate PoCX-only cases in the inherited job. Shared RPC coverage evaluates the complete inherited selection using the unchanged upstream evaluator. Default standalone transport matrices retain their previous strict verification. Optional module skips require an original recipe omission, an unconditional unchanged guard and an actually missing module; ASan tracing remains required. No original scenarios, assertions or source files changed.",
+    "source_changes": {
+      "test/pocx/test_runner.py": {
+        "previous_sha256": "9e8ef776b44f7f956690f79d424e6de022805b8f82cd4e5a11db007b1d7dc628",
+        "sha256": "04f32c045b5e3ff6e6b3d302cea6ff15defdda973f815b1919b25a534922c3af"
+      },
+      "test/pocx/functional_results.py": {
+        "previous_sha256": "4355a7bd0f08ada20a7d82587160a10c0493041205d92b3ab7fb4335459e4613",
+        "sha256": "ae45c2704a11b23688b523b9b273a591a0020176b4f44196e42fef740afb9cfc"
+      },
+      "test/pocx/verify_functional.py": {
+        "previous_sha256": "a821e05f9b3b50f6a7dee9b9f92e566d3d63b5090c1f3bb2bce264603f6a2145",
+        "sha256": "e74cb543f14c7f8982692389055c7dd3110b5eb4e03e374dcb355ac02c4040e5"
+      },
+      "test/pocx/rpc_coverage.py": {
+        "previous_sha256": "3d6afe81054a7acc05c634a54967d167eb4223205b421c7db2f3ce4406da6723",
+        "sha256": "f611e69b78eba7b95ecbd6a9632b66514c84d1c042110e867943cd9fce0f29e9"
+      },
+      "test/pocx/original_windows.py": {
+        "previous_sha256": "2598717ba1d532ebe4444d5cec2ae88f6cfed8132e514658600a71f551336e15",
+        "sha256": "ab008c9c062aa4516c08bf21e5afe8f01ce9d1ddaef64d7e2731068a291d8c49"
+      },
+      "test/pocx/test_original_windows.py": {
+        "previous_sha256": "d1ae65726b2ff2017ff72e5026ac80a6c3e6584c4c0c8df4b0e9e0d946c730f3",
+        "sha256": "27f47f07e52a7381e48ca4d1f77220c1efb073073be7f2fcba13a4c002d8c39f"
+      },
+      "test/pocx/inherited_selection.py": {
+        "previous_sha256": null,
+        "sha256": "9d9b69e92ccf55fad6bb3b003b31aa7d366233bf5dbc88581956a1f140dc767e"
+      },
+      "test/pocx/inherited_prerequisites.py": {
+        "previous_sha256": null,
+        "sha256": "fc24680108346518b53bc32dc2cc626ce74b04d7426145fd3954b9bd61acb2c4"
+      }
+    },
+    "execution_status": "Infrastructure checks exercise synthetic processes only; changed source revision still requires native/hosted verification."
   }
 }

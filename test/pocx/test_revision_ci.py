@@ -36,7 +36,7 @@ class RevisionTest(unittest.TestCase):
                         else ast.literal_eval(item) for item in original]
             actual = revision_ci.configure_command(build, consensus)
             self.assertEqual(actual, [*expected, '-DENABLE_POCX=' + mode,
-                                     '-DBUILD_FUZZ_BINARY=OFF', '-DBUILD_FOR_FUZZING=OFF'])
+                *([] if mode == 'OFF' else ['-DBUILD_FUZZ_BINARY=OFF', '-DBUILD_FOR_FUZZING=OFF'])])
 
     def test_plan_is_original_first_with_isolated_builds_and_preserved_environment(self):
         pair = revision_ci.plan(4, {'TEST_RUNNER_PORT_MIN': '14000'})
@@ -97,8 +97,9 @@ class RevisionTest(unittest.TestCase):
         job = re.search(r'^  test-each-commit:\n(.*?)(?=^  [\w-]+:)', workflow, re.M | re.S)[1]
         self.assertIn('.ci-venv/bin/python ./test/pocx/revision_ci.py --phase-consensus', job)
         self.assertNotIn('python3 ./.github/ci-test-each-commit-exec.py', job)
-        self.assertIn('python3-bpfcc bpfcc-tools "linux-headers-$(uname -r)"', job)
-        self.assertIn('sudo env CI_PRODUCT=', job)
+        self.assertNotIn('python3-bpfcc', job)
+        self.assertIn('env CI_PRODUCT=', job)
+        self.assertNotIn('sudo env CI_PRODUCT=', job)
         self.assertIn('GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=safe.directory', job)
         self.assertIn('.ci-venv/bin/pip install pycapnp==2.2.4', job)
         self.assertIn('if: always()\n        uses: actions/upload-artifact@v7', job)

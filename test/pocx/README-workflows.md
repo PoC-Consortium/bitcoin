@@ -1,124 +1,121 @@
 # Product workflows: CI and CI-POCX
 
-`CI` (`.github/workflows/ci.yml`) tests original Bitcoin with `ENABLE_POCX=OFF`.
-`CI-POCX` (`.github/workflows/ci-pocx.yml`) tests Bitcoin PoCX with
-`ENABLE_POCX=ON`. Each calls `ci-product.yml` with its own fixed product. The
-shared file has only a `workflow_call` trigger; it is implementation, not a third
-independently triggered workflow. Neither product depends on the other's jobs,
-builds, test results or artifacts. Their concurrency groups are independent.
+`CI` (`ci.yml`) tests original Bitcoin with `ENABLE_POCX=OFF`.
+`CI-POCX` (`ci-pocx.yml`) tests Bitcoin PoCX with `ENABLE_POCX=ON`.
+Both use `ci-product.yml`; it accepts `workflow_call` only and is not a third
+independently triggered workflow. Neither product depends on the other product's
+builds, tests or artifacts. Their concurrency groups and caches are independent.
 
-The active inherited non-fuzz matrix is preserved for both products. The earlier
-fuzz variants were already inactive before this restructuring; fuzz modernization
-remains a separate package. This change does not claim full hosted or fuzz CI is
-green. Configuration and infrastructure checks are not platform execution proof.
+## Required scope
 
-## Migration inventory
+The upstream reference is Bitcoin Core revision
+`9be056a8a72b624dae9623b2f7bded92c2a21c91`,
+[CI run 28793907018](https://github.com/bitcoin/bitcoin/actions/runs/28793907018).
+CI must match its matrix and original test selections, with no extra profiles.
+CI-POCX uses the same configurations, with reviewed adaptations, justified PoW
+exclusions and legitimate PoCX-only cases inside those configurations. Test
+counts may differ; additional cases do not justify new matrix combinations.
 
-| Previous jobs/checks | Destination in each product workflow | Coverage and cadence |
-| --- | --- | --- |
-| `CI` inherited `ci-matrix` OFF/ON pair | `ci-matrix`, one selected product | Same 12 environment recipes, runners, 120-minute limits, prerequisites and assertions; push, PR and normal manual dispatch |
-| macOS native OFF/ON pair | `macos-native-arm64` | Same macOS 15 ARM64/Xcode 16.2 recipe, GUI, install/deploy and actual native runtime; ordinary cadence |
-| Windows VS OFF/ON pair | `windows-native-dll` | Same VS2026 dynamic-library preset, vcpkg, manifests, lifecycle probes and all applicable frameworks; ordinary cadence |
-| Windows UCRT/MSVCRT paired producers/consumers | `windows-cross` and `windows-native-test` | Each product produces its own immutable bundle per CRT, then executes it on Windows 2022 at the producer's frozen revision; ordinary cadence |
-| Ancestor OFF/ON pairs | `test-each-commit` | Same ancestor range, compiler configuration and tests; multi-commit PRs only, explicit selected phase even for older executors |
-| Lint | `lint` | Same inherited lint recipe, ordinary cadence; checks repository sources rather than product runtime |
-| `PoCX tests` drift job | `source-review` | Source/test inventories, reviewed adaptations and fixture provenance remain guarded; workflow organization/isolation regression checks are separate checks |
-| `bitcoin-core` / `pocx-core` unit and functional profiles | `linux-core` for the selected product | Preserve minimal Release, GUI/ZMQ/USDT-off profiles; unit and functional use one build because their configurations are identical |
-| Separate `pocx-real-proof` job | Complete PoCX `linux-core` unit selection | Duplicate subset removed: `run_unit.py --all` already selects the real-proof, SIMD and wire suites, alongside Shabal, assignments and other PoCX-only cases |
-| `bitcoin-features` / `pocx-features` | `linux-features`, selected product | Qt, wallet-disabled, IPC-disabled and kernel profiles, weekly/manual only |
-| Paired optional functional job | `optional-functional`, selected product | Complete base/extended selections, both transports, previous releases, ZMQ, IPC, benchmark tools and USDT/BPF in an isolated network; weekly/manual only |
-| Paired owned ASan | `asan`, selected product | Clang 22, instrumentation/runtime verification, Qt, kernel, auxiliary and complete strict optional functional scope; weekly/manual only |
-| Paired owned TSan/MSan | `instrumented-sanitizers`, selected product | Pinned instrumented libc++/dependencies, sanitizer canaries and applicable complete frameworks; weekly/manual only |
-| Manual `baseline_only` | `CI` original unit diagnostic | Explicit opt-in, other jobs skipped; not a full CI pass |
+PoCX fuzz conversion remains deferred. The four corresponding ON variants are
+absent from the generated matrix and remain an explicit parity gap. Bitcoin OFF
+retains all four upstream fuzz variants and ordinary fuzz-binary compilation.
+The fuzz selector calls the original recipes with explicit OFF selection; it
+preserves their compiler options, sanitizers, corpus handling and assertions.
 
-The 12 inherited environment recipes are IWYU, 32-bit ARM, i686/no IPC, ASan,
-macOS cross ARM64, macOS cross Intel, no-wallet, previous releases, Alpine/musl,
-tidy, TSan and MSan. Their original environment scripts and the original Bitcoin
-test recipes remain unchanged. Cross-build success is not target-native runtime
-success. Native Windows and native macOS requirements remain native requirements.
+`upstream-ci-matrix.json` contains the original Linux/macOS/VS matrix definitions.
+`ci_matrix.py` checks their pinned revision and canonical digest before emitting
+product matrices in the existing runner-selection job. Include-only matrices
+ensure deferred fuzz variants cannot be reintroduced by include/exclude rules.
 
-The minimal Linux profiles are useful negative feature configurations, rather
-than copies of inherited dev-mode builds. The scheduled profiles retain their
-independent verification purpose: explicit feature combinations, strict optional
-dependency/no-skip gates, instrumented dependency provenance and sanitizer
-canaries. They are not promoted to every push. The former standalone real-proof
-build and duplicate minimal unit/functional builds are eliminated.
+## Job mapping
 
-## Events and interpretation
+| Job/check | Product workflow destination |
+| --- | --- |
+| Original 14 Linux/cross configurations | `ci-matrix`: all 14 for CI, 12 non-fuzz for CI-POCX |
+| Native macOS standard and fuzz | `macos-native-arm64`: both for CI, standard for CI-POCX |
+| Native Visual Studio standard and fuzz | `windows-native-dll`: both for CI, standard for CI-POCX |
+| UCRT/MSVCRT producers and native consumers | `windows-cross` and `windows-native-test`, one selected product per CRT |
+| Ancestor compilation/tests | `test-each-commit`, original multi-commit PR condition |
+| Runner selection and immutable revision | Original `runners` and `record-frozen-commit` meta jobs |
+| Inherited lint and source/adaptation guards | `lint`; guards are steps inside this inherited job |
+| Extra `linux-core`, feature, optional-functional and sanitizer profiles | Removed from both product workflows; no supplemental schedule |
+| Separate baseline/source-review/scope-summary jobs | Removed; useful checks/reporting remain within inherited jobs |
 
-Both product workflows accept push, pull request and manual dispatch. Weekly
-supplements keep `19 2 * * 1` (Monday 02:19 UTC). A scheduled invocation runs the
-source guards, minimal Linux core and weekly supplemental profiles; it does not
-repeat the entire inherited platform matrix. A normal manual dispatch runs both
-the inherited matrix and the supplements for that product.
+The original workflow's push/PR triggers and `SKIP_BRANCH_PUSH` policy remain.
+There are no extra scheduled/manual product profiles. Existing local diagnostic
+runners remain available for focused development; their existence does not add
+coverage to the Actions matrix. The former top-level PoCX tests workflow stays
+removed. PoCX-only unit/functional coverage belongs inside corresponding ON jobs.
 
-`SKIP_BRANCH_PUSH=true` suppresses redundant inherited branch-push jobs, while PR
-and manual invocations retain their intended scope. Minimal Linux/source checks
-retain their former push coverage. The scope summary shows actual GitHub job
-outcomes, including skipped jobs. Success on a weekly supplement, diagnostic or
-limited event is evidence only for the jobs actually executed.
+## Execution and status
 
-Runtime reports still distinguish failures, skips, configuration-inactive cases,
-platform-disabled cases, reviewed exclusions and actual passes. No status is
-converted into a pass by this restructuring. Reviewed PoW exclusions remain in
-`unit-parity.json` and `manifest.json`; the replaced PoW algorithms are excluded
-only for PoCX, with their recorded reasons. They remain part of Bitcoin OFF
-coverage. PoCX-only cases remain additional required coverage in ON builds.
+Original environment scripts, original POSIX recipes and original Windows drivers
+remain unchanged. Owned runners select products explicitly and preserve inherited
+features, assertions and native platform requirements. macOS cross compilation
+does not establish native macOS runtime success; Windows payloads execute on
+Windows. An omitted `CI_PRODUCT` retains legacy paired local commands for existing
+platform handovers, including their equal non-fuzz feature profiles. Independent
+Bitcoin Actions jobs retain original fuzz compilation. Invalid explicit product
+selectors fail.
 
-## Runner selection and Windows artifacts
+Reports distinguish passes, failures, skips, configuration-disabled cases,
+unverified cases and reviewed exclusions. Cancelled or unexecuted jobs are not
+passing coverage. Source/adaptation/provenance guards check current hashes without
+rewriting historical execution evidence or converting missing evidence to passes.
 
-Actions sets `CI_PRODUCT=bitcoin` or `CI_PRODUCT=pocx` explicitly. The inherited
-POSIX, native Windows and revision planners select exactly that product and set
-the corresponding CMake flag. Docker passes the selector through its allowlist;
-elevated steps pass it explicitly through `sudo`. Unknown or empty selectors and
-mismatched Linux profile prefixes fail rather than choosing a default product.
+The functional dispatcher follows each upstream job's BASE/EXTENDED selection,
+reviewed exclusions and global transport flags. Case-specific v1/v2 variants
+retain their actual effective transports. Format-11 proofs bind the expected
+case/transport pairs; identical pairs share execution. PoCX-only cases use the
+inherited job's transport. Separate developer transport matrices remain strict.
+RPC coverage evaluates the complete inherited selection with the unchanged
+upstream evaluator, rather than demanding separate coverage from partial groups.
 
-With `CI_PRODUCT` unset, the old original-first paired local commands remain
-available for the platform handovers. Do not change another session's checkout,
-in-progress binaries or cached artifact manifests to adopt the new organization.
+BCC tracing remains required in ASan, as upstream. Other recipes retain their
+original package selections and privilege limits. An `upstream-optional-skip`
+requires a reviewed original recipe omission, an unchanged unconditional test
+guard and an actually unavailable Python module. It remains skipped coverage;
+a missing required prerequisite, unexpected skip or failed process stays red.
+Original ARM/previous-release BCC activation is therefore corrected at its source,
+without disabling compiled tracepoints or changing test assertions.
 
-Windows producers export format-2 single-product bundles. The legacy directory
-name `windows-cross-pair` and manifest filename `pair.json` remain for transport
-compatibility; the manifest's kind, format and one-element product inventory
-identify the single-product format. Format-1 local pairs are still verified with
-the original cross-product feature/configuration matching guard.
+The changed configuration still needs hosted verification. Sanitizer time limits,
+restored OFF fuzz execution and reported PoCX Windows failures remain open until
+matching-revision executions provide evidence. Local checks do not establish a
+green pipeline.
 
-Actions consumers explicitly require exactly their selected product. They check
-the frozen source revision, current source snapshot, functional support sources,
-compiler feature/target metadata, complete required payload, PE architecture,
-checksums and PoCX cross-unit provenance. Tests run on Windows against unchanged
-payloads, with reports and relocated functional views outside the bundle. Each
-product runs host process-lifecycle checks before its framework claims. Test or
-build failure in the other product cannot prevent this producer or consumer.
+## Windows artifacts and diagnostics
 
-Single-product export and verification are also available locally:
+Each CRT producer exports its selected product at `record-frozen-commit`'s exact
+revision. Consumers require the matching product, source snapshot, configuration,
+architecture, checksums and complete payload. Format-2 single-product artifacts
+retain the legacy `windows-cross-pair` directory/`pair.json` transport names;
+format-1 paired local artifacts retain their additional cross-product checks.
+Neither product needs the other product's tests to pass to produce or consume its
+own artifacts. Existing platform sessions' builds and cached artifacts stay intact.
+
+Reports and relocated functional views live outside immutable binary payloads.
+Collection includes canonical short temporary result paths, raw case logs and
+framework logs, without walking node databases, wallets or linked directories.
+Build output streams to the job console while identical raw log bytes are retained.
+Collected diagnostics preserve failure status; collection does not verify a pass.
+
+Local export/verification remains available:
 
 ```sh
 python3 test/pocx/windows_artifacts.py --build BUILD --product pocx --output NEW_BUNDLE
 python3 test/pocx/windows_artifacts.py --verify NEW_BUNDLE --product pocx
 ```
 
-Use `windows_artifact_ci.py --product pocx --artifacts NEW_BUNDLE --output NEW_REPORTS`
-on Windows with the same prerequisites as the platform handover. Replace `pocx`
-with `bitcoin` for OFF. Never relabel an old bundle with a new revision or product.
+On Windows use `windows_artifact_ci.py --product pocx --artifacts NEW_BUNDLE
+--output NEW_REPORTS` with the platform handover prerequisites; use `bitcoin` for
+OFF. Never relabel artifacts with another product or revision.
 
-## Validation and platform coordination
+## Validation
 
-`test_product_workflows.py` checks product isolation, matrix and event selection,
-the removed real-proof subset, selector propagation, independent failure paths
-and single-product artifact rejection. Existing inherited/revision/Windows and
-source-evidence regression checks remain applicable. `actionlint` validates the
-three workflow files, including their reusable workflow inputs and dependencies.
-
-The original environment/test recipe hashes stay pinned. Current source maps in
-`inherited-ci.json`, `windows-ci.json` and `windows-artifacts.json` explicitly
-review the organizational change and extend guards to both wrappers, the shared
-workflow, selector and regression test. Historical repair records and collected
-execution evidence are not rewritten. New workflow/source snapshots require
-their own matching execution evidence; prior Linux/Windows milestones remain
-historical results for the revisions actually tested.
-
-Platform work may continue with the default local paired entry points. Integrate
-platform commits normally and reconcile any overlapping infrastructure changes;
-do not replace their source hashes blindly. Recheck changed runners/configuration
-and affected shared code without repeatedly replaying unaffected baselines.
+`test_product_workflows.py` checks the pinned upstream matrices, absence of extra
+jobs/events, product isolation, restored OFF fuzz dispatch and immutable Windows
+artifact rejection. Inherited/revision/Windows infrastructure tests cover failure
+propagation, raw live logs and bounded report retention. `actionlint` validates
+workflow syntax, dependencies and shell steps; the full inherited linter remains
+required. Local infrastructure checks are not hosted platform execution evidence.

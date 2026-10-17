@@ -19,6 +19,7 @@ from functional_cases import upstream_cases
 import process_tree
 import unit_assets
 import ci_product
+import inherited_selection
 import windows_artifacts
 import windows_artifact_functional as functional
 import windows_artifact_tests as frameworks
@@ -26,7 +27,7 @@ import windows_artifact_tests as frameworks
 MANIFEST_SKIPS = {'fuzz.exe', 'bench_bitcoin.exe'}  # Exact unchanged cross-driver exemptions.
 
 
-def functional_rows(cases, native, *, root=ROOT):
+def functional_rows(cases, native, *, profile, root=ROOT):
     upstream = upstream_cases(root / 'test/functional/test_runner.py')
     original_names = {case['test'] for case in upstream}
     manifest = json.loads((root / 'test/pocx/manifest.json').read_text())
@@ -40,19 +41,19 @@ def functional_rows(cases, native, *, root=ROOT):
                 'adapted' if name in manifest['tests'] else 'unchanged'})
     if native:
         seen = set()
-        for case in upstream:
+        for case in inherited_selection.upstream_rows(upstream, profile['case_selection']):
             name = case['test']
             if name not in manifest.get('excluded_tests', {}):
                 continue
-            for mode in ('v1', 'v2'):
-                key = (case['id'], mode)
-                if key in seen:
-                    continue
-                seen.add(key)
-                rows.append({'framework': 'functional', 'counting_unit': 'Argument case per transport',
-                    'case': case['id'], 'transport': mode, 'effective_transport': mode,
-                    'origin': 'original', 'adaptation': 'excluded', 'status': 'reviewed-exclusion',
-                    'reason': manifest['excluded_tests'][name], 'seconds': '', 'execution_status': 'not executed'})
+            mode = inherited_selection.effective_transport(case['upstream_case'], profile['case_selection'])
+            key = (case['id'], mode)
+            if key in seen:
+                continue
+            seen.add(key)
+            rows.append({'framework': 'functional', 'counting_unit': 'Argument case per transport',
+                'case': case['id'], 'transport': mode, 'effective_transport': mode,
+                'origin': 'original', 'adaptation': 'excluded', 'status': 'reviewed-exclusion',
+                'reason': manifest['excluded_tests'][name], 'seconds': '', 'execution_status': 'not executed'})
     return rows
 
 
@@ -149,7 +150,8 @@ def run_pair(bundle, output, assets, jobs, factor, *, environment=None, timeout=
             if child['status'] != 'passed':
                 raise ValueError('Original/native artifact functional profile failed')
             phase['functional_report_sha256'] = sha256(directory / 'functional/results.json')
-            report['cases'].extend(dict(case, consensus=consensus) for case in functional_rows(child['cases'], consensus == 'pocx', root=root))
+            report['cases'].extend(dict(case, consensus=consensus) for case in functional_rows(
+                child['cases'], consensus == 'pocx', profile=profile, root=root))
             unchanged()
             phase['status'] = 'passed'
             save()
@@ -190,7 +192,7 @@ def main():
     pair = windows_artifacts.verify_pair(args.artifacts, product=args.product)
     if args.plan:
         print(json.dumps({'status': 'configured only; not executed', 'full_windows_ci_pass': False,
-            'phases': [{'consensus': row['consensus'], 'steps': ['manifest', 'qt/unit/libraries/kernel', 'functional v1/v2 including previous releases']}
+            'phases': [{'consensus': row['consensus'], 'steps': ['manifest', 'qt/unit/libraries/kernel', 'inherited functional selection including previous releases']}
                        for row in pair['phases']]}, indent=2))
         return
     if args.output is None:

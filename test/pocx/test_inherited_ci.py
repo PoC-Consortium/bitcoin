@@ -7,11 +7,12 @@ These are infrastructure checks; fake recipe callbacks are never framework or
 hosted execution evidence. No container, installation or privileged recipe runs.
 """
 import importlib.util
+import io
+from contextlib import redirect_stdout
 import hashlib
 import json
 import os
 from pathlib import Path
-import re
 import shlex
 import subprocess
 import sys
@@ -21,24 +22,13 @@ from unittest.mock import patch
 
 import inherited_ci
 import inherited_functional as functional
+import inherited_selection
+import process_tree
 import inherited_tests as tests
 from common import ROOT
 
 
 class InheritedTest(unittest.TestCase):
-    def test_manual_baseline_dispatch_is_explicitly_limited(self):
-        import yaml
-        workflow = yaml.safe_load((ROOT/'.github/workflows/ci-product.yml').read_text())
-        baseline = workflow['jobs']['bitcoin-baseline']
-        self.assertIn("inputs.product == 'bitcoin'", baseline['if'])
-        self.assertIn('--profile bitcoin-unit --jobs 2', str(baseline['steps']))
-        self.assertIn("github.event_name == 'workflow_dispatch' && inputs.baseline_only", baseline['if'])
-        self.assertNotIn('strategy', baseline)
-        self.assertTrue(any(step.get('if') == 'always()' for step in baseline['steps']))
-        for name, job in workflow['jobs'].items():
-            if name not in ('bitcoin-baseline', 'scope-summary'):
-                self.assertIn('!inputs.baseline_only', job['if'], name)
-
     def env(self):
         return {'BASE_ROOT_DIR': str(ROOT), 'BASE_SCRATCH_DIR': str(ROOT/'build-inherited-fixture'),
                 'BASE_OUTDIR': str(ROOT/'build-inherited-fixture/out'), 'HOST': 'x86_64-pc-linux-gnu',
@@ -68,44 +58,12 @@ class InheritedTest(unittest.TestCase):
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)
         self.assertEqual(module.test_script('/source', {}), ['python3','/source/test/pocx/inherited_ci.py'])
-        self.assertEqual(module.test_script('/source', {'RUN_FUZZ_TESTS':'true'}), ['/source/ci/test/03_test_script.sh'])
+        self.assertEqual(module.test_script('/source', {'RUN_FUZZ_TESTS':'true'}), ['python3','/source/test/pocx/bitcoin_fuzz_ci.py'])
         self.assertEqual(module.imagefile('/source', {}), '/source/test/pocx/ci/test_imagefile')
         self.assertEqual(module.imagefile('/source', {'RUN_FUZZ_TESTS':'true'}), '/source/ci/test_imagefile')
 
-    def test_enabled_linux_tracing_prerequisites_preserve_compiler_and_feature_settings(self):
+    def test_runtime_prerequisites_preserve_original_scope_and_only_bind_asan_headers(self):
         spec = importlib.util.spec_from_file_location('container_runtime', ROOT/'ci/test/02_run_container.py')
-        module = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(module)
-        names = ('ci_native_asan', 'ci_native_tsan', 'ci_native_msan', 'ci_native_nowallet',
-                 'ci_native_previous_releases', 'ci_native_alpine_musl',
-                 'ci_i686_no_multiprocess', 'ci_arm_linux')
-        for name in names:
-            with self.subTest(name=name):
-                original = dict(os.environ, CONTAINER_NAME=name, RUN_FUNCTIONAL_TESTS='true',
-                    RUN_FUZZ_TESTS='false', CI_IMAGE_NAME_TAG='alpine:3.23' if 'alpine' in name else 'ubuntu:24.04',
-                    PACKAGES='compiler python3', CI_CONTAINER_CAP='--security-opt seccomp=unconfined',
-                    BITCOIN_CONFIG='--preset=dev-mode -DENABLE_WALLET=OFF', DEP_OPTS='NO_WALLET=1 CC=clang-17')
-                result = module.configure_runtime_environment(ROOT, original)
-                expected = ('py3-bcc', 'bcc-tools') if 'alpine' in name else ('python3-bpfcc', 'bpfcc-tools','python3-zmq')
-                for package in expected:
-                    self.assertEqual(result['PACKAGES'].split().count(package), 1)
-                for flag in ('--security-opt seccomp=unconfined', '--privileged',
-                             '/usr/src:/usr/src:ro', '/lib/modules:/lib/modules:ro'):
-                    self.assertIn(flag, result['CI_CONTAINER_CAP'])
-                permitted = ('PACKAGES','PIP_PACKAGES','CI_CONTAINER_CAP')
-                self.assertEqual({k:v for k,v in original.items() if k not in permitted},
-                                 {k:v for k,v in result.items() if k not in permitted})
-                self.assertEqual(module.configure_runtime_environment(ROOT, result), result)
-                self.assertEqual(original['PACKAGES'], 'compiler python3')
-        for flags in ({'RUN_FUZZ_TESTS':'true'}, {'RUN_FUNCTIONAL_TESTS':'false'},
-                      {'CONTAINER_NAME':'ci_native_tidy'}, {'CONTAINER_NAME':'ci_win64'}):
-            original = dict(os.environ, CONTAINER_NAME='ci_native_nowallet', RUN_FUZZ_TESTS='false',
-                            RUN_FUNCTIONAL_TESTS='true', PACKAGES='compiler', CI_CONTAINER_CAP='existing')
-            original.update(flags)
-            self.assertEqual(module.configure_runtime_environment(ROOT, original), original)
-
-    def test_actual_recipes_have_python_bindings_for_enabled_functional_features(self):
-        spec = importlib.util.spec_from_file_location('python_runtime', ROOT/'ci/test/02_run_container.py')
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)
         for name in ('arm','i686_no_ipc','native_asan','native_tsan','native_msan',
@@ -114,23 +72,17 @@ class InheritedTest(unittest.TestCase):
             original=json.loads(subprocess.check_output(command,cwd=ROOT,text=True,
                 env={'PATH':os.environ['PATH'],'FILE_ENV':'./ci/test/00_setup_env_'+name+'.sh','MAKEJOBS':'-j1'}))
             result=module.configure_runtime_environment(ROOT,original)
-            packages=result.get('PACKAGES','').split()
-            pip=result.get('PIP_PACKAGES','').split()
-            with self.subTest(recipe=name):
-                self.assertTrue('python3-zmq' in packages or any(p in ('pyzmq','zmq') for p in pip))
-                if name=='i686_no_ipc':
-                    self.assertEqual(result.get('PIP_PACKAGES'),original.get('PIP_PACKAGES'))
-                else:
-                    self.assertTrue(any(p=='pycapnp' or p.startswith('pycapnp==') for p in pip))
-                if name=='native_previous_releases':
-                    self.assertNotIn('--break-system-packages',pip)
-                    self.assertIn('python3-pip',packages)
-                if name=='arm':
-                    self.assertIn('--break-system-packages',pip)
-                    self.assertIn('python3-pip',packages)
-                self.assertEqual(result['BITCOIN_CONFIG'],original['BITCOIN_CONFIG'])
-                self.assertEqual(result.get('DEP_OPTS'),original.get('DEP_OPTS'))
-                self.assertEqual(module.configure_runtime_environment(ROOT,result),result)
+            self.assertEqual(result.get('PACKAGES'), original.get('PACKAGES'))
+            self.assertEqual(result.get('PIP_PACKAGES'), original.get('PIP_PACKAGES'))
+            if name == 'native_asan':
+                self.assertIn('/usr/src:/usr/src:ro', result['CI_CONTAINER_CAP'])
+                self.assertIn('/lib/modules:/lib/modules:ro', result['CI_CONTAINER_CAP'])
+                for flag in ({'RUN_FUZZ_TESTS':'true'}, {'RUN_FUNCTIONAL_TESTS':'false'}):
+                    inactive = dict(original, **flag)
+                    self.assertEqual(module.configure_runtime_environment(ROOT, inactive), inactive)
+            else:
+                self.assertEqual(result, original)
+            self.assertEqual(module.configure_runtime_environment(ROOT,result),result)
 
     def test_review_rejects_recipe_drift(self):
         self.assertTrue(inherited_ci.verify_recipe()['source_sha256'])
@@ -142,7 +94,8 @@ class InheritedTest(unittest.TestCase):
     def test_actual_tracing_recipes_match_host_header_provisioning(self):
         workflow = (ROOT/'.github/workflows/ci-product.yml').read_text()
         step = workflow.split('- name: Provision matching headers for enabled Linux USDT tests', 1)[1].split('\n      - name:', 1)[0]
-        profiles = json.loads(re.search(r"fromJSON\('([^']+)'\)", step).group(1))
+        self.assertIn("env.CONTAINER_NAME == 'ci_native_asan'", step)
+        profiles = ['ci_native_asan']
         self.assertEqual(len(profiles), len(set(profiles)))
         spec = importlib.util.spec_from_file_location('tracing_entry', ROOT/'ci/test/02_run_container.py')
         module = importlib.util.module_from_spec(spec)
@@ -311,6 +264,53 @@ class InheritedTest(unittest.TestCase):
                         for name in ('rpc_interface.txt', 'coverage.123.node0')}
             self.assertEqual(set(retained), expected)
 
+    def test_short_native_result_paths_retain_proofs_and_case_logs_without_node_data(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            build = root / 'build'
+            build.mkdir()
+            before = inherited_ci.evidence_directories(build)
+            result = build / 't/pocx-results-native'
+            files = ['results.json', 'wallet_basic.py.log', 'wallet_basic/test_framework.log',
+                     'v2/wallet_basic.py.log', 'v2/wallet_basic/test_framework.log']
+            for name in files + ['wallet_basic/node0/regtest/wallets/wallet.dat']:
+                path = result / name
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text('raw failure details')
+            (result / 'wallet_basic/node0/loop').symlink_to(result, target_is_directory=True)
+            retained = inherited_ci.retain_evidence(build, before, root / 'retained')
+            self.assertEqual(set(retained), {'t/pocx-results-native/' + name for name in files})
+
+    def test_read_only_result_discovery_does_not_create_scratch_directories(self):
+        with tempfile.TemporaryDirectory() as directory:
+            build = Path(directory) / 'missing-build'
+            self.assertEqual(inherited_ci.evidence_directories(build), set())
+            self.assertFalse(build.exists())
+
+    def test_live_recipe_output_arrives_before_exit_and_preserves_bytes_and_failure(self):
+        import ci_logging
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            gate = root / 'console-observed'
+            class ConsoleBuffer(io.BytesIO):
+                def write(self, block):
+                    if b'ready' in block:
+                        gate.touch()
+                    return super().write(block)
+            console = io.TextIOWrapper(ConsoleBuffer(), encoding='utf8', errors='replace')
+            code = ("import os,pathlib,time; os.write(1,b'ready\\n'); "
+                    "gate=pathlib.Path('console-observed'); deadline=time.monotonic()+5\n"
+                    "while not gate.exists() and time.monotonic()<deadline: time.sleep(.01)\n"
+                    "assert gate.exists(), 'console only received output after termination'\n"
+                    "os.write(2,b'raw\\xff\\n'); raise SystemExit(7)")
+            log = root / 'raw.log'
+            with log.open('w') as stream, redirect_stdout(console):
+                result = ci_logging.run_live([sys.executable, '-c', code], cwd=root,
+                    env=dict(os.environ), stdout=stream, stderr=subprocess.STDOUT)
+            self.assertEqual(result.returncode, 7)
+            self.assertEqual(log.read_bytes(), b'ready\nraw\xff\n')
+            self.assertEqual(console.buffer.getvalue(), log.read_bytes())
+
     def test_failed_recipe_reports_are_copied_and_publishable(self):
         with tempfile.TemporaryDirectory() as directory:
             root=Path(directory)
@@ -399,7 +399,7 @@ class InheritedTest(unittest.TestCase):
         profile = functional.inherited_options({'TEST_RUNNER_EXTRA':'--v2transport --usecli --extended', 'BITCOIN_CMD':'bitcoin -m'})
         self.assertTrue(profile['use_cli'])
         self.assertTrue(profile['multiprocess'])
-        self.assertEqual(profile['transports'], ['v1','v2'])
+        self.assertEqual(profile['transports'], ['v2'])
         for env in ({'TEST_RUNNER_EXTRA':'--exclude=wallet_basic'}, {'BITCOIN_CMD':'other-command'}):
             with self.subTest(env=env), self.assertRaises(ValueError):
                 functional.inherited_options(env)
@@ -641,44 +641,44 @@ class InheritedTest(unittest.TestCase):
             self.assertTrue((output/'cases.csv').is_file())
             return json.loads((output/'results.json').read_text())
 
-    def test_original_functional_dispatch_retains_both_transports(self):
+    def test_original_functional_dispatch_retains_upstream_default_selection(self):
         report=self.original_functional_fixture('Passed')
         self.assertEqual(report['status'],'passed')
-        self.assertEqual({row['transport'] for row in report['cases']},{'v1','v2'})
-        self.assertEqual(report['counts'],{'passed':2})
+        self.assertEqual({row['transport'] for row in report['cases']},{'v1'})
+        self.assertEqual(report['counts'],{'passed':1})
 
-    def test_original_i686_dispatch_uses_verified_view_for_both_transports(self):
+    def test_original_i686_dispatch_uses_verified_view_for_selected_transport(self):
         report=self.original_functional_fixture('Passed',abi_adapter=True)
         self.assertEqual(report['status'],'passed')
         self.assertEqual(report['original_usdt_staging'],{'fixture':True})
-        self.assertEqual({row['transport'] for row in report['cases']},{'v1','v2'})
+        self.assertEqual({row['transport'] for row in report['cases']},{'v1'})
         self.assertTrue(all('private-view/test/functional/test_runner.py' in row['command'][1]
                             for row in report['runs']))
 
     def test_changed_original_i686_view_cannot_promote_completed_cases(self):
         report=self.original_functional_fixture('Passed',abi_adapter=True,changed_view=True)
         self.assertEqual(report['status'],'failed')
-        self.assertEqual(report['counts'],{'passed':2})
+        self.assertEqual(report['counts'],{'passed':1})
         self.assertIn('staging changed',report['error'])
 
     def test_original_green_aggregate_cannot_hide_missing_enabled_case(self):
         report=self.original_functional_fixture('Skipped')
         self.assertEqual(report['status'],'failed')
-        self.assertEqual(report['counts'],{'unverified':2})
+        self.assertEqual(report['counts'],{'unverified':1})
 
     def test_original_failure_preserves_red_cases_and_missing_transport(self):
         report=self.original_functional_fixture('Failed',raw_exit=1,aggregate='Failed')
         self.assertEqual(report['status'],'failed')
-        self.assertEqual(report['counts'],{'failed':1,'unverified':1})
+        self.assertEqual(report['counts'],{'failed':1})
         self.assertEqual([(row['transport'],row['status']) for row in report['cases']],
-                         [('v1','failed'),('v2','unverified')])
+                         [('v1','failed')])
         self.assertEqual(len(report['runs']),1)
         self.assertEqual(report['runs'][0]['returncode'],1)
 
     def test_original_abnormal_exit_keeps_passed_rows_without_promoting_profile(self):
         report=self.original_functional_fixture('Passed',raw_exit=2)
         self.assertEqual(report['status'],'failed')
-        self.assertEqual(report['counts'],{'passed':1,'unverified':1})
+        self.assertEqual(report['counts'],{'passed':1})
         self.assertEqual(len(report['runs']),1)
 
     def test_original_multi_configuration_preserves_inherited_timeout_and_binary_paths(self):
@@ -687,6 +687,29 @@ class InheritedTest(unittest.TestCase):
         self.assertEqual(report['build_configuration'],'Release')
         self.assertEqual(report['profile']['effective_timeout_factor'],7.5)
         self.assertTrue(all('--timeout-factor=7.5' in row['command'] for row in report['runs']))
+
+    def scoped_native_fixture(self, data, extra):
+        # Synthetic process-control proof for controller contract checks only.
+        manifest = {'tests': {spec['test']: 'synthetic' for spec in data['provenance']['selected_cases']},
+                    'reused_tests': []}
+        scope = functional.inherited_options({'TEST_RUNNER_EXTRA': extra})['case_selection']
+        selection, mapping, modes = inherited_selection.native_selection(manifest,
+            functional.upstream_cases(ROOT / 'test/functional/test_runner.py'), scope)
+        provenance = data['provenance']
+        provenance.update(format_version=11, inherited_selection=scope, case_transports=mapping,
+                          transport_modes=modes, selected_cases=selection, rpc_coverage=False,
+                          build_configuration=provenance.get('build_configuration'),
+                          process_controller=process_tree.description())
+        data['results'] = [row for row in data['results'] if row['transport'] in mapping[row['case']]]
+        for row in data['results']:
+            kind = provenance['process_controller']['kind']
+            control = {'kind': kind, 'cleanup_complete': True, 'invocation': row['command']}
+            if kind == 'windows-job':
+                control['job'] = 'Local\\pocx-functional-' + '1' * 32
+                control['invocation'] = [sys.executable, str(process_tree.FILE), '--windows-worker',
+                                         control['job'], '--', *row['command']]
+            row['process_control'] = control
+        return manifest
 
     def test_native_functional_report_and_cli_modes_are_retained(self):
         from functional_cases import case_spec,selection_digest
@@ -709,21 +732,21 @@ class InheritedTest(unittest.TestCase):
                 'environment_profile':{'previous_releases':False,'network_addresses':False},
                 'selected_tests':[spec['test']],'selected_cases':[spec],'transport_modes':['v1','v2'],
                 'case_selection':{'selected_cases_sha256':selection_digest([spec])}},'results':rows}
+            manifest = self.scoped_native_fixture(data, '--usecli')
             (proof/'results.json').write_text(json.dumps(data))
             def native_runner(command,**kwargs):
                 kwargs['stdout'].write('Results: '+str(proof)+'\n')
                 return subprocess.CompletedProcess(command,0)
             with patch.object(functional,'dependency_hashes',return_value={}), \
-                    patch.object(functional,'verify_current_inputs',return_value={}), \
-                    patch.object(functional,'selected_cases',return_value=[spec]), \
+                    patch.object(functional,'verify_current_inputs',return_value=manifest), \
                     patch.object(functional.subprocess,'run',side_effect=native_runner):
                 report=functional.run(root,output,{'ENABLE_POCX':'ON','ENABLE_IPC':'ON'},4,40,
                     environment={'TEST_RUNNER_EXTRA':'--usecli','BITCOIN_CMD':'bitcoin -m'})
             self.assertEqual(report['status'],'passed')
-            self.assertEqual(report['counts'],{'passed':2})
+            self.assertEqual(report['counts'],{'passed':1})
             self.assertIn('--usecli',report['runs'][0]['command'])
             self.assertIn('--multiprocess',report['runs'][0]['command'])
-            self.assertEqual(len((output/'cases.csv').read_text().splitlines()),3)
+            self.assertEqual(len((output/'cases.csv').read_text().splitlines()),2)
 
     def native_feature_fixture(self, feature, status, raw_exit=1, *, multi=False, extra='', fallback_factor=40):
         from functional_cases import case_spec,selection_digest
@@ -754,13 +777,13 @@ class InheritedTest(unittest.TestCase):
                 'environment_profile':{'previous_releases':False,'network_addresses':False},
                 'selected_tests':[spec['test'] for spec in specs],'selected_cases':specs,'transport_modes':['v1','v2'],
                 'case_selection':{'selected_cases_sha256':selection_digest(specs)}},'results':rows}
+            manifest = self.scoped_native_fixture(data, '--usecli' if execution['use_cli'] else extra)
             (proof/'results.json').write_text(json.dumps(data))
             def native_runner(command,**kwargs):
                 kwargs['stdout'].write('Results: '+str(proof)+'\n')
                 return subprocess.CompletedProcess(command,raw_exit)
             with patch.object(functional,'dependency_hashes',return_value={}), \
-                    patch.object(functional,'verify_current_inputs',return_value={}), \
-                    patch.object(functional,'selected_cases',return_value=specs), \
+                    patch.object(functional,'verify_current_inputs',return_value=manifest), \
                     patch.object(functional.subprocess,'run',side_effect=native_runner):
                 try:
                     functional.run(root,output,{'ENABLE_POCX':'ON','ENABLE_IPC':feature},4,fallback_factor,
@@ -772,9 +795,9 @@ class InheritedTest(unittest.TestCase):
     def test_native_disabled_feature_keeps_skips_explicit_without_rejecting_the_profile(self):
         report=self.native_feature_fixture('OFF','skipped')
         self.assertEqual(report['status'],'passed')
-        self.assertEqual(report['counts'],{'passed':2,'configuration-disabled':2})
+        self.assertEqual(report['counts'],{'passed':1,'configuration-disabled':1})
         disabled=[row for row in report['cases'] if row['status']=='configuration-disabled']
-        self.assertEqual(len(disabled),2)
+        self.assertEqual(len(disabled),1)
         self.assertTrue(all(row['execution_status']=='skipped' and 'ENABLE_IPC=OFF' in row['reason'] for row in disabled))
         self.assertEqual(report['runs'][0]['returncode'],1)
 
@@ -798,7 +821,7 @@ class InheritedTest(unittest.TestCase):
             with self.subTest(feature=feature,status=status):
                 report=self.native_feature_fixture(feature,status)
                 self.assertEqual(report['status'],'failed')
-                self.assertEqual(report['counts'],{'passed':2,category:2})
+                self.assertEqual(report['counts'],{'passed':1,category:1})
 
     def test_native_case_results_must_match_the_raw_exit_status(self):
         for status,raw_exit in [('passed',1),('skipped',0),('failed',2)]:

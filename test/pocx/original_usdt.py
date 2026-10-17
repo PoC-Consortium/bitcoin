@@ -21,12 +21,17 @@ HEADERS = 'test/pocx/framework/bcc_headers.py'
 def required(binary, options):
     if options.get('target_system') != 'Linux' or options.get('WITH_USDT') != 'ON':
         return False
+    # Original non-tracing recipes omit BCC and let the unchanged test guard
+    # skip. Do not reject an unrelated 32-bit ELF before that guard can run.
+    try:
+        import bcc
+    except ImportError:
+        return False
     with binary.open('rb') as stream:
         header = stream.read(20)
     if len(header) != 20 or header[:4] != b'\x7fELF' or header[4:6] not in (b'\x01\x01', b'\x02\x01'):
         raise ValueError('Expected a Linux little-endian ELF tracing executable')
     if header[4] == 2:
-        import bcc
         return bool(kernel_header_flags(getattr(bcc, '__version__', None)))
     if int.from_bytes(header[18:20], 'little') != 3:
         raise ValueError('Only the reviewed i686 original tracing adapter is supported')

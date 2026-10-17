@@ -7,6 +7,7 @@ from functional_environment import timeout_arguments
 import functional_execution
 import process_tree
 import rpc_coverage
+import inherited_selection
 
 
 def transport_results(report):
@@ -18,8 +19,13 @@ def transport_results(report):
     provenance = report['provenance']
     results = report['results']
     version = provenance.get('format_version', 1)
-    if type(version) is not int or version not in (1, 2, 3, 4, 5, 6, 7, 8, 9, 10):
+    if type(version) is not int or version not in (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11):
         raise ValueError('Unknown functional execution format')
+    if version < 11 and any(key in provenance for key in ('inherited_selection', 'case_transports',
+                                                         'inherited_selection_helper_sha256')):
+        raise ValueError('Historical report has unrecorded inherited case/transport selection')
+    if version >= 11:
+        inherited_selection.validate(provenance.get('inherited_selection'))
     rpc_coverage.verify(report)
     if version >= 8 and ('build_configuration' not in provenance or
                           (provenance['build_configuration'] is not None and
@@ -80,7 +86,15 @@ def transport_results(report):
                     set(tests) != {case['test'] for case in cases} or
                     provenance['case_selection']['selected_cases_sha256'] != selection_digest(cases)):
                 raise ValueError('Incomplete or mismatched functional case selection')
-            expected = {(case['id'], mode) for case in cases for mode in modes}
+            if version >= 11:
+                mapping = provenance.get('case_transports')
+                if (not isinstance(mapping, dict) or set(mapping) != {case['id'] for case in cases} or
+                        any(value not in (['v1'], ['v2'], ['v1', 'v2']) for value in mapping.values()) or
+                        modes != [mode for mode in ('v1', 'v2') if any(mode in value for value in mapping.values())]):
+                    raise ValueError('Invalid inherited case/transport inventory')
+                expected = {(case, mode) for case, transports in mapping.items() for mode in transports}
+            else:
+                expected = {(case['id'], mode) for case in cases for mode in modes}
         else:
             expected = {(name, mode) for name in tests for mode in modes}
         if (not tests or len(tests) != len(set(tests)) or not modes or

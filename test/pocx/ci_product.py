@@ -26,3 +26,14 @@ def require_configuration(options, environment):
     products = selected(environment)
     if options.get('ENABLE_POCX') not in {PRODUCTS[product] for product in products}:
         raise ValueError('Compiled ENABLE_POCX does not match CI_PRODUCT')
+
+
+def configuration_options(product, *, paired=False):
+    if product not in PRODUCTS:
+        raise ValueError('Unknown CI product')
+    options = ['-DENABLE_POCX=' + PRODUCTS[product]]
+    # Retain equal feature profiles for historical paired local artifacts.
+    # Independent Bitcoin CI keeps upstream fuzz compilation unchanged.
+    if product == 'pocx' or paired:
+        options += ['-DBUILD_FUZZ_BINARY=OFF', '-DBUILD_FOR_FUZZING=OFF']
+    return options

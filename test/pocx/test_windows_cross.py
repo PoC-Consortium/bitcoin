@@ -135,7 +135,11 @@ class WindowsCrossTest(unittest.TestCase):
                 'pocx/functional/runtime/artifact-functional-view.json',
                 'pocx/functional/runtime/pocx-results-fixture/results.json',
                 'pocx/functional/runtime/pocx-results-fixture/p2p_ping.py.log',
-                'pocx/functional/runtime/pocx-results-fixture/v2/p2p_ping.py.log']
+                'pocx/functional/runtime/pocx-results-fixture/v2/p2p_ping.py.log',
+                'pocx/functional/runtime/t/pocx-results-short/results.json',
+                'pocx/functional/runtime/t/pocx-results-short/wallet_basic.py.log',
+                'pocx/functional/runtime/t/pocx-results-short/wallet_basic/test_framework.log',
+                'pocx/functional/runtime/t/pocx-results-short/v2/wallet_basic.py.log']
             ignored = ['bitcoin/functional/runtime/bin/bitcoind.exe',
                 'bitcoin/functional/execution/legacy-utxo-v1/node0/regtest/state.json',
                 'pocx/functional/runtime/pocx-results-fixture/p2p_ping/node0/regtest/state.json',

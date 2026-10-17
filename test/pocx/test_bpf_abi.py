@@ -103,6 +103,12 @@ class BPFArgumentWidthTest(unittest.TestCase):
     def test_no_active_contexts_preserves_program(self):
         self.assertEqual(abi.argument_reads(PROGRAM, []), (PROGRAM, []))
 
+    def test_original_optional_bcc_guard_precedes_unsupported_arm_adapter(self):
+        self.elf(1, 40)
+        with patch.dict('sys.modules', {'bcc': None}):
+            self.assertFalse(original_usdt.required(self.binary, {'target_system': 'Linux', 'WITH_USDT': 'ON'}))
+
+    @patch.dict('sys.modules', {'bcc': SimpleNamespace(__version__='0.31.0')})
     def test_original_adapter_requires_enabled_linux_i686(self):
         enabled = {'target_system': 'Linux', 'WITH_USDT': 'ON'}
         self.assertTrue(original_usdt.required(self.binary, enabled))

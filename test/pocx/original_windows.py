@@ -5,7 +5,6 @@
 import ast
 import configparser
 import json
-from pathlib import Path
 import shutil
 
 from common import ROOT, sha256

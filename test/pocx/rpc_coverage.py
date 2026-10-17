@@ -60,7 +60,15 @@ def evaluate(directory, environment):
 
 def verify(report):
     provenance = report['provenance']
-    enabled = provenance.get('format_version', 1) >= 10
+    version = provenance.get('format_version', 1)
+    if version >= 11:
+        if type(provenance.get('rpc_coverage')) is not bool:
+            raise ValueError('Inherited selection requires an explicit RPC coverage setting')
+        if not provenance['rpc_coverage']:
+            if 'rpc_coverage' in report or 'rpc_coverage_helper_sha256' in provenance:
+                raise ValueError('Disabled RPC coverage has unexpected coverage evidence')
+            return True
+    enabled = version >= 10
     if not enabled:
         if 'rpc_coverage' in provenance or 'rpc_coverage' in report:
             raise ValueError('Historical report has unrecorded RPC coverage')
@@ -69,14 +77,16 @@ def verify(report):
         raise ValueError('Missing explicit RPC coverage request')
     if provenance.get('rpc_coverage_helper_sha256') != sha256(Path(__file__)):
         raise ValueError('RPC coverage helper changed since invocation')
-    modes = provenance['transport_modes']
+    modes = ['inherited'] if version >= 11 else provenance['transport_modes']
     records = report.get('rpc_coverage', {})
     if set(records) != set(modes):
         raise ValueError('Missing transport RPC coverage results')
     all_passed = True
     for mode in modes:
-        rows = [row for row in report['results'] if row.get('transport') == mode]
-        parents = {Path(row['log']).resolve().parent for row in rows}
+        rows = [row for row in report['results'] if mode == 'inherited' or row.get('transport') == mode]
+        parents = {Path(row['log']).resolve().parent.parent
+                   if mode == 'inherited' and row.get('transport') == 'v2'
+                   else Path(row['log']).resolve().parent for row in rows}
         if len(parents) != 1:
             raise ValueError('RPC coverage must match the executed transport directory')
         directory = next(iter(parents)) / 'rpc-coverage'
@@ -93,6 +103,8 @@ def verify(report):
 
 
 def arguments(report, mode):
-    if report['provenance'].get('format_version', 1) < 10:
+    provenance = report['provenance']
+    version = provenance.get('format_version', 1)
+    if version < 10 or (version >= 11 and provenance['rpc_coverage'] is False):
         return []
-    return ['--coveragedir=' + report['rpc_coverage'][mode]['directory']]
+    return ['--coveragedir=' + report['rpc_coverage']['inherited' if version >= 11 else mode]['directory']]

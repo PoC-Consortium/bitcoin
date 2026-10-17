@@ -163,7 +163,7 @@
     "test/pocx/build_configuration.py": "c9df217b325f1e3dfd8cd14e002f542bd78aa084b410e8f3b18d18a261a36456",
     "test/pocx/kernel/fixtures.json": "0069f80997408a2a13739afe46775c4a5e2cc799a8b963006fdd30c299a7d35f",
     "test/pocx/kernel/parity.json": "6c05a2fdf6713ab0e1f2ae041e2183b6d611e678056882561a3bfcdd12b15410",
-    "test/pocx/kernel/provenance.json": "14b9d4aae50bf4468c6583d99d666189b87811cb08c00e7bf0911ce9fccf09d2",
+    "test/pocx/kernel/provenance.json": "74d6404c219c4eda2bff6b2ea0f97fdb50fd349df0cde53554d0b34cb8057eec",
     "test/pocx/kernel/reference.rs": "af1cb2d2abd1b353f508a4891acbeab8b2e85e1b777ffe973cd091a0df89b5b7",
     "test/pocx/kernel/render_fixtures.py": "fc4034af16dc364d5c18143dd8e9e8fe7b2392f5e50325498d9b099b3d00ce03",
     "test/pocx/kernel/verify_fixtures.py": "f93ed8f7fbd1e60f4aa837a8f9d20b4bc68bee5977a5c674b026f2df00245b55",
@@ -211,7 +211,7 @@
     "src/validation.cpp": "380eae4c8e044e4c8180587da29720bd835752970958f07d4887085f84f4a2ca",
     "test/pocx/build_configuration.py": "c9df217b325f1e3dfd8cd14e002f542bd78aa084b410e8f3b18d18a261a36456",
     "test/pocx/kernel/fixtures.json": "0069f80997408a2a13739afe46775c4a5e2cc799a8b963006fdd30c299a7d35f",
-    "test/pocx/kernel/provenance.json": "14b9d4aae50bf4468c6583d99d666189b87811cb08c00e7bf0911ce9fccf09d2",
+    "test/pocx/kernel/provenance.json": "74d6404c219c4eda2bff6b2ea0f97fdb50fd349df0cde53554d0b34cb8057eec",
     "test/pocx/kernel/reference.rs": "af1cb2d2abd1b353f508a4891acbeab8b2e85e1b777ffe973cd091a0df89b5b7",
     "test/pocx/kernel/render_fixtures.py": "fc4034af16dc364d5c18143dd8e9e8fe7b2392f5e50325498d9b099b3d00ce03",
     "test/pocx/kernel/verify_fixtures.py": "f93ed8f7fbd1e60f4aa837a8f9d20b4bc68bee5977a5c674b026f2df00245b55",
@@ -288,5 +288,8 @@
     "historical_generator_source_sha256": "f8068cac4ef12f25d3ba326e95837d2b4dc5bb12a2bc5f3e0099af02f3f62067",
     "current_generator_source_sha256": "ff4bd90b4be6380ef547e68c04a913b601e5df46bf9987c0f72091301d3cc42e",
     "runtime_status": "Actual rebuilt generator and kernel runtime pending; historical reference execution unchanged."
+  },
+  "lint_line_ending_review": {
+    "scope": "Normalize CRLF metadata to LF only; parsed provenance, fixture bytes and execution claims are unchanged. Current consumer hashes are refreshed; historical records remain historical."
   }
 }

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # Copyright (c) 2026 The Bitcoin PoCX developers
 # Distributed under the MIT software license; see COPYING.
-"""Run and verify both functional transports from an immutable Windows pair.
+"""Run and verify inherited functional selections from immutable Windows artifacts.
 
 The parent owns the complete process tree and independently checks the retained
 case inventory, commands and raw results. This is a functional profile, not proof
@@ -21,7 +21,8 @@ import time
 from common import ROOT, sha256, short_tmpdir
 import artifact_functional_view as views
 import functional_environment
-from functional_cases import selected_cases, upstream_cases
+from functional_cases import upstream_cases
+import inherited_selection
 from functional_results import transport_results
 import inherited_functional as functional
 import process_tree
@@ -64,11 +65,14 @@ def verify_child(report, directory, view, options, jobs, factor, environment, *,
                 not proof_path.is_file() or sha256(proof_path) != proof_record.get('sha256')):
             raise ValueError('Missing or changed native functional proof')
         proof = json.loads(proof_path.read_text())
-        if proof.get('provenance', {}).get('format_version') not in (9, 10):
+        if proof.get('provenance', {}).get('format_version') != 11:
             raise ValueError('Artifact native execution requires the current process-controlled proof format')
         manifest = verify_current_inputs(proof, view)
-        expected = selected_cases(manifest, upstream_cases(root / 'test/functional/test_runner.py'))
-        if (proof['provenance']['selected_cases'] != expected or proof['provenance']['transport_modes'] != ['v1', 'v2'] or
+        expected, mapping, modes = inherited_selection.native_selection(
+            manifest, upstream_cases(root / 'test/functional/test_runner.py'), profile['case_selection'])
+        if (proof['provenance']['selected_cases'] != expected or proof['provenance']['transport_modes'] != modes or
+                proof['provenance'].get('inherited_selection') != profile['case_selection'] or
+                proof['provenance'].get('case_transports') != mapping or
                 proof['provenance'].get('build_configuration') is not None or
                 proof['provenance'].get('timeout_factor') != factor or
                 proof['provenance'].get('environment_profile') !=
@@ -99,8 +103,9 @@ def verify_child(report, directory, view, options, jobs, factor, environment, *,
             raise ValueError('Disabled benchmarks have unexpected discovery evidence')
         if report.get('benchmarks') != benchmarks:
             raise ValueError('Benchmark inventory differs from executed listing')
-        expected = functional.original_inventory(root / 'test/functional/test_runner.py', benchmarks, enabled)
-        for mode in ('v1', 'v2'):
+        expected = functional.original_inventory(root / 'test/functional/test_runner.py', benchmarks,
+                                               enabled, profile['case_selection'])
+        for mode in profile['transports']:
             for group in functional.original_groups(expected, options):
                 command = functional.original_command(view, directory, group, mode, jobs, factor, profile, windows=True, root=root)
                 if group[2]:
@@ -118,7 +123,7 @@ def verify_child(report, directory, view, options, jobs, factor, environment, *,
                     if summary[1] != 'Passed':
                         raise ValueError('Original functional aggregate failed')
                     for case, status, duration in rows:
-                        raw.append((case, mode, functional.effective_transport(case, mode), status, float(duration)))
+                        raw.append((case, mode, inherited_selection.effective_transport(case, profile['case_selection']), status, float(duration)))
                     expected_runs.append((mode, command, 0))
     if report.get('expected_cases') != expected:
         raise ValueError('Functional expected inventory changed')
@@ -129,13 +134,14 @@ def verify_child(report, directory, view, options, jobs, factor, environment, *,
                 type(run.get('seconds')) not in (int, float) or not math.isfinite(run['seconds']) or run['seconds'] < 0 or
                 run['log_sha256'] != sha256(directory / (name + '.log'))):
             raise ValueError('Functional runner command, terminal result or retained log changed')
-    wanted = Counter((case, mode) for case in expected for mode in ('v1', 'v2'))
+    wanted = (Counter((case, mode) for case, modes in mapping.items() for mode in modes) if native else
+              Counter((case, mode) for case in expected for mode in profile['transports']))
     if Counter((case, mode) for case, mode, _, _, _ in raw) != wanted:
         raise ValueError('Incomplete raw functional matrix')
     checked = []
     for case, mode, effective, status, seconds in raw:
         state, reason = functional.classify(case, status, options, profile, native=native, root=root)
-        if state not in ('passed', 'configuration-disabled'):
+        if state not in ('passed', 'configuration-disabled', 'upstream-optional-skip'):
             raise ValueError('Required functional case failed or skipped without a source guard: ' + case)
         checked.append({'case': case, 'transport': mode, 'effective_transport': effective, 'status': state,
                         'reason': reason, 'execution_status': status, 'seconds': seconds})
@@ -167,7 +173,7 @@ def run_phase(bundle, row, output, jobs, factor, *, environment=None, timeout=86
         raise ValueError('Functional phase differs from immutable artifact manifest')
     output.mkdir(parents=True, exist_ok=False)
     view = output / 'runtime'
-    report = {'status': 'running', 'scope': 'Complete applicable artifact functional selection in both transports; full hosted pipeline incomplete',
+    report = {'status': 'running', 'scope': 'Complete applicable inherited artifact functional selection; full hosted pipeline incomplete',
         'full_windows_ci_pass': False, 'consensus': row['consensus'], 'cases': [],
         'pair_sha256': sha256(bundle / 'pair.json'), 'process_controller': process_tree.description(),
         'profile': profile, 'timeout': timeout, 'previous_release_binaries': release_inputs}

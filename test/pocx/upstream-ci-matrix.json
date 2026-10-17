@@ -1,0 +1,169 @@
+{
+  "upstream_revision": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
+  "matrices": {
+    "ci-matrix": {
+      "include": [
+        {
+          "name": "iwyu",
+          "warp-runner": "warp-ubuntu-latest-x64-8x",
+          "fallback-runner": "ubuntu-latest",
+          "timeout-minutes": 120,
+          "file-env": "./ci/test/00_setup_env_native_iwyu.sh"
+        },
+        {
+          "name": "32 bit ARM",
+          "warp-runner": "ubuntu-24.04-arm",
+          "fallback-runner": "ubuntu-24.04-arm",
+          "timeout-minutes": 120,
+          "file-env": "./ci/test/00_setup_env_arm.sh",
+          "provider": "gha"
+        },
+        {
+          "name": "ASan + LSan + UBSan + integer",
+          "warp-runner": "warp-ubuntu-2404-x64-8x",
+          "fallback-runner": "ubuntu-24.04",
+          "timeout-minutes": 120,
+          "file-env": "./ci/test/00_setup_env_native_asan.sh"
+        },
+        {
+          "name": "macOS-cross to arm64",
+          "warp-runner": "warp-ubuntu-latest-x64-4x",
+          "fallback-runner": "ubuntu-latest",
+          "timeout-minutes": 120,
+          "file-env": "./ci/test/00_setup_env_mac_cross.sh"
+        },
+        {
+          "name": "macOS-cross to x86_64",
+          "warp-runner": "warp-ubuntu-latest-x64-4x",
+          "fallback-runner": "ubuntu-latest",
+          "timeout-minutes": 120,
+          "file-env": "./ci/test/00_setup_env_mac_cross_intel.sh"
+        },
+        {
+          "name": "No wallet",
+          "warp-runner": "warp-ubuntu-latest-x64-4x",
+          "fallback-runner": "ubuntu-latest",
+          "timeout-minutes": 120,
+          "file-env": "./ci/test/00_setup_env_native_nowallet.sh"
+        },
+        {
+          "name": "i686, no IPC",
+          "warp-runner": "warp-ubuntu-latest-x64-8x",
+          "fallback-runner": "ubuntu-latest",
+          "timeout-minutes": 120,
+          "file-env": "./ci/test/00_setup_env_i686_no_ipc.sh"
+        },
+        {
+          "name": "fuzzer,address,undefined,integer",
+          "warp-runner": "warp-ubuntu-latest-x64-16x",
+          "fallback-runner": "ubuntu-latest",
+          "timeout-minutes": 240,
+          "file-env": "./ci/test/00_setup_env_native_fuzz.sh"
+        },
+        {
+          "name": "previous releases",
+          "warp-runner": "warp-ubuntu-latest-x64-8x",
+          "fallback-runner": "ubuntu-latest",
+          "timeout-minutes": 120,
+          "file-env": "./ci/test/00_setup_env_native_previous_releases.sh"
+        },
+        {
+          "name": "Alpine (musl)",
+          "warp-runner": "warp-ubuntu-latest-x64-8x",
+          "fallback-runner": "ubuntu-latest",
+          "timeout-minutes": 120,
+          "file-env": "./ci/test/00_setup_env_native_alpine_musl.sh"
+        },
+        {
+          "name": "tidy",
+          "warp-runner": "warp-ubuntu-latest-x64-8x",
+          "fallback-runner": "ubuntu-latest",
+          "timeout-minutes": 120,
+          "file-env": "./ci/test/00_setup_env_native_tidy.sh"
+        },
+        {
+          "name": "TSan",
+          "warp-runner": "warp-ubuntu-latest-x64-8x",
+          "fallback-runner": "ubuntu-latest",
+          "timeout-minutes": 120,
+          "file-env": "./ci/test/00_setup_env_native_tsan.sh"
+        },
+        {
+          "name": "MSan, fuzz",
+          "warp-runner": "warp-ubuntu-latest-x64-8x",
+          "fallback-runner": "ubuntu-latest",
+          "timeout-minutes": 150,
+          "file-env": "./ci/test/00_setup_env_native_fuzz_with_msan.sh"
+        },
+        {
+          "name": "MSan",
+          "warp-runner": "warp-ubuntu-latest-x64-16x",
+          "fallback-runner": "ubuntu-latest",
+          "timeout-minutes": 120,
+          "file-env": "./ci/test/00_setup_env_native_msan.sh"
+        }
+      ]
+    },
+    "macos-native-arm64": {
+      "job-type": [
+        "standard",
+        "fuzz"
+      ],
+      "include": [
+        {
+          "job-type": "standard",
+          "file-env": "./ci/test/00_setup_env_mac_native.sh",
+          "job-name": "macOS native"
+        },
+        {
+          "job-type": "fuzz",
+          "file-env": "./ci/test/00_setup_env_mac_native_fuzz.sh",
+          "job-name": "macOS native, fuzz"
+        }
+      ]
+    },
+    "windows-native-dll": {
+      "job-type": [
+        "standard",
+        "fuzz"
+      ],
+      "include": [
+        {
+          "job-type": "standard",
+          "job-name": "Windows native, VS"
+        },
+        {
+          "job-type": "fuzz",
+          "job-name": "Windows native, fuzz, VS"
+        }
+      ]
+    }
+  },
+  "recipe_sha256": {
+    ".github/ci-test-each-commit-exec.py": "7d6c921986188b726f82bb08a782be738f6dfc2460d1f64272ae8bd8715d040b",
+    ".github/ci-windows-cross.py": "3d67e51113cb3edd9c24a6714d8393510c7b5d8d6a7bb8fed43a6911efd3fcc3",
+    ".github/ci-windows.py": "9cec268ddaf98292b2067ae07ff99e8290a6e1a2e3a97aac9814c6642542e27b",
+    "ci/test/00_setup_env.sh": "94296f24a59b80f708471803c916d159241c633e8a28b3d3e8000d584b1da6ad",
+    "ci/test/00_setup_env_arm.sh": "1b686fe70c8d7fbbd25b2dc78b101bd58629c2445ece81b6f9fc6ed14fb76f85",
+    "ci/test/00_setup_env_i686_no_ipc.sh": "8713073def184459e62e8dc4b4484e5f4226aba6e1b4195a7c0a128f3306093b",
+    "ci/test/00_setup_env_mac_cross.sh": "8f5e545fe5f81111c3a2fbd97ad93d45be437d7209ee18d1ca83e20d9be3a48d",
+    "ci/test/00_setup_env_mac_cross_intel.sh": "8b332eec69bd0790d637d5009dcc483044d06b6fa663bce0f32e0869831e9966",
+    "ci/test/00_setup_env_mac_native.sh": "bc48cac2d6c63f3b49d7c7938159e08306f28460918ec202424a2214b8b0c503",
+    "ci/test/00_setup_env_mac_native_fuzz.sh": "42b0657a8bbb22160ee4bc768b6d7dc91f9b460adc8644f41eaad693e0e19892",
+    "ci/test/00_setup_env_native_alpine_musl.sh": "5f429555374d1c579106938154f4b5a27ad85c9ce015b345311fc040ceaa6247",
+    "ci/test/00_setup_env_native_asan.sh": "e2848eef89042d5fd742e26d43188e680c97ff06a5ad20f1a3f9b3a8f098b84c",
+    "ci/test/00_setup_env_native_fuzz.sh": "6e9e64b8bc2755fa9e6623d4d74840219ea6eedeae03f3a8a3e15524059256b3",
+    "ci/test/00_setup_env_native_fuzz_with_msan.sh": "b668c9192e5b2af971e093566e5200fe5d4c840468d32650f79ed2271143a60a",
+    "ci/test/00_setup_env_native_iwyu.sh": "61b5d26e218b48c6f87dc71cc08d01b507747f8440d5fa62b4ea5c644790815b",
+    "ci/test/00_setup_env_native_msan.sh": "0affee5c6e63934f52afab75197afa71faefd28227a9b09f700c22017567aad0",
+    "ci/test/00_setup_env_native_nowallet.sh": "310381daad847197755b1bc29405a47d166b7c54b749e932d850e9f5dac7e560",
+    "ci/test/00_setup_env_native_previous_releases.sh": "36dd6b0682b1c5d56fb6a8ba3247928422da48e87460c1391cdb4a81ba5452d9",
+    "ci/test/00_setup_env_native_tidy.sh": "85c30815b43f30984a0c141f8b8ca158864570d29681c9bd9a6551473a825441",
+    "ci/test/00_setup_env_native_tsan.sh": "3a6c745649df764592b06c460a989ab4cd4b6005bb472519428fc7e6414a490f",
+    "ci/test/00_setup_env_win64.sh": "1354e7e29c227f8a5255022b93377c0477ba233d0fe78cbc0f6ba9fcfb4d44d0",
+    "ci/test/00_setup_env_win64_msvcrt.sh": "5870e8ebc1618952d45794038e7dc9eadd593f0a23c878ee2463349f521936fa",
+    "ci/test/01_base_install.sh": "49f8de8b17c6c97b0ca08559ba1614e49f4fd2da1e78bbe6f11335772e67f47c",
+    "ci/test/03_test_script.sh": "cfd9e9583398dee9527a2fb7ea099104a8cab53f7bf5ccdceb3f4e84425ebb8b",
+    "test/fuzz/test_runner.py": "cd764c351828e1ace46a81c1030cb2a96d60c482a1b9f5e2618be736bd61492f"
+  }
+}

@@ -3,9 +3,9 @@
 # Distributed under the MIT software license; see COPYING.
 """Strict original/native functional dispatch for inherited feature configurations.
 
-Explicitly disabled features are recorded separately. Missing modules, binaries
-or permissions for enabled features fail; an upstream green ALL row is not enough.
-Both transports and all extended cases run on each side of the baseline pair.
+Explicitly disabled features and original optional dependency skips are recorded
+separately. Missing required prerequisites fail; a green ALL row is not enough.
+Case selection and transport overrides follow the inherited job's arguments.
 """
 import ast
 import argparse
@@ -22,9 +22,11 @@ import sys
 import time
 
 from common import ROOT, sha256
-from functional_cases import selected_cases, upstream_cases
+from functional_cases import upstream_cases
 from functional_results import transport_results
-from run_bitcoin_functional import expected_cases, read_cases, effective_transport
+from run_bitcoin_functional import expected_cases, read_cases
+import inherited_selection
+import inherited_prerequisites
 import functional_execution
 import build_configuration
 import rpc_coverage
@@ -47,20 +49,25 @@ ADDRESS = {'feature_bind_port_discover.py', 'feature_bind_port_externalip.py'}
 LEGACY_UTXO = 'feature_unsupported_utxo_db.py'
 
 
-def original_inventory(source, benchmarks, bench_enabled):
+def original_inventory(source, benchmarks, bench_enabled, scope=None):
     if type(bench_enabled) is not bool:
         raise ValueError('Missing explicit benchmark feature')
-    if bench_enabled:
-        return expected_cases(source, benchmarks)
-    if benchmarks:
+    if not bench_enabled and benchmarks:
         raise ValueError('Disabled benchmark feature has an executed benchmark inventory')
     # Upstream expands the dynamic script only when benchmarks are compiled.
     # Keep its unexpanded, source-guarded skip in an explicitly disabled build.
-    return [row['upstream_case'] for row in upstream_cases(source)]
+    rows = upstream_cases(source)
+    cases = expected_cases(source, benchmarks) if bench_enabled else [row['upstream_case'] for row in rows]
+    if scope is None:
+        return cases
+    rows = inherited_selection.upstream_rows(rows, scope)
+    selected = {row['upstream_case'] for row in rows}
+    dynamic = [row['upstream_case'] + ' --bench=' for row in rows if row['dynamic']]
+    return [case for case in cases if case in selected or any(case.startswith(prefix) for prefix in dynamic)]
 
 
 def original_groups(expected, options):
-    if options.get('target_system') != 'Windows':
+    if options.get('target_system') != 'Windows' or LEGACY_UTXO not in expected:
         return [('complete', expected, False)]
     if expected.count(LEGACY_UTXO) != 1:
         raise ValueError('Windows selection must retain the original old-release UTXO case exactly once')
@@ -70,7 +77,7 @@ def original_groups(expected, options):
 
 def original_command(build, output, group, mode, jobs, factor, profile, *, windows=False, root=None):
     name, _, direct = group
-    common = ['--timeout-factor=' + str(factor), '--' + mode + 'transport']
+    common = ['--timeout-factor=' + str(factor), *profile['case_selection']['transport_flags']]
     if profile['use_cli']:
         common.append('--usecli')
     if profile['previous_releases']:
@@ -89,20 +96,23 @@ def original_command(build, output, group, mode, jobs, factor, profile, *, windo
         identity = hashlib.sha256(str(output.resolve()).encode()).hexdigest()[:8]
         scratch = (ROOT if root is None else root) / ('build-ft-' + identity + '-' + mode)
     command = [sys.executable, str(build / 'test/functional/test_runner.py'), '--jobs=' + str(jobs),
-        '--extended', '--resultsfile=' + str(output / (mode + '.csv')),
+        '--resultsfile=' + str(output / (mode + '.csv')),
         '--tmpdirprefix=' + str(scratch), '--combinedlogslen=100', *common]
     if name != 'complete':
         raise ValueError('Unknown original functional group')
     if profile.get('coverage'):
         command.append('--coverage')
-    if windows:
-        command.append('--exclude=' + LEGACY_UTXO)
+    if profile['case_selection']['extended']:
+        command.append('--extended')
+    exclusions = [*profile['case_selection']['excluded'], *([LEGACY_UTXO] if windows else [])]
+    command.extend('--exclude=' + name for name in exclusions)
     return command
 
 
 def native_command(build, jobs, factor, profile, environment, selected_config=None):
     command = [sys.executable, str(ROOT / 'test/pocx/test_runner.py'), '--build-dir', str(build),
-               '--jobs', str(jobs), '--transport', 'matrix', '--timeout-factor', str(factor),
+               '--jobs', str(jobs), '--inherited-selection', json.dumps(profile['case_selection'], separators=(',', ':')),
+               '--timeout-factor', str(factor),
                '--timeout', str(math.ceil(2400 * factor))]
     if selected_config is not None:
         command += ['--config', selected_config]
@@ -121,7 +131,7 @@ def inherited_options(environment):
     extra = shlex.split(environment.get('TEST_RUNNER_EXTRA', ''))
     allowed = {'--v1transport', '--v2transport', '--usecli', '--extended', '--previous-releases', '--coverage'}
     factors = []
-    extended_selection = []
+    exclusions = []
     index = 0
     while index < len(extra):
         argument = extra[index]
@@ -136,9 +146,9 @@ def inherited_options(environment):
             index += 1
             if index == len(extra) or extra[index] != 'feature_dbcrash':
                 raise ValueError('Unreviewed inherited functional exclusion')
-            extended_selection.append('feature_dbcrash.py')
+            exclusions.append('feature_dbcrash.py')
         elif argument == '--exclude=feature_dbcrash':
-            extended_selection.append('feature_dbcrash.py')
+            exclusions.append('feature_dbcrash.py')
         elif argument not in allowed:
             raise ValueError('Unreviewed inherited functional argument: ' + argument)
         index += 1
@@ -155,13 +165,16 @@ def inherited_options(environment):
     wrapper = shlex.split(environment.get('BITCOIN_CMD', ''))
     if wrapper not in ([], ['bitcoin', '-m']):
         raise ValueError('Unreviewed inherited BITCOIN_CMD; expected bitcoin -m')
+    scope = inherited_selection.validate({'extended': '--extended' in extra, 'excluded': exclusions,
+        'transport_flags': list(dict.fromkeys(arg for arg in extra if arg in ('--v1transport', '--v2transport')))})
     return {'use_cli': '--usecli' in extra, 'multiprocess': bool(wrapper),
             'previous_releases': '--previous-releases' in extra or
                                  environment.get('DOWNLOAD_PREVIOUS_RELEASES') == 'true',
-            'network_addresses': False, 'transports': ['v1', 'v2'], 'extended': True,
+            'network_addresses': False, 'transports': [inherited_selection.effective_transport('', scope)],
+            'extended': scope['extended'], 'case_selection': scope,
+            'optional_dependencies': inherited_prerequisites.policy(environment),
             'inherited_arguments': extra, 'timeout_factor': factor,
-            'coverage': '--coverage' in extra,
-            'selection_extensions': extended_selection}
+            'coverage': '--coverage' in extra}
 
 
 def class_guards(path, cls, seen=frozenset(), *, inherited=True):
@@ -344,7 +357,21 @@ def classify(case, status, options, profile, *, native=False, root=ROOT):
         return 'passed', ''
     if status in ('skipped', 'Skipped'):
         reason = disabled_reason(shlex.split(case)[0], options, profile, native=native, root=root)
-        return ('configuration-disabled', reason) if reason else ('unverified', 'Unexpected skip or missing enabled prerequisite')
+        if reason:
+            return 'configuration-disabled', reason
+        name = shlex.split(case)[0]
+        path = root / ('test/pocx/functional' if native else 'test/functional') / name
+        if not path.is_file() and native:
+            path = root / 'test/functional' / name
+        classes = [node for node in ast.parse(path.read_text()).body if isinstance(node, ast.ClassDef)]
+        guards = {guard for cls in classes for guard in class_guards(path, cls, inherited=len(classes) == 1)}
+        policy = profile['optional_dependencies']
+        for module in policy['optional_modules']:
+            if (inherited_prerequisites.MODULE_GUARDS[module] in guards and
+                    not inherited_prerequisites.available(module)):
+                return 'upstream-optional-skip', ('Original ' + policy['recipe'] + ' recipe does not provision ' +
+                    module + '; module is unavailable and the unchanged unconditional skip guard applies')
+        return 'unverified', 'Unexpected skip or missing enabled prerequisite'
     return 'failed', 'Functional process failed or timed out'
 
 
@@ -412,10 +439,16 @@ def run(build, output, options, jobs, factor, *, environment=None, selected_conf
             proof_path = Path(paths[0]) / 'results.json'
             proof = json.loads(proof_path.read_text())
             manifest = verify_current_inputs(proof, build)
-            expected = selected_cases(manifest, upstream_cases(ROOT / 'test/functional/test_runner.py'))
+            expected, case_transports, modes = inherited_selection.native_selection(
+                manifest, upstream_cases(ROOT / 'test/functional/test_runner.py'), profile['case_selection'])
             if (proof['provenance']['selected_cases'] != expected or
-                    proof['provenance']['transport_modes'] != ['v1', 'v2']):
-                raise ValueError('Incomplete native functional matrix')
+                    proof['provenance']['transport_modes'] != modes or
+                    proof['provenance'].get('format_version') != 11 or
+                    proof['provenance'].get('inherited_selection') != profile['case_selection'] or
+                    proof['provenance'].get('case_transports') != case_transports):
+                raise ValueError('Incomplete inherited native functional selection')
+            report['case_transports'] = case_transports
+            report['reviewed_pocx_exclusions'] = manifest.get('excluded_tests', {})
             if (proof['provenance'].get('build_configuration') != selected_config or
                     proof['provenance'].get('timeout_factor', 1) != factor):
                 raise ValueError('Native functional configuration or timing differs from inherited invocation')
@@ -456,7 +489,8 @@ def run(build, output, options, jobs, factor, *, environment=None, selected_conf
                 log.write_text(listing)
                 report['benchmark_discovery'] = {'command': command, 'log_sha256': sha256(log)}
             report['benchmarks'] = benchmarks
-            expected = original_inventory(ROOT / 'test/functional/test_runner.py', benchmarks, options['BUILD_BENCH'] == 'ON')
+            expected = original_inventory(ROOT / 'test/functional/test_runner.py', benchmarks,
+                                          options['BUILD_BENCH'] == 'ON', profile['case_selection'])
             report['expected_cases'] = expected
             runtime_build = build
             signer = build / 'test/functional/rpc_signer.py'
@@ -479,7 +513,7 @@ def run(build, output, options, jobs, factor, *, environment=None, selected_conf
                     for case, status, duration in rows:
                         state, reason = classify(case, status, options, profile)
                         report['cases'].append({'case': case, 'transport': mode,
-                                                'effective_transport': effective_transport(case, mode), 'status': state,
+                                                'effective_transport': inherited_selection.effective_transport(case, profile['case_selection']), 'status': state,
                                                 'reason': reason, 'execution_status': status, 'seconds': float(duration)})
                     # Preserve actual case results before rejecting a failed
                     # aggregate/exit. A red first transport must not erase its
@@ -508,7 +542,7 @@ def run(build, output, options, jobs, factor, *, environment=None, selected_conf
                 for case in report.get('expected_cases', []):
                     if (case, mode) not in recorded:
                         report['cases'].append({'case': case, 'transport': mode,
-                            'effective_transport': effective_transport(case, mode), 'status': 'unverified',
+                            'effective_transport': inherited_selection.effective_transport(case, profile['case_selection']), 'status': 'unverified',
                             'reason': 'No valid execution evidence retained after original runner failure',
                             'execution_status': 'unverified', 'seconds': 0.0})
         report.update(status='failed', error=str(error))

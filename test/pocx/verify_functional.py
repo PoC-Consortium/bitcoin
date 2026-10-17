@@ -27,6 +27,7 @@ import build_configuration
 import process_tree
 import rpc_coverage
 import original_windows
+import inherited_selection
 
 
 def digest(path):
@@ -46,6 +47,8 @@ def verify(report, expected_cases, modes, policy, build_options, require_no_skip
     if not rpc_coverage.verify(report):
         raise ValueError('RPC interface has uncovered commands')
     if report['provenance']['selected_cases'] != expected_cases or report['provenance']['transport_modes'] != modes:
+        raise ValueError('Complete declared case/transport selection required')
+    if {(row['case'], mode) for mode, row in pairs} != {(case['id'], mode) for case in expected_cases for mode in modes}:
         raise ValueError('Complete declared case/transport selection required')
     counts = {mode: Counter() for mode in modes}
     skips = []
@@ -81,6 +84,10 @@ def verify_current_inputs(report, build):
     if provenance['build_options'] != build_options(cache):
         raise ValueError('Functional recorded features differ from the build configuration')
     manifest = json.loads((OWNED / 'manifest.json').read_text())
+    if provenance.get('format_version', 1) >= 11:
+        if provenance.get('inherited_selection_helper_sha256') != digest(ROOT / 'test/pocx/inherited_selection.py'):
+            raise ValueError('Inherited functional selection helper changed')
+        inherited_selection.verify(provenance, manifest, upstream_cases(ROOT / 'test/functional/test_runner.py'))
     sources = framework_sources(ROOT)
     for dest, source in manifest['replacements'].items():
         sources[dest] = OWNED / source

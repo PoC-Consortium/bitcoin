@@ -22,7 +22,7 @@ def run(cmd, **kwargs):
 
 def test_script(root, environment):
     if environment.get('RUN_FUZZ_TESTS') == 'true':
-        return [f'{root}/ci/test/03_test_script.sh']
+        return ['python3', f'{root}/test/pocx/bitcoin_fuzz_ci.py']
     return ['python3', f'{root}/test/pocx/inherited_ci.py']
 
 

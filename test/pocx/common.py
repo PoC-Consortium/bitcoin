@@ -38,7 +38,7 @@ def sha256(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def short_tmpdir(build):
+def short_tmpdir(build, *, create=True):
     """Keep IPC socket names short without putting test state outside the worktree."""
     temp = build / 't'
     if len(os.fsencode(temp)) > 80:
@@ -52,7 +52,8 @@ def short_tmpdir(build):
             temp = ROOT / ('build' + name)
     if len(os.fsencode(temp)) > 80:
         raise ValueError('Source path is too long for IPC tests; use a shorter isolated worktree path')
-    temp.mkdir(parents=True, exist_ok=True)
+    if create:
+        temp.mkdir(parents=True, exist_ok=True)
     return temp
 
 

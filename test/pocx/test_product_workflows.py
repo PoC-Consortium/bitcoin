@@ -3,6 +3,7 @@
 # Distributed under the MIT software license; see COPYING.
 """Product isolation, inherited scope and artifact rejection checks; no runtime claims."""
 import importlib.util
+import hashlib
 import json
 import os
 import shutil
@@ -11,11 +12,14 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from types import SimpleNamespace
 from unittest.mock import patch
 
 import yaml
 
 import ci_product
+import ci_matrix
+import bitcoin_fuzz_ci
 from common import ROOT
 import inherited_ci
 import revision_ci
@@ -40,12 +44,12 @@ class ProductWorkflowsTest(unittest.TestCase):
         for name, product, title in [('ci.yml', 'bitcoin', 'CI'), ('ci-pocx.yml', 'pocx', 'CI-POCX')]:
             document = documents[name]
             self.assertEqual(document['name'], title)
-            self.assertEqual(set(document['on']), {'push', 'pull_request', 'schedule', 'workflow_dispatch'})
-            self.assertEqual(document['on']['schedule'], [{'cron': '19 2 * * 1'}])
+            self.assertEqual(set(document['on']), {'push', 'pull_request'})
+            self.assertEqual(document['on']['push'], {'branches': ['**'], 'tags-ignore': ['**']})
             self.assertEqual(set(document['jobs']), {'product'})
             job = document['jobs']['product']
             self.assertEqual(job['uses'], './.github/workflows/ci-product.yml')
-            self.assertEqual(job['with']['product'], product)
+            self.assertEqual(job['with'], {'product': product})
             self.assertNotIn('needs', job)
             self.assertIn('github.workflow', document['concurrency']['group'])
         shared = documents['ci-product.yml']
@@ -53,41 +57,40 @@ class ProductWorkflowsTest(unittest.TestCase):
         self.assertEqual(shared['env']['CI_PRODUCT'], '${{ inputs.product }}')
         self.assertNotIn('concurrency', shared)
 
-    def test_complete_inherited_platform_matrix_and_cadence_remain(self):
+    def test_complete_inherited_platform_matrix_without_supplements(self):
         jobs = workflow('ci-product.yml')['jobs']
-        matrix = jobs['ci-matrix']['strategy']['matrix']['include']
-        names = ['native_iwyu', 'arm', 'i686_no_ipc', 'native_asan', 'mac_cross',
-                 'mac_cross_intel', 'native_nowallet', 'native_previous_releases',
-                 'native_alpine_musl', 'native_tidy', 'native_tsan', 'native_msan']
-        self.assertEqual([row['file-env'] for row in matrix],
-                         ['./ci/test/00_setup_env_' + name + '.sh' for name in names])
-        self.assertTrue(all(row['timeout-minutes'] == 120 for row in matrix))
-        arm = matrix[1]
-        self.assertEqual((arm['fallback-runner'], arm['warp-runner'], arm['provider']),
-                         ('ubuntu-24.04-arm', 'ubuntu-24.04-arm', 'gha'))
+        self.assertEqual(set(jobs), {'runners', 'test-each-commit', 'macos-native-arm64',
+            'windows-native-dll', 'record-frozen-commit', 'windows-cross', 'windows-native-test',
+            'ci-matrix', 'lint'})
+        reference = json.loads((ROOT / 'test/pocx/upstream-ci-matrix.json').read_text())
+        self.assertEqual(reference['upstream_revision'], '9be056a8a72b624dae9623b2f7bded92c2a21c91')
+        # This digest is computed from the matrices in bitcoin/bitcoin run
+        # 28793907018's workflow at the pinned revision, not our workflow.
+        encoded = json.dumps(reference['matrices'], sort_keys=True, separators=(',', ':')).encode()
+        self.assertEqual(hashlib.sha256(encoded).hexdigest(),
+                         '5281faede86e2a69eb775c39c48dc28e9542d247458149af94e405231df126ff')
+        original = ci_matrix.matrices('bitcoin')
+        native = ci_matrix.matrices('pocx')
+        self.assertEqual({k: len(v['include']) for k, v in original.items()},
+                         {'linux': 14, 'macos': 2, 'windows': 2})
+        self.assertEqual({k: len(v['include']) for k, v in native.items()},
+                         {'linux': 12, 'macos': 1, 'windows': 1})
+        for output, job in ci_matrix.JOBS.items():
+            self.assertEqual(original[output]['include'], reference['matrices'][job]['include'])
+            self.assertEqual(native[output]['include'], [row for row in original[output]['include']
+                if row.get('job-type') != 'fuzz' and row.get('file-env') not in ci_matrix.FUZZ_ENVIRONMENTS])
+            self.assertEqual(jobs[job]['strategy']['matrix'],
+                             '${{ fromJSON(needs.runners.outputs.' + output + ') }}')
+            self.assertIn('runners', jobs[job]['needs'])
         for job, runner in [('macos-native-arm64', 'macos-15'),
                             ('windows-native-dll', 'windows-2025-vs2026'),
                             ('windows-native-test', 'windows-2022')]:
             self.assertEqual(jobs[job]['runs-on'], runner)
-        for job in ('runners', 'ci-matrix', 'macos-native-arm64', 'windows-native-dll',
-                    'windows-cross', 'windows-native-test', 'lint'):
-            self.assertIn("github.event_name != 'schedule'", jobs[job]['if'])
-        for job in ('linux-features', 'optional-functional', 'asan', 'instrumented-sanitizers'):
-            self.assertIn("github.event_name == 'schedule'", jobs[job]['if'])
-            self.assertIn("github.event_name == 'workflow_dispatch'", jobs[job]['if'])
-            self.assertNotIn('bitcoin-core', jobs[job].get('needs', []))
-        core = jobs['linux-core']
-        self.assertNotIn('strategy', core)
-        commands = '\n'.join(step.get('run', '') for step in core['steps'])
-        self.assertIn('--profile \"$CI_PRODUCT-unit\"', commands)
-        self.assertIn('--profile \"$CI_PRODUCT-functional\"', commands)
-        self.assertEqual(commands.count('--build-dir \"$CI_BUILD\"'), 2)
-        self.assertIn('--skip-build', commands)
-        self.assertEqual(jobs['linux-features']['strategy']['matrix']['profile'],
-                         ['qt', 'wallet-disabled', 'ipc-disabled', 'kernel'])
-        self.assertEqual(jobs['instrumented-sanitizers']['strategy']['matrix']['sanitizer'], ['tsan', 'msan'])
-        self.assertNotIn('pocx-core', jobs)
-        self.assertIn('Skipped jobs are not passing execution evidence', str(jobs['scope-summary']))
+        self.assertEqual(jobs['windows-cross']['strategy']['matrix']['crt'], ['msvcrt', 'ucrt'])
+        self.assertEqual(jobs['windows-native-test']['strategy']['matrix']['crt'], ['msvcrt', 'ucrt'])
+        guards = '\n'.join(step.get('run', '') for step in jobs['lint']['steps'])
+        self.assertIn('check_drift.py', guards)
+        self.assertIn('ci/lint.py', guards)
 
     def test_product_selection_survives_container_and_privilege_boundaries(self):
         spec = importlib.util.spec_from_file_location('product_container', ROOT / 'ci/test/02_run_container.py')
@@ -96,13 +99,77 @@ class ProductWorkflowsTest(unittest.TestCase):
         tree = (ROOT / 'ci/test/02_run_container.py').read_text()
         self.assertIn('"CI_PRODUCT",', tree)
         self.assertEqual(module.test_script('/root', {}), ['python3', '/root/test/pocx/inherited_ci.py'])
-        jobs = workflow('ci-product.yml')['jobs']
-        for name in ('test-each-commit', 'optional-functional', 'asan', 'instrumented-sanitizers'):
-            commands = '\n'.join(step.get('run', '') for step in jobs[name]['steps'])
-            self.assertIn('sudo env CI_PRODUCT=', commands)
-        # Historical executors do not understand the new environment selector;
-        # their existing explicit phase option must also be passed.
-        self.assertIn('--phase-consensus', str(jobs['test-each-commit']['steps']))
+        self.assertEqual(module.test_script('/root', {'RUN_FUZZ_TESTS': 'true'}),
+                         ['python3', '/root/test/pocx/bitcoin_fuzz_ci.py'])
+        commands = '\n'.join(step.get('run', '') for step in
+                             workflow('ci-product.yml')['jobs']['test-each-commit']['steps'])
+        self.assertIn('env CI_PRODUCT=', commands)
+        self.assertIn('--phase-consensus', commands)
+
+    def test_matrix_cli_selects_only_the_requested_product_and_rejects_unknown(self):
+        for product in ('bitcoin', 'pocx', 'bad'):
+            run = subprocess.run([sys.executable, '-B', str(ROOT / 'test/pocx/ci_matrix.py')],
+                                 env=dict(os.environ, CI_PRODUCT=product), capture_output=True, text=True)
+            if product == 'bad':
+                self.assertNotEqual(run.returncode, 0)
+                self.assertEqual(run.stdout, '')
+            else:
+                self.assertEqual(run.returncode, 0, run.stderr)
+                self.assertEqual(dict((key, json.loads(value)) for key, value in
+                    (line.split('=', 1) for line in run.stdout.splitlines())), ci_matrix.matrices(product))
+
+    def test_original_fuzz_flags_and_windows_recipe_preserved_with_off_selection(self):
+        flags = '-DBUILD_FOR_FUZZING=ON -DSANITIZERS=fuzzer,address -DENABLE_POCX=ON'
+        result = bitcoin_fuzz_ci.environment_for_fuzz({'CI_PRODUCT': 'bitcoin', 'BITCOIN_CONFIG': flags})
+        self.assertEqual(result['BITCOIN_CONFIG'], flags + ' -DENABLE_POCX=OFF')
+        for product in (None, 'pocx', '', 'other'):
+            with self.assertRaises(ValueError):
+                bitcoin_fuzz_ci.environment_for_fuzz({'CI_PRODUCT': product})
+        for enabled in ('ON', 'OFF'):
+            with tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                (root / 'build').mkdir()
+                (root / 'build/CMakeCache.txt').write_text('ENABLE_POCX:BOOL=' + enabled + '\n')
+                calls = []
+                driver = SimpleNamespace(GENERATE_OPTIONS={'fuzz': ['-DBUILD_FOR_FUZZING=ON']})
+                for name in ('generate', 'build', 'check_manifests', 'prepare_tests', 'run_tests'):
+                    setattr(driver, name, lambda kind, name=name: calls.append((name, kind)))
+                if enabled == 'ON':
+                    with self.assertRaises(ValueError):
+                        bitcoin_fuzz_ci.run_windows(root, load=lambda: driver)
+                    self.assertEqual(calls, [('generate', 'fuzz')])
+                else:
+                    bitcoin_fuzz_ci.run_windows(root, load=lambda: driver)
+                    self.assertEqual(calls, [(name, 'fuzz') for name in
+                        ('generate', 'build', 'check_manifests', 'prepare_tests', 'run_tests')])
+                self.assertEqual(driver.GENERATE_OPTIONS['fuzz'], ['-DBUILD_FOR_FUZZING=ON', '-DENABLE_POCX=OFF'])
+
+    def test_matrix_rejects_an_added_profile_before_creating_jobs(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            path = root / 'test/pocx/upstream-ci-matrix.json'
+            path.parent.mkdir(parents=True)
+            reference = json.loads((ROOT / 'test/pocx/upstream-ci-matrix.json').read_text())
+            reference['matrices']['ci-matrix']['include'].append({'name': 'extra profile'})
+            path.write_text(json.dumps(reference))
+            for product in ('bitcoin', 'pocx'):
+                with self.assertRaisesRegex(ValueError, 'upstream scope review'):
+                    ci_matrix.matrices(product, root)
+
+    def test_original_recipe_change_is_rejected_before_creating_platform_jobs(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            reference = json.loads((ROOT / 'test/pocx/upstream-ci-matrix.json').read_text())
+            for name in ['test/pocx/upstream-ci-matrix.json', *reference['recipe_sha256']]:
+                path = root / name
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_bytes((ROOT / name).read_bytes())
+            self.assertEqual(ci_matrix.matrices('bitcoin', root), ci_matrix.matrices('bitcoin'))
+            path = root / 'ci/test/00_setup_env_arm.sh'
+            path.write_text(path.read_text() + '\nexport RUN_FUNCTIONAL_TESTS=false\n')
+            for product in ('bitcoin', 'pocx'):
+                with self.assertRaisesRegex(ValueError, 'Original CI recipe changed'):
+                    ci_matrix.matrices(product, root)
 
     def test_posix_windows_and_revision_plans_select_exactly_one_product(self):
         environment = {'BASE_ROOT_DIR': str(ROOT), 'BASE_SCRATCH_DIR': str(ROOT / 'build-product-fixture'),
@@ -117,6 +184,9 @@ class ProductWorkflowsTest(unittest.TestCase):
             self.assertIn('-DENABLE_POCX=' + enabled, flags)
             self.assertIn('-DENABLE_WALLET=OFF', flags)
             self.assertIn('-DSANITIZERS=thread', flags)
+            if product == 'bitcoin':
+                self.assertNotIn('-DBUILD_FUZZ_BINARY=OFF', flags)
+                self.assertNotIn('-DBUILD_FOR_FUZZING=OFF', flags)
         for invalid in ('', 'OFF', 'ON', 'both', 'pocx '):
             for planner in (lambda env: inherited_ci.plan(env),
                             lambda env: windows_ci.plan(2, env), lambda env: revision_ci.plan(2, env)):

@@ -10,10 +10,6 @@ on:
         description: 'bitcoin (ENABLE_POCX=OFF) or pocx (ENABLE_POCX=ON)'
         required: true
         type: string
-      baseline_only:
-        description: 'Manual original Bitcoin unit diagnostic only'
-        default: false
-        type: boolean
 
 permissions:
   contents: read
@@ -30,40 +26,14 @@ defaults:
     shell: bash
 
 jobs:
-  bitcoin-baseline:
-    name: 'Original Bitcoin unit baseline only'
-    if: github.event_name == 'workflow_dispatch' && inputs.baseline_only && inputs.product == 'bitcoin'
-    runs-on: ubuntu-24.04
-    timeout-minutes: 90
-    permissions:
-      contents: read
-    steps:
-      - uses: actions/checkout@v6
-      - name: Install the standard unit profile prerequisites
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y build-essential cmake ninja-build pkgconf libevent-dev libboost-dev libsqlite3-dev capnproto libcapnp-dev python3-venv
-          python3 -m venv .ci-venv
-          .ci-venv/bin/pip install pycapnp==2.2.4
-      - name: Build and verify the original Bitcoin unit profile
-        run: .ci-venv/bin/python test/pocx/ci.py --profile bitcoin-unit --jobs 2
-      - name: Retain baseline reports and logs
-        if: always()
-        uses: actions/upload-artifact@v7
-        with:
-          name: hosted-bitcoin-unit-baseline
-          path: |
-            build-ci-bitcoin-unit/ci-results-*/
-            build-ci-bitcoin-unit/bitcoin-unit-*/
-            build-ci-bitcoin-unit/Testing/
-          if-no-files-found: error
-
   runners:
-    if: ${{ (!inputs.baseline_only && github.event_name != 'schedule') }}
     name: '[meta] determine runners'
     runs-on: ubuntu-slim
     outputs:
       provider: ${{ steps.runners.outputs.provider }}
+      linux: ${{ steps.matrix.outputs.linux }}
+      macos: ${{ steps.matrix.outputs.macos }}
+      windows: ${{ steps.matrix.outputs.windows }}
     steps:
       - &ANNOTATION_PR_NUMBER
         name: Annotate with pull request number
@@ -84,6 +54,12 @@ jobs:
             echo "provider=gha" >> "$GITHUB_OUTPUT"
             echo "::notice title=Runner Selection::Using GitHub-hosted runners"
           fi
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.ref || '' }}
+      - id: matrix
+        name: Select inherited product matrices
+        run: python3 test/pocx/ci_matrix.py >> "$GITHUB_OUTPUT"
 
   test-each-commit:
     name: 'test ancestor commits'
@@ -91,7 +67,7 @@ jobs:
     runs-on: ${{ needs.runners.outputs.provider == 'warp' && 'warp-ubuntu-latest-x64-8x' || 'ubuntu-latest' }}
     env:
       TEST_RUNNER_PORT_MIN: "14000"  # Use a larger port range to avoid colliding with other CI services.
-    if: ${{ (!inputs.baseline_only && github.event_name != 'schedule') && (github.event_name == 'pull_request' && github.event.pull_request.commits != 1) }}
+    if: ${{ (github.event_name == 'pull_request' && github.event.pull_request.commits != 1) }}
     timeout-minutes: 360  # Use maximum time, see https://docs.github.com/en/actions/writing-workflows/workflow-syntax-for-github-actions#jobsjob_idtimeout-minutes.
     steps:
       - name: Determine fetch depth
@@ -146,14 +122,14 @@ jobs:
           git config user.name "CI"
       - run: |
           sudo apt-get update
-          sudo apt-get install clang mold ccache build-essential cmake ninja-build pkgconf python3-zmq python3-venv python3-bpfcc bpfcc-tools "linux-headers-$(uname -r)" libevent-dev libboost-dev libsqlite3-dev systemtap-sdt-dev libzmq3-dev qt6-base-dev qt6-tools-dev qt6-l10n-tools libqrencode-dev capnproto libcapnp-dev -y
+          sudo apt-get install clang mold ccache build-essential cmake ninja-build pkgconf python3-zmq python3-venv libevent-dev libboost-dev libsqlite3-dev systemtap-sdt-dev libzmq3-dev qt6-base-dev qt6-tools-dev qt6-l10n-tools libqrencode-dev capnproto libcapnp-dev -y
           python3 -m venv --system-site-packages .ci-venv
           .ci-venv/bin/pip install pycapnp==2.2.4
       - name: Compile and run tests
         run: |
           # Run tests on commits after the last merge commit and before the PR head commit
-          # Original USDT cases require root and the matching BPF prerequisites.
-          git rebase --exec "git merge --no-commit origin/${GITHUB_BASE_REF} && sudo env CI_PRODUCT=\"${CI_PRODUCT}\" GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=safe.directory GIT_CONFIG_VALUE_0=\"${GITHUB_WORKSPACE}\" .ci-venv/bin/python ./test/pocx/revision_ci.py --phase-consensus \"${CI_PRODUCT}\" && git reset --hard" ${{ env.TEST_BASE }}
+          # Preserve upstream optional tracing guards in the ancestor job.
+          git rebase --exec "git merge --no-commit origin/${GITHUB_BASE_REF} && env CI_PRODUCT=\"${CI_PRODUCT}\" GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=safe.directory GIT_CONFIG_VALUE_0=\"${GITHUB_WORKSPACE}\" .ci-venv/bin/python ./test/pocx/revision_ci.py --phase-consensus \"${CI_PRODUCT}\" && git reset --hard" ${{ env.TEST_BASE }}
 
       - name: Upload selected product test evidence
         if: always()
@@ -181,6 +157,7 @@ jobs:
           if-no-files-found: warn
 
   macos-native-arm64:
+    needs: runners
     name: ${{ matrix.job-name }}
     # Use any image to support the xcode-select below, but hardcode version to avoid silent upgrades (and breaks).
     # See: https://github.com/actions/runner-images#available-images.
@@ -191,18 +168,13 @@ jobs:
     # one for the branch push and one for the pull request.
     # This can be avoided by setting SKIP_BRANCH_PUSH=true as a custom env variable
     # in Github repository settings.
-    if: ${{ (!inputs.baseline_only && github.event_name != 'schedule') && (vars.SKIP_BRANCH_PUSH != 'true' || github.event_name != 'push') }}
+    if: ${{ (vars.SKIP_BRANCH_PUSH != 'true' || github.event_name == 'pull_request') }}
 
     timeout-minutes: 120
 
     strategy:
       fail-fast: false
-      matrix:
-        job-type: [standard]
-        include:
-          - job-type: standard
-            file-env: './ci/test/00_setup_env_mac_native.sh'
-            job-name: 'macOS native'
+      matrix: ${{ fromJSON(needs.runners.outputs.macos) }}
 
     env:
       DANGER_RUN_CI_ON_HOST: 1
@@ -260,7 +232,7 @@ jobs:
           FILE_ENV: ${{ matrix.file-env }}
 
       - name: Upload selected product test evidence
-        if: always()
+        if: always() && matrix.job-type == 'standard'
         uses: actions/upload-artifact@v7
         with:
           name: inherited-tests-${{ inputs.product }}-${{ github.job }}-${{ strategy.job-index }}
@@ -276,10 +248,11 @@ jobs:
           key: ${{ inputs.product }}-${{ github.job }}-${{ matrix.job-type }}-ccache-${{ github.run_id }}
 
   windows-native-dll:
+    needs: runners
     name: ${{ matrix.job-name }}
     runs-on: windows-2025-vs2026
 
-    if: ${{ (!inputs.baseline_only && github.event_name != 'schedule') && (vars.SKIP_BRANCH_PUSH != 'true' || github.event_name != 'push') }}
+    if: ${{ (vars.SKIP_BRANCH_PUSH != 'true' || github.event_name == 'pull_request') }}
 
     env:
       PYTHONUTF8: 1
@@ -291,11 +264,7 @@ jobs:
 
     strategy:
       fail-fast: false
-      matrix:
-        job-type: [standard]
-        include:
-          - job-type: standard
-            job-name: 'Windows native, VS'
+      matrix: ${{ fromJSON(needs.runners.outputs.windows) }}
 
     steps:
       - *ANNOTATION_PR_NUMBER
@@ -343,9 +312,14 @@ jobs:
           key: ${{ inputs.product }}-${{ github.job }}-vcpkg-binary-${{ hashFiles('cmake_version', 'msbuild_version', 'toolset_version', 'vcpkg.json') }}
 
       - name: Verify selected product on native Windows
+        if: matrix.job-type == 'standard'
         env:
           TEST_RUNNER_EXTRA: "--timeout-factor=${{ env.TEST_RUNNER_TIMEOUT_FACTOR }} ${{ case(github.event_name == 'pull_request', '', '--extended') }}"
         run: py -3 test/pocx/windows_ci.py
+
+      - name: Run original Bitcoin native fuzz configuration
+        if: matrix.job-type == 'fuzz'
+        run: py -3 test/pocx/bitcoin_fuzz_ci.py --windows
 
       - name: Save vcpkg binary cache
         uses: actions/cache/save@v5
@@ -363,7 +337,7 @@ jobs:
           key: ${{ inputs.product }}-${{ github.job }}-vcpkg-tools-${{ github.run_id }}
 
       - name: Retain selected product native Windows test evidence
-        if: always()
+        if: always() && matrix.job-type == 'standard'
         uses: actions/upload-artifact@v7
         with:
           name: native-windows-${{ inputs.product }}-${{ matrix.job-type }}-${{ github.run_id }}
@@ -371,7 +345,6 @@ jobs:
           if-no-files-found: warn
 
   record-frozen-commit:
-    if: ${{ (!inputs.baseline_only && github.event_name != 'schedule') }}
     # Record frozen commit, so that the native tests on cross-builds can run on
     # the exact same commit id of the build.
     name: '[meta] record frozen commit'
@@ -389,7 +362,7 @@ jobs:
     name: 'Windows-cross to x86_64, ${{ matrix.crt }}'
     needs: [runners, record-frozen-commit]
     runs-on: ${{ needs.runners.outputs.provider == 'warp' && 'warp-ubuntu-latest-x64-4x' || 'ubuntu-latest' }}
-    if: ${{ (!inputs.baseline_only && github.event_name != 'schedule') && (vars.SKIP_BRANCH_PUSH != 'true' || github.event_name != 'push') }}
+    if: ${{ (vars.SKIP_BRANCH_PUSH != 'true' || github.event_name == 'pull_request') }}
 
     strategy:
       fail-fast: false
@@ -436,7 +409,7 @@ jobs:
         run: ./ci/test_run_all.sh
 
       - name: Upload selected product test evidence
-        if: always()
+        if: always() && env.RUN_FUZZ_TESTS != 'true'
         uses: actions/upload-artifact@v7
         with:
           name: inherited-tests-${{ inputs.product }}-${{ github.job }}-${{ strategy.job-index }}
@@ -458,7 +431,6 @@ jobs:
           if-no-files-found: error
 
   windows-native-test:
-    if: ${{ (!inputs.baseline_only && github.event_name != 'schedule') }}
     name: 'Windows, ${{ matrix.crt }}, test cross-built'
     runs-on: windows-2022
     needs: [windows-cross, record-frozen-commit]
@@ -531,7 +503,7 @@ jobs:
     name: ${{ matrix.name }}
     needs: runners
     runs-on: ${{ needs.runners.outputs.provider == 'warp' && matrix.warp-runner || matrix.fallback-runner }}
-    if: ${{ (!inputs.baseline_only && github.event_name != 'schedule') && (vars.SKIP_BRANCH_PUSH != 'true' || github.event_name != 'push') }}
+    if: ${{ (vars.SKIP_BRANCH_PUSH != 'true' || github.event_name == 'pull_request') }}
     timeout-minutes: ${{ matrix.timeout-minutes }}
 
     env:
@@ -540,80 +512,7 @@ jobs:
 
     strategy:
       fail-fast: false
-      matrix:
-        include:
-          - name: 'iwyu'
-            warp-runner: 'warp-ubuntu-latest-x64-8x'
-            fallback-runner: 'ubuntu-latest'
-            timeout-minutes: 120
-            file-env: './ci/test/00_setup_env_native_iwyu.sh'
-
-          - name: '32 bit ARM'
-            warp-runner: 'ubuntu-24.04-arm' # Warp's Arm runners don't support 32-bit mode currently
-            fallback-runner: 'ubuntu-24.04-arm'
-            timeout-minutes: 120
-            file-env: './ci/test/00_setup_env_arm.sh'
-            provider: 'gha'
-
-          - name: 'i686, no IPC'
-            warp-runner: 'warp-ubuntu-latest-x64-8x'
-            fallback-runner: 'ubuntu-latest'
-            timeout-minutes: 120
-            file-env: './ci/test/00_setup_env_i686_no_ipc.sh'
-
-          - name: 'ASan + LSan + UBSan + integer'
-            warp-runner: 'warp-ubuntu-2404-x64-8x' # has to match container in ci/test/00_setup_env_native_asan.sh for tracing tools
-            fallback-runner: 'ubuntu-24.04'
-            timeout-minutes: 120
-            file-env: './ci/test/00_setup_env_native_asan.sh'
-
-          - name: 'macOS-cross to arm64'
-            warp-runner: 'warp-ubuntu-latest-x64-4x'
-            fallback-runner: 'ubuntu-latest'
-            timeout-minutes: 120
-            file-env: './ci/test/00_setup_env_mac_cross.sh'
-
-          - name: 'macOS-cross to x86_64'
-            warp-runner: 'warp-ubuntu-latest-x64-4x'
-            fallback-runner: 'ubuntu-latest'
-            timeout-minutes: 120
-            file-env: './ci/test/00_setup_env_mac_cross_intel.sh'
-
-          - name: 'No wallet'
-            warp-runner: 'warp-ubuntu-latest-x64-4x'
-            fallback-runner: 'ubuntu-latest'
-            timeout-minutes: 120
-            file-env: './ci/test/00_setup_env_native_nowallet.sh'
-
-          - name: 'previous releases'
-            warp-runner: 'warp-ubuntu-latest-x64-8x'
-            fallback-runner: 'ubuntu-latest'
-            timeout-minutes: 120
-            file-env: './ci/test/00_setup_env_native_previous_releases.sh'
-
-          - name: 'Alpine (musl)'
-            warp-runner: 'warp-ubuntu-latest-x64-8x'
-            fallback-runner: 'ubuntu-latest'
-            timeout-minutes: 120
-            file-env: './ci/test/00_setup_env_native_alpine_musl.sh'
-
-          - name: 'tidy'
-            warp-runner: 'warp-ubuntu-latest-x64-8x'
-            fallback-runner: 'ubuntu-latest'
-            timeout-minutes: 120
-            file-env: './ci/test/00_setup_env_native_tidy.sh'
-
-          - name: 'TSan'
-            warp-runner: 'warp-ubuntu-latest-x64-8x'
-            fallback-runner: 'ubuntu-latest'
-            timeout-minutes: 120
-            file-env: './ci/test/00_setup_env_native_tsan.sh'
-
-          - name: 'MSan'
-            warp-runner: 'warp-ubuntu-latest-x64-16x'
-            fallback-runner: 'ubuntu-latest'
-            timeout-minutes: 120
-            file-env: './ci/test/00_setup_env_native_msan.sh'
+      matrix: ${{ fromJSON(needs.runners.outputs.linux) }}
 
     steps:
       - *ANNOTATION_PR_NUMBER
@@ -646,14 +545,14 @@ jobs:
 
       - name: Provision matching headers for enabled Linux USDT tests
         if: >-
-          ${{ contains(fromJSON('["ci_native_asan", "ci_native_tsan", "ci_native_msan", "ci_native_nowallet", "ci_native_previous_releases", "ci_native_alpine_musl", "ci_i686_no_multiprocess", "ci_arm_linux"]'), env.CONTAINER_NAME) }}
+          ${{ env.CONTAINER_NAME == 'ci_native_asan' }}
         run: |
           sudo apt-get update
           sudo apt-get install --no-install-recommends -y "linux-headers-$(uname -r)"
           test -d "/lib/modules/$(uname -r)/build"
 
       - name: Set mmap_rnd_bits
-        if: ${{ env.CONTAINER_NAME == 'ci_native_tsan' || env.CONTAINER_NAME == 'ci_native_msan' }}
+        if: ${{ env.CONTAINER_NAME == 'ci_native_tsan' || env.CONTAINER_NAME == 'ci_native_msan' || env.CONTAINER_NAME == 'ci_native_fuzz_msan' }}
         # Prevents crashes due to high ASLR entropy
         run: sudo sysctl -w vm.mmap_rnd_bits=28
 
@@ -661,7 +560,7 @@ jobs:
         run: ./ci/test_run_all.sh
 
       - name: Upload selected product test evidence
-        if: always() && env.RUN_FUZZ_TESTS != 'true'
+        if: always() && !contains(matrix.file-env, 'fuzz')
         uses: actions/upload-artifact@v7
         with:
           name: inherited-tests-${{ inputs.product }}-${{ github.job }}-${{ strategy.job-index }}
@@ -677,7 +576,7 @@ jobs:
     name: 'lint'
     needs: runners
     runs-on: ${{ needs.runners.outputs.provider == 'warp' && 'warp-ubuntu-latest-x64-2x' || 'ubuntu-latest' }}
-    if: ${{ (!inputs.baseline_only && github.event_name != 'schedule') && (vars.SKIP_BRANCH_PUSH != 'true' || github.event_name != 'push') }}
+    if: ${{ (vars.SKIP_BRANCH_PUSH != 'true' || github.event_name == 'pull_request') }}
     timeout-minutes: 20
     env:
       CONTAINER_NAME: "bitcoin-linter"
@@ -698,322 +597,5 @@ jobs:
       - name: CI script
         run: |
           git worktree add ../lint-worktree HEAD
+          python3 -B ../lint-worktree/test/pocx/check_drift.py
           ../lint-worktree/ci/lint.py
-
-  source-review:
-    if: ${{ !inputs.baseline_only }}
-    runs-on: ubuntu-24.04
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@v6
-      - name: Install workflow parser
-        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y python3-yaml
-      - name: Check workflow organization and product isolation
-        run: python3 -B test/pocx/test_product_workflows.py
-      - name: Check reviewed source and adaptation drift
-        run: python3 -B test/pocx/ci.py --profile drift
-      - uses: actions/upload-artifact@v7
-        if: always()
-        with:
-          name: source-review-${{ inputs.product }}
-          path: build-ci-drift/ci-results-*/
-
-
-  linux-core:
-    needs: source-review
-    if: ${{ !inputs.baseline_only }}
-    runs-on: ubuntu-24.04
-    timeout-minutes: 360
-    env:
-      CI_BUILD: build-ci-${{ inputs.product }}-unit
-    steps:
-      - uses: actions/checkout@v6
-      - name: Install Linux build and IPC test prerequisites
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y build-essential cmake ninja-build pkgconf libevent-dev libboost-dev libsqlite3-dev capnproto libcapnp-dev python3-venv
-          python3 -m venv .ci-venv
-          .ci-venv/bin/pip install pycapnp==2.2.4
-      - name: Build once and run all unit and auxiliary cases
-        run: .ci-venv/bin/python test/pocx/ci.py --profile "$CI_PRODUCT-unit" --build-dir "$CI_BUILD" --jobs 4
-      - name: Run functional selection against the same configuration
-        if: ${{ !cancelled() }}
-        run: .ci-venv/bin/python test/pocx/ci.py --profile "$CI_PRODUCT-functional" --build-dir "$CI_BUILD" --skip-build --jobs 4
-      - name: Retain test results and failure logs
-        uses: actions/upload-artifact@v7
-        if: always()
-        with:
-          name: ${{ inputs.product }}-linux-core-results
-          path: |
-            ${{ env.CI_BUILD }}/ci-results-*/
-            ${{ env.CI_BUILD }}/pocx-unit-*/
-            ${{ env.CI_BUILD }}/pocx-results-*/
-            ${{ env.CI_BUILD }}/bitcoin-unit-*/
-            ${{ env.CI_BUILD }}/Testing/
-
-
-  linux-features:
-    needs: source-review
-    if: ${{ !inputs.baseline_only && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') }}
-    runs-on: ubuntu-24.04
-    timeout-minutes: 180
-    strategy:
-      fail-fast: false
-      matrix:
-        profile: [qt, wallet-disabled, ipc-disabled, kernel]
-    env:
-      CI_PROFILE: ${{ inputs.product }}-${{ matrix.profile }}
-    steps:
-      - uses: actions/checkout@v6
-      - name: Install Linux and Qt prerequisites
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y build-essential cmake ninja-build pkgconf libevent-dev libboost-dev libsqlite3-dev capnproto libcapnp-dev python3-venv qt6-base-dev qt6-tools-dev qt6-l10n-tools libqrencode-dev
-          python3 -m venv .ci-venv
-          .ci-venv/bin/pip install pycapnp==2.2.4
-      - run: .ci-venv/bin/python test/pocx/ci.py --profile '${{ env.CI_PROFILE }}' --jobs 4
-      - uses: actions/upload-artifact@v7
-        if: always()
-        with:
-          name: ${{ env.CI_PROFILE }}-results
-          path: |
-            build-ci-${{ env.CI_PROFILE }}/ci-results-*/
-            build-ci-${{ env.CI_PROFILE }}/pocx-unit-*/
-            build-ci-${{ env.CI_PROFILE }}/bitcoin-unit-*/
-            build-ci-${{ env.CI_PROFILE }}/Testing/
-            build-ci-${{ env.CI_PROFILE }}/src/qt/test/Testing/
-
-
-  optional-functional:
-    needs: source-review
-    if: ${{ !inputs.baseline_only && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') }}
-    runs-on: ubuntu-24.04
-    timeout-minutes: 360
-    steps:
-      - uses: actions/checkout@v6
-      - name: Install complete optional functional prerequisites
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y build-essential cmake ninja-build pkgconf libevent-dev libboost-dev libsqlite3-dev capnproto libcapnp-dev libzmq3-dev systemtap-sdt-dev python3-venv python3-zmq python3-bpfcc bpfcc-tools iproute2 "linux-headers-$(uname -r)"
-          python3 -m venv --system-site-packages .ci-venv
-          .ci-venv/bin/pip install pycapnp==2.2.4
-      - name: Download fresh checksum-verified previous releases
-        run: .ci-venv/bin/python test/get_previous_releases.py --remove-dir --target-dir .ci-previous-releases v0.14.3 v0.20.1 v0.21.0 v22.0 v23.0 v24.0.1 v25.0 v28.2
-      - name: Build selected optional configuration
-        run: |
-          consensus="$CI_PRODUCT"
-          case "$consensus" in
-            bitcoin) pocx=OFF ;;
-            pocx) pocx=ON ;;
-            *) exit 1 ;;
-          esac
-          cmake -S . -B "build-ci-$consensus-functional-optional" -G Ninja \
-            -DENABLE_POCX="$pocx" -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTS=ON \
-            -DBUILD_GUI=OFF -DBUILD_BENCH=ON -DBUILD_FUZZ_BINARY=OFF -DBUILD_FOR_FUZZING=OFF \
-            -DENABLE_WALLET=ON -DENABLE_IPC=ON -DBUILD_KERNEL_LIB=ON -DBUILD_UTIL_CHAINSTATE=ON \
-            -DWITH_ZMQ=ON -DWITH_USDT=ON -DSANITIZERS= \
-            -DBUILD_DAEMON=ON -DBUILD_CLI=ON -DBUILD_BITCOIN_BIN=ON \
-            -DBUILD_TX=ON -DBUILD_UTIL=ON -DBUILD_WALLET_TOOL=ON
-          cmake --build "build-ci-$consensus-functional-optional" -j 4
-      - name: Run selected product in an isolated network
-        # Original USDT cases explicitly require root for BPF. Only this
-        # scheduled/manual hosted job elevates, after installing/downloading
-        # dependencies. Special public-address fixtures stay in a fresh netns.
-        run: |
-          sudo env CI_PRODUCT="$CI_PRODUCT" GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=safe.directory GIT_CONFIG_VALUE_0="$GITHUB_WORKSPACE" \
-            unshare --net /bin/bash -euo pipefail <<'SH'
-          ip link set lo up
-          # rpc_bind.py requires a non-loopback address distinct from 1.1.1.1.
-          ip link add pocx-private type dummy
-          ip address add 192.168.254.1/32 dev pocx-private
-          ip link set pocx-private up
-          ip link add pocx-test type dummy
-          ip address add 1.1.1.1/32 dev pocx-test
-          ip address add 2.2.2.2/32 dev pocx-test
-          ip link set pocx-test up
-          .ci-venv/bin/python test/pocx/ci.py --profile "$CI_PRODUCT-functional-optional" --skip-build --jobs 4 --previous-releases-dir .ci-previous-releases
-          SH
-      - uses: actions/upload-artifact@v7
-        if: always()
-        with:
-          name: ${{ inputs.product }}-optional-functional-results
-          path: |
-            build-ci-*-functional-optional/ci-results-*/
-            build-ci-*-functional-optional/pocx-results-*/
-
-
-  asan:
-    needs: source-review
-    if: ${{ !inputs.baseline_only && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') }}
-    runs-on: ubuntu-24.04
-    timeout-minutes: 360
-    steps:
-      - uses: actions/checkout@v6
-      - name: Install inherited Clang 22 sanitizer toolchain and all test prerequisites
-        run: |
-          curl --fail --show-error --location https://apt.llvm.org/llvm-snapshot.gpg.key -o .ci-llvm-key.asc
-          sudo install -m 644 .ci-llvm-key.asc /usr/share/keyrings/pocx-llvm.asc
-          echo 'deb [signed-by=/usr/share/keyrings/pocx-llvm.asc] https://apt.llvm.org/noble/ llvm-toolchain-noble-22 main' | sudo tee /etc/apt/sources.list.d/pocx-llvm-22.list
-          sudo apt-get update
-          sudo apt-get install -y build-essential cmake ninja-build pkgconf clang-22 llvm-22 libclang-rt-22-dev mold libevent-dev libboost-dev libsqlite3-dev capnproto libcapnp-dev libzmq3-dev systemtap-sdt-dev python3-venv python3-zmq python3-bpfcc bpfcc-tools iproute2 qt6-base-dev qt6-tools-dev qt6-l10n-tools libqrencode-dev "linux-headers-$(uname -r)"
-          python3 -m venv --system-site-packages .ci-venv
-          .ci-venv/bin/pip install pycapnp==2.2.4
-      - name: Download fresh checksum-verified previous releases
-        run: .ci-venv/bin/python test/get_previous_releases.py --remove-dir --target-dir .ci-previous-releases v0.14.3 v0.20.1 v0.21.0 v22.0 v23.0 v24.0.1 v25.0 v28.2
-      - name: Build selected complete sanitizer configuration
-        run: |
-          .ci-venv/bin/python - <<'PY'
-          import os
-          from pathlib import Path
-          import subprocess
-          import sys
-          sys.path.insert(0, 'test/pocx')
-          from ci import options
-          from sanitizer_ci import tools
-          tools()
-          for profile in (os.environ['CI_PRODUCT'] + '-asan',):
-              build = Path('build-ci-' + profile)
-              command = ['cmake', '-S', '.', '-B', str(build), '-G', 'Ninja', '-Werror=dev']
-              command += [f'-D{key}={value}' for key, value in options(profile).items()]
-              subprocess.run(command, check=True)
-              subprocess.run(['cmake', '--build', str(build), '-j', '4'], check=True)
-          PY
-      - name: Run all selected-product sanitized frameworks
-        # Root is required by unchanged BPF cases; fixture addresses stay in
-        # this fresh network namespace. Sanitizer errors remain fatal.
-        run: |
-          sudo env CI_PRODUCT="$CI_PRODUCT" GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=safe.directory GIT_CONFIG_VALUE_0="$GITHUB_WORKSPACE" \
-            unshare --net /bin/bash -euo pipefail <<'SH'
-          ip link set lo up
-          # rpc_bind.py requires a non-loopback address distinct from 1.1.1.1.
-          ip link add pocx-private type dummy
-          ip address add 192.168.254.1/32 dev pocx-private
-          ip link set pocx-private up
-          ip link add pocx-test type dummy
-          ip address add 1.1.1.1/32 dev pocx-test
-          ip address add 2.2.2.2/32 dev pocx-test
-          ip link set pocx-test up
-          .ci-venv/bin/python test/pocx/ci.py --profile "$CI_PRODUCT-asan" --skip-build --jobs 4 --previous-releases-dir .ci-previous-releases
-          SH
-      - uses: actions/upload-artifact@v7
-        if: always()
-        with:
-          name: ${{ inputs.product }}-asan-results
-          path: |
-            build-ci-*-asan/ci-results-*/
-            build-ci-*-asan/bitcoin-unit-*/
-            build-ci-*-asan/pocx-unit-*/
-            build-ci-*-asan/pocx-results-*/
-            build-ci-*-asan/Testing/
-
-
-  instrumented-sanitizers:
-    needs: source-review
-    if: ${{ !inputs.baseline_only && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') }}
-    runs-on: ubuntu-24.04
-    timeout-minutes: 360
-    strategy:
-      fail-fast: false
-      matrix:
-        sanitizer: [tsan, msan]
-    steps:
-      - uses: actions/checkout@v6
-      - name: Install Clang 22 and dependency build prerequisites
-        run: |
-          curl --fail --show-error --location https://apt.llvm.org/llvm-snapshot.gpg.key -o .ci-llvm-key.asc
-          sudo install -m 644 .ci-llvm-key.asc /usr/share/keyrings/pocx-llvm.asc
-          echo 'deb [signed-by=/usr/share/keyrings/pocx-llvm.asc] https://apt.llvm.org/noble/ llvm-toolchain-noble-22 main' | sudo tee /etc/apt/sources.list.d/pocx-llvm-22.list
-          sudo apt-get update
-          sudo apt-get install -y build-essential cmake ninja-build pkgconf autoconf automake libtool bison patch ccache clang-22 llvm-22 llvm-22-dev libclang-22-dev libclang-rt-22-dev python3-venv python3-zmq python3-bpfcc bpfcc-tools iproute2 "linux-headers-$(uname -r)"
-          python3 -m venv --system-site-packages .ci-venv
-          .ci-venv/bin/pip install pycapnp==2.2.4
-      - name: Build pinned instrumented libc++ and inherited dependencies
-        run: .ci-venv/bin/python test/pocx/prepare_instrumented_dependencies.py --sanitizer '${{ matrix.sanitizer }}' --directory '.ci-instrumented-${{ matrix.sanitizer }}' --jobs 4
-      - name: Download fresh checksum-verified previous releases
-        run: .ci-venv/bin/python test/get_previous_releases.py --remove-dir --target-dir .ci-previous-releases v0.14.3 v0.20.1 v0.21.0 v22.0 v23.0 v24.0.1 v25.0 v28.2
-      - name: Build selected complete instrumented configuration
-        env:
-          SANITIZER_KIND: ${{ matrix.sanitizer }}
-        run: |
-          .ci-venv/bin/python - <<'PY'
-          import os
-          from pathlib import Path
-          import subprocess
-          import sys
-          sys.path.insert(0, 'test/pocx')
-          from ci import options
-          from instrumented_ci import verify_dependencies
-          kind = os.environ['SANITIZER_KIND']
-          directory = Path('.ci-instrumented-' + kind).resolve()
-          verify_dependencies(kind, directory)
-          for consensus in (os.environ['CI_PRODUCT'],):
-              profile = consensus + '-' + kind
-              build = Path('build-ci-' + profile)
-              command = ['cmake', '-S', '.', '-B', str(build), '-G', 'Ninja', '-Werror=dev']
-              command += [f'-D{key}={value}' for key, value in options(profile, directory).items()]
-              subprocess.run(command, check=True)
-              subprocess.run(['cmake', '--build', str(build), '-j', '4'], check=True)
-          PY
-      - name: Run applicable selected-product frameworks
-        env:
-          SANITIZER_KIND: ${{ matrix.sanitizer }}
-        run: |
-          sudo env CI_PRODUCT="$CI_PRODUCT" SANITIZER_KIND="$SANITIZER_KIND" GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=safe.directory GIT_CONFIG_VALUE_0="$GITHUB_WORKSPACE" \
-            unshare --net /bin/bash -euo pipefail <<'SH'
-          ip link set lo up
-          # rpc_bind.py requires a non-loopback address distinct from 1.1.1.1.
-          ip link add pocx-private type dummy
-          ip address add 192.168.254.1/32 dev pocx-private
-          ip link set pocx-private up
-          ip link add pocx-test type dummy
-          ip address add 1.1.1.1/32 dev pocx-test
-          ip address add 2.2.2.2/32 dev pocx-test
-          ip link set pocx-test up
-          .ci-venv/bin/python test/pocx/ci.py --profile "$CI_PRODUCT-$SANITIZER_KIND" --skip-build --jobs 4 --previous-releases-dir .ci-previous-releases --instrumented-dependencies-dir ".ci-instrumented-$SANITIZER_KIND"
-          SH
-      - uses: actions/upload-artifact@v7
-        if: always()
-        with:
-          name: ${{ inputs.product }}-${{ matrix.sanitizer }}-results
-          path: |
-            .ci-instrumented-${{ matrix.sanitizer }}/preparation.json
-            .ci-instrumented-${{ matrix.sanitizer }}/*.log
-            build-ci-*-${{ matrix.sanitizer }}/ci-results-*/
-            build-ci-*-${{ matrix.sanitizer }}/bitcoin-unit-*/
-            build-ci-*-${{ matrix.sanitizer }}/pocx-unit-*/
-            build-ci-*-${{ matrix.sanitizer }}/pocx-results-*/
-            build-ci-*-${{ matrix.sanitizer }}/Testing/
-
-  scope-summary:
-    if: always()
-    needs: [bitcoin-baseline, runners, test-each-commit, macos-native-arm64, windows-native-dll, record-frozen-commit, windows-cross, windows-native-test, ci-matrix, lint, source-review, linux-core, linux-features, optional-functional, asan, instrumented-sanitizers]
-    runs-on: ubuntu-slim
-    steps:
-      - name: Report executed scope without promoting skipped jobs
-        run: |
-          {
-            echo '# ${{ inputs.product }} CI scope'
-            echo
-            echo 'Event: ${{ github.event_name }}'
-            echo
-            echo 'Skipped jobs are not passing execution evidence. Weekly/manual supplements and unit-only diagnostics do not establish a full platform-matrix pass. Inactive fuzz variants remain outside this verification package.'
-            echo
-            echo '| Job | GitHub result |'
-            echo '| --- | --- |'
-            echo '| bitcoin-baseline | ${{ needs.bitcoin-baseline.result }} |'
-            echo '| runners | ${{ needs.runners.result }} |'
-            echo '| test-each-commit | ${{ needs.test-each-commit.result }} |'
-            echo '| macos-native-arm64 | ${{ needs.macos-native-arm64.result }} |'
-            echo '| windows-native-dll | ${{ needs.windows-native-dll.result }} |'
-            echo '| record-frozen-commit | ${{ needs.record-frozen-commit.result }} |'
-            echo '| windows-cross | ${{ needs.windows-cross.result }} |'
-            echo '| windows-native-test | ${{ needs.windows-native-test.result }} |'
-            echo '| ci-matrix | ${{ needs.ci-matrix.result }} |'
-            echo '| lint | ${{ needs.lint.result }} |'
-            echo '| source-review | ${{ needs.source-review.result }} |'
-            echo '| linux-core | ${{ needs.linux-core.result }} |'
-            echo '| linux-features | ${{ needs.linux-features.result }} |'
-            echo '| optional-functional | ${{ needs.optional-functional.result }} |'
-            echo '| asan | ${{ needs.asan.result }} |'
-            echo '| instrumented-sanitizers | ${{ needs.instrumented-sanitizers.result }} |'
-          } >> "$GITHUB_STEP_SUMMARY"

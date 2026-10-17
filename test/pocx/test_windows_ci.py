@@ -57,8 +57,12 @@ class WindowsCITest(unittest.TestCase):
             command = windows.configure_command(row['consensus'])
             self.assertIn('--preset', command)
             self.assertIn('vs2026', command)
-            self.assertEqual(command[-3:], ['-DENABLE_POCX=' + enabled,
-                '-DBUILD_FUZZ_BINARY=OFF', '-DBUILD_FOR_FUZZING=OFF'])
+            if enabled == 'OFF':
+                self.assertEqual(command[-1], '-DENABLE_POCX=OFF')
+                self.assertNotIn('-DBUILD_FUZZ_BINARY=OFF', command)
+            else:
+                self.assertEqual(command[-3:], ['-DENABLE_POCX=ON',
+                    '-DBUILD_FUZZ_BINARY=OFF', '-DBUILD_FOR_FUZZING=OFF'])
             self.assertEqual(row['environment']['TEST_RUNNER_EXTRA'], env['TEST_RUNNER_EXTRA'])
             self.assertEqual(row['environment']['VCPKG_ROOT'], env['VCPKG_ROOT'])
         self.assertNotEqual(pairs[0]['environment']['BASE_BUILD_DIR'], pairs[1]['environment']['BASE_BUILD_DIR'])
@@ -127,7 +131,7 @@ class WindowsCITest(unittest.TestCase):
             calls, sleeps, _ = self.phase(root, 'bitcoin', configure_codes=(1, 0), build_codes=(1, 0))
             self.assertEqual(sleeps, [12])
             configurations = [cmd for cmd, _ in calls if cmd[0] == 'cmake' and '--build' not in cmd]
-            self.assertEqual(configurations, [windows.configure_command('bitcoin', root)] * 2)
+            self.assertEqual(configurations, [windows.configure_command('bitcoin', root, paired=True)] * 2)
             builds = [cmd for cmd, _ in calls if '--build' in cmd]
             self.assertEqual(builds[0][-2:], ['-j', '3'])
             self.assertEqual(builds[1][-2:], ['-j1', '--verbose'])
