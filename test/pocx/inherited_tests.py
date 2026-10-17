@@ -12,6 +12,8 @@ import sys
 import tempfile
 import xml.etree.ElementTree as ET
 
+import ci_product
+
 from common import ROOT, sha256, exclusive_lock
 import build_configuration
 from ci_evidence import source_snapshot, build_snapshot, require_unchanged
@@ -82,6 +84,7 @@ def run(build, phase, count, timeout, factor, *, environment=None, selected_conf
     build_configuration.require_source(cache, ROOT)
     selected_config = build_configuration.configuration(cache, selected_config)
     options, _ = unit_matrix.configuration(build)
+    ci_product.require_configuration(options, env)
     from check_drift import check
     issues = check(ROOT)
     if issues:

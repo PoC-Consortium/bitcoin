@@ -38,8 +38,10 @@ class WindowsArtifactCITest(unittest.TestCase):
             rows.append({'consensus': consensus, 'files': files, 'build_options': {'ENABLE_POCX': 'ON' if consensus == 'pocx' else 'OFF'}})
         return root, bundle, {'phases': rows}
 
-    def run_fixture(self, directory, *, failure=None, cleanup=True, mutation=None):
+    def run_fixture(self, directory, *, failure=None, cleanup=True, mutation=None, product=None):
         root, bundle, pair = self.fixture(directory)
+        if product is not None:
+            pair['phases'] = [row for row in pair['phases'] if row['consensus'] == product]
         calls = []
         controller = process_tree.description()
         def verify(*args, **kwargs):
@@ -90,7 +92,7 @@ class WindowsArtifactCITest(unittest.TestCase):
                 patch.object(ci.functional, 'run_phase', side_effect=functional):
             try:
                 ci.run_pair(bundle, output, {}, 3, 7.5, root=root, revision='a' * 40,
-                environment={'PREVIOUS_RELEASES_DIR': str(root / 'releases')}, execute=execute)
+                environment={'PREVIOUS_RELEASES_DIR': str(root / 'releases')}, execute=execute, product=product)
             except ValueError:
                 pass
         return json.loads((output / 'results.json').read_text()), calls, output, pair

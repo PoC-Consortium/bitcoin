@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # Copyright (c) 2026 The Bitcoin PoCX developers
 # Distributed under the MIT software license; see COPYING.
-"""Export and verify paired Windows cross-build payloads without running PE files.
+"""Export and verify product-specific or local paired Windows payloads without running PE files.
 
 Checksums bind the CI-produced payload to its source/configuration; they are not
 a signature or evidence that any test was executed. Consumers keep payloads
@@ -20,6 +20,7 @@ import build_configuration
 from ci_evidence import source_snapshot, build_snapshot, require_unchanged
 import record_cross_unit
 import unit_matrix
+import ci_product
 
 AUXILIARY = ('src/secp256k1/bin/exhaustive_tests.exe', 'src/secp256k1/bin/noverify_tests.exe',
              'src/secp256k1/bin/tests.exe', 'src/univalue/object.exe', 'src/univalue/unitester.exe')
@@ -54,6 +55,9 @@ REVIEW_SOURCES = {'.github/ci-windows-cross.py', 'src/pocx/test/CMakeLists.txt',
 
 REVIEW_SOURCES.update({'test/pocx/original_windows.py', 'test/pocx/test_original_windows.py',
     'test/pocx/bitcoin_baseline/windows/review.json', 'test/pocx/bitcoin_baseline/windows/rpc_signer.py'})
+
+REVIEW_SOURCES.update({'.github/workflows/ci.yml', '.github/workflows/ci-pocx.yml',
+    '.github/workflows/ci-product.yml', 'test/pocx/ci_product.py', 'test/pocx/test_product_workflows.py'})
 
 
 def verify_recipe(root=ROOT):
@@ -203,9 +207,20 @@ def export_phase(build, destination, consensus, root):
 
 
 def export_pair(bitcoin_build, pocx_build, output, *, root=ROOT, revision=None):
+    return export_builds([bitcoin_build, pocx_build], ('bitcoin', 'pocx'), output, root=root, revision=revision)
+
+
+def export_product(build, product, output, *, root=ROOT, revision=None):
+    if product not in ci_product.PRODUCTS:
+        raise ValueError('Unknown Windows artifact product')
+    return export_builds([build], (product,), output, root=root, revision=revision)
+
+
+def export_builds(builds, products, output, *, root=ROOT, revision=None):
+    ci_product.validate_phases([{'consensus': name} for name in products])
     root = root.resolve()
-    builds = [bitcoin_build.resolve(), pocx_build.resolve()]
-    if builds[0] == builds[1] or output.exists():
+    builds = [build.resolve() for build in builds]
+    if len(builds) != len(products) or len(set(builds)) != len(builds) or output.exists():
         raise ValueError('Use distinct original/native builds and a new artifact destination')
     for build in builds:
         if build == root or not build.is_relative_to(root):
@@ -219,10 +234,11 @@ def export_pair(bitcoin_build, pocx_build, output, *, root=ROOT, revision=None):
     output.parent.mkdir(parents=True, exist_ok=True)
     temporary = Path(tempfile.mkdtemp(prefix='pocx-windows-export-', dir=output.parent))
     try:
-        report = {'format': 1, 'kind': 'pocx-windows-cross-pair', 'revision': revision,
+        report = {'format': 1 if len(builds) == 2 else 2,
+                  'kind': 'pocx-windows-cross-pair' if len(builds) == 2 else 'pocx-windows-cross-product', 'revision': revision,
                   'source_snapshot': sources, 'functional_support_sha256': support,
                   'phases': [], 'execution_status': 'not executed'}
-        for consensus, build in zip(('bitcoin', 'pocx'), builds):
+        for consensus, build in zip(products, builds):
             report['phases'].append(export_phase(build, temporary / consensus, consensus, root))
         for build, snapshot in zip(builds, before):
             require_unchanged('Cross-build inputs', snapshot, build_snapshot(build))
@@ -237,18 +253,22 @@ def export_pair(bitcoin_build, pocx_build, output, *, root=ROOT, revision=None):
     return report
 
 
-def verify_pair(bundle, *, root=ROOT, revision=None):
+def verify_pair(bundle, *, root=ROOT, revision=None, product=None):
     if bundle.is_symlink():
         raise ValueError('Symlinked Windows artifact bundle')
     report = json.loads((bundle / 'pair.json').read_text())
     revision = revision_id(root) if revision is None else revision
-    if (report.get('format') != 1 or report.get('kind') != 'pocx-windows-cross-pair' or
-            report.get('revision') != revision or report.get('execution_status') != 'not executed' or
-            [row['consensus'] for row in report['phases']] != ['bitcoin', 'pocx']):
-        raise ValueError('Missing, reordered or wrong-revision Windows artifact pair')
+    names = ci_product.validate_phases(report['phases'])
+    expected = (1, 'pocx-windows-cross-pair') if len(names) == 2 else (2, 'pocx-windows-cross-product')
+    if ((report.get('format'), report.get('kind')) != expected or
+            report.get('revision') != revision or report.get('execution_status') != 'not executed'):
+        raise ValueError('Missing, reordered or wrong-revision Windows artifact pair/product')
+    if product is not None and (product not in ci_product.PRODUCTS or names != [product]):
+        raise ValueError('Artifact does not contain exactly the selected product')
     require_unchanged('Artifact source inputs', report['source_snapshot'], source_snapshot(root))
     require_unchanged('Artifact functional support inputs', report.get('functional_support_sha256'), functional_support(root))
-    matching_configurations(report['phases'])
+    if len(names) == 2:
+        matching_configurations(report['phases'])
     all_files = {'pair.json'}
     for row in report['phases']:
         phase = bundle / row['consensus']
@@ -263,6 +283,8 @@ def verify_pair(bundle, *, root=ROOT, revision=None):
         options, system = unit_matrix.configuration(phase / 'provenance')
         validate_configuration(options, system)
         build_configuration.configuration((phase / 'provenance/CMakeCache.txt').read_text())
+        if options.get('ENABLE_POCX') != ci_product.PRODUCTS[row['consensus']]:
+            raise ValueError('Artifact compiler configuration does not match selected product')
         if row['build_options'] != options:
             raise ValueError('Artifact metadata differs from recorded compiler configuration')
         required, unit = required_files(options, row['consensus'])
@@ -305,17 +327,24 @@ def verify_pair(bundle, *, root=ROOT, revision=None):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--bitcoin-build', type=Path)
+    parser.add_argument('--build', type=Path, help='Single product build; requires --product')
     parser.add_argument('--pocx-build', type=Path)
     parser.add_argument('--output', type=Path)
     parser.add_argument('--verify', type=Path)
+    parser.add_argument('--product', choices=tuple(ci_product.PRODUCTS),
+                        help='Require a single-product bundle when verifying')
     args = parser.parse_args()
     verify_recipe()
     if args.verify:
-        if any((args.bitcoin_build, args.pocx_build, args.output)):
+        if any((args.build, args.bitcoin_build, args.pocx_build, args.output)):
             parser.error('Choose export or verification')
-        report = verify_pair(args.verify)
+        report = verify_pair(args.verify, product=args.product)
+    elif args.product:
+        if not all((args.build, args.output)) or args.bitcoin_build or args.pocx_build:
+            parser.error('Single product export requires --build, --product and --output only')
+        report = export_product(args.build, args.product, args.output)
     else:
-        if not all((args.bitcoin_build, args.pocx_build, args.output)):
+        if args.build or not all((args.bitcoin_build, args.pocx_build, args.output)):
             parser.error('Export requires both builds and output')
         report = export_pair(args.bitcoin_build, args.pocx_build, args.output)
     print(json.dumps({'status': 'artifact inputs verified; tests not executed', 'revision': report['revision']}))

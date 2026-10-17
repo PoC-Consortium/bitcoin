@@ -4,21 +4,25 @@
   "unchanged_upstream_recipe": ".github/ci-windows.py",
   "source_sha256": {
     ".github/ci-windows.py": "9cec268ddaf98292b2067ae07ff99e8290a6e1a2e3a97aac9814c6642542e27b",
-    ".github/workflows/ci.yml": "0faba4651593cda133121fbfc2d31edc32084be95872812dac72dbf1e20bb3dd",
-    "test/pocx/build_configuration.py": "c9df217b325f1e3dfd8cd14e002f542bd78aa084b410e8f3b18d18a261a36456",
-    "test/pocx/ci_evidence.py": "3300f6b9e2510e1725351fccb10b306f4dfac020595f38f30735373b9f34538d",
-    "test/pocx/inherited_ci.py": "e0dc7430cc00fa964f74549a0a4b831a52cd5cee07f9ac7900185398ab598334",
-    "test/pocx/inherited_functional.py": "38faa96c36ca54baabc9206725858729ca41ac78d235d1bb7bd3c299d25bc897",
-    "test/pocx/inherited_tests.py": "b1fb1313f9c510735ecbf42cf7d092201031d8516051e463351b233125af3a74",
-    "test/pocx/process_tree.py": "12639a920fa4a656eec4f14ea02c4aaf1fe997cfc18c7df2566e82a1d3ab3f29",
-    "test/pocx/test_process_tree.py": "c2b1bc492945a007e023614d6e2529e231a3e94cdf41696ae4588bb6d2a9a64c",
-    "test/pocx/test_windows_ci.py": "9fe03a9cad21112bd7a964f22e100748463a3dcb6c2190c65b1032bed24b7317",
-    "test/pocx/unit_assets.py": "1c34c321789b13246532e2d702b2212a5812cdd88bd4f6289945aa7f5680f992",
-    "test/pocx/windows_ci.py": "bec35450318ba0465e1be89370cda825f300cf2be6d76481a1600941e93c9909",
-    "test/pocx/original_windows.py": "2598717ba1d532ebe4444d5cec2ae88f6cfed8132e514658600a71f551336e15",
-    "test/pocx/test_original_windows.py": "d1ae65726b2ff2017ff72e5026ac80a6c3e6584c4c0c8df4b0e9e0d946c730f3",
+    ".github/workflows/ci-pocx.yml": "ea2b11ff35304fe0d1ae65fc02c071860b5e7fd6ec6e520dd4832ff5a7ec0341",
+    ".github/workflows/ci-product.yml": "0aca92bf412d114ea7cfe745bf9c2393dcae4648eaf8ee695ae2a9b9ccd51bd1",
+    ".github/workflows/ci.yml": "25e3550fc74c70ca4ab56a90e7a3d3b776255dbbcd0a71e80ec1df69b061256d",
     "test/pocx/bitcoin_baseline/windows/review.json": "f541b15bbe06f200838f6ba17cacfe279ac723fbc71a1b6994c822e45219a6e6",
-    "test/pocx/bitcoin_baseline/windows/rpc_signer.py": "ea682c6093604670612eeae9936a9a3d4d0af232fe798d9edf7eea979c01639d"
+    "test/pocx/bitcoin_baseline/windows/rpc_signer.py": "ea682c6093604670612eeae9936a9a3d4d0af232fe798d9edf7eea979c01639d",
+    "test/pocx/build_configuration.py": "c9df217b325f1e3dfd8cd14e002f542bd78aa084b410e8f3b18d18a261a36456",
+    "test/pocx/ci_evidence.py": "47b4c08cc84dd6bc1425138f24cfd98bb8d014f070b2f8e7fef32483986a4443",
+    "test/pocx/ci_product.py": "50989a8e49ae46323fb972bbd1a8077f4ddb7371b236549083afa0681c72d75c",
+    "test/pocx/inherited_ci.py": "451b7e05f866473c87eaedc25976758a303f1773f533357f03ed0f1488e76061",
+    "test/pocx/inherited_functional.py": "38faa96c36ca54baabc9206725858729ca41ac78d235d1bb7bd3c299d25bc897",
+    "test/pocx/inherited_tests.py": "a08946f019b624ecdd5b00709a44fdabf0133dc9de8cc0328ca0c82c70f05d10",
+    "test/pocx/original_windows.py": "2598717ba1d532ebe4444d5cec2ae88f6cfed8132e514658600a71f551336e15",
+    "test/pocx/process_tree.py": "12639a920fa4a656eec4f14ea02c4aaf1fe997cfc18c7df2566e82a1d3ab3f29",
+    "test/pocx/test_original_windows.py": "d1ae65726b2ff2017ff72e5026ac80a6c3e6584c4c0c8df4b0e9e0d946c730f3",
+    "test/pocx/test_process_tree.py": "c2b1bc492945a007e023614d6e2529e231a3e94cdf41696ae4588bb6d2a9a64c",
+    "test/pocx/test_product_workflows.py": "536e0f1d8b182dfb800751f20d497b55e58ad5c5a055efbba721e995e1d22597",
+    "test/pocx/test_windows_ci.py": "cef4a20ea0f1a3ecfc9e35df76248852b2703b3b402359c0d7a68e2af83a925a",
+    "test/pocx/unit_assets.py": "1c34c321789b13246532e2d702b2212a5812cdd88bd4f6289945aa7f5680f992",
+    "test/pocx/windows_ci.py": "484a36206a3b854c36c302e7cf0d007afd26246cc3176aa39819f214c0c3bc0b"
   },
   "preserved_recipe": [
     "Visual Studio 2026 preset and all original standard options",
@@ -104,5 +108,53 @@
       "test/pocx/inherited_functional.py": "38faa96c36ca54baabc9206725858729ca41ac78d235d1bb7bd3c299d25bc897",
       "test/pocx/windows_ci.py": "bec35450318ba0465e1be89370cda825f300cf2be6d76481a1600941e93c9909"
     }
+  },
+  "product_workflow_reorganization_review": {
+    "scope": "Independent CI (bitcoin/OFF) and CI-POCX (pocx/ON) with shared inherited matrix and explicit selected-product runners. Keep legacy local pairs, source/test drift checks, reviewed exclusions and immutable revision/source/configuration/PE provenance. No assertion, feature, platform-native runtime or upstream recipe changes approved by this organization review.",
+    "selected_product_environment": "CI_PRODUCT=bitcoin or CI_PRODUCT=pocx; unset retains the local ordered pair",
+    "windows_artifact_format": "Format2 holds exactly one product; format1 retains legacy local pairs. Actions producer and consumer require their matching single product at the same frozen revision.",
+    "source_changes": {
+      ".github/workflows/ci-pocx.yml": {
+        "previous_sha256": null,
+        "sha256": "ea2b11ff35304fe0d1ae65fc02c071860b5e7fd6ec6e520dd4832ff5a7ec0341"
+      },
+      ".github/workflows/ci-product.yml": {
+        "previous_sha256": null,
+        "sha256": "0aca92bf412d114ea7cfe745bf9c2393dcae4648eaf8ee695ae2a9b9ccd51bd1"
+      },
+      ".github/workflows/ci.yml": {
+        "previous_sha256": "0faba4651593cda133121fbfc2d31edc32084be95872812dac72dbf1e20bb3dd",
+        "sha256": "25e3550fc74c70ca4ab56a90e7a3d3b776255dbbcd0a71e80ec1df69b061256d"
+      },
+      "test/pocx/ci_evidence.py": {
+        "previous_sha256": "3300f6b9e2510e1725351fccb10b306f4dfac020595f38f30735373b9f34538d",
+        "sha256": "47b4c08cc84dd6bc1425138f24cfd98bb8d014f070b2f8e7fef32483986a4443"
+      },
+      "test/pocx/ci_product.py": {
+        "previous_sha256": null,
+        "sha256": "50989a8e49ae46323fb972bbd1a8077f4ddb7371b236549083afa0681c72d75c"
+      },
+      "test/pocx/inherited_ci.py": {
+        "previous_sha256": "e0dc7430cc00fa964f74549a0a4b831a52cd5cee07f9ac7900185398ab598334",
+        "sha256": "451b7e05f866473c87eaedc25976758a303f1773f533357f03ed0f1488e76061"
+      },
+      "test/pocx/inherited_tests.py": {
+        "previous_sha256": "b1fb1313f9c510735ecbf42cf7d092201031d8516051e463351b233125af3a74",
+        "sha256": "a08946f019b624ecdd5b00709a44fdabf0133dc9de8cc0328ca0c82c70f05d10"
+      },
+      "test/pocx/test_product_workflows.py": {
+        "previous_sha256": null,
+        "sha256": "536e0f1d8b182dfb800751f20d497b55e58ad5c5a055efbba721e995e1d22597"
+      },
+      "test/pocx/test_windows_ci.py": {
+        "previous_sha256": "9fe03a9cad21112bd7a964f22e100748463a3dcb6c2190c65b1032bed24b7317",
+        "sha256": "cef4a20ea0f1a3ecfc9e35df76248852b2703b3b402359c0d7a68e2af83a925a"
+      },
+      "test/pocx/windows_ci.py": {
+        "previous_sha256": "bec35450318ba0465e1be89370cda825f300cf2be6d76481a1600941e93c9909",
+        "sha256": "484a36206a3b854c36c302e7cf0d007afd26246cc3176aa39819f214c0c3bc0b"
+      }
+    },
+    "execution_status": "Source organization reviewed; focused infrastructure validation only. Historical platform results do not establish hosted execution of the new workflows."
   }
 }

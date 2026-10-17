@@ -25,7 +25,7 @@ class WindowsCITest(unittest.TestCase):
         original = root / '.github/ci-windows.py'
         original.parent.mkdir()
         original.write_bytes((ROOT / '.github/ci-windows.py').read_bytes())
-        for name in ('CMakeLists.txt', 'CMakePresets.json', '.github/workflows/pocx-tests.yml'):
+        for name in ('CMakeLists.txt', 'CMakePresets.json', '.github/workflows/ci-product.yml'):
             path = root / name
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_text('fixture source only\n')
@@ -72,7 +72,7 @@ class WindowsCITest(unittest.TestCase):
             with self.subTest(env=env), self.assertRaises(ValueError):
                 windows.plan(2, env)
 
-    def phase(self, root, consensus, *, configure_codes=(0,), build_codes=(0,), failure=None):
+    def phase(self, root, consensus, *, configure_codes=(0,), build_codes=(0,), failure=None, product=None):
         calls, sleeps, provisioned = [], [], []
         configs, builds = iter(configure_codes), iter(build_codes)
         def run(command, **kwargs):
@@ -89,8 +89,11 @@ class WindowsCITest(unittest.TestCase):
         def provision(directory):
             provisioned.append(directory)
             return {'directory': str(directory), 'scope': 'fake pinned assets, never downloaded'}
+        environment = {'TEST_RUNNER_TIMEOUT_FACTOR': '40'}
+        if product is not None:
+            environment['CI_PRODUCT'] = product
         with contextlib.redirect_stdout(io.StringIO()):
-            windows.run_phase(consensus, 3, root=root, environment={'TEST_RUNNER_TIMEOUT_FACTOR': '40'},
+            windows.run_phase(consensus, 3, root=root, environment=environment,
                              run=run, sleep=sleeps.append, provision=provision)
         return calls, sleeps, provisioned
 
@@ -169,7 +172,7 @@ class WindowsCITest(unittest.TestCase):
                     '0' * 64 if path == ROOT / name else original(path)):
                 with self.assertRaisesRegex(ValueError, 'changed without review'):
                     windows.verify_recipe()
-        workflow = (ROOT / '.github/workflows/ci.yml').read_text()
+        workflow = (ROOT / '.github/workflows/ci-product.yml').read_text()
         job = workflow.split('  windows-native-dll:\n', 1)[1].split('  record-frozen-commit:\n', 1)[0]
         self.assertIn('py -3 test/pocx/windows_ci.py', job)
         self.assertIn('py -3 .github/ci-windows.py "standard" github_import_vs_env', job)

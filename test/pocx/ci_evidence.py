@@ -35,7 +35,7 @@ def artifact_paths(directory):
 
 def source_snapshot(root):
     import json
-    paths = {root / '.github/workflows/pocx-tests.yml', root / 'CMakeLists.txt',
+    paths = {root / 'CMakeLists.txt',
              root / 'CMakePresets.json'}
     # Include runner imports, reviews, fixtures, original test/production sources
     # and build selection files. Fuzz belongs to a separate package. Recording
@@ -50,7 +50,8 @@ def source_snapshot(root):
                 continue
             if path.is_file() and path.suffix not in ('.md', '.pyc'):
                 paths.add(path)
-    for name in ('.github/workflows/ci.yml', '.github/ci-windows.py', '.github/ci-windows-cross.py',
+    for name in ('.github/workflows/ci.yml', '.github/workflows/ci-pocx.yml',
+                 '.github/workflows/ci-product.yml', '.github/ci-windows.py', '.github/ci-windows-cross.py',
                  '.github/ci-test-each-commit-exec.py', 'ci/test_run_all.sh'):
         if (root / name).is_file():
             paths.add(root / name)

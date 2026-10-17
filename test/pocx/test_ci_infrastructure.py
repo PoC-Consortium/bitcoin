@@ -121,7 +121,8 @@ case "$CI_CONTAINER_CAP" in *--privileged*) ;; *) exit 23 ;; esac
         return root
 
     def test_ci_source_proof_rejects_changes_to_helpers_workflow_and_resources(self):
-        paths = ['CMakeLists.txt', 'CMakePresets.json', '.github/workflows/pocx-tests.yml',
+        paths = ['CMakeLists.txt', 'CMakePresets.json', '.github/workflows/ci-product.yml',
+                 '.github/workflows/ci.yml', '.github/workflows/ci-pocx.yml',
                  'test/pocx/ci.py', 'test/pocx/common.py', 'test/pocx/unit_matrix.py',
                  'test/pocx/unit-parity.json', 'test/pocx/framework/clock.py',
                  'test/functional/test_framework/messages.py',
@@ -149,7 +150,7 @@ case "$CI_CONTAINER_CAP" in *--privileged*) ;; *) exit 23 ;; esac
 
     def test_fuzz_implementation_is_not_a_dependency_of_delivered_ci(self):
         from ci import PROFILES
-        root = self.files(['CMakeLists.txt', 'CMakePresets.json', '.github/workflows/pocx-tests.yml',
+        root = self.files(['CMakeLists.txt', 'CMakePresets.json', '.github/workflows/ci-product.yml',
                            'test/pocx/ci.py', 'test/pocx/run_fuzz.py', 'test/pocx/fuzz/manifest.json'])
         self.assertNotIn('pocx-fuzz', PROFILES)
         self.assertNotIn('test/pocx/run_fuzz.py', source_snapshot(root))
@@ -261,7 +262,7 @@ case "$CI_CONTAINER_CAP" in *--privileged*) ;; *) exit 23 ;; esac
 
     def test_saved_ci_report_rejects_changed_child_evidence_and_failed_status(self):
         from common import sha256
-        root = self.files(['CMakeLists.txt', 'CMakePresets.json', '.github/workflows/pocx-tests.yml',
+        root = self.files(['CMakeLists.txt', 'CMakePresets.json', '.github/workflows/ci-product.yml',
                            'build/ci-results/drift.log', 'build/ci-results/drift.json'])
         output = root / 'build/ci-results'
         artifact = output / 'drift.json'

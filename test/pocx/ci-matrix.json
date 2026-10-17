@@ -1,32 +1,27 @@
 {
-  "scope": "Required coverage audit for unit, Qt, kernel and functional CI parity. Configuration records do not establish execution or passing status. Fuzz completion is a separate package.",
+  "scope": "Active non-fuzz inherited matrix and additional profile configuration inventory. CI selects bitcoin/OFF; CI-POCX selects pocx/ON. Configuration records and historical execution fields do not establish current hosted passing status. Fuzz modernization remains a separate package.",
   "upstream_revision": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
   "inherited_workflow": {
-    "path": ".github/workflows/ci.yml",
-    "sha256": "0faba4651593cda133121fbfc2d31edc32084be95872812dac72dbf1e20bb3dd",
+    "path": ".github/workflows/ci-product.yml",
+    "sha256": "0aca92bf412d114ea7cfe745bf9c2393dcae4648eaf8ee695ae2a9b9ccd51bd1",
     "matches_pinned_upstream": false,
     "events": {
-      "pull_request": "",
-      "push": {
-        "branches": [
-          "**"
-        ],
-        "tags-ignore": [
-          "**"
-        ]
-      },
-      "workflow_dispatch": {
+      "workflow_call": {
         "inputs": {
+          "product": {
+            "description": "bitcoin (ENABLE_POCX=OFF) or pocx (ENABLE_POCX=ON)",
+            "required": true,
+            "type": "string"
+          },
           "baseline_only": {
-            "description": "Run only the original Bitcoin unit baseline on Ubuntu",
-            "type": "boolean",
-            "required": false,
-            "default": false
+            "description": "Manual original Bitcoin unit diagnostic only",
+            "default": false,
+            "type": "boolean"
           }
         }
       }
     },
-    "manual_dispatch_scope": "Add opt-in manual baseline_only=false by default. An explicit true workflow_dispatch runs one Ubuntu24 original bitcoin-unit job with two build jobs and retained reports. All nine existing jobs are gated off only for this manual selection; original conditions, steps, matrices, platforms and dependency edges are structurally unchanged for normal/default runs. No required CI configuration removed and no hosted execution inferred."
+    "manual_dispatch_scope": "CI baseline_only=true remains a unit-only diagnostic. Normal manual dispatch runs the selected product matrix plus supplements; weekly schedule retains source/core and supplemental coverage. No product depends on the other product test result."
   },
   "latest_published_run": {
     "conclusion": "failure",
@@ -52,10 +47,8 @@
       "packages_expression": null,
       "python_packages_expression": "\"--break-system-packages pycapnp zmq\"",
       "execution_status": "unverified for current package",
-      "baseline_first": true,
-      "baseline_first_field_meaning": "Requirement; does not establish implementation or execution",
       "entry_point": "ci/test_run_all.sh -> ci/test/02_run_container.py -> test/pocx/inherited_ci.py",
-      "baseline_first_implementation": "implemented in source; original recipe and hosted execution unverified"
+      "product_selection": "CI_PRODUCT selects exactly one product; no cross-product runtime prerequisite"
     },
     {
       "job": "windows-cross",
@@ -70,11 +63,9 @@
       "packages_expression": "\"g++-mingw-w64-x86-64-posix nsis\"",
       "python_packages_expression": null,
       "execution_status": "unverified for current package",
-      "baseline_first": true,
-      "baseline_first_field_meaning": "Requirement; does not establish implementation or execution",
       "entry_point": "ci/test_run_all.sh -> test/pocx/inherited_ci.py -> test/pocx/windows_cross.py (paired export before cleanup)",
-      "baseline_first_implementation": "Original cross-build before PoCX cross-build; target-host Bitcoin runtime baseline deferred to paired Windows consumer",
-      "artifact_export": "Source wired: immutable original/native pair, raw compiler configuration and source/binary provenance; no Windows execution claimed"
+      "artifact_export": "Source wired: immutable original/native pair, raw compiler configuration and source/binary provenance; no Windows execution claimed",
+      "product_selection": "CI_PRODUCT selects exactly one product; no cross-product runtime prerequisite"
     },
     {
       "job": "windows-cross",
@@ -89,11 +80,9 @@
       "packages_expression": "\"g++-mingw-w64-ucrt64 nsis\"",
       "python_packages_expression": null,
       "execution_status": "unverified for current package",
-      "baseline_first": true,
-      "baseline_first_field_meaning": "Requirement; does not establish implementation or execution",
       "entry_point": "ci/test_run_all.sh -> test/pocx/inherited_ci.py -> test/pocx/windows_cross.py (paired export before cleanup)",
-      "baseline_first_implementation": "Original cross-build before PoCX cross-build; target-host Bitcoin runtime baseline deferred to paired Windows consumer",
-      "artifact_export": "Source wired: immutable original/native pair, raw compiler configuration and source/binary provenance; no Windows execution claimed"
+      "artifact_export": "Source wired: immutable original/native pair, raw compiler configuration and source/binary provenance; no Windows execution claimed",
+      "product_selection": "CI_PRODUCT selects exactly one product; no cross-product runtime prerequisite"
     },
     {
       "job": "ci-matrix",
@@ -108,10 +97,8 @@
       "packages_expression": "\"clang-${TIDY_LLVM_V} clang-format-${TIDY_LLVM_V} libclang-${TIDY_LLVM_V}-dev llvm-${TIDY_LLVM_V}-dev jq libevent-dev libboost-dev libzmq3-dev systemtap-sdt-dev qt6-base-dev qt6-tools-dev qt6-l10n-tools libqrencode-dev libsqlite3-dev libcapnp-dev capnproto\"",
       "python_packages_expression": null,
       "execution_status": "unverified for current package",
-      "baseline_first": true,
-      "baseline_first_field_meaning": "Requirement; does not establish implementation or execution",
       "entry_point": "ci/test_run_all.sh -> ci/test/02_run_container.py -> test/pocx/inherited_ci.py",
-      "baseline_first_implementation": "implemented in source; original recipe and hosted execution unverified"
+      "product_selection": "CI_PRODUCT selects exactly one product; no cross-product runtime prerequisite"
     },
     {
       "job": "ci-matrix",
@@ -126,10 +113,8 @@
       "packages_expression": "\"python3-zmq g++-arm-linux-gnueabihf libc6:armhf libstdc++6:armhf libfontconfig1:armhf libxcb1:armhf\"",
       "python_packages_expression": null,
       "execution_status": "unverified for current package",
-      "baseline_first": true,
-      "baseline_first_field_meaning": "Requirement; does not establish implementation or execution",
       "entry_point": "ci/test_run_all.sh -> ci/test/02_run_container.py -> test/pocx/inherited_ci.py",
-      "baseline_first_implementation": "implemented in source; original recipe and hosted execution unverified"
+      "product_selection": "CI_PRODUCT selects exactly one product; no cross-product runtime prerequisite"
     },
     {
       "job": "ci-matrix",
@@ -144,10 +129,8 @@
       "packages_expression": "\"systemtap-sdt-dev clang-${APT_LLVM_V} llvm-${APT_LLVM_V} libclang-rt-${APT_LLVM_V}-dev mold python3-zmq qt6-base-dev qt6-tools-dev qt6-l10n-tools libevent-dev libboost-dev libzmq3-dev libqrencode-dev libsqlite3-dev ${BPFCC_PACKAGE} libcapnp-dev capnproto python3-pip\"",
       "python_packages_expression": "\"--break-system-packages pycapnp\"",
       "execution_status": "unverified for current package",
-      "baseline_first": true,
-      "baseline_first_field_meaning": "Requirement; does not establish implementation or execution",
       "entry_point": "ci/test_run_all.sh -> ci/test/02_run_container.py -> test/pocx/inherited_ci.py",
-      "baseline_first_implementation": "implemented in source; original recipe and hosted execution unverified"
+      "product_selection": "CI_PRODUCT selects exactly one product; no cross-product runtime prerequisite"
     },
     {
       "job": "ci-matrix",
@@ -162,10 +145,8 @@
       "packages_expression": "\"clang lld llvm zip\"",
       "python_packages_expression": null,
       "execution_status": "unverified for current package",
-      "baseline_first": true,
-      "baseline_first_field_meaning": "Requirement; does not establish implementation or execution",
       "entry_point": "ci/test_run_all.sh -> ci/test/02_run_container.py -> test/pocx/inherited_ci.py",
-      "baseline_first_implementation": "implemented in source; original recipe and hosted execution unverified"
+      "product_selection": "CI_PRODUCT selects exactly one product; no cross-product runtime prerequisite"
     },
     {
       "job": "ci-matrix",
@@ -180,10 +161,8 @@
       "packages_expression": "\"clang lld llvm zip\"",
       "python_packages_expression": null,
       "execution_status": "unverified for current package",
-      "baseline_first": true,
-      "baseline_first_field_meaning": "Requirement; does not establish implementation or execution",
       "entry_point": "ci/test_run_all.sh -> ci/test/02_run_container.py -> test/pocx/inherited_ci.py",
-      "baseline_first_implementation": "implemented in source; original recipe and hosted execution unverified"
+      "product_selection": "CI_PRODUCT selects exactly one product; no cross-product runtime prerequisite"
     },
     {
       "job": "ci-matrix",
@@ -198,10 +177,8 @@
       "packages_expression": "\"python3-zmq python3-pip clang-17 llvm-17 libc++abi-17-dev libc++-17-dev\"",
       "python_packages_expression": "\"--break-system-packages pycapnp\"",
       "execution_status": "unverified for current package",
-      "baseline_first": true,
-      "baseline_first_field_meaning": "Requirement; does not establish implementation or execution",
       "entry_point": "ci/test_run_all.sh -> ci/test/02_run_container.py -> test/pocx/inherited_ci.py",
-      "baseline_first_implementation": "implemented in source; original recipe and hosted execution unverified"
+      "product_selection": "CI_PRODUCT selects exactly one product; no cross-product runtime prerequisite"
     },
     {
       "job": "ci-matrix",
@@ -216,10 +193,8 @@
       "packages_expression": null,
       "python_packages_expression": "\"--break-system-packages pyzmq pycapnp\"",
       "execution_status": "unverified for current package",
-      "baseline_first": true,
-      "baseline_first_field_meaning": "Requirement; does not establish implementation or execution",
       "entry_point": "ci/test_run_all.sh -> ci/test/02_run_container.py -> test/pocx/inherited_ci.py",
-      "baseline_first_implementation": "implemented in source; original recipe and hosted execution unverified"
+      "product_selection": "CI_PRODUCT selects exactly one product; no cross-product runtime prerequisite"
     },
     {
       "job": "ci-matrix",
@@ -234,10 +209,8 @@
       "packages_expression": "\"clang-${TIDY_LLVM_V} libclang-${TIDY_LLVM_V}-dev llvm-${TIDY_LLVM_V}-dev libomp-${TIDY_LLVM_V}-dev clang-tidy-${TIDY_LLVM_V} jq libevent-dev libboost-dev libzmq3-dev systemtap-sdt-dev qt6-base-dev qt6-tools-dev qt6-l10n-tools libqrencode-dev libsqlite3-dev libcapnp-dev capnproto\"",
       "python_packages_expression": null,
       "execution_status": "unverified for current package",
-      "baseline_first": true,
-      "baseline_first_field_meaning": "Requirement; does not establish implementation or execution",
       "entry_point": "ci/test_run_all.sh -> ci/test/02_run_container.py -> test/pocx/inherited_ci.py",
-      "baseline_first_implementation": "implemented in source; original recipe and hosted execution unverified"
+      "product_selection": "CI_PRODUCT selects exactly one product; no cross-product runtime prerequisite"
     },
     {
       "job": "ci-matrix",
@@ -252,10 +225,8 @@
       "packages_expression": "\"clang-${APT_LLVM_V} llvm-${APT_LLVM_V} llvm-${APT_LLVM_V}-dev libclang-${APT_LLVM_V}-dev libclang-rt-${APT_LLVM_V}-dev python3-zmq python3-pip\"",
       "python_packages_expression": "\"--break-system-packages pycapnp\"",
       "execution_status": "unverified for current package",
-      "baseline_first": true,
-      "baseline_first_field_meaning": "Requirement; does not establish implementation or execution",
       "entry_point": "ci/test_run_all.sh -> ci/test/02_run_container.py -> test/pocx/inherited_ci.py",
-      "baseline_first_implementation": "implemented in source; original recipe and hosted execution unverified"
+      "product_selection": "CI_PRODUCT selects exactly one product; no cross-product runtime prerequisite"
     },
     {
       "job": "ci-matrix",
@@ -270,10 +241,8 @@
       "packages_expression": "\"clang-${APT_LLVM_V} llvm-${APT_LLVM_V} llvm-${APT_LLVM_V}-dev libclang-${APT_LLVM_V}-dev libclang-rt-${APT_LLVM_V}-dev python3-pip\"",
       "python_packages_expression": "\"--break-system-packages pycapnp\"",
       "execution_status": "unverified for current package",
-      "baseline_first": true,
-      "baseline_first_field_meaning": "Requirement; does not establish implementation or execution",
       "entry_point": "ci/test_run_all.sh -> ci/test/02_run_container.py -> test/pocx/inherited_ci.py",
-      "baseline_first_implementation": "implemented in source; original recipe and hosted execution unverified"
+      "product_selection": "CI_PRODUCT selects exactly one product; no cross-product runtime prerequisite"
     },
     {
       "job": "windows-native-dll",
@@ -293,9 +262,7 @@
       "unit_and_ctest_configured": true,
       "functional_configured": true,
       "execution_status": "unverified for current package",
-      "baseline_first": true,
-      "baseline_first_field_meaning": "Requirement; does not establish implementation or execution",
-      "baseline_first_implementation": "implemented in source for native VS Release; both CRT artifact consumers source-wired separately; actual Windows and hosted execution unverified"
+      "product_selection": "CI_PRODUCT selects exactly one product; no cross-product runtime prerequisite"
     },
     {
       "job": "windows-native-test",
@@ -320,11 +287,9 @@
       "unit_and_ctest_configured": true,
       "functional_configured": true,
       "execution_status": "unverified for current package",
-      "baseline_first": true,
-      "baseline_first_field_meaning": "Requirement; does not establish implementation or execution",
-      "baseline_first_implementation": "Source wired: full original lifecycle/version/manifests/Qt/unit/libraries/kernel/functional v1/v2 phase before any PoCX executable; hosted execution unverified",
       "previous_releases": "Required; unchanged checksum-verified downloader and owned platform-aware binary inventory",
-      "runtime_artifact": "Bounded reports/logs retained on success and failure; binaries, node data and caches omitted"
+      "runtime_artifact": "Bounded reports/logs retained on success and failure; binaries, node data and caches omitted",
+      "product_selection": "CI_PRODUCT selects exactly one product; no cross-product runtime prerequisite"
     },
     {
       "job": "test-each-commit",
@@ -333,10 +298,8 @@
       "entry_point": "test/pocx/revision_ci.py -> test/pocx/inherited_tests.py",
       "unit_and_ctest_configured": true,
       "functional_configured": true,
-      "baseline_first": true,
-      "baseline_first_implementation": "implemented in source; actual ancestor-commit recipe and hosted execution unverified",
       "execution_status": "unverified for current package",
-      "baseline_first_field_meaning": "Requirement; does not establish implementation or execution"
+      "product_selection": "CI_PRODUCT selects exactly one product; no cross-product runtime prerequisite"
     },
     {
       "job": "ci-matrix",
@@ -351,17 +314,15 @@
       "packages_expression": "\"llvm clang g++-multilib\"",
       "python_packages_expression": null,
       "execution_status": "unverified for current package",
-      "baseline_first": true,
-      "baseline_first_field_meaning": "Requirement; does not establish implementation or execution",
       "entry_point": "ci/test_run_all.sh -> ci/test/02_run_container.py -> test/pocx/inherited_ci.py",
-      "baseline_first_implementation": "implemented in source; original recipe and hosted execution unverified",
       "restored_from_upstream": {
         "name": "i686, no IPC",
         "warp-runner": "warp-ubuntu-latest-x64-8x",
         "fallback-runner": "ubuntu-latest",
         "timeout-minutes": "120",
         "file-env": "./ci/test/00_setup_env_i686_no_ipc.sh"
-      }
+      },
+      "product_selection": "CI_PRODUCT selects exactly one product; no cross-product runtime prerequisite"
     },
     {
       "job": "ci-matrix",
@@ -376,10 +337,7 @@
       "packages_expression": "\"gcc-12 g++-12 python3-zmq\"",
       "python_packages_expression": null,
       "execution_status": "unverified for current package",
-      "baseline_first": true,
-      "baseline_first_field_meaning": "Requirement; does not establish implementation or execution",
       "entry_point": "ci/test_run_all.sh -> ci/test/02_run_container.py -> test/pocx/inherited_ci.py",
-      "baseline_first_implementation": "implemented in source; original recipe and hosted execution unverified",
       "restored_from_upstream": {
         "name": "previous releases",
         "warp-runner": "warp-ubuntu-latest-x64-8x",
@@ -390,7 +348,8 @@
       "rpc_coverage": "Required independently for Bitcoin and PoCX, both transports; unchanged upstream evaluator and retained raw PoCX coverage inputs",
       "selection_extensions": [
         "feature_dbcrash.py: historical slow-case exclusion deliberately included to satisfy the complete functional selection"
-      ]
+      ],
+      "product_selection": "CI_PRODUCT selects exactly one product; no cross-product runtime prerequisite"
     }
   ],
   "unwired_environment_scripts": [
@@ -518,17 +477,13 @@
     "windows-native-dll:fuzz"
   ],
   "owned_optional_functional_job": {
-    "workflow": ".github/workflows/pocx-tests.yml",
+    "workflow": ".github/workflows/ci-product.yml",
     "job": "optional-functional",
     "events": [
       "schedule",
       "workflow_dispatch"
     ],
     "runner": "ubuntu-24.04",
-    "profiles_in_execution_order": [
-      "bitcoin-functional-optional",
-      "pocx-functional-optional"
-    ],
     "required_transports": [
       "v1",
       "v2"
@@ -538,19 +493,19 @@
     "missing_dependency_or_skip_result": "failure",
     "execution_status": "configured; current local full execution and hosted execution unverified",
     "privilege_scope": "Original BPF cases require root; scheduled/manual hosted runtime step only, in a fresh network namespace. No local privilege escalation authorized or performed.",
-    "previous_release_provisioning": "Fresh original checksum-verified downloader with --remove-dir and all eight explicitly required versions;17 runtime executables fingerprinted."
+    "previous_release_provisioning": "Fresh original checksum-verified downloader with --remove-dir and all eight explicitly required versions;17 runtime executables fingerprinted.",
+    "profiles_by_product": {
+      "bitcoin": "bitcoin-functional-optional",
+      "pocx": "pocx-functional-optional"
+    }
   },
   "owned_sanitizer_job": {
-    "workflow": ".github/workflows/pocx-tests.yml",
+    "workflow": ".github/workflows/ci-product.yml",
     "job": "asan",
     "runner": "ubuntu-24.04",
     "events": [
       "schedule",
       "workflow_dispatch"
-    ],
-    "profiles_in_execution_order": [
-      "bitcoin-asan",
-      "pocx-asan"
     ],
     "upstream_environment": "ci/test/00_setup_env_native_asan.sh",
     "specification": "test/pocx/sanitizer-ci.json",
@@ -571,10 +526,14 @@
       "Thread sanitizer and instrumented libc++/dependencies",
       "Memory sanitizer and instrumented libc++/dependencies",
       "Other required platform/configuration matrix executions"
-    ]
+    ],
+    "profiles_by_product": {
+      "bitcoin": "bitcoin-asan",
+      "pocx": "pocx-asan"
+    }
   },
   "owned_instrumented_sanitizer_job": {
-    "workflow": ".github/workflows/pocx-tests.yml",
+    "workflow": ".github/workflows/ci-product.yml",
     "job": "instrumented-sanitizers",
     "sanitizers": [
       "tsan",
@@ -590,12 +549,13 @@
         "pocx-msan"
       ]
     },
-    "ordering": "Full original baseline must pass before native runtime in each fail-fast job.",
+    "ordering": "Each workflow runs its selected product independently; no other product baseline prerequisite.",
     "specification": "test/pocx/instrumented-ci.json",
     "specification_sha256": "55108ea8d48bdf7b2cda4bf45d8dad37fc67efd0434fe8134dc4fa38a63c73ba",
     "execution_status": "unverified",
     "qt": "configuration-disabled by both inherited jobs; required separately in ASan/Qt profiles",
-    "rust_instrumentation": "not inferred from C++ coverage"
+    "rust_instrumentation": "not inferred from C++ coverage",
+    "profile_selection": "Selected product only; no original-first Actions ordering"
   },
   "owned_inherited_posix_bridge": {
     "entrypoint": "ci/test/02_run_container.py",
@@ -603,22 +563,18 @@
     "review": "test/pocx/inherited-ci.json",
     "upstream_recipe_unchanged": "ci/test/03_test_script.sh",
     "owned_recipe": "test/pocx/ci/inherited_test_script.sh",
-    "execution_order": [
-      "bitcoin ENABLE_POCX=OFF",
-      "pocx ENABLE_POCX=ON"
-    ],
     "strict_framework_dispatch": "test/pocx/inherited_tests.py",
     "functional_dispatch": "test/pocx/inherited_functional.py",
-    "profile_scope": "Retain inherited features/dependency/build/analysis settings; extend both sides to both functional transports and all extended cases",
+    "profile_scope": "Retain inherited feature, dependency, build and analysis settings for each product; both functional transports and all extended cases",
     "fuzz_boundary": "Both framework builds disable fuzz binaries; dedicated fuzz jobs retain their unchanged original driver",
     "native_artifact_path": "unchanged; original build/install paths use the bitcoin-baseline suffix",
     "hosted_execution": "unverified",
     "remaining": [
-      "Required inherited recipe and platform execution proof, including restored i686/no-IPC and previous-release profiles",
-      "Actual native Windows and both CRT artifact producer/consumer execution proof"
+      "New product workflows require matching-source hosted execution evidence; local infrastructure checks are not hosted or native execution claims"
     ],
     "evidence_retention": "Implemented bounded report publication, container export, and always-upload steps; actual hosted export/upload unverified",
-    "revision_entrypoint": "test/pocx/revision_ci.py; preserves unchanged upstream executor compiler configuration and verbose build fallback"
+    "revision_entrypoint": "test/pocx/revision_ci.py; preserves unchanged upstream executor compiler configuration and verbose build fallback",
+    "product_selection": "CI_PRODUCT=bitcoin selects OFF; CI_PRODUCT=pocx selects ON; omitted selector retains local original-first pairs only"
   },
   "owned_native_windows_bridge": {
     "driver": "test/pocx/windows_ci.py",
@@ -634,27 +590,27 @@
       "functional-v2"
     ],
     "execution_status": "unverified; no actual native Windows execution recorded",
-    "prerequisite": "Passing complete Bitcoin-OFF phase before any PoCX-ON phase",
+    "prerequisite": "Selected product recipe/source guards and native host lifecycle probes; no other product runtime prerequisite",
     "cross_artifact_consumers": "Source wired for both CRTs; actual hosted build/runtime execution unverified"
   },
   "owned_windows_cross_artifact_foundation": {
     "exporter": "test/pocx/windows_artifacts.py",
     "source_review": "test/pocx/windows-artifacts.json",
     "cross_unit_recorder": "test/pocx/record_cross_unit.py",
-    "source_status": "Implemented paired exporter/recorder and complete original-first target-host consumer; source wiring does not establish execution",
-    "hosted_producer_wiring": "Implemented: inherited cross controller exports both configurations before container cleanup; stable immutable pair is copied to host and uploaded per CRT",
+    "source_status": "Product-specific immutable exporter and selected-product native consumer; legacy local pair retained; configuration is not execution proof",
+    "hosted_producer_wiring": "Each product exports its own format2 single-product bundle per CRT before container cleanup; consumer requires the identical frozen revision and product",
     "target_host_consumer": "Implemented and workflow-wired: manifests, Qt/unit/libraries/kernel and strict functional v1/v2 matrix; actual Windows execution unverified",
     "actual_windows_test_cases_executed": 0,
     "execution_status": "Unverified for actual hosted builds and Windows execution; source/fixture checks are infrastructure only",
-    "target_host_unit_profile": "test/pocx/windows_artifact_unit.py: original-first complete enabled unit inventory in one process; actual Windows execution unverified",
+    "target_host_unit_profile": "test/pocx/windows_artifact_unit.py: selected-product complete enabled unit inventory in one process; actual Windows execution unverified",
     "amd64_sse2_status": "source gate corrected; exact production consensus/test blocks and real SSE2 source compile for AMD64; target-host comparison execution unverified",
-    "target_host_test_profile": "test/pocx/windows_artifact_tests.py: original-first Qt methods, single-process units, five auxiliary executables and complete enabled kernel suite; actual Windows execution unverified",
-    "configuration_parity": "Matching feature, target, compiler and sanitizer options required; only ENABLE_POCX differs",
+    "target_host_test_profile": "test/pocx/windows_artifact_tests.py: selected-product Qt methods, single-process units, five auxiliary executables and complete enabled kernel suite; actual Windows execution unverified",
+    "configuration_parity": "Compiler configuration must match selected product and recorded source/target/features; format1 local pairs additionally require cross-product feature equality",
     "kernel_cross_fixture_status": "source fixed: cross builds render byte-identical independently verified207-block snapshot with host Python, native generation retained; actual target-host kernel execution unverified",
     "producer": "test/pocx/windows_cross.py",
     "target_host_complete_profile": "test/pocx/windows_artifact_ci.py",
     "frozen_revision_and_source_bytes": "Both CRT producers and consumers check out record-frozen-commit with core.autocrlf=false",
-    "retained_evidence": "Bounded producer/runtime reports retained, including failure logs; payload binaries uploaded only in the dedicated immutable build-pair artifact"
+    "retained_evidence": "Bounded product reports including failures; binaries uploaded only as the dedicated immutable product artifact"
   },
   "restored_upstream_environment_profiles": [
     {
@@ -709,5 +665,21 @@
     ],
     "scope": "Provision enabled Linux USDT dependencies/capabilities and actual-host matching headers without disabling tests or changing compiler/features. Hosted/platform execution remains unverified.",
     "python_prerequisites_review": "Provision Python ZeroMQ for the reviewed Debian/Ubuntu functional recipes and add pinned pycapnp only where IPC is enabled and the original environment omitted it. Preserve existing pip requirements; Ubuntu22.04 does not receive the unsupported --break-system-packages option. Export added PIP_PACKAGES through host/container setup. Original compiler, dependency build flags, features, test selections and assertions remain unchanged. Actual-recipe regression checks all eight environments, disabled/fuzz routing and idempotence; package/runtime execution remains separately required."
+  },
+  "product_workflows": {
+    "bitcoin": {
+      "name": "CI",
+      "path": ".github/workflows/ci.yml",
+      "ENABLE_POCX": "OFF"
+    },
+    "pocx": {
+      "name": "CI-POCX",
+      "path": ".github/workflows/ci-pocx.yml",
+      "ENABLE_POCX": "ON"
+    },
+    "implementation": ".github/workflows/ci-product.yml",
+    "migration_inventory": "test/pocx/README-workflows.md",
+    "legacy_local_pair": "CI_PRODUCT unset retains original-first local execution",
+    "execution_status": "Configuration reviewed; new hosted workflow execution remains unverified"
   }
 }

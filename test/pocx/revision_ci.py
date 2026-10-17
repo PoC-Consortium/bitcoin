@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # Copyright (c) 2026 The Bitcoin PoCX developers
 # Distributed under the MIT software license; see COPYING.
-"""Original-first ancestor-commit CI with the inherited compiler configuration.
+"""Selected-product ancestor-commit CI with the inherited compiler configuration.
 
 The unchanged upstream executor remains the recipe reference. Infrastructure
 fixtures and --plan establish no framework or hosted execution coverage.
@@ -17,6 +17,7 @@ import tempfile
 
 from common import ROOT
 import inherited_ci
+import ci_product
 
 
 def configure_command(build, consensus):
@@ -51,7 +52,7 @@ def plan(count, environment, root=ROOT):
              'command': [sys.executable, str(root / 'test/pocx/revision_ci.py'),
                          '--phase-consensus', consensus, '--jobs', str(count)],
              'environment': dict(environment, BASE_BUILD_DIR=str(build_directory(consensus, root)))}
-            for consensus in ('bitcoin', 'pocx')]
+            for consensus in ci_product.selected(environment)]
 
 
 def run_phase(consensus, count, *, root=ROOT, run=subprocess.run):
@@ -81,8 +82,10 @@ def main():
     count = args.jobs if args.jobs is not None else int(subprocess.check_output(['nproc'], text=True))
     validate_jobs(count)
     if args.plan and args.phase_consensus:
-        parser.error('--plan describes the complete pair; it cannot execute a phase')
+        parser.error('--plan describes the selected products; it cannot execute a phase')
     inherited_ci.verify_recipe()
+    if args.phase_consensus and args.phase_consensus not in ci_product.selected(os.environ):
+        parser.error('Revision phase does not match CI_PRODUCT')
     if args.phase_consensus:
         run_phase(args.phase_consensus, count)
         return 0
@@ -93,7 +96,7 @@ def main():
              'configure_command': configure_command(build_directory(row['consensus']), row['consensus'])}
             for row in pairs]}, indent=2))
         return 0
-    print('Running original/native tests on commit ...', flush=True)
+    print('Running selected-product tests on commit ...', flush=True)
     subprocess.run(['git', 'log', '-1'], cwd=ROOT, check=True)
     scratch = ROOT / 'ci_build-evidence'
     scratch.mkdir(exist_ok=True)

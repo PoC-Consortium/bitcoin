@@ -113,7 +113,7 @@ class SanitizerInfrastructureTest(unittest.TestCase):
                     sanitizer_ci.specification()
 
     def test_suppression_sources_are_part_of_outer_execution_snapshot(self):
-        for name in ['CMakeLists.txt', 'CMakePresets.json', '.github/workflows/pocx-tests.yml',
+        for name in ['CMakeLists.txt', 'CMakePresets.json', '.github/workflows/ci-product.yml',
                      'test/sanitizer_suppressions/ubsan', 'ci/test/00_setup_env_native_asan.sh']:
             path = self.output / name
             path.parent.mkdir(parents=True, exist_ok=True)

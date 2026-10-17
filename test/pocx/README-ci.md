@@ -1,10 +1,13 @@
 # Bitcoin and PoCX CI verification
 
-`ci.py` provides Linux entry points for the completed test packages. The workflow
-in `.github/workflows/pocx-tests.yml` runs original Bitcoin baselines before the
-matching PoCX jobs. The scheduled/manual feature jobs include both sides of the
-Qt, kernel, wallet-disabled and IPC-disabled configurations. A configured job is
-not passing evidence until it has actually executed successfully.
+`CI` tests original Bitcoin (`ENABLE_POCX=OFF`); `CI-POCX` tests Bitcoin PoCX
+(`ENABLE_POCX=ON`). They independently call `.github/workflows/ci-product.yml`.
+The redundant `PoCX tests` workflow has been removed after accounting for its
+unique checks and scheduled coverage. Read [README-workflows.md](README-workflows.md)
+for the job migration inventory, cadence, product selection and Windows artifact
+rules. `ci.py` remains the Linux profile entry point; the default local paired
+platform commands remain available. A configured job is not passing evidence
+until it actually executes successfully.
 
 ## Current-machine milestone and platform handover (2026-10-16)
 
@@ -15,9 +18,12 @@ case-level reconciliation completed. Configuration-inactive cases, reviewed
 PoW exclusions and the minimal profiles' optional skips remain explicit;
 the latter have passing coverage in enabled profiles.
 
-Ten target-native platform conditions remain deferred: six Windows, two
-macOS ARM64 and two Linux ARM. Intermediate-history verification and fuzz
-modernization are separate work. This milestone does not claim hosted or
+At that milestone ten target-native conditions were deferred. The subsequent
+Windows commit `a3c0ae3a49` reports all six Windows conditions completed; its
+shared changes still need targeted Linux revalidation. macOS ARM64 and Linux ARM
+remain separate platform work. The product-workflow restructuring has only
+infrastructure verification until the new workflows execute. Intermediate-history
+verification and fuzz modernization remain separate work. This milestone does not claim hosted or
 target-native execution that has not happened.
 
 Read [README-platform-handover.md](README-platform-handover.md) for clone,

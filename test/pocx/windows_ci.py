@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # Copyright (c) 2026 The Bitcoin PoCX developers
 # Distributed under the MIT software license; see COPYING.
-"""Original-first native Windows CI, preserving the upstream VS/vcpkg recipe.
+"""Selected-product native Windows CI, preserving the upstream VS/vcpkg recipe.
 
 The original Windows driver stays unchanged. --plan is read-only; neither a plan
 nor fake callback checks establish Windows or framework execution coverage.
@@ -20,6 +20,7 @@ import time
 
 from common import ROOT, sha256
 import inherited_ci
+import ci_product
 import inherited_functional
 import unit_assets
 
@@ -32,6 +33,9 @@ REVIEW_SOURCES = {'.github/ci-windows.py', '.github/workflows/ci.yml',
 MANIFEST_SKIPS = {'fuzz.exe', 'bench_bitcoin.exe', 'test_bitcoin-qt.exe', 'bitcoin-chainstate.exe'}
 REVIEW_SOURCES.update({'test/pocx/original_windows.py', 'test/pocx/test_original_windows.py',
     'test/pocx/bitcoin_baseline/windows/review.json', 'test/pocx/bitcoin_baseline/windows/rpc_signer.py'})
+
+REVIEW_SOURCES.update({'.github/workflows/ci.yml', '.github/workflows/ci-pocx.yml',
+    '.github/workflows/ci-product.yml', 'test/pocx/ci_product.py', 'test/pocx/test_product_workflows.py'})
 
 
 def verify_recipe(root=ROOT):
@@ -88,7 +92,7 @@ def plan(count, environment, root=ROOT):
              'command': [sys.executable, str(root / 'test/pocx/windows_ci.py'),
                          '--phase-consensus', consensus, '--jobs', str(count)],
              'environment': dict(environment, BASE_BUILD_DIR=str(build_directory(consensus, root)))}
-            for consensus in ('bitcoin', 'pocx')]
+            for consensus in ci_product.selected(environment)]
 
 
 def check_manifests(build, invoke):
@@ -111,6 +115,8 @@ def run_phase(consensus, count, *, root=ROOT, environment=None, run=subprocess.r
     validate_jobs(count)
     build = build_directory(consensus, root)
     env = dict(os.environ if environment is None else environment)
+    if consensus not in ci_product.selected(env):
+        raise ValueError('Windows phase does not match CI_PRODUCT')
     def invoke(command, *, check=True):
         print('+ ' + shlex.join(command), flush=True)
         result = run(command, cwd=root, env=env)
@@ -131,7 +137,7 @@ def run_phase(consensus, count, *, root=ROOT, environment=None, run=subprocess.r
     assets = provision(root / 'unit_test_data')
     env['DIR_UNIT_TEST_DATA'] = assets['directory']
     print('Pinned original unit assets: ' + json.dumps(assets, sort_keys=True), flush=True)
-    if consensus == 'bitcoin':
+    if consensus == 'bitcoin' or env.get('CI_PRODUCT') == 'pocx':
         # Real host lifecycle probes must pass before any framework claims.
         invoke([sys.executable, str(root / 'test/pocx/test_process_tree.py')])
     runtime = [sys.executable, str(root / 'test/pocx/inherited_tests.py'),
@@ -149,7 +155,7 @@ def main():
     count = args.jobs if args.jobs is not None else (getattr(os, 'process_cpu_count', os.cpu_count)() or 1)
     validate_jobs(count)
     if args.plan and args.phase_consensus:
-        parser.error('--plan describes the complete pair')
+        parser.error('--plan describes the selected products')
     verify_recipe()
     pairs = plan(count, os.environ)
     if args.plan:

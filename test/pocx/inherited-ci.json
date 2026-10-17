@@ -15,34 +15,39 @@
   "execution_status": "unverified for actual inherited POSIX/hosted recipes",
   "source_sha256": {
     ".github/ci-test-each-commit-exec.py": "7d6c921986188b726f82bb08a782be738f6dfc2460d1f64272ae8bd8715d040b",
-    "ci/test/02_run_container.py": "84e4a1adb04972ec0d3c74a598f0995fde6465592c62f84139db41fcab6a7b65",
+    ".github/workflows/ci-pocx.yml": "ea2b11ff35304fe0d1ae65fc02c071860b5e7fd6ec6e520dd4832ff5a7ec0341",
+    ".github/workflows/ci-product.yml": "0aca92bf412d114ea7cfe745bf9c2393dcae4648eaf8ee695ae2a9b9ccd51bd1",
+    ".github/workflows/ci.yml": "25e3550fc74c70ca4ab56a90e7a3d3b776255dbbcd0a71e80ec1df69b061256d",
+    "ci/test/02_run_container.py": "2becef70fc04eaae9b346d9afb3ef6b6590fe6a490b24c4b15ca0ac8c60ca20f",
     "ci/test/03_test_script.sh": "cfd9e9583398dee9527a2fb7ea099104a8cab53f7bf5ccdceb3f4e84425ebb8b",
-    "test/pocx/ci/inherited_test_script.sh": "25b6f367bed45e7c7d040ae2a82bba21b278790d83c536ade4d7b7a835273930",
-    "test/pocx/inherited_ci.py": "e0dc7430cc00fa964f74549a0a4b831a52cd5cee07f9ac7900185398ab598334",
-    "test/pocx/inherited_functional.py": "38faa96c36ca54baabc9206725858729ca41ac78d235d1bb7bd3c299d25bc897",
-    "test/pocx/inherited_tests.py": "b1fb1313f9c510735ecbf42cf7d092201031d8516051e463351b233125af3a74",
-    "test/pocx/revision_ci.py": "4ae8bac50834eb3d9bb3a883b6d8897c51730f6989e981bcd589c14fbd7e0998",
-    "test/pocx/test_windows_cross.py": "fe09e5b453625b7c849f4c9177392f9b7c72931f530a21e353101d6b36ebbe57",
-    "test/pocx/windows_cross.py": "92e2796dc4101adb5bb0788b9e9407f075c0ee81ce5bf659c996ab710c54e35c",
-    "test/pocx/ci/00_setup_env_native_asan_tracing.sh": "caa30536d110b2b66754837ae1dce4398e389747cdd98996d75db2ae949a5f5d",
     "ci/test_imagefile": "1474ad98f223b4069eb297e201ea2148621c8a077d8706a34c45a761a23e45b5",
-    "test/pocx/ci/test_imagefile": "8611a47495fdc3b331d403ef3ee90cd9a1a20b4e6dcae1795148ba5db7f64d55",
-    "test/pocx/ci/inherited_runtime_env.sh": "0b8f000c75cea73e06df91589da76f06d5773db321199d3468d68ceb5adb8f91",
-    "test/pocx/original_usdt.py": "6d16fb36c3d615b6d871486f94ef6019b293b710f3aab71953d6fbbe58c8b67c",
-    "test/pocx/framework/bpf_abi.py": "5bb74f7e8fb3bdf815defbbc2d35362690a2e09f8898645ced8fbcac60259571",
-    "test/pocx/test_bpf_abi.py": "75a17d5360c9958e9dc2146a5031f7d25668cd13c38b70625eb8abee744a0d4a",
-    "test/pocx/bitcoin_baseline/usdt/review.json": "3f3fc24dc1c06bf8efac4bc8b8748f2fa2eb77d27b5283ab1cd8c35605f5203a",
+    "test/pocx/bitcoin_baseline/usdt/interface_usdt_coinselection.py": "937ed589df1a6bf42d62ae4b20d4a9a11b00f8b68f712be21d708bfc25e7e2e5",
+    "test/pocx/bitcoin_baseline/usdt/interface_usdt_mempool.py": "73336cf4489b45fc87729287814236d5f5e20ca528427500a18aaa00885d173a",
+    "test/pocx/bitcoin_baseline/usdt/interface_usdt_net.py": "113bc1b4208988dc906187b5c4baebde9af438dc5684a5009f0cf49c0dadeb55",
     "test/pocx/bitcoin_baseline/usdt/interface_usdt_utxocache.py": "10059ade02b7eaf59ecd5df1e2a4df1ca3895da27aa0a533c4fee4d9a453e73c",
     "test/pocx/bitcoin_baseline/usdt/interface_usdt_validation.py": "d4a7dfc3fda13e7b0ca0609dd97fd25195d6a3939a4bcea7efd85b808a910bca",
-    "test/pocx/bitcoin_baseline/usdt/interface_usdt_coinselection.py": "937ed589df1a6bf42d62ae4b20d4a9a11b00f8b68f712be21d708bfc25e7e2e5",
-    "test/pocx/bitcoin_baseline/usdt/interface_usdt_net.py": "113bc1b4208988dc906187b5c4baebde9af438dc5684a5009f0cf49c0dadeb55",
-    "test/pocx/bitcoin_baseline/usdt/interface_usdt_mempool.py": "73336cf4489b45fc87729287814236d5f5e20ca528427500a18aaa00885d173a",
-    "test/pocx/pocx_bootstrap.py": "72e0a27abe139a6079220174cc1c103c173a0f632c1aa6034ddcc2075d58322d",
-    "test/pocx/framework/bcc_headers.py": "54c095668335ee50fdb0b2b4842e21eced9c9b2c175652463937f1be05b786ec",
-    "test/pocx/original_windows.py": "2598717ba1d532ebe4444d5cec2ae88f6cfed8132e514658600a71f551336e15",
-    "test/pocx/test_original_windows.py": "d1ae65726b2ff2017ff72e5026ac80a6c3e6584c4c0c8df4b0e9e0d946c730f3",
+    "test/pocx/bitcoin_baseline/usdt/review.json": "3f3fc24dc1c06bf8efac4bc8b8748f2fa2eb77d27b5283ab1cd8c35605f5203a",
     "test/pocx/bitcoin_baseline/windows/review.json": "f541b15bbe06f200838f6ba17cacfe279ac723fbc71a1b6994c822e45219a6e6",
-    "test/pocx/bitcoin_baseline/windows/rpc_signer.py": "ea682c6093604670612eeae9936a9a3d4d0af232fe798d9edf7eea979c01639d"
+    "test/pocx/bitcoin_baseline/windows/rpc_signer.py": "ea682c6093604670612eeae9936a9a3d4d0af232fe798d9edf7eea979c01639d",
+    "test/pocx/ci/00_setup_env_native_asan_tracing.sh": "caa30536d110b2b66754837ae1dce4398e389747cdd98996d75db2ae949a5f5d",
+    "test/pocx/ci/inherited_runtime_env.sh": "0b8f000c75cea73e06df91589da76f06d5773db321199d3468d68ceb5adb8f91",
+    "test/pocx/ci/inherited_test_script.sh": "25b6f367bed45e7c7d040ae2a82bba21b278790d83c536ade4d7b7a835273930",
+    "test/pocx/ci/test_imagefile": "8611a47495fdc3b331d403ef3ee90cd9a1a20b4e6dcae1795148ba5db7f64d55",
+    "test/pocx/ci_product.py": "50989a8e49ae46323fb972bbd1a8077f4ddb7371b236549083afa0681c72d75c",
+    "test/pocx/framework/bcc_headers.py": "54c095668335ee50fdb0b2b4842e21eced9c9b2c175652463937f1be05b786ec",
+    "test/pocx/framework/bpf_abi.py": "5bb74f7e8fb3bdf815defbbc2d35362690a2e09f8898645ced8fbcac60259571",
+    "test/pocx/inherited_ci.py": "451b7e05f866473c87eaedc25976758a303f1773f533357f03ed0f1488e76061",
+    "test/pocx/inherited_functional.py": "38faa96c36ca54baabc9206725858729ca41ac78d235d1bb7bd3c299d25bc897",
+    "test/pocx/inherited_tests.py": "a08946f019b624ecdd5b00709a44fdabf0133dc9de8cc0328ca0c82c70f05d10",
+    "test/pocx/original_usdt.py": "6d16fb36c3d615b6d871486f94ef6019b293b710f3aab71953d6fbbe58c8b67c",
+    "test/pocx/original_windows.py": "2598717ba1d532ebe4444d5cec2ae88f6cfed8132e514658600a71f551336e15",
+    "test/pocx/pocx_bootstrap.py": "72e0a27abe139a6079220174cc1c103c173a0f632c1aa6034ddcc2075d58322d",
+    "test/pocx/revision_ci.py": "820892e710eb2fca178be77df4568f617603df68f9c265a16f178c8713c087df",
+    "test/pocx/test_bpf_abi.py": "75a17d5360c9958e9dc2146a5031f7d25668cd13c38b70625eb8abee744a0d4a",
+    "test/pocx/test_original_windows.py": "d1ae65726b2ff2017ff72e5026ac80a6c3e6584c4c0c8df4b0e9e0d946c730f3",
+    "test/pocx/test_product_workflows.py": "536e0f1d8b182dfb800751f20d497b55e58ad5c5a055efbba721e995e1d22597",
+    "test/pocx/test_windows_cross.py": "8e424e8bdc6d5e213944db9df22b084cc68b60472b1efe3d8c2ca8d5cbf1bac6",
+    "test/pocx/windows_cross.py": "73b65ca5b7ecb28e07c20a6b0ed563bf4359d5911d4e81df3050a560c8c0d92d"
   },
   "evidence_retention": "Copy newly created bounded framework report trees into artifacts/pocx-inherited on success and failure; export container reports before cleanup; upload in inherited POSIX jobs",
   "unchanged_upstream_revision_recipe": ".github/ci-test-each-commit-exec.py",
@@ -91,5 +96,57 @@
       "test/pocx/inherited_ci.py": "e0dc7430cc00fa964f74549a0a4b831a52cd5cee07f9ac7900185398ab598334",
       "test/pocx/inherited_functional.py": "38faa96c36ca54baabc9206725858729ca41ac78d235d1bb7bd3c299d25bc897"
     }
+  },
+  "product_workflow_reorganization_review": {
+    "scope": "Independent CI (bitcoin/OFF) and CI-POCX (pocx/ON) with shared inherited matrix and explicit selected-product runners. Keep legacy local pairs, source/test drift checks, reviewed exclusions and immutable revision/source/configuration/PE provenance. No assertion, feature, platform-native runtime or upstream recipe changes approved by this organization review.",
+    "selected_product_environment": "CI_PRODUCT=bitcoin or CI_PRODUCT=pocx; unset retains the local ordered pair",
+    "windows_artifact_format": "Format2 holds exactly one product; format1 retains legacy local pairs. Actions producer and consumer require their matching single product at the same frozen revision.",
+    "source_changes": {
+      ".github/workflows/ci-pocx.yml": {
+        "previous_sha256": null,
+        "sha256": "ea2b11ff35304fe0d1ae65fc02c071860b5e7fd6ec6e520dd4832ff5a7ec0341"
+      },
+      ".github/workflows/ci-product.yml": {
+        "previous_sha256": null,
+        "sha256": "0aca92bf412d114ea7cfe745bf9c2393dcae4648eaf8ee695ae2a9b9ccd51bd1"
+      },
+      ".github/workflows/ci.yml": {
+        "previous_sha256": null,
+        "sha256": "25e3550fc74c70ca4ab56a90e7a3d3b776255dbbcd0a71e80ec1df69b061256d"
+      },
+      "ci/test/02_run_container.py": {
+        "previous_sha256": "84e4a1adb04972ec0d3c74a598f0995fde6465592c62f84139db41fcab6a7b65",
+        "sha256": "2becef70fc04eaae9b346d9afb3ef6b6590fe6a490b24c4b15ca0ac8c60ca20f"
+      },
+      "test/pocx/ci_product.py": {
+        "previous_sha256": null,
+        "sha256": "50989a8e49ae46323fb972bbd1a8077f4ddb7371b236549083afa0681c72d75c"
+      },
+      "test/pocx/inherited_ci.py": {
+        "previous_sha256": "e0dc7430cc00fa964f74549a0a4b831a52cd5cee07f9ac7900185398ab598334",
+        "sha256": "451b7e05f866473c87eaedc25976758a303f1773f533357f03ed0f1488e76061"
+      },
+      "test/pocx/inherited_tests.py": {
+        "previous_sha256": "b1fb1313f9c510735ecbf42cf7d092201031d8516051e463351b233125af3a74",
+        "sha256": "a08946f019b624ecdd5b00709a44fdabf0133dc9de8cc0328ca0c82c70f05d10"
+      },
+      "test/pocx/revision_ci.py": {
+        "previous_sha256": "4ae8bac50834eb3d9bb3a883b6d8897c51730f6989e981bcd589c14fbd7e0998",
+        "sha256": "820892e710eb2fca178be77df4568f617603df68f9c265a16f178c8713c087df"
+      },
+      "test/pocx/test_product_workflows.py": {
+        "previous_sha256": null,
+        "sha256": "536e0f1d8b182dfb800751f20d497b55e58ad5c5a055efbba721e995e1d22597"
+      },
+      "test/pocx/test_windows_cross.py": {
+        "previous_sha256": "fe09e5b453625b7c849f4c9177392f9b7c72931f530a21e353101d6b36ebbe57",
+        "sha256": "8e424e8bdc6d5e213944db9df22b084cc68b60472b1efe3d8c2ca8d5cbf1bac6"
+      },
+      "test/pocx/windows_cross.py": {
+        "previous_sha256": "92e2796dc4101adb5bb0788b9e9407f075c0ee81ce5bf659c996ab710c54e35c",
+        "sha256": "73b65ca5b7ecb28e07c20a6b0ed563bf4359d5911d4e81df3050a560c8c0d92d"
+      }
+    },
+    "execution_status": "Source organization reviewed; focused infrastructure validation only. Historical platform results do not establish hosted execution of the new workflows."
   }
 }

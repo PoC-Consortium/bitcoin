@@ -18,7 +18,7 @@ import windows_artifacts as artifacts
 class WindowsArtifactsTest(unittest.TestCase):
     def fixture(self, directory):
         root = Path(directory)
-        for name in ('CMakeLists.txt', 'CMakePresets.json', '.github/workflows/pocx-tests.yml', 'src/fixture.cpp',
+        for name in ('CMakeLists.txt', 'CMakePresets.json', '.github/workflows/ci-product.yml', 'src/fixture.cpp',
                      *artifacts.FUNCTIONAL_SUPPORT):
             path = root / name
             path.parent.mkdir(parents=True, exist_ok=True)

@@ -26,24 +26,18 @@ from common import ROOT
 
 
 class InheritedTest(unittest.TestCase):
-    def test_manual_baseline_dispatch_is_single_job_and_default_matrix_remains_enabled(self):
-        workflow = (ROOT/'.github/workflows/ci.yml').read_text()
-        header, jobs = workflow.split('\njobs:\n', 1)
-        self.assertRegex(header, r'baseline_only:\n(?:[^\n]*\n)*?        default: false')
-        self.assertNotIn('    if:', header)
-        blocks = re.split(r'(?=^  [a-z][a-z0-9-]*:\n)', jobs, flags=re.MULTILINE)
-        blocks = {block.split(':',1)[0].strip(): block for block in blocks if block.strip()}
-        baseline = blocks.pop('bitcoin-baseline')
-        self.assertIn("if: github.event_name == 'workflow_dispatch' && inputs.baseline_only", baseline)
-        self.assertIn('--profile bitcoin-unit --jobs 2', baseline)
-        self.assertIn('if: always()', baseline)
-        self.assertNotIn('matrix:', baseline)
-        self.assertEqual(set(blocks), {'runners','test-each-commit','macos-native-arm64',
-            'windows-native-dll','record-frozen-commit','windows-cross','windows-native-test','ci-matrix','lint'})
-        for name, block in blocks.items():
-            condition = re.search(r'^    if: (.+)$', block, re.MULTILINE)
-            self.assertIsNotNone(condition, name)
-            self.assertIn("(github.event_name != 'workflow_dispatch' || !inputs.baseline_only)", condition[1])
+    def test_manual_baseline_dispatch_is_explicitly_limited(self):
+        import yaml
+        workflow = yaml.safe_load((ROOT/'.github/workflows/ci-product.yml').read_text())
+        baseline = workflow['jobs']['bitcoin-baseline']
+        self.assertIn("inputs.product == 'bitcoin'", baseline['if'])
+        self.assertIn('--profile bitcoin-unit --jobs 2', str(baseline['steps']))
+        self.assertIn("github.event_name == 'workflow_dispatch' && inputs.baseline_only", baseline['if'])
+        self.assertNotIn('strategy', baseline)
+        self.assertTrue(any(step.get('if') == 'always()' for step in baseline['steps']))
+        for name, job in workflow['jobs'].items():
+            if name not in ('bitcoin-baseline', 'scope-summary'):
+                self.assertIn('!inputs.baseline_only', job['if'], name)
 
     def env(self):
         return {'BASE_ROOT_DIR': str(ROOT), 'BASE_SCRATCH_DIR': str(ROOT/'build-inherited-fixture'),
@@ -146,7 +140,7 @@ class InheritedTest(unittest.TestCase):
                 inherited_ci.verify_recipe()
 
     def test_actual_tracing_recipes_match_host_header_provisioning(self):
-        workflow = (ROOT/'.github/workflows/ci.yml').read_text()
+        workflow = (ROOT/'.github/workflows/ci-product.yml').read_text()
         step = workflow.split('- name: Provision matching headers for enabled Linux USDT tests', 1)[1].split('\n      - name:', 1)[0]
         profiles = json.loads(re.search(r"fromJSON\('([^']+)'\)", step).group(1))
         self.assertEqual(len(profiles), len(set(profiles)))

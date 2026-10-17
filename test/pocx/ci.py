@@ -22,6 +22,7 @@ import tempfile
 import time
 
 import pocx_bootstrap as pocx_bootstrap
+import ci_product
 from stage import ROOT, build_options, sha256, short_tmpdir
 from ci_evidence import artifact_paths, build_snapshot, require_unchanged, source_snapshot, verify_report
 
@@ -170,6 +171,9 @@ def main():
     parser.add_argument('--instrumented-dependencies-dir', type=Path,
                         help='Verified prepared libc++/depends; required only for TSAN/MSAN profiles')
     args = parser.parse_args()
+    products = ci_product.selected(os.environ)
+    if args.profile != 'drift' and args.profile.split('-', 1)[0] not in products:
+        parser.error('CI profile does not match CI_PRODUCT')
     if args.jobs < 1:
         parser.error('jobs must be positive')
     asan = args.profile.endswith('-asan')

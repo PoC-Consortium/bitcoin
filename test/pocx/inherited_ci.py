@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # Copyright (c) 2026 The Bitcoin PoCX developers
 # Distributed under the MIT software license; see COPYING.
-"""Run inherited POSIX recipes with an explicit Bitcoin baseline before PoCX.
+"""Run inherited POSIX recipes for CI_PRODUCT; retain paired local execution.
 
 Invoke after the existing container/dependency setup. --plan is read-only and
 does not establish execution coverage. Fuzz jobs retain their original driver.
@@ -18,11 +18,12 @@ import sys
 import tempfile
 import time
 import windows_cross
+import ci_product
 
 from common import ROOT, sha256
 from ci_evidence import source_snapshot
 
-SETTINGS = ('HOST', 'MAKEJOBS', 'GOAL', 'BITCOIN_CONFIG', 'DEP_OPTS', 'NO_DEPENDS',
+SETTINGS = ('CI_PRODUCT', 'HOST', 'MAKEJOBS', 'GOAL', 'BITCOIN_CONFIG', 'DEP_OPTS', 'NO_DEPENDS',
             'RUN_UNIT_TESTS', 'RUN_FUNCTIONAL_TESTS', 'RUN_TIDY', 'RUN_IWYU',
             'TEST_RUNNER_EXTRA', 'TEST_RUNNER_TIMEOUT_FACTOR', 'BITCOIN_CMD',
             'CI_OS_NAME', 'CI_LIMIT_STACK_SIZE', 'DOWNLOAD_PREVIOUS_RELEASES', 'TEST_RUNNER_PORT_MIN',
@@ -34,7 +35,7 @@ RECIPE_SOURCES = {'ci/test/03_test_script.sh', 'ci/test/02_run_container.py',
                   'test/pocx/ci/inherited_test_script.sh', 'test/pocx/inherited_ci.py',
                   'test/pocx/inherited_tests.py', 'test/pocx/inherited_functional.py',
                   '.github/ci-test-each-commit-exec.py', 'test/pocx/revision_ci.py',
-                  'test/pocx/windows_cross.py', 'test/pocx/test_windows_cross.py'}
+                  'test/pocx/windows_cross.py', 'test/pocx/test_windows_cross.py', 'test/pocx/ci_product.py'}
 RECIPE_SOURCES.update({'test/pocx/pocx_bootstrap.py', 'test/pocx/original_usdt.py', 'test/pocx/framework/bpf_abi.py',
                        'test/pocx/framework/bcc_headers.py',
                        'test/pocx/test_bpf_abi.py', 'test/pocx/bitcoin_baseline/usdt/review.json'})
@@ -46,6 +47,9 @@ RECIPE_SOURCES.update({'test/pocx/original_windows.py', 'test/pocx/test_original
 UPSTREAM_REVISION_RECIPE_SHA256 = '7d6c921986188b726f82bb08a782be738f6dfc2460d1f64272ae8bd8715d040b'
 EVIDENCE_PREFIXES = ('pocx-inherited-', 'bitcoin-unit-', 'pocx-unit-', 'pocx-results-')
 EVIDENCE_SUFFIXES = {'.json', '.xml', '.csv', '.log', '.txt'}
+
+RECIPE_SOURCES.update({'.github/workflows/ci.yml', '.github/workflows/ci-pocx.yml',
+    '.github/workflows/ci-product.yml', 'test/pocx/ci_product.py', 'test/pocx/test_product_workflows.py'})
 
 
 def iwyu_inputs(root, snapshot):
@@ -188,7 +192,8 @@ def plan(environment, root=ROOT):
         if path == root or not path.is_relative_to(root):
             raise ValueError('Use isolated inherited CI directories inside this source worktree')
     pairs = []
-    for name, enabled in (('bitcoin', 'OFF'), ('pocx', 'ON')):
+    for name in ci_product.selected(environment):
+        enabled = ci_product.PRODUCTS[name]
         child = dict(environment, HOST=host)
         child['BASE_BUILD_DIR'] = str(build) + ('-bitcoin-baseline' if name == 'bitcoin' else '')
         child['BASE_OUTDIR'] = str(output) + ('-bitcoin-baseline' if name == 'bitcoin' else '')
@@ -203,11 +208,11 @@ def plan(environment, root=ROOT):
 
 
 def execute(pairs, output, *, root=ROOT, run=subprocess.run):
-    if [item['consensus'] for item in pairs] != ['bitcoin', 'pocx']:
-        raise ValueError('Inherited CI requires exactly one original baseline followed by one native build')
+    products = ci_product.validate_phases(pairs)
     cross = windows_cross.is_cross_pair(pairs)
     output.mkdir(parents=True, exist_ok=False)
-    report = {'status': 'running', 'scope': 'Original-first CI controller; actual framework and hosted execution require their own evidence.',
+    report = {'status': 'running', 'scope': 'Selected-product CI controller; actual framework and hosted execution require their own evidence.',
+              'products': products,
               'source_snapshot': source_snapshot(root), 'steps': [], 'native_execution': 'deferred',
               'runtime_scope': 'Cross-build only; target-host execution deferred' if cross else 'Native inherited runtime recipe'}
     def save():
@@ -219,7 +224,10 @@ def execute(pairs, output, *, root=ROOT, run=subprocess.run):
             step = {'consensus': item['consensus'], 'command': item['command'], 'status': 'running',
                     'settings': {key: env[key] for key in (*SETTINGS, 'BASE_BUILD_DIR', 'BASE_OUTDIR') if key in env}}
             report['steps'].append(step)
-            if item['consensus'] == 'pocx':
+            if item['consensus'] == 'pocx' and len(products) == 1:
+                report['native_execution'] = ('Cross-build only; target-host execution deferred' if cross
+                                              else 'selected independently; runtime recipe started')
+            elif item['consensus'] == 'pocx':
                 report['native_execution'] = ('Cross-build started after original build; target-host baseline still required'
                     if cross else 'started after successful original baseline')
             save()

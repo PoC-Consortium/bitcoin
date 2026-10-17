@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # Copyright (c) 2026 The Bitcoin PoCX developers
 # Distributed under the MIT software license; see COPYING.
-"""Consume an immutable Windows pair: complete Bitcoin runtime before PoCX.
+"""Consume immutable selected-product Windows artifacts, or an ordered local pair.
 
 Plans and callback checks do not establish Windows execution. Actual hosted
 producer/workflow verification is a separate requirement from this runtime.
@@ -18,6 +18,7 @@ from common import ROOT, sha256
 from functional_cases import upstream_cases
 import process_tree
 import unit_assets
+import ci_product
 import windows_artifacts
 import windows_artifact_functional as functional
 import windows_artifact_tests as frameworks
@@ -56,13 +57,16 @@ def functional_rows(cases, native, *, root=ROOT):
 
 
 def run_pair(bundle, output, assets, jobs, factor, *, environment=None, timeout=86400,
-             execute=process_tree.execute, root=ROOT, revision=None):
+             execute=process_tree.execute, root=ROOT, revision=None, product=None):
     if type(jobs) is not int or jobs < 1 or type(timeout) is not int or timeout < 1:
         raise ValueError('Expected positive runtime jobs and timeout')
     output = output.resolve()
     if output.is_relative_to(bundle.resolve()):
         raise ValueError('Reports must be outside immutable artifact bundle')
     pair = windows_artifacts.verify_pair(bundle, root=root, revision=revision)
+    products = ci_product.validate_phases(pair['phases'])
+    if product is not None and (product not in ci_product.PRODUCTS or products != [product]):
+        raise ValueError('Artifact runtime requires exactly the selected product')
     env = dict(os.environ if environment is None else environment)
     env['PYTHONDONTWRITEBYTECODE'] = '1'
     env['DOWNLOAD_PREVIOUS_RELEASES'] = 'true'
@@ -70,8 +74,8 @@ def run_pair(bundle, output, assets, jobs, factor, *, environment=None, timeout=
     if not env.get('PREVIOUS_RELEASES_DIR'):
         raise ValueError('Full Windows runtime requires PREVIOUS_RELEASES_DIR')
     output.mkdir(parents=True, exist_ok=False)
-    report = {'status': 'running', 'scope': 'Complete applicable paired artifact runtime; hosted producer/workflow evidence remains separate',
-        'full_windows_runtime_pass': False, 'full_windows_ci_pass': False, 'host_platform': sys.platform,
+    report = {'status': 'running', 'scope': 'Complete applicable selected-product artifact runtime; hosted producer/workflow evidence remains separate',
+        'products': products, 'full_windows_runtime_pass': False, 'full_windows_ci_pass': False, 'host_platform': sys.platform,
         'pair_sha256': sha256(bundle / 'pair.json'), 'phases': [], 'cases': [], 'native_execution': 'deferred',
         'process_controller': process_tree.description(), 'profile': profile, 'timeout': timeout}
     def save():
@@ -91,7 +95,9 @@ def run_pair(bundle, output, assets, jobs, factor, *, environment=None, timeout=
         for row in pair['phases']:
             consensus = row['consensus']
             payload = bundle / consensus
-            if consensus == 'pocx':
+            if consensus == 'pocx' and len(products) == 1:
+                report['native_execution'] = 'selected independently; target-host runtime started'
+            elif consensus == 'pocx':
                 report['native_execution'] = 'started after complete original framework/functional runtime passed'
             directory = output / consensus
             directory.mkdir()
@@ -114,7 +120,7 @@ def run_pair(bundle, output, assets, jobs, factor, *, environment=None, timeout=
                 unchanged()
                 step['status'] = 'passed'
                 save()
-            if consensus == 'bitcoin':
+            if consensus == 'bitcoin' or products == ['pocx']:
                 invoke('host-process-lifecycle', [sys.executable, '-B', str(root / 'test/pocx/test_process_tree.py')])
             invoke('version', [str(payload / 'bin/bitcoind.exe'), '-version'])
             manifest = directory / 'bitcoind.manifest'
@@ -176,11 +182,12 @@ def main():
     parser.add_argument('--timeout-factor', type=float, default=40)
     parser.add_argument('--timeout', type=int, default=86400)
     parser.add_argument('--plan', action='store_true')
+    parser.add_argument('--product', choices=tuple(ci_product.PRODUCTS))
     args = parser.parse_args()
     if not args.plan and os.name != 'nt':
         parser.error('Actual complete artifact runtime requires Windows')
     windows_artifacts.verify_recipe()
-    pair = windows_artifacts.verify_pair(args.artifacts)
+    pair = windows_artifacts.verify_pair(args.artifacts, product=args.product)
     if args.plan:
         print(json.dumps({'status': 'configured only; not executed', 'full_windows_ci_pass': False,
             'phases': [{'consensus': row['consensus'], 'steps': ['manifest', 'qt/unit/libraries/kernel', 'functional v1/v2 including previous releases']}
@@ -189,7 +196,7 @@ def main():
     if args.output is None:
         parser.error('Execution requires a new --output directory')
     assets = unit_assets.provision(ROOT / 'unit_test_data')
-    run_pair(args.artifacts, args.output, assets, args.jobs, args.timeout_factor, timeout=args.timeout)
+    run_pair(args.artifacts, args.output, assets, args.jobs, args.timeout_factor, timeout=args.timeout, product=args.product)
 
 
 if __name__ == '__main__':

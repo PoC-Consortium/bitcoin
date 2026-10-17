@@ -1,0 +1,25 @@
+# Copyright (c) 2026 The Bitcoin PoCX developers
+# Distributed under the MIT software license; see COPYING.
+name: CI-POCX
+on:
+  pull_request:
+  push:
+    branches: ['**']
+    tags-ignore: ['**']
+  workflow_dispatch:
+  schedule:
+    - cron: '19 2 * * 1'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  product:
+    name: CI-POCX (ENABLE_POCX=ON)
+    uses: ./.github/workflows/ci-product.yml
+    with:
+      product: pocx

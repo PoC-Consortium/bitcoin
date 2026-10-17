@@ -43,7 +43,7 @@ class PortablePathsTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             for name in ('CMakeLists.txt', 'CMakePresets.json',
-                         '.github/workflows/pocx-tests.yml', 'src/nested/example.cpp'):
+                         '.github/workflows/ci-product.yml', 'src/nested/example.cpp'):
                 path = root / name
                 path.parent.mkdir(parents=True, exist_ok=True)
                 path.write_text('original input\n')

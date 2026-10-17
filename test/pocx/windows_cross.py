@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 # Copyright (c) 2026 The Bitcoin PoCX developers
 # Distributed under the MIT software license; see COPYING.
-"""Export completed Windows cross-build pairs before their container disappears.
+"""Export selected Windows cross-builds before their container disappears.
 
-This is build-input evidence only. Bitcoin/PoCX runtime baseline ordering is
-enforced later by windows_artifact_ci.py on the target host.
+This is build-input evidence only. Product identity and runtime execution are
+verified later by windows_artifact_ci.py on the target host. Local pairs remain supported.
 """
 import argparse
 import json
@@ -14,6 +14,7 @@ import tempfile
 
 from common import ROOT, sha256
 import windows_artifacts
+import ci_product
 
 HOSTS = {'x86_64-w64-mingw32', 'x86_64-w64-mingw32ucrt'}
 BUNDLE_DIRECTORY = 'windows-artifacts'
@@ -21,8 +22,7 @@ PUBLISHED_DIRECTORY = 'windows-cross-pair'
 
 
 def is_cross_pair(pairs):
-    if [row['consensus'] for row in pairs] != ['bitcoin', 'pocx']:
-        raise ValueError('Cross export requires the complete original/native build pair')
+    ci_product.validate_phases(pairs)
     hosts = [row['environment'].get('HOST', '') for row in pairs]
     cross = any('mingw' in host for host in hosts)
     if cross and (len(set(hosts)) != 1 or hosts[0] not in HOSTS):
@@ -32,7 +32,7 @@ def is_cross_pair(pairs):
 
 def export(pairs, output, *, root=ROOT, revision=None):
     if not is_cross_pair(pairs):
-        raise ValueError('Export requires a reviewed Windows cross-build pair')
+        raise ValueError('Export requires reviewed Windows cross-build products')
     windows_artifacts.verify_recipe(root)
     for row in pairs:
         env = row['environment']
@@ -40,7 +40,10 @@ def export(pairs, output, *, root=ROOT, revision=None):
             raise ValueError('Cross producer must defer target-host runtime execution explicitly')
     builds = [Path(row['environment']['BASE_BUILD_DIR']) for row in pairs]
     bundle = output / BUNDLE_DIRECTORY
-    pair = windows_artifacts.export_pair(*builds, bundle, root=root, revision=revision)
+    if len(pairs) == 1:
+        pair = windows_artifacts.export_product(builds[0], pairs[0]['consensus'], bundle, root=root, revision=revision)
+    else:
+        pair = windows_artifacts.export_pair(*builds, bundle, root=root, revision=revision)
     return {'status': 'built and input-verified; target-host execution not performed',
         'target': pairs[0]['environment']['HOST'], 'pair_sha256': sha256(bundle / 'pair.json'),
         'published_bundle_name': PUBLISHED_DIRECTORY, 'revision': pair['revision'],

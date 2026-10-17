@@ -1,5 +1,12 @@
 # Windows and macOS test handover
 
+For the current Actions organization, read [README-workflows.md](README-workflows.md).
+`CI` selects Bitcoin OFF and `CI-POCX` selects PoCX ON independently through the
+shared workflow. The paired local commands below remain supported when
+`CI_PRODUCT` is unset. Portable status/checksums below record the earlier Linux
+milestone; they are not refreshed execution claims for subsequent platform or
+workflow commits. Preserve other sessions' checkouts and generated builds.
+
 The Linux/current-machine milestone is complete. Continue target-native
 verification from this repository; establish each target's original Bitcoin
 baseline with `ENABLE_POCX=OFF` before its matching PoCX phase. The paired
@@ -86,7 +93,7 @@ uses `windows-2025-vs2026`; record differences from that environment explicitly.
 
 Set `VCPKG_ROOT` to the installed vcpkg directory. Reproduce the vcpkg
 release-build and CMake/libevent compatibility settings from the
-`windows-native-dll` job in `.github/workflows/ci.yml` when applicable; use a
+`windows-native-dll` job in `.github/workflows/ci-product.yml` when applicable; use a
 dedicated vcpkg installation rather than editing a shared installation blindly.
 Do not replace the required `vs2026` dynamic-library preset with a static or
 GUI-disabled build to work around failures.
@@ -159,7 +166,7 @@ py -3 test/pocx/windows_cross.py --collect-runtime artifacts/windows-ucrt-runtim
 
 Repeat verification, execution and collection for MSVCRT with its own paths.
 Check each prerequisite command's exit status before proceeding. The workflow
-reference is `windows-native-test` in `.github/workflows/ci.yml`, with its
+reference is `windows-native-test` in `.github/workflows/ci-product.yml`, with its
 `windows-2022` environment. Preserve actual environment differences. The
 collector retains bounded evidence; collection alone is not a test pass.
 

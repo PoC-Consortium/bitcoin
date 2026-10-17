@@ -93,15 +93,17 @@ class RevisionTest(unittest.TestCase):
         self.assertEqual(len(self.phase([0, 0, 7])), 3)
 
     def test_actual_workflow_routes_revision_job_and_uploads_failure_evidence(self):
-        workflow = (ROOT/'.github/workflows/ci.yml').read_text()
+        workflow = (ROOT/'.github/workflows/ci-product.yml').read_text()
         job = re.search(r'^  test-each-commit:\n(.*?)(?=^  [\w-]+:)', workflow, re.M | re.S)[1]
-        self.assertIn('.ci-venv/bin/python ./test/pocx/revision_ci.py && git reset --hard', job)
+        self.assertIn('.ci-venv/bin/python ./test/pocx/revision_ci.py --phase-consensus', job)
         self.assertNotIn('python3 ./.github/ci-test-each-commit-exec.py', job)
         self.assertIn('python3-bpfcc bpfcc-tools "linux-headers-$(uname -r)"', job)
-        self.assertIn('sudo env GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=safe.directory', job)
+        self.assertIn('sudo env CI_PRODUCT=', job)
+        self.assertIn('GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=safe.directory', job)
         self.assertIn('.ci-venv/bin/pip install pycapnp==2.2.4', job)
         self.assertIn('if: always()\n        uses: actions/upload-artifact@v7', job)
-        self.assertIn('path: artifacts/pocx-inherited', job)
+        self.assertIn('artifacts/pocx-inherited', job)
+        self.assertIn('ci_build*/pocx-inherited-*/*.json', job)
 
     def test_readonly_cli_plan_describes_both_builds_without_running_them(self):
         before = set(ROOT.iterdir())

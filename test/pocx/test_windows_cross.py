@@ -167,7 +167,7 @@ class WindowsCrossTest(unittest.TestCase):
                 cross.collect_runtime(source, root / 'empty-evidence')
 
     def test_workflow_pairs_frozen_crt_artifacts_and_runs_owned_complete_consumer(self):
-        document = yaml.safe_load((ROOT / '.github/workflows/ci.yml').read_text())
+        document = yaml.safe_load((ROOT / '.github/workflows/ci-product.yml').read_text())
         producer = document['jobs']['windows-cross']
         consumer = document['jobs']['windows-native-test']
         self.assertEqual(producer['strategy']['matrix']['crt'], ['msvcrt', 'ucrt'])
@@ -181,7 +181,7 @@ class WindowsCrossTest(unittest.TestCase):
             self.assertEqual(checkout['with']['ref'], '${{ needs.record-frozen-commit.outputs.commit }}')
             self.assertEqual(job['env']['GIT_CONFIG_KEY_0'], 'core.autocrlf')
             self.assertEqual(job['env']['GIT_CONFIG_VALUE_0'], 'false')
-        upload = next(step for step in producer['steps'] if step.get('name') == 'Upload verified Bitcoin and PoCX cross-build pair')
+        upload = next(step for step in producer['steps'] if step.get('name') == 'Upload verified selected-product cross-build bundle')
         download = next(step for step in consumer['steps'] if step.get('uses', '').startswith('actions/download-artifact@'))
         self.assertEqual(upload['with']['name'], download['with']['name'])
         self.assertEqual(upload['with']['path'], 'artifacts/pocx-inherited/' + cross.PUBLISHED_DIRECTORY)
