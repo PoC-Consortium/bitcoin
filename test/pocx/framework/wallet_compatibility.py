@@ -173,7 +173,7 @@ def rebase_wallet_file(path, context, *, bitcoin_wallet=None):
         raise ValueError('Expected a SQLite or Berkeley DB wallet fixture')
     if bitcoin_wallet is None:
         raise ValueError('Berkeley DB fixture rebasing requires the genuine previous-release wallet tool')
-    with tempfile.TemporaryDirectory(prefix='pocx-wallet-context-', dir='/tmp') as directory:
+    with tempfile.TemporaryDirectory(prefix='pocx-wallet-context-') as directory:
         directory = Path(directory)
         source = directory / 'source'
         source_wallet = source / 'regtest/wallets/fixture'

@@ -9,6 +9,7 @@ import argparse
 import atexit
 import ast
 from collections import Counter
+from contextlib import closing
 from copy import deepcopy
 from decimal import Decimal
 from pathlib import Path
@@ -107,14 +108,14 @@ class PreviousReleaseFixturesTest(unittest.TestCase):
         return framework
 
     def test_default_nodes_keep_native_address_fixtures(self):
-        with tempfile.TemporaryDirectory(prefix='pocx-node-factory-',dir='/tmp') as d:
+        with tempfile.TemporaryDirectory(prefix='pocx-node-factory-') as d:
             framework=self.framework(d)
             framework.add_nodes(2)
             self.assertTrue(all(type(node) is TestNode for node in framework.nodes))
             self.assertEqual(framework.nodes[0].PRIV_KEYS,TestNode.PRIV_KEYS)
 
     def test_explicit_old_release_keeps_original_bitcoin_keys_and_binary(self):
-        with tempfile.TemporaryDirectory(prefix='pocx-node-factory-',dir='/tmp') as d:
+        with tempfile.TemporaryDirectory(prefix='pocx-node-factory-') as d:
             framework=self.framework(d)
             framework.add_nodes(2,versions=[200100,None],node_classes=[BitcoinTestNode,TestNode])
             self.assertIs(type(framework.nodes[0]),BitcoinTestNode)
@@ -125,7 +126,7 @@ class PreviousReleaseFixturesTest(unittest.TestCase):
 
     def test_invalid_node_factory_inventory_is_rejected(self):
         for classes in [[BitcoinTestNode],[BitcoinTestNode,object]]:
-            with self.subTest(classes=classes),tempfile.TemporaryDirectory(prefix='pocx-node-factory-',dir='/tmp') as d:
+            with self.subTest(classes=classes),tempfile.TemporaryDirectory(prefix='pocx-node-factory-') as d:
                 framework=self.framework(d)
                 with self.assertRaises((AssertionError,ValueError)):
                     framework.add_nodes(2,node_classes=classes)
@@ -243,30 +244,30 @@ class WalletContextFixturesTest(unittest.TestCase):
                 self.assertEqual(self.context().reverse().record(*expected),original)
 
     def test_sqlite_failure_rolls_back_and_success_retains_every_record(self):
-        with tempfile.TemporaryDirectory(prefix='pocx-wallet-sqlite-',dir='/tmp') as d:
+        with tempfile.TemporaryDirectory(prefix='pocx-wallet-sqlite-') as d:
             path=Path(d)/'wallet.dat'
             key=ser_string(b'bestblock_nomerkle')
             invalid=bytes(4)+b'\x01'+bytes.fromhex('33'*32)
             opaque=(ser_string(b'keymeta')+b'private-key-identifier',b'untouched HD path and creation time')
-            with sqlite3.connect(path) as db:
+            with closing(sqlite3.connect(path)) as db, db:
                 db.execute('CREATE TABLE main(key BLOB PRIMARY KEY NOT NULL,value BLOB NOT NULL)')
                 db.executemany('INSERT INTO main VALUES(?,?)',[(key,invalid),opaque])
             with self.assertRaises(ValueError):
                 rebase_wallet_file(path,self.context())
-            with sqlite3.connect(path) as db:
+            with closing(sqlite3.connect(path)) as db, db:
                 self.assertEqual(sorted(db.execute('SELECT key,value FROM main').fetchall()),sorted([(key,invalid),opaque]))
                 valid=bytes(4)+b'\x01'+bytes.fromhex(BITCOIN_GENESIS)[::-1]
                 db.execute('UPDATE main SET value=? WHERE key=?',(valid,key))
             proof=rebase_wallet_file(path,self.context())
             self.assertEqual(proof,{'format':'sqlite','records':2,'context_records_changed':1})
-            with sqlite3.connect(path) as db:
+            with closing(sqlite3.connect(path)) as db, db:
                 self.assertEqual(db.execute('SELECT value FROM main WHERE key=?',(opaque[0],)).fetchone()[0],opaque[1])
             rebase_wallet_file(path,self.context().reverse())
-            with sqlite3.connect(path) as db:
+            with closing(sqlite3.connect(path)) as db, db:
                 self.assertEqual(db.execute('SELECT value FROM main WHERE key=?',(key,)).fetchone()[0],valid)
 
     def test_wallet_dump_checksum_and_duplicate_records_are_enforced(self):
-        with tempfile.TemporaryDirectory(prefix='pocx-wallet-dump-',dir='/tmp') as d:
+        with tempfile.TemporaryDirectory(prefix='pocx-wallet-dump-') as d:
             path=Path(d)/'wallet.dump'
             records=[(ser_string(b'key'),b'opaque-secret-material')]
             write_wallet_dump(path,records)
@@ -277,6 +278,34 @@ class WalletContextFixturesTest(unittest.TestCase):
             write_wallet_dump(path,records+records)
             with self.assertRaises(ValueError):
                 read_wallet_dump(path)
+
+    def test_bdb_tool_failure_uses_platform_temp_and_cleans_up(self):
+        from types import SimpleNamespace
+
+        with tempfile.TemporaryDirectory(prefix='pocx-wallet-platform-temp-') as directory:
+            directory = Path(directory)
+            path = directory / 'wallet.dat'
+            original = bytes(12) + (0x053162).to_bytes(4, 'little')
+            path.write_bytes(original)
+            invoked = []
+
+            def fail_wallet_tool(command, **kwargs):
+                datadir = Path(next(arg.removeprefix('-datadir=') for arg in command
+                                    if arg.startswith('-datadir=')))
+                # The platform's temporary directory can be redirected. Never
+                # require a drive-root /tmp directory to reach the real tool.
+                self.assertEqual(datadir.parent.parent, directory)
+                self.assertEqual((datadir / 'regtest/wallets/fixture/wallet.dat').read_bytes(), original)
+                invoked.append(datadir.parent)
+                return SimpleNamespace(returncode=1)
+
+            with patch.object(tempfile, 'tempdir', str(directory)), patch.object(
+                    _test_framework_wallet_compatibility.subprocess, 'run', side_effect=fail_wallet_tool):
+                with self.assertRaisesRegex(RuntimeError, 'wallet tool failed: dump, exit 1'):
+                    rebase_wallet_file(path, self.context(), bitcoin_wallet='bitcoin-wallet')
+            self.assertEqual(len(invoked), 1)
+            self.assertFalse(invoked[0].exists())
+            self.assertEqual(path.read_bytes(), original)
 
     def test_backward_adapter_retains_every_original_assertion_and_method(self):
         original=ast.parse((ROOT/'test/functional/wallet_backwards_compatibility.py').read_text())
@@ -311,7 +340,7 @@ class WalletContextFixturesTest(unittest.TestCase):
         for destination,source in [('test_framework/messages.py','framework/wallet_compatibility.py'),
                                    ('other/wallet.py','framework/wallet_compatibility.py'),
                                    ('test_framework/wallet.py','../../outside.py')]:
-            with self.subTest(destination=destination),tempfile.TemporaryDirectory(dir='/tmp') as d:
+            with self.subTest(destination=destination),tempfile.TemporaryDirectory() as d:
                 manifest=json.loads((ROOT/'test/pocx/manifest.json').read_text())
                 manifest['framework_additions']={destination:source}
                 path=Path(d)/'manifest.json'

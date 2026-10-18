@@ -4,6 +4,8 @@
 """Verify the shared pre-funded fixture before migrating its upstream consumers."""
 from decimal import Decimal
 from pathlib import Path
+from unittest.mock import patch
+from test_framework import blocktools
 from test_framework.address import address_to_scriptpubkey, create_deterministic_address_bcrt1_p2tr_op_true
 from test_framework.test_framework import BitcoinTestFramework
 from test_framework.test_node import TestNode
@@ -65,6 +67,35 @@ class PoCXPreminedTest(BitcoinTestFramework):
         assert_equal(first.getblock(blocks[0], 2)['tx'][0]['vout'][0]['scriptPubKey']['hex'],
                      address_to_scriptpubkey(first.get_deterministic_priv_key().address).hex())
         assert_equal(list(Path(self.options.cachedir).glob('**/blocks')), [])
+
+        # A fast machine can relay a whole batch before a download expires.
+        # Require an explicit, completed relay barrier before the next proof
+        # preview, so this catches the clock race regardless of scheduling.
+        pending = []
+        original_generate = first.generate
+        original_preview = blocktools.create_pocx_block
+        original_sync_blocks = self.sync_blocks
+
+        def mine(*args, **kwargs):
+            blocks = original_generate(*args, **kwargs)
+            pending.extend(blocks)
+            return blocks
+
+        def preview(*args, **kwargs):
+            assert_equal(pending, [])
+            return original_preview(*args, **kwargs)
+
+        def relay(*args, **kwargs):
+            original_sync_blocks(*args, **kwargs)
+            assert all(node.getbestblockhash() == first.getbestblockhash() for node in self.nodes)
+            pending.clear()
+
+        with patch.object(first, 'generate', side_effect=mine), patch.object(
+                blocktools, 'create_pocx_block', side_effect=preview), patch.object(
+                self, 'sync_blocks', side_effect=relay):
+            generated = self.generate(first, 6)
+        assert_equal(len(generated), 6)
+        assert_equal(pending, [])
 
 
 if __name__ == '__main__':

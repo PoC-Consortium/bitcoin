@@ -680,22 +680,22 @@ class BitcoinTestFramework(metaclass=BitcoinTestMetaClass):
         pass
 
     def generate(self, generator, *args, sync_fun=None, **kwargs):
-        blocks = self._generate_prefunded(generator, 'generate', args, kwargs)
+        blocks = self._generate_prefunded(generator, 'generate', args, kwargs, sync_fun)
         sync_fun() if sync_fun else self.sync_all()
         return blocks
 
     def generateblock(self, generator, *args, sync_fun=None, **kwargs):
-        blocks = self._generate_prefunded(generator, 'generateblock', args, kwargs)
+        blocks = self._generate_prefunded(generator, 'generateblock', args, kwargs, sync_fun)
         sync_fun() if sync_fun else self.sync_all()
         return blocks
 
     def generatetoaddress(self, generator, *args, sync_fun=None, **kwargs):
-        blocks = self._generate_prefunded(generator, 'generatetoaddress', args, kwargs)
+        blocks = self._generate_prefunded(generator, 'generatetoaddress', args, kwargs, sync_fun)
         sync_fun() if sync_fun else self.sync_all()
         return blocks
 
     def generatetodescriptor(self, generator, *args, sync_fun=None, **kwargs):
-        blocks = self._generate_prefunded(generator, 'generatetodescriptor', args, kwargs)
+        blocks = self._generate_prefunded(generator, 'generatetodescriptor', args, kwargs, sync_fun)
         sync_fun() if sync_fun else self.sync_all()
         return blocks
 
@@ -707,7 +707,7 @@ class BitcoinTestFramework(metaclass=BitcoinTestMetaClass):
             return bool(choice)
         return bool(not self.setup_clean_chain and getattr(self, '_pocx_fixture_time', None))
 
-    def _generate_prefunded(self, generator, method, args, kwargs):
+    def _generate_prefunded(self, generator, method, args, kwargs, sync_fun=None):
         operation = getattr(generator, method)
         if not self._uses_pocx_synchronized_generation():
             return operation(*args, called_by_framework=True, **kwargs)
@@ -722,7 +722,13 @@ class BitcoinTestFramework(metaclass=BitcoinTestMetaClass):
         # Advance one block at a time so peers can share a monotonic clock under
         # PoCX's fifteen-second future window. Bulk RPC behavior is covered directly
         # by the clean-chain mining tests, which retain their original calls.
-        for _ in range(count):
+        for index in range(count):
+            if index:
+                # Finish the previous block's relay before advancing mocktime.
+                # Native deadlines can otherwise expire an in-flight download
+                # in milliseconds of real time. Honor explicit subsets/no_op
+                # so intentionally disconnected or unsynced fixtures keep theirs.
+                sync_fun() if sync_fun else self.sync_blocks(wait=0.05, advance_mocktime=False)
             header = producer.getblockheader(producer.getbestblockhash())
             # Preview a real proof without submission or mempool changes. Moving
             # by the worst possible quality can expire unrelated peer downloads
@@ -883,12 +889,14 @@ class BitcoinTestFramework(metaclass=BitcoinTestMetaClass):
             utxos.append({"txid": send_res["txid"], "vout": vout})
         return utxos
 
-    def sync_blocks(self, nodes=None, wait=1, timeout=60):
+    def sync_blocks(self, nodes=None, wait=1, timeout=60, *, advance_mocktime=True):
         """
         Wait until everybody has the same tip.
         sync_blocks needs to be called with an rpc_connections set that has least
         one node already synced to the latest, stable tip, otherwise there's a
         chance it might return before all nodes are stably synced.
+        Set advance_mocktime=False when draining downloads before a forging
+        clock advance; those downloads must retain their original timeout budget.
         """
         rpc_connections = nodes or self.nodes
         timeout = int(timeout * self.options.timeout_factor)
@@ -899,7 +907,7 @@ class BitcoinTestFramework(metaclass=BitcoinTestMetaClass):
                 return
             # Check that each peer has at least one connection
             assert (all([len(x.getpeerinfo()) for x in rpc_connections]))
-            if self._uses_pocx_synchronized_generation():
+            if advance_mocktime and self._uses_pocx_synchronized_generation():
                 # Let normal inventory/request timers progress with frozen
                 # fixture clocks, like the wall clock in Bitcoin's cache tests.
                 for node in rpc_connections:
