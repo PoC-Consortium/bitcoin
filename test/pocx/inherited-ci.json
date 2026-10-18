@@ -16,7 +16,7 @@
   "source_sha256": {
     ".github/ci-test-each-commit-exec.py": "7d6c921986188b726f82bb08a782be738f6dfc2460d1f64272ae8bd8715d040b",
     ".github/workflows/ci-pocx.yml": "699f0a58e48d1f6348a65d9b0224d870d569da1088b457195aa78b55703fc88f",
-    ".github/workflows/ci-product.yml": "b5547b12474809b5be68c4df9babf7c16bed7685f0e4a84805c354f4480c5117",
+    ".github/workflows/ci-product.yml": "3c9f78de87a1b0ab15146f3f3f72568969c19857703aa098ec8d2e2607bfc3c4",
     ".github/workflows/ci.yml": "178f16dc008944d5158cfe45e84da73c39839949ca82b0a6703805919f05e8a9",
     "ci/test/02_run_container.py": "5d39f118d96eedda9e90286c4560b705c63e768bed78d4184806faf75c79dc76",
     "ci/test/03_test_script.sh": "cfd9e9583398dee9527a2fb7ea099104a8cab53f7bf5ccdceb3f4e84425ebb8b",

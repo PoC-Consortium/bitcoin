@@ -504,7 +504,11 @@ jobs:
     needs: runners
     runs-on: ${{ needs.runners.outputs.provider == 'warp' && matrix.warp-runner || matrix.fallback-runner }}
     if: ${{ (vars.SKIP_BRANCH_PUSH != 'true' || github.event_name == 'pull_request') }}
-    timeout-minutes: ${{ inputs.product == 'pocx' && (matrix.name == 'TSan' || matrix.name == 'MSan') && 360 || matrix.timeout-minutes }}
+    timeout-minutes: >-
+      ${{ (
+        (inputs.product == 'pocx' && (matrix.name == 'TSan' || matrix.name == 'MSan')) ||
+        (inputs.product == 'bitcoin' && (matrix.name == 'fuzzer,address,undefined,integer' || matrix.name == 'MSan, fuzz'))
+      ) && 360 || matrix.timeout-minutes }}
 
     env:
       DANGER_CI_ON_HOST_FOLDERS: 1

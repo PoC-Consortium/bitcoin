@@ -5,7 +5,7 @@
   "source_sha256": {
     ".github/ci-windows.py": "9cec268ddaf98292b2067ae07ff99e8290a6e1a2e3a97aac9814c6642542e27b",
     ".github/workflows/ci-pocx.yml": "699f0a58e48d1f6348a65d9b0224d870d569da1088b457195aa78b55703fc88f",
-    ".github/workflows/ci-product.yml": "b5547b12474809b5be68c4df9babf7c16bed7685f0e4a84805c354f4480c5117",
+    ".github/workflows/ci-product.yml": "3c9f78de87a1b0ab15146f3f3f72568969c19857703aa098ec8d2e2607bfc3c4",
     ".github/workflows/ci.yml": "178f16dc008944d5158cfe45e84da73c39839949ca82b0a6703805919f05e8a9",
     "test/pocx/bitcoin_baseline/windows/review.json": "f541b15bbe06f200838f6ba17cacfe279ac723fbc71a1b6994c822e45219a6e6",
     "test/pocx/bitcoin_baseline/windows/rpc_signer.py": "ea682c6093604670612eeae9936a9a3d4d0af232fe798d9edf7eea979c01639d",
