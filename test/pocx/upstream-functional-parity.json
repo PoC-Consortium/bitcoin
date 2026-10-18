@@ -7156,7 +7156,7 @@
         }
       ],
       "dependencies": {
-        "test/pocx/framework/test_framework.py": "7f7b55b578001fe6ae02327c8fabb17693bdd15da53f897895011f4af4b23003",
+        "test/pocx/framework/test_framework.py": "95f94c745dc80ff9044b0277a2882e3c705e68531fe03d76cc7b5e9ab7a95fb1",
         "test/functional/test_framework/test_node.py": "59799d482ecf3aeb7f5ec2fa52ffe839f4e377ac0a903bf22daa5ecfaaa5d2ac",
         "test/pocx/framework/blocktools.py": "b87707eb61097f1b7cf651a5c81ccd2570ca505e809bcd4a1026aede6afc1ceb",
         "test/functional/test_framework/messages.py": "c786651a517a49dd084b1d76072f755d40c5483f5be53b7322ca4f3403548b26"
@@ -10157,7 +10157,7 @@
         }
       ],
       "dependencies": {
-        "test/pocx/framework/test_framework.py": "7f7b55b578001fe6ae02327c8fabb17693bdd15da53f897895011f4af4b23003",
+        "test/pocx/framework/test_framework.py": "95f94c745dc80ff9044b0277a2882e3c705e68531fe03d76cc7b5e9ab7a95fb1",
         "test/functional/test_framework/test_node.py": "59799d482ecf3aeb7f5ec2fa52ffe839f4e377ac0a903bf22daa5ecfaaa5d2ac"
       },
       "adapted_assertion_and_method_accounting": {
@@ -11374,7 +11374,7 @@
       "latest_observed_outcome": "passed",
       "current_input_outcome": "unverified",
       "dependencies": {
-        "test/pocx/framework/test_framework.py": "7f7b55b578001fe6ae02327c8fabb17693bdd15da53f897895011f4af4b23003",
+        "test/pocx/framework/test_framework.py": "95f94c745dc80ff9044b0277a2882e3c705e68531fe03d76cc7b5e9ab7a95fb1",
         "test/functional/test_framework/test_node.py": "59799d482ecf3aeb7f5ec2fa52ffe839f4e377ac0a903bf22daa5ecfaaa5d2ac",
         "test/pocx/framework/blocktools.py": "b87707eb61097f1b7cf651a5c81ccd2570ca505e809bcd4a1026aede6afc1ceb",
         "test/functional/test_framework/messages.py": "c786651a517a49dd084b1d76072f755d40c5483f5be53b7322ca4f3403548b26"
@@ -19754,7 +19754,7 @@
       "latest_observed_outcome": "passed",
       "current_input_outcome": "unverified",
       "dependencies": {
-        "test/pocx/framework/test_framework.py": "7f7b55b578001fe6ae02327c8fabb17693bdd15da53f897895011f4af4b23003",
+        "test/pocx/framework/test_framework.py": "95f94c745dc80ff9044b0277a2882e3c705e68531fe03d76cc7b5e9ab7a95fb1",
         "test/functional/test_framework/test_node.py": "59799d482ecf3aeb7f5ec2fa52ffe839f4e377ac0a903bf22daa5ecfaaa5d2ac",
         "test/pocx/framework/blocktools.py": "b87707eb61097f1b7cf651a5c81ccd2570ca505e809bcd4a1026aede6afc1ceb",
         "test/pocx/framework/wallet_compatibility.py": "ad05a7f2d0424d511a77293eb428f927ba59a508c2d021e68a92ea4c868b4d3f",
@@ -21989,7 +21989,7 @@
       "latest_observed_outcome": "passed",
       "current_input_outcome": "unverified",
       "dependencies": {
-        "test/pocx/framework/test_framework.py": "7f7b55b578001fe6ae02327c8fabb17693bdd15da53f897895011f4af4b23003",
+        "test/pocx/framework/test_framework.py": "95f94c745dc80ff9044b0277a2882e3c705e68531fe03d76cc7b5e9ab7a95fb1",
         "test/functional/test_framework/test_node.py": "59799d482ecf3aeb7f5ec2fa52ffe839f4e377ac0a903bf22daa5ecfaaa5d2ac",
         "test/pocx/framework/test_node.py": "a4935df6cd38842cbd8577dbd839d931f464bd69f6a9f8419c6bdcc4bf5bb6a1",
         "test/pocx/framework/blocktools.py": "b87707eb61097f1b7cf651a5c81ccd2570ca505e809bcd4a1026aede6afc1ceb",
@@ -24227,7 +24227,7 @@
       "replacement_sha256": "b87707eb61097f1b7cf651a5c81ccd2570ca505e809bcd4a1026aede6afc1ceb",
       "copied_upstream_alias": "test_framework/bitcoin_blocktools.py",
       "dependencies": {
-        "test/pocx/framework/test_framework.py": "7f7b55b578001fe6ae02327c8fabb17693bdd15da53f897895011f4af4b23003",
+        "test/pocx/framework/test_framework.py": "95f94c745dc80ff9044b0277a2882e3c705e68531fe03d76cc7b5e9ab7a95fb1",
         "test/pocx/framework/test_node.py": "a4935df6cd38842cbd8577dbd839d931f464bd69f6a9f8419c6bdcc4bf5bb6a1",
         "test/pocx/framework/messages.py": "f93a7e32521a57c7e5b49214c8bb949b4bc1d1d33eb12ce724462edd37d45898",
         "src/chain.h": "556ee891313051c191ea17edd45c0dc50cdd1299e4ea374997165a0dcd4a581b",
@@ -26231,10 +26231,10 @@
   },
   "native_forging_clock": {
     "sources": {
-      "test/pocx/framework/test_framework.py": "7f7b55b578001fe6ae02327c8fabb17693bdd15da53f897895011f4af4b23003",
+      "test/pocx/framework/test_framework.py": "95f94c745dc80ff9044b0277a2882e3c705e68531fe03d76cc7b5e9ab7a95fb1",
       "test/pocx/framework/blocktools.py": "b87707eb61097f1b7cf651a5c81ccd2570ca505e809bcd4a1026aede6afc1ceb"
     },
-    "review": "Opt-in synchronized forging obtains an unsubmitted real native proof on active parent at parent_time+1. Existing builder verifies tip, height, mempool, clock, proof hash and parent preservation. Independently bound preview time using uint64 quality, target decrease20percent and integer time bending. Set actors to max(actual proof deadline, existing clocks), preserving explicit scenario advances and stopped-node startup clock. Original generation RPC/body/amount and final synchronization retained. Inter-block relay barriers use the selected callback or a fast block-only wait with mocktime frozen; explicit no_op remains an opt-out. Default intermediate barriers include observers on the producer tip or with less chainwork. Competing equal-or-higher-work tips need further replacement blocks before adoption and remain covered by the unchanged final synchronization. Avoid expiring unrelated block downloads by advancing worst-case579seconds for an actual102second proof. Historical200-block funding remains explicitly paced at the independent worst-case interval to keep its genesis-target invariant and backdating bound. Its complete per-block target,10-coin reward,script allocation,tip age,IBD and verifychain checks remain unchanged. Ordinary scenario generation uses actual deadlines. Historical funded tip is20h plus one bound interval before real time, retaining the asserted24h usability and leaving room for the original orphan scenario170 additional funding coinbases plus cleanup blocks. Per-block proof bounds and real-clock eligibility assertions remain active. Connected generation previews explicitly allow legitimate incoming/replacement mempool transactions while retaining empty-body, proof hash, active-parent, height, deadline, clock and normal mining assertions. Strict mempool equality remains the default for quiescent explicit constructors. The added equality is not an original Bitcoin assertion and previously raced with asynchronous wallet transaction relay. A native mining regression injects a real valid transaction after the unsubmitted preview RPC, requires unchanged tip/height, then verifies the actual mining RPC includes exactly that transaction and empties the mempool. All original100block wrapper assertions remain intact. Failed full candidate and owned-group cleanup retained in complete-selection-matrix-final-third-interruption.json. Explicitmixednodeclasses retain defaultnativeclass for existing consumers; only reviewedcompatibilityadapters select the unchangedBitcoinTestNode for priorBitcoinreleases. NewBitcoinproofconstructor uses an unchangedaliased upstreammessages module and identicalcoinbases; it does not affect nativeforging. Currentexecution remains unverified.",
+    "review": "Opt-in synchronized forging obtains an unsubmitted real native proof on active parent at parent_time+1. Existing builder verifies tip, height, mempool, clock, proof hash and parent preservation. Independently bound preview time using uint64 quality, target decrease20percent and integer time bending. Set actors to max(actual proof deadline, existing clocks), preserving explicit scenario advances and stopped-node startup clock. Original generation RPC/body/amount and final synchronization retained. Inter-block relay barriers use the selected callback or a fast block-only wait with mocktime frozen; explicit no_op remains an opt-out. Default intermediate barriers include observers on the producer tip or with less chainwork. Competing equal-or-higher-work tips need further replacement blocks before adoption and remain covered by the unchanged final synchronization. Avoid expiring unrelated block downloads by advancing worst-case579seconds for an actual102second proof. Historical200-block funding remains explicitly paced at the independent worst-case interval to keep its genesis-target invariant and backdating bound. Its complete per-block target,10-coin reward,script allocation,tip age,IBD and verifychain checks remain unchanged. Ordinary scenario generation uses actual deadlines. Historical funded tip is20h plus one bound interval before real time, retaining the asserted24h usability and leaving room for the original orphan scenario170 additional funding coinbases plus cleanup blocks. Per-block proof bounds and real-clock eligibility assertions remain active. Connected generation previews explicitly allow legitimate incoming/replacement mempool transactions while retaining empty-body, proof hash, active-parent, height, deadline, clock and normal mining assertions. Strict mempool equality remains the default for quiescent explicit constructors. The added equality is not an original Bitcoin assertion and previously raced with asynchronous wallet transaction relay. A native mining regression injects a real valid transaction after the unsubmitted preview RPC, requires unchanged tip/height, then verifies the actual mining RPC includes exactly that transaction and empties the mempool. All original100block wrapper assertions remain intact. Failed full candidate and owned-group cleanup retained in complete-selection-matrix-final-third-interruption.json. Explicitmixednodeclasses retain defaultnativeclass for existing consumers; only reviewedcompatibilityadapters select the unchangedBitcoinTestNode for priorBitcoinreleases. NewBitcoinproofconstructor uses an unchangedaliased upstreammessages module and identicalcoinbases; it does not affect nativeforging. Currentexecution remains unverified. Synchronization waits also preserve the maximum updated participant clock for stopped opt-in nodes, using the same monotonic Python-only bookkeeping as forging. No RPC is sent to stopped nodes, and unselected running nodes or stopped nodes without clock preservation are not advanced.",
     "historical_failure": "build-pocx-clean/native-fixture-review-zqi15wex/470d7b8cb463/node0/regtest/debug.log",
     "runtime_evidence": [
       "build-pocx-clean/native-fixture-review-ophccz59/results.json",
@@ -26244,9 +26244,10 @@
       "build-pocx-clean/pocx-results-9wexy5m1/results.json",
       "build-pocx-clean/pocx-results-kke33xjl/results.json",
       "build-pocx-clean/pocx-results-fgwf4s35/results.json",
-      "build-wallet-ci/t/pocx-results-wm44no5v/results.json"
+      "build-wallet-ci/t/pocx-results-wm44no5v/results.json",
+      "build-wallet-ci/t/pocx-results-h48iz0kl/results.json"
     ],
-    "status": "Passed 12 targeted local Windows functional cases, including both transports and one-CPU wallet stress; complete hosted matrix remains required."
+    "status": "Passed 16 targeted local Windows functional cases, including both transports and six one-CPU wallet stress cases; complete hosted sanitizer execution remains required."
   },
   "exclusions": {
     "mining_mainnet.py": "Entire script exercises Bitcoin-only nonce preimages and compact nBits/target difficulty1-to4 retarget at heights2015/2016 using data/mainnet_alt.json. PoCX replaces the SHA256 PoW algorithm and Bitcoin2016block retarget with storage-proof base-target adjustment, so these exact PoW vectors and expected fields are inapplicable. No generic mining/GBT/block-validation assertions occur in this script; mixed mining_basic.py remains required. Native consensus difficulty is covered by the separately completed unit package, while native proof/forging functional cases remain required."
@@ -26519,5 +26520,42 @@
       "original_bitcoin_functional_files_byte_identical": 378,
       "scope": "Targeted native Windows execution; no local macOS or Linux 32-bit ARM execution and no complete CI run."
     }
+  },
+  "stopped_node_sync_clock_review": {
+    "base_revision": "36e92c8cf666f655aa8018c05b5e428bee7a127a",
+    "failure_job": "https://github.com/PoC-Consortium/bitcoin/actions/runs/39125072039/job/117668592044",
+    "failure_mechanism": "The final synchronization callback could advance running-node mocktime after forging had saved the stopped-node clock. wallet_basic.py then compared saved mocktime 2000025530 with running-node mocktime 2000025531 before restart. Sanitizer scheduling exposed the missing stopped-node bookkeeping.",
+    "change": "Reuse the monotonic stopped-node clock preservation from forging after both block and mempool synchronization waits advance participant clocks. Retain the existing wallet clock assertion and every original Bitcoin functional source.",
+    "sources": {
+      "test/pocx/framework/test_framework.py": "95f94c745dc80ff9044b0277a2882e3c705e68531fe03d76cc7b5e9ab7a95fb1",
+      "test/pocx/functional/feature_pocx_premined.py": "5fa5ff48166f60717655a67dd2eed5063ba2bb02c19c7e7c4022db7365ade923"
+    },
+    "regression": "With real native nodes and one node stopped, inject one stale block-tip observation and one stale mempool observation to deterministically exercise both waits. Require the saved clock to advance and match the active nodes, forbid stopped-node clock RPC, then restart and verify tip agreement.",
+    "validation": {
+      "functional_report": "build-wallet-ci/t/pocx-results-h48iz0kl/results.json",
+      "functional_cases_passed": 10,
+      "transports": [
+        "v1",
+        "v2"
+      ],
+      "tests": [
+        "feature_pocx_premined.py",
+        "feature_coinstatsindex.py",
+        "wallet_basic.py",
+        "wallet_address_types.py",
+        "rpc_psbt.py"
+      ],
+      "original_bitcoin_functional_files_byte_identical": 378,
+      "mutation_controls": "The current helper fails the block-wait regression; removing only mempool clock preservation from the fixed helper independently fails the mempool-wait regression.",
+      "scope": "Local Visual Studio Release executables; not a Linux sanitizer execution or complete CI run.",
+      "wallet_stress_cases_passed": 6,
+      "wallet_stress_tests": [
+        "wallet_basic.py",
+        "wallet_address_types.py",
+        "rpc_psbt.py"
+      ],
+      "wallet_stress_cpu_affinity": "one logical CPU"
+    },
+    "execution_status": "Passed ten local functional cases plus six one-CPU wallet stress cases; hosted sanitizer execution remains required."
   }
 }

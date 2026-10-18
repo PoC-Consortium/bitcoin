@@ -16,7 +16,7 @@
   "source_sha256": {
     ".github/ci-test-each-commit-exec.py": "7d6c921986188b726f82bb08a782be738f6dfc2460d1f64272ae8bd8715d040b",
     ".github/workflows/ci-pocx.yml": "699f0a58e48d1f6348a65d9b0224d870d569da1088b457195aa78b55703fc88f",
-    ".github/workflows/ci-product.yml": "3c9f78de87a1b0ab15146f3f3f72568969c19857703aa098ec8d2e2607bfc3c4",
+    ".github/workflows/ci-product.yml": "bf15e187c7525c47bd373de7878f7979d0b3147928a42c64781d69426ebe6373",
     ".github/workflows/ci.yml": "178f16dc008944d5158cfe45e84da73c39839949ca82b0a6703805919f05e8a9",
     "ci/test/02_run_container.py": "5d39f118d96eedda9e90286c4560b705c63e768bed78d4184806faf75c79dc76",
     "ci/test/03_test_script.sh": "cfd9e9583398dee9527a2fb7ea099104a8cab53f7bf5ccdceb3f4e84425ebb8b",
@@ -53,7 +53,7 @@
     "test/pocx/test_bpf_abi.py": "5c12703a7db6d67143ec11a6082faeabf64a848534ec2b0aa7abec4c29e1f812",
     "test/pocx/test_inherited_selection.py": "195cf2982f72a156f385d08d504a741b5948f507da2017e121758a6bd8ae44ef",
     "test/pocx/test_original_windows.py": "27f47f07e52a7381e48ca4d1f77220c1efb073073be7f2fcba13a4c002d8c39f",
-    "test/pocx/test_product_workflows.py": "b8a97fa29a37de2a44a5ac9547680196484a94cb15651a47a47cf061557f3ba2",
+    "test/pocx/test_product_workflows.py": "0dbcac3b8cfd7ce342d1028943241b6f09e6a65d35777b3559d8ca19c81d0d13",
     "test/pocx/test_windows_cross.py": "3ab7f0396721814e68a53ecd8d1a5428bbebf7d2064b1928ef93edf98688392b",
     "test/pocx/upstream-ci-matrix.json": "2db9d8020ca1d07283cbc27a53e8bb3760bfbbfe4b5a805376f04467e64f3f7a",
     "test/pocx/windows_cross.py": "aaa5ec71734e514b049cd40bd99f176ca96324569b63566c35d7a264da51e9ce"
@@ -263,5 +263,9 @@
         "sha256": "aaa5ec71734e514b049cd40bd99f176ca96324569b63566c35d7a264da51e9ce"
       }
     }
+  },
+  "workflow_default_timeout_review": {
+    "change": "Remove every explicit job timeout from the shared CI implementation so both CI and CI-POCX use the GitHub default job limit. Preserve the frozen upstream matrix as reference data and retain per-test wait scaling and process cleanup limits.",
+    "regression": "The product workflow wiring check rejects explicit timeout-minutes on any job or step in all three active workflow files."
   }
 }

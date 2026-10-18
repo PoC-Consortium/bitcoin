@@ -707,6 +707,13 @@ class BitcoinTestFramework(metaclass=BitcoinTestMetaClass):
             return bool(choice)
         return bool(not self.setup_clean_chain and getattr(self, '_pocx_fixture_time', None))
 
+    def _preserve_pocx_stopped_mocktime(self, timestamp):
+        # Retain coordinated fixture time for startup without RPC calls to
+        # stopped processes or changes to explicit frozen-time tests.
+        for node in self.nodes:
+            if not node.running and node.pocx_preserve_mocktime:
+                node.mocktime = max(node.mocktime or 0, timestamp)
+
     def _generate_prefunded(self, generator, method, args, kwargs, sync_fun=None):
         operation = getattr(generator, method)
         if not self._uses_pocx_synchronized_generation():
@@ -768,12 +775,7 @@ class BitcoinTestFramework(metaclass=BitcoinTestMetaClass):
             assert actual_time <= timestamp
             for node in peers:
                 node.setmocktime(timestamp)
-            # A stopped observer's real clock would also advance. Retain the
-            # coordinated fixture time for its later startup, without RPC calls
-            # to stopped processes or changes to explicit frozen-time tests.
-            for node in self.nodes:
-                if not node.running and node.pocx_preserve_mocktime:
-                    node.mocktime = max(node.mocktime or 0, timestamp)
+            self._preserve_pocx_stopped_mocktime(timestamp)
             if method == 'generateblock':
                 return result
             generated.extend(result)
@@ -924,6 +926,7 @@ class BitcoinTestFramework(metaclass=BitcoinTestMetaClass):
                 # fixture clocks, like the wall clock in Bitcoin's cache tests.
                 for node in rpc_connections:
                     node.bumpmocktime(max(1, int(wait)))
+                self._preserve_pocx_stopped_mocktime(max(node.mocktime for node in rpc_connections))
             time.sleep(wait)
         raise AssertionError("Block sync timed out after {}s:{}".format(
             timeout,
@@ -950,6 +953,7 @@ class BitcoinTestFramework(metaclass=BitcoinTestMetaClass):
             if self._uses_pocx_synchronized_generation():
                 for node in rpc_connections:
                     node.bumpmocktime(max(1, int(wait)))
+                self._preserve_pocx_stopped_mocktime(max(node.mocktime for node in rpc_connections))
             time.sleep(wait)
         raise AssertionError("Mempool sync timed out after {}s:{}".format(
             timeout,

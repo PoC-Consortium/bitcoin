@@ -2,6 +2,7 @@
 # Copyright (c) 2026 The Bitcoin PoCX developers
 # Distributed under the MIT software license; see COPYING.
 # Implementation only: CI and CI-POCX are the two independently triggered workflows.
+# Leave job time limits unset so both products use GitHub's default.
 name: Product CI implementation
 on:
   workflow_call:
@@ -68,7 +69,6 @@ jobs:
     env:
       TEST_RUNNER_PORT_MIN: "14000"  # Use a larger port range to avoid colliding with other CI services.
     if: ${{ (github.event_name == 'pull_request' && github.event.pull_request.commits != 1) }}
-    timeout-minutes: 360  # Use maximum time, see https://docs.github.com/en/actions/writing-workflows/workflow-syntax-for-github-actions#jobsjob_idtimeout-minutes.
     steps:
       - name: Determine fetch depth
         run: echo "FETCH_DEPTH=$((${{ github.event.pull_request.commits }} + 2))" >> "$GITHUB_ENV"
@@ -169,8 +169,6 @@ jobs:
     # This can be avoided by setting SKIP_BRANCH_PUSH=true as a custom env variable
     # in Github repository settings.
     if: ${{ (vars.SKIP_BRANCH_PUSH != 'true' || github.event_name == 'pull_request') }}
-
-    timeout-minutes: 120
 
     strategy:
       fail-fast: false
@@ -504,11 +502,6 @@ jobs:
     needs: runners
     runs-on: ${{ needs.runners.outputs.provider == 'warp' && matrix.warp-runner || matrix.fallback-runner }}
     if: ${{ (vars.SKIP_BRANCH_PUSH != 'true' || github.event_name == 'pull_request') }}
-    timeout-minutes: >-
-      ${{ (
-        (inputs.product == 'pocx' && (matrix.name == 'TSan' || matrix.name == 'MSan')) ||
-        (inputs.product == 'bitcoin' && (matrix.name == 'fuzzer,address,undefined,integer' || matrix.name == 'MSan, fuzz'))
-      ) && 360 || matrix.timeout-minutes }}
 
     env:
       DANGER_CI_ON_HOST_FOLDERS: 1
@@ -581,7 +574,6 @@ jobs:
     needs: runners
     runs-on: ${{ needs.runners.outputs.provider == 'warp' && 'warp-ubuntu-latest-x64-2x' || 'ubuntu-latest' }}
     if: ${{ (vars.SKIP_BRANCH_PUSH != 'true' || github.event_name == 'pull_request') }}
-    timeout-minutes: 20
     env:
       CONTAINER_NAME: "bitcoin-linter"
     steps:

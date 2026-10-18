@@ -111,6 +111,43 @@ class PoCXPreminedTest(BitcoinTestFramework):
         assert all(node.getbestblockhash() == replacement[-1] for node in self.nodes)
         assert all(node.getpeerinfo() for node in self.nodes)
 
+        # Synchronization waits advance the fixture clock too. A stopped node
+        # must retain that progress for restart, even if no more blocks follow.
+        self.log.info('Preserve stopped-node clocks during block and mempool synchronization')
+        stopped = self.nodes[2]
+        self.stop_node(2)
+        active = self.nodes[:2]
+        observer = active[1]
+        stale_tip = observer.getblockhash(observer.getblockcount() - 1)
+        for method, synchronize, stale in (
+                ('getbestblockhash', self.sync_blocks, stale_tip),
+                ('getrawmempool', self.sync_mempools, [transaction])):
+            self.log.info('Check stopped-node clock after a delayed %s poll', method)
+            query = getattr(observer, method)
+            reads = []
+
+            def delayed_poll(*args, **kwargs):
+                # One stale observation deterministically exercises the wait,
+                # including on machines where relay already finished.
+                reads.append(None)
+                return stale if len(reads) == 1 else query(*args, **kwargs)
+
+            previous_clock = stopped.mocktime
+            with patch.object(observer, method, side_effect=delayed_poll), patch.object(
+                    stopped, 'setmocktime', side_effect=AssertionError('RPC on a stopped node')):
+                synchronize(active, wait=0.05)
+            assert len(reads) >= 2
+            assert stopped.mocktime > previous_clock
+            assert_equal(stopped.mocktime, max(node.mocktime for node in active))
+            assert_equal(stopped.running, False)
+
+        restart_clock = stopped.mocktime
+        self.start_node(2)
+        assert_equal(stopped.mocktime, restart_clock)
+        self.connect_nodes(1, 2)
+        self.sync_all()
+        assert all(node.getbestblockhash() == replacement[-1] for node in self.nodes)
+
 
 if __name__ == '__main__':
     PoCXPreminedTest(__file__).main()

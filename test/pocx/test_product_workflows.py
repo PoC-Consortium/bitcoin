@@ -41,6 +41,12 @@ class ProductWorkflowsTest(unittest.TestCase):
     def test_only_two_triggered_workflows_select_independent_products(self):
         documents = {p.name: workflow(p.name) for p in (ROOT / '.github/workflows').glob('*.yml')}
         self.assertEqual(set(documents), {'ci.yml', 'ci-pocx.yml', 'ci-product.yml'})
+        for name, document in documents.items():
+            for job_name, job in document['jobs'].items():
+                with self.subTest(workflow=name, job=job_name):
+                    self.assertNotIn('timeout-minutes', job)
+                    for step in job.get('steps', []):
+                        self.assertNotIn('timeout-minutes', step)
         for name, product, title in [('ci.yml', 'bitcoin', 'CI'), ('ci-pocx.yml', 'pocx', 'CI-POCX')]:
             document = documents[name]
             self.assertEqual(document['name'], title)
