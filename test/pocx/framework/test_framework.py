@@ -726,9 +726,21 @@ class BitcoinTestFramework(metaclass=BitcoinTestMetaClass):
             if index:
                 # Finish the previous block's relay before advancing mocktime.
                 # Native deadlines can otherwise expire an in-flight download
-                # in milliseconds of real time. Honor explicit subsets/no_op
-                # so intentionally disconnected or unsynced fixtures keep theirs.
-                sync_fun() if sync_fun else self.sync_blocks(wait=0.05, advance_mocktime=False)
+                # in milliseconds of real time. Honor explicit subsets/no_op.
+                if sync_fun:
+                    sync_fun()
+                else:
+                    tip = producer.getblockheader(producer.getbestblockhash())
+                    relay_peers = []
+                    for node in self.nodes:
+                        chain = node.getblockchaininfo()
+                        # A reorg may need several new blocks before observers
+                        # adopt it. Do not wait for a competing chain with at
+                        # least as much work; the final sync still includes it.
+                        if (chain['bestblockhash'] == tip['hash'] or
+                                int(chain['chainwork'], 16) < int(tip['chainwork'], 16)):
+                            relay_peers.append(node)
+                    self.sync_blocks(relay_peers, wait=0.05, advance_mocktime=False)
             header = producer.getblockheader(producer.getbestblockhash())
             # Preview a real proof without submission or mempool changes. Moving
             # by the worst possible quality can expire unrelated peer downloads

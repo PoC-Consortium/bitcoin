@@ -97,6 +97,20 @@ class PoCXPreminedTest(BitcoinTestFramework):
         assert_equal(len(generated), 6)
         assert_equal(pending, [])
 
+        # The default batch must also build a replacement from a shorter fork.
+        # Observers cannot adopt its first block: they still have more work.
+        # Requiring matching tips between every block would deadlock here.
+        self.log.info('Generate through a shorter competing fork before synchronizing all peers')
+        old_tip = first.getbestblockhash()
+        first.invalidateblock(generated[-3])
+        assert int(first.getblockchaininfo()['chainwork'], 16) < int(
+            self.nodes[1].getblockchaininfo()['chainwork'], 16)
+        assert_equal(self.nodes[1].getbestblockhash(), old_tip)
+        replacement = self.generatetoaddress(first, 5, first.getnewaddress())
+        assert_equal(len(replacement), 5)
+        assert all(node.getbestblockhash() == replacement[-1] for node in self.nodes)
+        assert all(node.getpeerinfo() for node in self.nodes)
+
 
 if __name__ == '__main__':
     PoCXPreminedTest(__file__).main()
