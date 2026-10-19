@@ -463,7 +463,10 @@ static int pocx_validate_blocks_scalar(
             }
 
             const uint64_t warp_x = num_base_nonces * warp + j;
-            wu.base_nonce = warp_x * NUM_SCOOPS + nonce_in_warp_x;
+            // Preserve modulo-2^64 nonce expansion without overflowing an
+            // intermediate unsigned multiplication.
+            wu.base_nonce = (warp_x & (std::numeric_limits<uint64_t>::max() / NUM_SCOOPS))
+                          * NUM_SCOOPS + nonce_in_warp_x;
             wu.scoop = scoop_x;
             wu.mirror = (j % 2) != 0;
             std::memset(wu.scoop_data, 0, SCOOP_SIZE);
@@ -609,7 +612,8 @@ static int pocx_validate_blocks_avx2_impl(
             }
 
             const uint64_t warp_x = num_base_nonces * warp + j;
-            wu.base_nonce = warp_x * NUM_SCOOPS + nonce_in_warp_x;
+            wu.base_nonce = (warp_x & (std::numeric_limits<uint64_t>::max() / NUM_SCOOPS))
+                          * NUM_SCOOPS + nonce_in_warp_x;
             wu.scoop = scoop_x;
             wu.mirror = (j % 2) != 0;
             std::memset(wu.scoop_data, 0, SCOOP_SIZE);
@@ -786,7 +790,8 @@ static int pocx_validate_blocks_sse2_impl(
             }
 
             const uint64_t warp_x = num_base_nonces * warp + j;
-            wu.base_nonce = warp_x * NUM_SCOOPS + nonce_in_warp_x;
+            wu.base_nonce = (warp_x & (std::numeric_limits<uint64_t>::max() / NUM_SCOOPS))
+                          * NUM_SCOOPS + nonce_in_warp_x;
             wu.scoop = scoop_x;
             wu.mirror = (j % 2) != 0;
             std::memset(wu.scoop_data, 0, SCOOP_SIZE);

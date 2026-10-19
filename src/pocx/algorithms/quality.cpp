@@ -172,7 +172,10 @@ static int generate_scoop(
         }
 
         const uint64_t warp_x = num_uncompressed_nonces * warp + i;
-        const uint64_t nonce_x = warp_x * NUM_SCOOPS + nonce_in_warp_x;
+        // Nonce expansion is defined modulo 2^64. Keep only the low warp
+        // bits before multiplying so the intended wrap is explicit.
+        const uint64_t nonce_x = (warp_x & (std::numeric_limits<uint64_t>::max() / NUM_SCOOPS))
+                               * NUM_SCOOPS + nonce_in_warp_x;
 
         // Generate single nonce using plot generation
         if (GenerateNonces(nonce_buffer, NONCE_SIZE, 0, address_payload, seed, nonce_x, 1) != 0) {

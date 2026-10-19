@@ -50,7 +50,10 @@ The native additions check these invariants:
 
 The time-bending oracle uses Boost.Multiprecision so it does not share the
 consensus arithmetic implementation. The inherited include lint allows this
-header only in that oracle source.
+header only in that oracle source. Clang's integer sanitizer reports Boost's
+intentional unsigned limb truncation during left shifts; the PoCX fuzz build
+disables only `unsigned-shift-base` for `arithmetic.cpp`. Other sanitizer checks
+on that file and all checks on production time-bending code remain active.
 
 The inherited `rpc` target uses a PoCX-owned adaptation: the original argument
 generator and Bitcoin command classifications remain intact. PoCX read-only
@@ -127,5 +130,8 @@ features, Release build, manifest step and qa-assets checkout. It passes
 profile can be reproduced with
 `CI_PRODUCT=pocx FILE_ENV=./ci/test/00_setup_env_native_fuzz_with_msan.sh ./ci/test_run_all.sh`
 after provisioning the instrumented libc++ and dependency environment used by
-that recipe. These platform commands require actual native execution before
-their status can become passed.
+that recipe. A local MSan binary linked to uninstrumented system libevent can
+report a false uninitialized read in the inherited `http_request` target. Use
+the recipe's MSan-instrumented depends libraries, including libevent, for a
+valid full replay. These platform commands require actual native execution
+before their status can become passed.

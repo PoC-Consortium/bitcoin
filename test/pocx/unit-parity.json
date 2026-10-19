@@ -1451,7 +1451,7 @@
     "scope": "Pending combined native CI repair sources only: bounded exact-output quality memoization, higher-work shorter-chain progress, include declarations, and exact i686 header layout checks. Original Bitcoin OFF branches and all test assertions/inventories remain unchanged. Current linked runtime and private compiler/analysis checks are still required.",
     "status": "source review only; actual native integration and CI execution pending",
     "reviewed_native_sources": {
-      "src/pocx/algorithms/quality.cpp": "0d1caf1eb4fd117b0be396107e3e178c24846ba5d1564abefd13090a76d10cc3",
+      "src/pocx/algorithms/quality.cpp": "da0d7d5a90abfddc2f8b17c2b3fd3356f33555bbb691123ef7d482cd65a4db89",
       "src/pocx/test/pocx_real_proof_tests.cpp": "b531e28da4eef8fc92b7d867415ca3b8b88866fe7caa68c813f2c644535e22db",
       "src/validation.cpp": "380eae4c8e044e4c8180587da29720bd835752970958f07d4887085f84f4a2ca",
       "src/kernel/chainparams.cpp": "4de3aa903eb7ab403350a43a6d5e0b68f3549e60490c632c75b45a8a067f111e",
