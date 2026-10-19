@@ -186,6 +186,13 @@ list(APPEND POCX_UNIT_INPUTS "${PROJECT_SOURCE_DIR}/test/pocx/pocx_bootstrap.py"
         self.options = dict(ENABLE_POCX='ON', ENABLE_WALLET='ON', ENABLE_IPC='ON',
                             WITH_USDT='OFF', target_system='Linux',
                             target_processor='x86_64', avx2_compiled=True)
+        baseline = json.loads((ROOT / 'test/pocx/unit-baseline.json').read_text())
+        self.baseline_cases = set(baseline['cases'])
+        self.assertEqual(len(self.baseline_cases), baseline['case_count'])
+        review = json.loads((ROOT / 'test/pocx/unit-parity.json').read_text())
+        self.applicable_cases = set(review['applicable'])
+        self.additional_cases = set(review['additional'])
+        self.debug_cases = set(review['configuration_cases'])
 
     def test_unit_timeout_gate_rejects_shorter_longer_disabled_and_dynamic_overrides(self):
         for value in (180, 3600, 0, -1, float('nan'), None, True, '2400'):
@@ -224,12 +231,22 @@ list(APPEND POCX_UNIT_INPUTS "${PROJECT_SOURCE_DIR}/test/pocx/pocx_bootstrap.py"
             full = unit_matrix.inventory(ROOT, options, bitcoin=bitcoin)
             tracing = unit_matrix.inventory(ROOT, dict(options, WITH_USDT='ON'), bitcoin=bitcoin)
             self.assertEqual(full['expected'], tracing['expected'])
-            self.assertEqual(len(full['expected']), 737 if bitcoin else 760)
+            # Named baseline/review membership is authoritative. New native
+            # cases must not require maintaining another numeric total here.
+            original = self.baseline_cases if bitcoin else self.applicable_cases
+            additional = set() if bitcoin else self.additional_cases
+            self.assertEqual(full['applicable'], original)
+            self.assertEqual(full['additional'], additional)
+            self.assertEqual(full['expected'], original | additional)
             wallet = unit_matrix.inventory(ROOT, dict(options, ENABLE_WALLET='OFF'), bitcoin=bitcoin)
-            self.assertEqual(len(wallet['applicable']), 680 if bitcoin else 670)
-            self.assertEqual(len(wallet['additional']), 0 if bitcoin else 32)
+            wallet_original = {case for case in original if case.split('/')[0] in unit_matrix.WALLET_SUITES}
+            wallet_additional = {case for case in additional if case.startswith('pocx_block_builder_tests/')}
+            self.assertEqual(wallet['applicable'], original - wallet_original)
+            self.assertEqual(wallet['additional'], additional - wallet_additional)
+            self.assertEqual(wallet['expected'], (original | additional) - wallet_original - wallet_additional)
             ipc = unit_matrix.inventory(ROOT, dict(options, ENABLE_IPC='OFF'), bitcoin=bitcoin)
-            self.assertEqual(len(full['expected'] - ipc['expected']), 2)
+            self.assertEqual(full['expected'] - ipc['expected'],
+                             {case for case in original if case.startswith('ipc_tests/')})
             self.assertEqual(full['excluded'], wallet['excluded'])
             self.assertEqual(full['excluded'], ipc['excluded'])
 
@@ -263,7 +280,10 @@ list(APPEND POCX_UNIT_INPUTS "${PROJECT_SOURCE_DIR}/test/pocx/pocx_bootstrap.py"
                     self.assertEqual(result['original'] & unit_parity.DEBUG_LOCKORDER_CASES, unit_parity.DEBUG_LOCKORDER_CASES)
                     self.assertEqual(result['expected'] & unit_parity.DEBUG_LOCKORDER_CASES,
                                      unit_parity.DEBUG_LOCKORDER_CASES if enabled else set())
-                    self.assertEqual(len(result['expected']), (737 if bitcoin else 760) + (2 if enabled else 0))
+                    original = self.baseline_cases if bitcoin else self.applicable_cases
+                    additional = set() if bitcoin else self.additional_cases
+                    self.assertEqual(result['expected'], original | additional |
+                                     (self.debug_cases if enabled else set()))
 
     def test_unknown_configuration_does_not_disable_parity_gate(self):
         for key, value in [('ENABLE_IPC', None), ('WITH_USDT', 'AUTO'),

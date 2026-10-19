@@ -49,8 +49,13 @@ For example:
 ```sh
 python3 test/pocx/check_drift.py
 python3 test/pocx/unit_parity.py --check
+python3 test/pocx/test_unit_matrix.py
 python3 test/pocx/test_runner.py --build-dir build-pocx --transport matrix feature_pocx_consensus.py
 ```
+
+Both workflows' existing lint job also executes `test_unit_matrix.py`. Its
+configuration expectations come from the named original baseline and reviewed
+PoCX case lists, so adding native tests does not leave duplicated totals stale.
 
 For full framework verification when warranted:
 

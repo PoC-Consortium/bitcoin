@@ -5,7 +5,7 @@ with `ENABLE_POCX=OFF`. With `ENABLE_POCX=ON`, it reuses applicable original sou
 selects reviewed PoCX-owned adaptations and adds native tests.
 
 The fixed Bitcoin v31.1 baseline has 737 actual cases. PoCX runs 727 applicable
-original cases plus 33 native cases: 760 cases in 154 Boost suites. Ten exact
+original cases plus 41 native cases: 768 cases in 155 Boost suites. Ten exact
 Bitcoin-only cases are excluded explicitly in `unit-parity.json`: nine SHA256/nBits
 proof/retarget tests and Bitcoin Testnet4 sanity. Supported-network sanity and
 work/time equivalence remain covered; PoCX's Testnet4 alias has its own test.
@@ -45,7 +45,15 @@ DIR_UNIT_TEST_DATA="$PWD/build-b/unit_test_data" TMPDIR="$PWD/build-b/t" ctest -
 DIR_UNIT_TEST_DATA="$PWD/build-b/unit_test_data" python3 test/pocx/run_unit.py --build-dir build-p --all --jobs 3
 python3 test/pocx/test_unit_infrastructure.py build-p build-b
 python3 test/pocx/unit_parity.py --check
+python3 test/pocx/test_unit_matrix.py
 ```
+
+The configuration self-tests read case membership from `unit-baseline.json` and
+`unit-parity.json`, including native additions and debug-only cases, rather than
+hardcoding profile totals. They compare exact sets for full, wallet-disabled,
+IPC-disabled and debug configurations. The shared CI lint job executes these
+self-tests for both products; source hash checks alone cannot establish that
+the infrastructure still works. This does not rerun a product test binary.
 
 A complete Bitcoin CTest run contains 149 original unit suites and six auxiliary
 library groups. The PoCX runner's `--all` executes all registered unit suites,

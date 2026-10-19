@@ -38,6 +38,16 @@ def workflow(name):
 
 
 class ProductWorkflowsTest(unittest.TestCase):
+    def test_lint_executes_unit_matrix_self_tests_in_both_products(self):
+        steps = workflow('ci-product.yml')['jobs']['lint']['steps']
+        script = next(step['run'] for step in steps if step.get('name') == 'CI script')
+        commands = script.splitlines()
+        guard = 'python3 -B ../lint-worktree/test/pocx/check_drift.py'
+        tests = 'python3 -B ../lint-worktree/test/pocx/test_unit_matrix.py'
+        self.assertIn(tests, commands)
+        self.assertLess(commands.index(guard), commands.index(tests))
+        self.assertLess(commands.index(tests), commands.index('../lint-worktree/ci/lint.py'))
+
     def test_only_two_triggered_workflows_select_independent_products(self):
         documents = {p.name: workflow(p.name) for p in (ROOT / '.github/workflows').glob('*.yml')}
         self.assertEqual(set(documents), {'ci.yml', 'ci-pocx.yml', 'ci-product.yml'})

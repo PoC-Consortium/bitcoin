@@ -594,4 +594,5 @@ jobs:
         run: |
           git worktree add ../lint-worktree HEAD
           python3 -B ../lint-worktree/test/pocx/check_drift.py
+          python3 -B ../lint-worktree/test/pocx/test_unit_matrix.py
           ../lint-worktree/ci/lint.py
