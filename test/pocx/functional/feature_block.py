@@ -10,6 +10,7 @@ from test_framework.blocktools import (
     add_witness_commitment,
     create_pocx_coinbase as create_coinbase,
     resign_pocx_block,
+    pocx_deadline,
     POCX_MAX_FUTURE_BLOCK_TIME,
     create_tx_with_script,
     get_legacy_sigopcount_block,
@@ -742,10 +743,17 @@ class FullBlockTest(BitcoinTestFramework):
         resign_pocx_block(b54)
         self.send_blocks([b54], False, force_send=True, reject_reason='time-too-old', reconnect=True)
 
-        # valid timestamp
+        # PoCX additionally requires a nondecreasing time and an elapsed forging
+        # deadline. Test the exact native boundary, rather than adding slack.
         self.move_tip(53)
         b55 = self.next_block(55, spend=out[15])
-        self.update_block(55, [], nTime=b53.nTime + 600)
+        deadline = pocx_deadline(b55.pocxProof.quality, b55.nBaseTarget)
+        assert_greater_than(deadline, 0)
+        self.update_block(55, [], nTime=b53.nTime + deadline)
+        too_early = copy.deepcopy(b55)
+        too_early.nTime -= 1
+        resign_pocx_block(too_early)
+        self.send_blocks([too_early], False, force_send=True, reject_reason='bad-pocx-timing', reconnect=True)
         self.send_blocks([b55], True)
         self.save_spendable_output()
 

@@ -163,6 +163,27 @@ def create_pocx_coinbase(height, pubkey=None, *, script_pubkey=None,
     return coinbase
 
 
+def pocx_deadline(quality, base_target, spacing=120):
+    """Independent integer reference for the first admissible forging time.
+
+    Python integers avoid overflow; no RPC or production calculation supplies
+    the expected boundary. Constants follow the Q42 scale and Q21 cube root.
+    """
+    def cube_root(value):
+        low, high = 0, 1 << ((value.bit_length() + 2) // 3)
+        while low < high:
+            middle = (low + high + 1) // 2
+            if middle ** 3 <= value:
+                low = middle
+            else:
+                high = middle - 1
+        return low
+    assert base_target > 0 and spacing > 0
+    divisor = (cube_root(spacing << 126) * 3927365422841) >> 42
+    scale = ((spacing << 84) + divisor // 2) // divisor
+    return (scale * cube_root((quality << 63) // base_target) + (1 << 62)) >> 63
+
+
 def resign_pocx_block(block):
     """Sign a mutated synthetic regtest header without replacing its proof/body.
 
@@ -170,19 +191,28 @@ def resign_pocx_block(block):
     malformed bodies here so rejection reaches the intended consensus check,
     rather than failing first on an obsolete header signature.
     """
-    from .crypto import secp256k1
-    from .key import ECKey, ECPubKey, ORDER, rfc6979_nonce
-    from .messages import hash256, ser_string
-    from .script import hash160
-
     assert_equal(block.pocxProof.account_id, _REGTEST_ACCOUNT)
     assert_equal(block.pocxProof.seed, bytes(32))
     assert 0 <= block.pocxProof.nonce < 64
+    previous_pubkey = block.vchPubKey
+    sign_pocx_block_with_key(block, _REGTEST_SIGNING_KEY)
+    assert_equal(block.vchPubKey, previous_pubkey)
+
+
+def sign_pocx_block_with_key(block, private_key):
+    """Sign explicit proof vectors using an independent Python secp256k1 signer.
+
+    This does not construct or validate a capacity proof. The caller supplies
+    every proof field; production still validates proof and signer authorization.
+    """
+    from .crypto import secp256k1
+    from .key import ECKey, ECPubKey, ORDER, rfc6979_nonce
+    from .messages import hash256, ser_string
+
     key = ECKey()
-    key.set(_REGTEST_SIGNING_KEY, compressed=True)
+    key.set(private_key, compressed=True)
     public_key = key.get_pubkey().get_bytes()
-    assert_equal(hash160(public_key), _REGTEST_ACCOUNT)
-    assert_equal(block.vchPubKey, public_key)
+    block.vchPubKey = public_key
     digest = hash256(ser_string(b'POCX Signed Block:\n') + ser_string(block.hash_hex.encode()))
     nonce = int.from_bytes(rfc6979_nonce(key.get_bytes() + digest), 'big')
     point = nonce * secp256k1.G

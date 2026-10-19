@@ -51,7 +51,7 @@
     },
     {
       "id": "POCX-HEADERS-SYNC-001",
-      "status": "observed missing mainnet headers-sync configuration; required regression remains selected",
+      "status": "resolved: explicit mainnet configuration regression added; hosted execution of this change pending",
       "test": "headers_sync_state; pocx_headers_sync_configuration",
       "reproducer": "ASAN_OPTIONS=detect_leaks=0 FUZZ=pocx_headers_sync_configuration build-pocx-fuzz/bin/fuzz test/pocx/fuzz/corpus/pocx_headers_sync_configuration/zero-period",
       "evidence": "build-pocx-fuzz/pocx-fuzz-halyzkq4/results.json; artifacts/m4-fuzz-index-focused2/pocx_headers_sync_configuration.log; artifacts/m4-fuzz-index-gcov1/verification.json",
@@ -59,7 +59,9 @@
       "observation": "PoCX mainnet omits m_headers_sync_params initialization because the upstream initialization is inside the Bitcoin-only branch. HeadersSyncParams defaults commitment_period to zero. Inherited headers_sync_state consumes an invalid 1..0 range; the native HeadersSyncState constructor requires commitment_period > 0. Peer processing can construct this state using actual network parameters for low-work sync.",
       "scope": "Verified mainnet configuration and fuzz constructor precondition failure; network reachability/exploit not established. Default minimum chain work zero may avoid early-chain entry, but this does not provide a valid nonzero period for future/overridden thresholds.",
       "blocked_criterion": "M4 applicable headers-sync fuzz parity and M3 native P2P headers-sync configuration coverage.",
-      "resolution": "Preserve both required configuration-dependent failures; supplemental pocx_headers_sync_state uses explicit pinned upstream test bounds for independent state-machine coverage. Do not silently substitute those bounds into the required network-configured target. Production settings unchanged."
+      "resolution": "Initialize inherited nonzero mainnet headers-sync resource limits outside the Bitcoin-only branch. Regression constructs HeadersSyncState with actual PoCX mainnet parameters. Bitcoin values unchanged. Retain nMinimumChainWork=0 because there is no authenticated new-chain work checkpoint; no Bitcoin work threshold is transplanted.",
+      "historical_resolution": "Preserve both required configuration-dependent failures; supplemental pocx_headers_sync_state uses explicit pinned upstream test bounds for independent state-machine coverage. Do not silently substitute those bounds into the required network-configured target. Production settings unchanged.",
+      "regression": "src/pocx/test/pocx_consensus_tests.cpp:mainnet_headers_sync_configuration"
     },
     {
       "id": "POCX-LINEARIZE-001",

@@ -27,16 +27,16 @@
     "test/pocx/functional_cases.py": "903124835dc4e3d902036a6789a72727f82ff334a2c0c236cc2ee2a49ef4b68f",
     "test/pocx/functional_environment.py": "0b9a8336bc866a3f7d145fc32933f00172113b24cc50563f54121a6d9256c10e",
     "test/pocx/functional_results.py": "ae45c2704a11b23688b523b9b273a591a0020176b4f44196e42fef740afb9cfc",
-    "test/pocx/inherited-ci.json": "5b4529be13a5527160e8cc39a83fc2a0e653a907f91b85f8dd379dedbb85c6fa",
+    "test/pocx/inherited-ci.json": "b63179624ba4e5d8abe95279c2f1e503b5e6e079e5c154b54f95cd6c1c4b711e",
     "test/pocx/inherited_ci.py": "d1914ddcc689e1a0a5086a80754b47a23e0340dcfdaa4369a9201d1677208310",
-    "test/pocx/inherited_functional.py": "973625dcf2d81fb8720cdb0541dc6ce4201ceb355b7d47f90cdcf47279012200",
+    "test/pocx/inherited_functional.py": "a00bb27b9a3705c3e8e61609b9ad57580eeb307f6028f3b345033af71d09957d",
     "test/pocx/inherited_prerequisites.py": "fc24680108346518b53bc32dc2cc626ce74b04d7426145fd3954b9bd61acb2c4",
     "test/pocx/inherited_selection.py": "9d9b69e92ccf55fad6bb3b003b31aa7d366233bf5dbc88581956a1f140dc767e",
-    "test/pocx/kernel-parity.json": "d7433cbf62d2f836a30f4066b49e1e33a08bd8c9c319433b4f6e5098feed593c",
+    "test/pocx/kernel-parity.json": "d50e3b69ee6a611d74c73ca1e99549c97568fb98e0e31ddc6c317bbf861b06a6",
     "test/pocx/kernel/fixtures.json": "0069f80997408a2a13739afe46775c4a5e2cc799a8b963006fdd30c299a7d35f",
-    "test/pocx/kernel/provenance.json": "74d6404c219c4eda2bff6b2ea0f97fdb50fd349df0cde53554d0b34cb8057eec",
+    "test/pocx/kernel/provenance.json": "3c635037e245247642899804facafd7cd4bba33ef2d78b58a6500b09903cbee0",
     "test/pocx/kernel_parity.py": "56345a332de96ed52218b5220fce286e2d97f4e9e540b3d2adf72223d795ed34",
-    "test/pocx/manifest.json": "aafe0bce90e53758ca8cc00e62de5b98e2f02b302c2227be1a3b6f7d8177221b",
+    "test/pocx/manifest.json": "51d59d9723cf2aa1d29a25421700d4860151669b09f964fdcd55f4261a3df2ca",
     "test/pocx/original_windows.py": "ab008c9c062aa4516c08bf21e5afe8f01ce9d1ddaef64d7e2731068a291d8c49",
     "test/pocx/process_tree.py": "12639a920fa4a656eec4f14ea02c4aaf1fe997cfc18c7df2566e82a1d3ab3f29",
     "test/pocx/qt_parity.py": "e4df50d17ffdfd4d3cd6c06451a7bed501b2e1d63c7b6028c7d2031a68e0d492",
@@ -67,7 +67,7 @@
     "test/pocx/unit_build.py": "e53b2493f8f3a9cc7dc14aa53e21ac5c0b2599a1dd9ce87c4d09187f48b44420",
     "test/pocx/unit_matrix.py": "a4f259236e1f9e67b1ec94c5c991e35d8f163fc705ca49c9f5e78e613026b1c5",
     "test/pocx/unit_parity.py": "64613ed3815c4cd59fd5352c2af2412f7826e0a1dfd184fbc7d00649a3257b6d",
-    "test/pocx/upstream-functional-parity.json": "c8180aea4d8d45702bc0d53812df031f595efa1781afdb0540762795a0fa0648",
+    "test/pocx/upstream-functional-parity.json": "d218dff0038dfb49304ee9a8313aaa0e9e787341c6ce75dc05fddd5aaf93102f",
     "test/pocx/verify_functional.py": "e74cb543f14c7f8982692389055c7dd3110b5eb4e03e374dcb355ac02c4040e5",
     "test/pocx/windows_artifact_ci.py": "bda214791601bd19720446ea3dbf926215d05c625efe81f525365e557f82a4df",
     "test/pocx/windows_artifact_functional.py": "6d7810c57e66a11dd359bbfd2440c1d5a906ab81df96fe35de2207693c00500d",
@@ -590,6 +590,15 @@
         "previous_sha256": "73b65ca5b7ecb28e07c20a6b0ed563bf4359d5911d4e81df3050a560c8c0d92d",
         "sha256": "aaa5ec71734e514b049cd40bd99f176ca96324569b63566c35d7a264da51e9ce"
       }
+    }
+  },
+  "testing_review_20261019": {
+    "scope": "Owned functional console reports case names/statuses and explicit reviewed subcase exclusions. Shared MinGW filesystem correction relocated into wallet ownership; same implementation for both products.",
+    "sources": {
+      "test/pocx/inherited_functional.py": "a00bb27b9a3705c3e8e61609b9ad57580eeb307f6028f3b345033af71d09957d",
+      "src/wallet/db.cpp": "698cb5b8a40a21ffbc2e63ce8bcab9b6b1049ff57fd3c91ecd030874b6aec564",
+      "src/wallet/wallet.cpp": "a1f338dc22725c3d9fdcaa529ca91b2aff58fdda90ca8625412faa6def10947b",
+      "src/wallet/windows_fs.h": "e668a5f55252976d7031c91b2e86c284d8fd05f3c14bbf986de809ac24c7d2e5"
     }
   }
 }

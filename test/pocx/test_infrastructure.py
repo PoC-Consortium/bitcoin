@@ -818,6 +818,17 @@ class InfrastructureTest(unittest.TestCase):
         self.assertEqual(issues, [{'source': records['results'][name]['source'],
                                   'reason': 'functional parity record does not match the pinned upstream inventory'}])
 
+    def test_unreviewed_subcase_exclusion_is_rejected(self):
+        path = OWNED / 'manifest.json'
+        manifest = json.loads(path.read_text())
+        manifest.setdefault('excluded_subcases', {})['mining_basic.py::unreviewed_boundary'] = 'Hide this case'
+        original_read = Path.read_text
+        with patch.object(Path, 'read_text', lambda current, *args, **kwargs:
+                          json.dumps(manifest) if current == path else original_read(current, *args, **kwargs)):
+            issues = check_drift.check(ROOT)
+        self.assertIn({'source': 'test/pocx/manifest.json',
+                       'reason': 'functional subcase exclusions require review'}, issues)
+
     def test_reviewed_functional_consumer_cannot_be_dropped(self):
         path = OWNED / 'manifest.json'
         records = json.loads((OWNED / 'upstream-functional-parity.json').read_text())['results']

@@ -411,6 +411,14 @@ def run(build, output, options, jobs, factor, *, environment=None, selected_conf
                                                         'reason', 'execution_status', 'seconds'])
             writer.writeheader()
             writer.writerows(report['cases'])
+    def print_results():
+        print('\nInherited functional results:', flush=True)
+        for row in report['cases']:
+            print(f"{row['case']} [{row['effective_transport']}] | {row['status']} | "
+                  f"{row['seconds']:.1f}s | {row['reason']}", flush=True)
+        print('Counts:', dict(Counter(row['status'] for row in report['cases'])), flush=True)
+        for name, reason in report.get('reviewed_pocx_subcase_exclusions', {}).items():
+            print(f'{name} | reviewed-exclusion | {reason}', flush=True)
     def execute(name, command, child_env):
         log = output / (name + '.log')
         start = time.monotonic()
@@ -449,6 +457,7 @@ def run(build, output, options, jobs, factor, *, environment=None, selected_conf
                 raise ValueError('Incomplete inherited native functional selection')
             report['case_transports'] = case_transports
             report['reviewed_pocx_exclusions'] = manifest.get('excluded_tests', {})
+            report['reviewed_pocx_subcase_exclusions'] = manifest.get('excluded_subcases', {})
             if (proof['provenance'].get('build_configuration') != selected_config or
                     proof['provenance'].get('timeout_factor', 1) != factor):
                 raise ValueError('Native functional configuration or timing differs from inherited invocation')
@@ -530,7 +539,9 @@ def run(build, output, options, jobs, factor, *, environment=None, selected_conf
         counts = Counter(row['status'] for row in report['cases'])
         report['counts'] = dict(counts)
         if not counts['passed'] or counts['failed'] or counts['unverified']:
-            raise ValueError('Required applicable functional cases failed or remain unverified')
+            failures = [row['case'] + ' [' + row['effective_transport'] + ']' for row in report['cases']
+                        if row['status'] in ('failed', 'unverified')]
+            raise ValueError('Required functional cases failed or remain unverified: ' + ', '.join(failures))
         if dependencies != dependency_hashes():
             raise ValueError('External functional dependencies changed during inherited execution')
         report['external_dependencies'] = dependencies
@@ -547,8 +558,10 @@ def run(build, output, options, jobs, factor, *, environment=None, selected_conf
                             'execution_status': 'unverified', 'seconds': 0.0})
         report.update(status='failed', error=str(error))
         save()
+        print_results()
         raise
     save()
+    print_results()
     return report
 
 

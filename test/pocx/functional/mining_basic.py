@@ -17,6 +17,7 @@ from test_framework.blocktools import (
     create_pocx_coinbase,
     create_pocx_block,
     resign_pocx_block,
+    pocx_deadline,
     get_witness_script,
     NORMAL_GBT_REQUEST_PARAMS,
     POCX_MAX_FUTURE_BLOCK_TIME,
@@ -197,11 +198,24 @@ class MiningTest(BitcoinTestFramework):
             self.restart_node(0)
 
     def test_timewarp(self):
-        # Reviewed PoW-only exclusion: BIP94 protects Bitcoin retarget windows.
-        # Native per-block difficulty and forging deadlines replace that rule.
-        self.log.info("Exclude Bitcoin PoW retarget timewarp scenario (BIP94)")
         # The preceding invalid-startup checks leave node0 stopped.
         self.start_node(0)
+        node = self.nodes[0]
+        self.log.info("Test PoCX's per-block deadline boundary replacing BIP94 retarget timewarp")
+        parent = node.getbestblockhash()
+        parent_time = node.getblockheader(parent)['time']
+        block = create_pocx_block(node)
+        deadline = pocx_deadline(block.pocxProof.quality, block.nBaseTarget)
+        assert_greater_than(deadline, 0)
+        block.nTime = parent_time + deadline - 1
+        resign_pocx_block(block)
+        node.setmocktime(max(node.mocktime or 0, parent_time + deadline))
+        assert_equal(node.submitblock(block.serialize().hex()), 'bad-pocx-timing')
+        assert_equal(node.getbestblockhash(), parent)
+        block.nTime += 1
+        resign_pocx_block(block)
+        assert_equal(node.submitblock(block.serialize().hex()), None)
+        assert_equal(node.getbestblockhash(), block.hash_hex)
 
     def test_pruning(self):
         self.log.info("Test that submitblock stores previously pruned block")

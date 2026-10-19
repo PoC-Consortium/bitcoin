@@ -196,7 +196,8 @@
     "wallet_migration.py": "functional/wallet_migration.py",
     "interface_usdt_mempool.py": "bitcoin_baseline/usdt/interface_usdt_mempool.py",
     "interface_usdt_net.py": "bitcoin_baseline/usdt/interface_usdt_net.py",
-    "interface_usdt_validation.py": "bitcoin_baseline/usdt/interface_usdt_validation.py"
+    "interface_usdt_validation.py": "bitcoin_baseline/usdt/interface_usdt_validation.py",
+    "feature_pocx_consensus.py": "functional/feature_pocx_consensus.py"
   },
   "reused_tests": [
     "feature_filelock.py",
@@ -410,5 +411,9 @@
     "test_framework/wallet_migration_fixtures.py": "framework/wallet_migration_fixtures.py",
     "test_framework/bpf_abi.py": "framework/bpf_abi.py",
     "test_framework/bcc_headers.py": "framework/bcc_headers.py"
+  },
+  "excluded_subcases": {
+    "interface_ipc_mining.py::successful_nonce_only_submitSolution": "Bitcoin PoW submitSolution transports only version, time, uint32 nonce and coinbase. It cannot carry PoCX proof, key or signature fields. Native IPC template construction and checkBlock remain exercised; successful RPC submission is separate coverage. Adding a PoCX IPC submission API is a product feature, outside preservation of the Bitcoin nonce API.",
+    "tool_signet_miner.py::bitcoin_pow_cli_generate_and_solvepsbt": "The unchanged Bitcoin signet miner CLI constructs 80-byte PoW headers and grinds nBits/nonce solutions. PoCX replaces those fields with capacity proof/signature headers. Owned coverage retains original PSBT, signet challenge, wallet signing and commitment helpers with native block assembly; this does not establish coverage of a native miner CLI."
   }
 }

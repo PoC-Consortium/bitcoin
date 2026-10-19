@@ -2,14 +2,14 @@
 // Distributed under the MIT software license; see COPYING.
 // GCC 14 MinGW filesystem status does not classify Windows reparse points.
 // Preserve no-follow wallet scanning and reject file symlinks as wallet paths.
-#ifndef BITCOIN_POCX_COMPAT_WINDOWS_WALLET_FS_H
-#define BITCOIN_POCX_COMPAT_WINDOWS_WALLET_FS_H
+#ifndef BITCOIN_WALLET_WINDOWS_FS_H
+#define BITCOIN_WALLET_WINDOWS_FS_H
 #include <util/fs.h>
 #include <system_error>
 #if defined(_WIN32) && defined(__MINGW32__)
 #include <windows.h>
 #endif
-namespace pocx::compat {
+namespace wallet::detail {
 inline fs::file_status WalletEntryStatus(const fs::directory_entry& entry, bool follow = true)
 {
 #if defined(_WIN32) && defined(__MINGW32__)
@@ -54,4 +54,4 @@ inline fs::file_status WalletPathSymlinkStatus(const fs::path& path) {
     return fs::symlink_status(path);
 }
 }
-#endif // BITCOIN_POCX_COMPAT_WINDOWS_WALLET_FS_H
+#endif // BITCOIN_WALLET_WINDOWS_FS_H

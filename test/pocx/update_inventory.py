@@ -21,6 +21,19 @@ ROOT = Path(__file__).resolve().parents[2]
 BASE = '5de2720ca47b3a753081e5ce545113cd3b616018'
 UPSTREAM = '9be056a8a72b624dae9623b2f7bded92c2a21c91'
 
+# The committed inventory describes sources and selection, never historical
+# execution. Runtime-enriched exports must use an explicit external destination.
+SOURCE_FIELDS = {'source', 'upstream', 'baseline_revision', 'baseline_sha256',
+                 'upstream_sha256', 'sha256', 'classification', 'reason',
+                 'replacement', 'current_sha256', 'covered_behavior',
+                 'guarded_case_source', 'guarded_cases', 'pocx_conditional_lines',
+                 'adaptation_origins', 'fuzz_targets', 'assertions', 'parity_mapping',
+                 'source_review_current'}
+
+
+def source_inventory(entries):
+    return [{key: value for key, value in entry.items() if key in SOURCE_FIELDS} for entry in entries]
+
 
 def git_content(revision, path):
     p = subprocess.run(['git', '-C', str(ROOT), 'show', f'{revision}:{path}'], capture_output=True)
@@ -45,8 +58,14 @@ def main():
     parser.add_argument('--output', type=Path, default=ROOT / 'test/pocx/coverage.json',
                         help='Inventory snapshot destination; defaults to coverage.json')
     args = parser.parse_args()
+    runtime_requested = any((args.pocx_unit_results, args.bitcoin_unit_results,
+        args.bitcoin_functional_results, args.pocx_wallet_disabled_results,
+        args.pocx_kernel_results, args.functional_results, args.fuzz_results))
+    committed_output = args.output.resolve() == ROOT / 'test/pocx/coverage.json'
+    if committed_output and runtime_requested:
+        parser.error('Execution exports require --output outside the committed source inventory')
     wrapper = args.wrapper.resolve()
-    inventory = json.loads((ROOT / 'artifacts/baseline-inventory.json').read_text())
+    inventory = json.loads((ROOT / 'test/pocx/baseline-inventory.json').read_text())
     restorations = json.loads((ROOT / 'test/pocx/restorations.json').read_text())['files']
     seen = {e['source'] for e in inventory}
     for pattern in ['test/functional/test_framework/**/*.py', 'test/functional/data/**/*.py', 'src/test/util/*', 'src/test/kernel/*']:
@@ -272,6 +291,7 @@ def main():
                            for name, path in framework_sources(ROOT).items()}
     current_tree_sources.update({name: 'test/pocx/' + path for name, path in manifest['replacements'].items()})
     current_tree_sources.update({name: 'test/functional/' + path for name, path in manifest.get('framework_copies', {}).items()})
+    current_tree_sources.update({name: 'test/pocx/' + path for name, path in manifest.get('framework_additions', {}).items()})
     current_tree_sources.update({name: 'test/functional/' + path for name, path in manifest.get('support_copies', {}).items()})
     current_tree_sources.update({name: 'test/pocx/' + path for name, path in manifest.get('support_replacements', {}).items()})
     current_tree_sources.update({name: 'test/pocx/' + path for name, path in manifest['tests'].items()})
@@ -365,7 +385,7 @@ def main():
         statuses = {result['status'] for profile in execution.values() for result in profile.values()}
         entry['execution'] = ('failed' if 'failed' in statuses else 'skipped' if 'skipped' in statuses
                               else 'passed' if statuses else 'not run')
-    args.output.write_text(json.dumps(entries, indent=2) + '\n')
+    args.output.write_text(json.dumps(source_inventory(entries) if not runtime_requested else entries, indent=2) + '\n')
     print(f'Inventoried {len(entries)} sources; provenance approvals unchanged')
 
 

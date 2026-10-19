@@ -420,11 +420,12 @@ class IPCMiningTest(BitcoinTestFramework):
                 remote_block_after = await mining_get_block(template, ctx)
                 assert_not_equal(remote_block_before.serialize().hex(), remote_block_after.serialize().hex())
 
-                self.log.debug("Legacy nonce-only submission cannot carry a capacity proof")
+                self.log.info("Reviewed exclusion: successful IPC submitSolution requires a PoW nonce; PoCX proof fields are absent")
                 # submitSolution(version,time,uint32 nonce,coinbase) is the
                 # Bitcoin PoW API. It has no native proof/key/signature fields.
                 # Retain rejection/mutation checks; successful native submission
-                # uses the complete signed block and is checked below.
+                # uses the complete signed block over RPC below. That RPC check
+                # does not establish successful IPC submission coverage.
                 submitted = (await template.submitSolution(ctx, block.nVersion, block.nTime, 0, coinbase.serialize())).result
                 assert_equal(submitted, False)
                 assert_equal(self.nodes[0].submitblock(block.serialize().hex()), None)

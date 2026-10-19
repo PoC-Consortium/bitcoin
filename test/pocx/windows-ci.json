@@ -17,7 +17,7 @@
     "test/pocx/ci_product.py": "07783ef9d57662bff430b33a446d8b11321e3740226fbb53e31a5c217cd1938c",
     "test/pocx/common.py": "9c6d49f8ca052427557fd301d9195a00c6e09542dfd7ed63b15e0a4b81e72772",
     "test/pocx/inherited_ci.py": "d1914ddcc689e1a0a5086a80754b47a23e0340dcfdaa4369a9201d1677208310",
-    "test/pocx/inherited_functional.py": "973625dcf2d81fb8720cdb0541dc6ce4201ceb355b7d47f90cdcf47279012200",
+    "test/pocx/inherited_functional.py": "a00bb27b9a3705c3e8e61609b9ad57580eeb307f6028f3b345033af71d09957d",
     "test/pocx/inherited_prerequisites.py": "fc24680108346518b53bc32dc2cc626ce74b04d7426145fd3954b9bd61acb2c4",
     "test/pocx/inherited_selection.py": "9d9b69e92ccf55fad6bb3b003b31aa7d366233bf5dbc88581956a1f140dc767e",
     "test/pocx/inherited_tests.py": "a08946f019b624ecdd5b00709a44fdabf0133dc9de8cc0328ca0c82c70f05d10",
@@ -250,6 +250,15 @@
         "previous_sha256": "484a36206a3b854c36c302e7cf0d007afd26246cc3176aa39819f214c0c3bc0b",
         "sha256": "fe3f5bd3f7f07f1c39ccac057752880b29b7ace7fccb9e44d9dfcaf25161402c"
       }
+    }
+  },
+  "testing_review_20261019": {
+    "scope": "Owned functional console reports case names/statuses and explicit reviewed subcase exclusions. Shared MinGW filesystem correction relocated into wallet ownership; same implementation for both products.",
+    "sources": {
+      "test/pocx/inherited_functional.py": "a00bb27b9a3705c3e8e61609b9ad57580eeb307f6028f3b345033af71d09957d",
+      "src/wallet/db.cpp": "698cb5b8a40a21ffbc2e63ce8bcab9b6b1049ff57fd3c91ecd030874b6aec564",
+      "src/wallet/wallet.cpp": "a1f338dc22725c3d9fdcaa529ca91b2aff58fdda90ca8625412faa6def10947b",
+      "src/wallet/windows_fs.h": "e668a5f55252976d7031c91b2e86c284d8fd05f3c14bbf986de809ac24c7d2e5"
     }
   }
 }

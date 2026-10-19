@@ -137,6 +137,7 @@ set(POCX_TEST_SOURCES
   ${PROJECT_SOURCE_DIR}/src/test/versionbits_tests.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/pocx_wire_tests.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/pocx_real_proof_tests.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/pocx_consensus_tests.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/pocx_tests.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/pocx_simd_tests.cpp
 )

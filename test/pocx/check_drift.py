@@ -144,6 +144,11 @@ def check(root):
     exclusions = functional.get('exclusions', {})
     if exclusions != manifest.get('excluded_tests', {}):
         issues.append({'source': 'test/pocx/manifest.json', 'reason': 'functional exclusions changed since specific review'})
+    subcases = manifest.get('excluded_subcases', {})
+    if subcases != functional.get('subcase_exclusions', {}) or any(
+            name.split('::', 1)[0] not in functional['results'] or '::' not in name or
+            not isinstance(reason, str) or not reason.strip() for name, reason in subcases.items()):
+        issues.append({'source': 'test/pocx/manifest.json', 'reason': 'functional subcase exclusions require review'})
     for name, record in functional['results'].items():
         source = record['source']
         entry = known.get(source, {})

@@ -33,7 +33,7 @@
     "src/test/kernel/test_kernel.cpp": "b239ffd7977a3390d024745b00b5ab485817c26648f0d5328d94c60730c1dbc4",
     "src/test/kernel/block_data.h": "37237946a7f8174b99f08390daea444e03d3557342f0a65dfc6c68a4a5ae16f5",
     "src/kernel/bitcoinkernel.cpp": "174890768e31e67bb8decb166b40b61c51e097a41ef5cb80708bc423eb8a788f",
-    "src/kernel/chainparams.cpp": "8dfb7f1f5a8e98af703bfb492fd9d70bb619e66cf7a087279ad9e63ccc3ff348",
+    "src/kernel/chainparams.cpp": "4b5d359715ffba88fa6f811982629495a388dd5e0a401a5924bcf95355189ffb",
     "src/pocx/consensus/difficulty.cpp": "9769f411840097321c9dce8b715922152003ff6a18273905bc5060146f563e56",
     "src/pocx/consensus/proof.cpp": "7c0b3c643d674c373590ea9b37a116722f2c674c2abe4a51d815217cc0487247",
     "src/pocx/consensus/proof.h": "f80eb5096e477e6147e4f3b04b705ac5886da245cb55fc4203f006d5c9ff95cd",
