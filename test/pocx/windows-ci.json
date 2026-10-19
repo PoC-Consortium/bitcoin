@@ -32,7 +32,7 @@
     "test/pocx/test_inherited_selection.py": "195cf2982f72a156f385d08d504a741b5948f507da2017e121758a6bd8ae44ef",
     "test/pocx/test_original_windows.py": "27f47f07e52a7381e48ca4d1f77220c1efb073073be7f2fcba13a4c002d8c39f",
     "test/pocx/test_process_tree.py": "c2b1bc492945a007e023614d6e2529e231a3e94cdf41696ae4588bb6d2a9a64c",
-    "test/pocx/test_product_workflows.py": "f7659c98c561d25f33a4f6f3d5e1de0794f32e1341dff5b6ec149478b41092ee",
+    "test/pocx/test_product_workflows.py": "c57862b423943bab77b2a59cbb431892a492c7df4d9de2d3266fb7fe40899ee1",
     "test/pocx/test_windows_ci.py": "29970ab78210261789993f72f8ad0ce19924ba76e4dc4f70671097f7d34859c8",
     "test/pocx/unit_assets.py": "1c34c321789b13246532e2d702b2212a5812cdd88bd4f6289945aa7f5680f992",
     "test/pocx/upstream-ci-matrix.json": "2db9d8020ca1d07283cbc27a53e8bb3760bfbbfe4b5a805376f04467e64f3f7a",
