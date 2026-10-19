@@ -9,19 +9,19 @@
       "workflow": ".github/workflows/ci.yml",
       "name": "CI",
       "ENABLE_POCX": "OFF",
-      "linux_configurations": 14,
-      "macos_native_variants": 2,
-      "windows_vs_native_variants": 2,
-      "fuzz": "All four inherited variants; original fuzz-binary compilation preserved."
+      "fuzz": {
+        "configurations": "inherited",
+        "target_suite": "bitcoin"
+      }
     },
     "pocx": {
       "workflow": ".github/workflows/ci-pocx.yml",
       "name": "CI-POCX",
       "ENABLE_POCX": "ON",
-      "linux_configurations": 12,
-      "macos_native_variants": 1,
-      "windows_vs_native_variants": 1,
-      "fuzz": "Deferred explicitly; no ON fuzz execution claimed."
+      "fuzz": {
+        "configurations": "inherited",
+        "target_suite": "pocx"
+      }
     }
   },
   "shared_workflow": ".github/workflows/ci-product.yml",
@@ -58,8 +58,8 @@
   "status_policy": "Failures, skips, inactive cases, cancellations, unverified cases and reviewed exclusions remain distinct from passes.",
   "pending_repairs": [
     "Verify exact inherited functional selections and original optional prerequisite boundaries on hosted platforms.",
-    "Resolve remaining sanitizer time-limit and PoCX Windows failures using retained raw diagnostics.",
-    "Verify restored OFF fuzz variants on their target platforms."
+    "Verify current PoCX fuzz configurations on native macOS and Windows and in hosted Linux CI.",
+    "Verify current OFF fuzz configurations on their target platforms at the matching revision."
   ],
   "execution_status": "Changed configuration requires matching-revision hosted verification; infrastructure checks are not proof of a green pipeline.",
   "functional_selection": "Inherited BASE/EXTENDED, explicit exclusions and effective per-case transports. Format11 proofs bind selection and RPC coverage; PoCX-only cases remain within corresponding configurations.",

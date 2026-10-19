@@ -90,6 +90,18 @@ class ProductWorkflowsTest(unittest.TestCase):
                          '5281faede86e2a69eb775c39c48dc28e9542d247458149af94e405231df126ff')
         original = ci_matrix.matrices('bitcoin')
         native = ci_matrix.matrices('pocx')
+        product_record = json.loads((ROOT / 'test/pocx/ci-matrix.json').read_text())['products']
+        self.assertEqual(set(product_record), {'bitcoin', 'pocx'})
+        for product, enabled in ci_product.PRODUCTS.items():
+            selected = product_record[product]
+            self.assertEqual(selected['ENABLE_POCX'], enabled)
+            self.assertEqual(selected['workflow'],
+                             '.github/workflows/ci' + ('-pocx' if product == 'pocx' else '') + '.yml')
+            self.assertEqual(selected['fuzz'],
+                             {'configurations': 'inherited', 'target_suite': product})
+            for duplicated_count in ('linux_configurations', 'macos_native_variants',
+                                     'windows_vs_native_variants'):
+                self.assertNotIn(duplicated_count, selected)
         self.assertEqual({k: len(v['include']) for k, v in original.items()},
                          {'linux': 14, 'macos': 2, 'windows': 2})
         self.assertEqual({k: len(v['include']) for k, v in native.items()},
