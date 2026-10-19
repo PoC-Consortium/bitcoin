@@ -8,15 +8,17 @@ matrix from the pinned Bitcoin revision
 Read [README-workflows.md](README-workflows.md) for matrix selection, required
 features, platform execution and immutable Windows artifact rules. Read
 [README-review-20261019.md](README-review-20261019.md) for the testing review's
-findings, decisions and remaining validation limits.
+findings, decisions and remaining validation limits. Fuzz ownership, exclusions
+and local/platform reproduction are in [README-fuzz.md](README-fuzz.md).
 
 ## Scope and results
 
-The Bitcoin matrix has 14 Linux, two macOS and two native VS configurations,
-plus its inherited Windows cross-build and native-consumer jobs. PoCX selects
-the corresponding configurations except the four fuzz variants. PoCX fuzz is
-explicitly deferred. Native PoCX test additions extend cases within these jobs;
-they do not introduce additional platform combinations.
+Both products select the inherited 14 Linux, two macOS and two native VS
+configurations, plus the inherited Windows cross-build and native-consumer
+jobs. The four fuzz configurations use each product's own sources and runner.
+Native PoCX additions extend cases within those jobs; they introduce no
+additional platform combinations. Local fuzz verification is recorded
+separately from native Windows/macOS and hosted status.
 
 Both workflows completed successfully at `ec67ffaf1d`:
 
@@ -53,9 +55,9 @@ python3 test/pocx/test_unit_matrix.py
 python3 test/pocx/test_runner.py --build-dir build-pocx --transport matrix feature_pocx_consensus.py
 ```
 
-Both workflows' existing lint job also executes `test_unit_matrix.py`. Its
-configuration expectations come from the named original baseline and reviewed
-PoCX case lists, so adding native tests does not leave duplicated totals stale.
+Both workflows' existing lint job executes `test_unit_matrix.py` and
+`test_fuzz_parity.py`. Their inventories come from named baseline and reviewed
+PoCX records, so adding native tests does not leave duplicated totals stale.
 
 For full framework verification when warranted:
 

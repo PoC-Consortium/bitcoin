@@ -215,7 +215,8 @@ def main():
     try:
         ci_exec(test_script(os.environ['BASE_ROOT_DIR'], os.environ))
     finally:
-        if not os.getenv('DANGER_RUN_CI_ON_HOST') and os.getenv('RUN_FUZZ_TESTS') != 'true':
+        retain_fuzz = os.getenv('RUN_FUZZ_TESTS') == 'true' and os.getenv('CI_PRODUCT') == 'pocx'
+        if not os.getenv('DANGER_RUN_CI_ON_HOST') and (os.getenv('RUN_FUZZ_TESTS') != 'true' or retain_fuzz):
             failed = sys.exc_info()[0] is not None
             try:
                 capture_evidence(container_id, os.environ)

@@ -1,0 +1,1306 @@
+{
+  "upstream_revision": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
+  "scope": "Named original fuzz targets and exact upstream source/runner hashes; runtime registration and corpus execution require separate verification. Hidden targets retain their original explicit selection policy.",
+  "sources": {
+    "src/test/fuzz/CMakeLists.txt": "b88bc6320d7fbd845925fad3fd6aba0cdba38ded8dcaf4c04b3d93a2f410029f",
+    "src/test/fuzz/FuzzedDataProvider.h": "a861868b3c170eb7e751d63024028bf2ee2d9c8faec6b38ec4b434c2d736f5b2",
+    "src/test/fuzz/addition_overflow.cpp": "93b91a79a6b8b023f941483888f63cf4f84f2dff2cfe3aa3ab1383ebc841e667",
+    "src/test/fuzz/addrman.cpp": "f6bf2ca7efc29e2d7c814a44b817ace6b17ba660eba0398a4796df189a4b1106",
+    "src/test/fuzz/asmap.cpp": "e9b7f064b0a4391001399491a4eea9b85f38abd36cfe40862ee02865d6e7b709",
+    "src/test/fuzz/asmap_direct.cpp": "5c7fa5ab3e0171175028a505675105d581185929601440c486b8dc5ba6793754",
+    "src/test/fuzz/autofile.cpp": "788f1e8ab6e031bad8f7d35166bedd11fa300fa1c3f9b34c4e8a6286a02c8d8c",
+    "src/test/fuzz/banman.cpp": "433897a02a32ad2e8ac4bf45ad9c67dc7bc87c9cb1484ff79e029d02fc7a9675",
+    "src/test/fuzz/base_encode_decode.cpp": "66240f9414fe2e31f136030d36de198a7181505291e0bf0dd6bba38dee4471e0",
+    "src/test/fuzz/bech32.cpp": "8a90cb50e0b3a33c17de155d3bb9a4d2d9d6873d50b1632ca75af9950f4fae5a",
+    "src/test/fuzz/bip324.cpp": "a538243b3d3516b434745e41c6d76646109753ddbd8dc61c56533da232791df1",
+    "src/test/fuzz/bitdeque.cpp": "168487edb178d5f4ac2ba804c6bbfc14565528cf6ad2ca9bca322fdc758c6a25",
+    "src/test/fuzz/bitset.cpp": "7ac5ecf3b3a7a54501dd320d1d4057de17f7ffe14976e6fa2cb32922c5ab2ff0",
+    "src/test/fuzz/block.cpp": "47fe53354e2c5cb37a895566527dd4fa76330eea7a06d1b35aa76a66e8c4a8c0",
+    "src/test/fuzz/block_header.cpp": "1fd8f88beea05396694aaf4ab5bf03afabb22c0f760da12bd4961be1db9a419a",
+    "src/test/fuzz/block_index.cpp": "484ebfb523a6f6ce4517b90dbe32c066d6bd18daf9afac464660ea7b90d29444",
+    "src/test/fuzz/block_index_tree.cpp": "5c29b00ee774e9cb8e4d70a8fa443fac1455594eca1debb713923fa4d394dcd6",
+    "src/test/fuzz/blockfilter.cpp": "4b52a1cc5cbb487777c85209d1b8a0412a5e506ccd5bf4ee275374cb78b4f143",
+    "src/test/fuzz/bloom_filter.cpp": "e3c180a9c2bbb0193b5f62cb0a6a261043b40a3512225a1952cc84dde11f9f47",
+    "src/test/fuzz/buffered_file.cpp": "b7264156f250625348fc2b4c6ea3e7f4a2bcd2c7334f4f2c277e0c8d655ac9bf",
+    "src/test/fuzz/chain.cpp": "849ecd5beae870a8320fdad764771ec86dc20afbc5fda0e4eb77c54e01435cea",
+    "src/test/fuzz/checkqueue.cpp": "214b28b770133afba7afc0d31cc06afb508f5a81a4a45bc845d6251298a83cff",
+    "src/test/fuzz/cluster_linearize.cpp": "472e4862c3c601397ddfdf363da9f220a3639e271dc229950fbff8f08b0bc372",
+    "src/test/fuzz/coins_view.cpp": "abab92ebaecb17bfafd6a2b400794de320335c14d513e3357731ddc75d0607da",
+    "src/test/fuzz/coinscache_sim.cpp": "0ef6058dab3fa01e07f66682e3078a8452034eb909fd6dad32bd515f582a2080",
+    "src/test/fuzz/connman.cpp": "965d435eceeb4d9a4cb203d33c4f1f2e045208a881ab4534261645dc0ee0a886",
+    "src/test/fuzz/crypto.cpp": "d8b6ba5e8a02b7ace75967802eefa4353255dca289eb9a989eb9c41d97cc231f",
+    "src/test/fuzz/crypto_aes256.cpp": "273e9247251ef8129520cf1d3963547294311dfa58bcadea8a675446033dc653",
+    "src/test/fuzz/crypto_aes256cbc.cpp": "a378b83716ed894ffd9d1196eec8bbb804c3bf1a32f303f5b00bd5f48604b72b",
+    "src/test/fuzz/crypto_chacha20.cpp": "6cb8c6c8853bfc4a27bde66d2f0c20342dde02c5e2eb9b75433c066b0bb27070",
+    "src/test/fuzz/crypto_chacha20poly1305.cpp": "de4e58a54169403c9f5178e142a5bcc188e11ec03fb42e4747a2626dbb65af0d",
+    "src/test/fuzz/crypto_common.cpp": "cfbad21ade16c7034c38a3f39d27e7cf4a75a87386356a03834727a011b8dddf",
+    "src/test/fuzz/crypto_diff_fuzz_chacha20.cpp": "4d38fd7b741d06fc77fe26c4d494c72063d26a478bdd7310552f65364d47fc9d",
+    "src/test/fuzz/crypto_hkdf_hmac_sha256_l32.cpp": "b88b33cf28d027daba3908b64425822c983116ede01742ea2700e640dbd228a5",
+    "src/test/fuzz/crypto_poly1305.cpp": "b34025c8facf981c9d91e1e97e900fe680abd3c4b0b61f44c17859c9e93b5f31",
+    "src/test/fuzz/cuckoocache.cpp": "82476f4afa4a25e0ac89611f207655c7f4dc2313a8b21966eb7f7230e6284cfc",
+    "src/test/fuzz/decode_tx.cpp": "7cfa58aeda543664acedd6d05a7865875ca825dda3a25162ddd7cdb5c3975c67",
+    "src/test/fuzz/descriptor_parse.cpp": "5489b33346cd131643bb2a23e193a11db55f4a5df7de82fd9f0785ce5a8e0a7f",
+    "src/test/fuzz/deserialize.cpp": "2c0bc17854e22fe9ed956ce12ebc45ca219c707460237ffb07564feb2f2f8634",
+    "src/test/fuzz/difference_formatter.cpp": "a2b82d48a949bbdef619f924b0a6bbd0603c8de0ac196930a031307497036688",
+    "src/test/fuzz/eval_script.cpp": "fc1e144d5121adb2e4a5c956b5ed92940743da6f8a0528ea1eaeb322e6d1460e",
+    "src/test/fuzz/fee_rate.cpp": "01346220692d1ecb2e4e8be792b2a387699090ef5ff5dd97f53d87a4a465a8f7",
+    "src/test/fuzz/feefrac.cpp": "5fd802e211b95b2ae9e16723803bfdafdb11436aa46b459212a0c3e7f6e59325",
+    "src/test/fuzz/feeratediagram.cpp": "4b5456feb29eb86eea53a223d78d72983a132bdfaa08af15094c6f3ff4c9e47a",
+    "src/test/fuzz/fees.cpp": "f77ec824a9d56c2dd37278d7a8df549ebd05834df362b1545e3810ea40cc5903",
+    "src/test/fuzz/flatfile.cpp": "4714c2d89843f55fa5271951f80e64e8ea1475d9bedeeee5aa713118ff843db5",
+    "src/test/fuzz/float.cpp": "ce703a2122fb88a1f0778d9e8bd842fa3ba7117e33157effa646397f632ee3fe",
+    "src/test/fuzz/fuzz.cpp": "a1487b52b27d46f1f6f5b962e36272b53fa1d0d77980337d930b53b9b0ce3e5f",
+    "src/test/fuzz/fuzz.h": "ca965666b3597081f209d044f0dd60c89c717fd7b2be6f17d0ee54fb473a244b",
+    "src/test/fuzz/golomb_rice.cpp": "2edc0b8954c2c83ced0801a1b2458aa27d2e841c20c2c5eac3a70bf8b55739c5",
+    "src/test/fuzz/headerssync.cpp": "efb6f34612ba57737d32323bd0810006bb1f87045665c03398720167ce220450",
+    "src/test/fuzz/hex.cpp": "f4db8e42493a6959fb8606672e3078a853c7ef75a7fa3bcd51f0b63bb1e29a62",
+    "src/test/fuzz/http_request.cpp": "df32f576a2ee546740c483e197b18e6d906e8e8045a6ea4d2bdde6b08eee71ba",
+    "src/test/fuzz/i2p.cpp": "45eb025b32d4b7bdc5778ae888f4a2edaf39a59b1229b16bd607896de691bc96",
+    "src/test/fuzz/integer.cpp": "29d06dbba2580c6d0bcfd875d385c5308a39e04c32d4ed7467b5b1b673ee4632",
+    "src/test/fuzz/key.cpp": "2760e36fb835e5dd18d2b2d20f1863ca122ed9877b502fa47623ec8d0226c05d",
+    "src/test/fuzz/key_io.cpp": "c7cc741d616a8170a4d91cc9a1a428810fd5b37d72970ed9aeca2ed8a6ee8bde",
+    "src/test/fuzz/kitchen_sink.cpp": "f2d86aaec91b7ee97ca94b57efd7254e04b26c44f50d119d8ab4625782a9e36b",
+    "src/test/fuzz/load_external_block_file.cpp": "45a206cff924fc924bf268015ab6396326c27c64ddc6052d9781a305a7191feb",
+    "src/test/fuzz/locale.cpp": "5af116055b6e0e06d09b1d099334331da2d4b67e31612723665aa0c9a85a2929",
+    "src/test/fuzz/merkle.cpp": "472bee572a7ef40db7474bbdd4aa7a2a5fe5678e69a0e7b2461642b54cbf88fc",
+    "src/test/fuzz/merkleblock.cpp": "8ed5b37d776e2244f20ac1d63766edad6146b70c9002a613aa0934e5e4c9886b",
+    "src/test/fuzz/message.cpp": "c582663d34ac627e10acf92083db975173e4c1bae9a3f283c0a259e6a6d8ef11",
+    "src/test/fuzz/mini_miner.cpp": "86da912cf1beb84d53ec3c57f3509a27e1ca7df9df2fcb11ddfba3b4913bc818",
+    "src/test/fuzz/miniscript.cpp": "19df519a0ed378a2a6db2f58992b33b9e5ddb8a70dabadd8c4a676b5afd9af76",
+    "src/test/fuzz/minisketch.cpp": "68109ac617f9ee72af51020c86ab4cc2e77119493dc91193a00513836a0a63a1",
+    "src/test/fuzz/muhash.cpp": "d2da059a24fb61daaf72413b6ab9d3253950792f873d28a46ad79d226f598569",
+    "src/test/fuzz/multiplication_overflow.cpp": "e3104ab91fd39d76cd61e86f08afe94af11931bc7064b8151a2536a535fca9fd",
+    "src/test/fuzz/net.cpp": "fdd8f5ea0711d1338eae747fc0dd60dd8f573108563595223fba50c48f7d11c0",
+    "src/test/fuzz/net_permissions.cpp": "6d054814d2dbefd70c756bbf3e1895ab08d3169631b9faaf33eca3c24a38b94d",
+    "src/test/fuzz/netaddress.cpp": "908dcb2b7e415107fb54d892a4a67501b593e081df5b743e2eeb63a7c0c3cbf1",
+    "src/test/fuzz/netbase_dns_lookup.cpp": "2bf0f525a5f2128b44aafc985d619a3aa3d8088f2daa5bc509586b24bc781fc7",
+    "src/test/fuzz/node_eviction.cpp": "a8cb4d94196051ae5efa4a5af018289a82724e277d41645a5935c3d64b896561",
+    "src/test/fuzz/overflow.cpp": "e199dce865305b074888ee93c644d99b96d7525e27984e075f926a3a6a5a9ca0",
+    "src/test/fuzz/p2p_handshake.cpp": "b7f63aa3e50161df87a5a0c90b2c4db2492fe8f089b1d98c31614991dfdeece9",
+    "src/test/fuzz/p2p_headers_presync.cpp": "e3ae8057ff4889ccb374262848b21066fe9a922356abcc2c9adf626781250237",
+    "src/test/fuzz/p2p_transport_serialization.cpp": "b6303ea3c3bf8a9c411d3cd7b50e5adb4de76231abebe377ca9e42e18ff6f461",
+    "src/test/fuzz/package_eval.cpp": "b23b79345d36074e87bea9a5b32cb287d23e4ca379e891ae72047a528293608b",
+    "src/test/fuzz/parse_hd_keypath.cpp": "7ce94856a048e8ce12bb798556f9bb6f107e9e2d7d0544a8f3e4d5f75e64de80",
+    "src/test/fuzz/parse_iso8601.cpp": "2fee4adcac99ac543ad3ff6a915fd9e38270eb98b891cc143b76926938b107af",
+    "src/test/fuzz/parse_numbers.cpp": "605a9f19749436c403843965000ece6090f8d70508203304f05baf9d795b740e",
+    "src/test/fuzz/parse_script.cpp": "d47857de13835a8e5989d29868b9dff69c2f4b0d1a8205dc2d0a4a84000023a1",
+    "src/test/fuzz/parse_univalue.cpp": "bd2f341a9f6491868c36724391ac002d36a1dfa14da490126b11354bb215d730",
+    "src/test/fuzz/partially_downloaded_block.cpp": "c098081a163ef4f687870bd7fc30024b36db05d904e3fa5ced2b90d83b905775",
+    "src/test/fuzz/pcp.cpp": "afa162453779b7a4f30784dcf6b007c8784c4cba014bcba515ba294ee677129e",
+    "src/test/fuzz/policy_estimator.cpp": "ec755551da7911f301430474c524fd3a19645001d491a61764b797f08cb05174",
+    "src/test/fuzz/policy_estimator_io.cpp": "c7eb2e1f6ce776d872604927a5375e09432b479948b95f0c95054416b3256eac",
+    "src/test/fuzz/poolresource.cpp": "6f94d6f137a998ac9019eacf1a8bbda576d03b649452e79088844a84205d5bf3",
+    "src/test/fuzz/pow.cpp": "fb34de1e611df736b5537e7defbd181cb228d0d7e891ac74c73a6eba275ef0b8",
+    "src/test/fuzz/prevector.cpp": "309dec3f9712e030568a4b644b5c73c481008f4b15254b9367f773982f93b7a2",
+    "src/test/fuzz/primitives_transaction.cpp": "b291fdc3c6ba41d5fe0987536e46a1e2fba59ef1a20bcd8f2727c9f5cd598c06",
+    "src/test/fuzz/process_message.cpp": "389dc417f769eb6b89d94f6dbbd84abc13ef11875656b40b9ef07b5263f3711a",
+    "src/test/fuzz/process_messages.cpp": "71ff88a58c35c6537b538b1a7f6a31fdc355a80f56c28c0668e9fa06e7e8ddfd",
+    "src/test/fuzz/protocol.cpp": "dcac48c1357531d5a454671a10732f3f006d44beb912a06c6f732ebd4d441b79",
+    "src/test/fuzz/psbt.cpp": "db594755ba1a7c50dd37c4c0a0f0fa709b6934fe2ead1dc0afec1f0b77cf8d14",
+    "src/test/fuzz/random.cpp": "d3bdc466b43c76a98614bdca0ae8a9779899f614f90c02ddcc27d2c4b2af6f05",
+    "src/test/fuzz/rbf.cpp": "8ca8b48a39ac3eb81b2e414e3d99f7840b8ade73600a95391534cbb7fea0cd8f",
+    "src/test/fuzz/rolling_bloom_filter.cpp": "a0f2e5a84c028118f55a0b6d63ee56fa3df6724875e17b98e58602e58ad1150c",
+    "src/test/fuzz/rpc.cpp": "d1181ef24078e16a13bf3676a13ce5618cd9fa39431d5f8d3f198318f4cf2d46",
+    "src/test/fuzz/script.cpp": "71f4fbda918f3c326fabc39bd688039e196458dd89bc3670316cf6b29b12a809",
+    "src/test/fuzz/script_assets_test_minimizer.cpp": "b2709bd39140a49ed4c699d9625030d7513b84e1b34521385a2c4a81117e741a",
+    "src/test/fuzz/script_descriptor_cache.cpp": "84aa527088369d752a78705366e8abf9a7932802363d4c0b1ed8df00247bca43",
+    "src/test/fuzz/script_flags.cpp": "f43910449560ed86fad85ca047bf4f82a647ac8d108820b4d910bb7ff33f3e3a",
+    "src/test/fuzz/script_format.cpp": "2387edc2c89a15c8f7258405a6a8a2d3730b241ea3fd0189e5ec5a64622a6959",
+    "src/test/fuzz/script_interpreter.cpp": "948476057bcf1d6bdf6c8d07795c0954439f7530a5b21a02f6b80938aa662eb0",
+    "src/test/fuzz/script_ops.cpp": "b55a4c2107b82e06c0c063e43ada7f3da6f986e73c51070688101910e8bc0805",
+    "src/test/fuzz/script_parsing.cpp": "c8ad4261b55f05e43d41e0f92e8b46a37f4e3d75cb994ade8c200c16458655c2",
+    "src/test/fuzz/script_sigcache.cpp": "cb5e9dfb3373c16e270840308705c9e0ee8a39aaff2e28d48a01b2e1dfc58e96",
+    "src/test/fuzz/script_sign.cpp": "f840f00a37c12539a4f7eebddcd73dc7a7f3517819dffd8f67ee35bd7bfcba8c",
+    "src/test/fuzz/scriptnum_ops.cpp": "96db742935b48bda1942540d468491211ac1c2c31f94aaf980f077726b929324",
+    "src/test/fuzz/secp256k1_ec_seckey_import_export_der.cpp": "2fab62aad055ccfc60587a6059690c51ae161e348308a58db9c46a16725d8ce1",
+    "src/test/fuzz/secp256k1_ecdsa_signature_parse_der_lax.cpp": "e8a6469cb00e7f0326d6eae834a096ec64141b35c92ec6e5f982e9cc5d888219",
+    "src/test/fuzz/signature_checker.cpp": "00704224aab5a7493a222023184d0f91b8ec54b88bacace93723fe58a3dfc077",
+    "src/test/fuzz/signet.cpp": "bddb4a9193c397f015ee9bc1deed235822b355e84e84bf5ef81871b5fe908660",
+    "src/test/fuzz/socks5.cpp": "a10bfae90051211067c009cd5202d62b10383be5693cd9c99fa8b16d1a238e6a",
+    "src/test/fuzz/span.cpp": "88ac0ea72c38628760b923704f9fa32087e907bf1ec043efd23d83caae78f76b",
+    "src/test/fuzz/string.cpp": "22c0919ffcc35fb665f5299f5a61ea7622f218d4a5299681a770966f75782923",
+    "src/test/fuzz/strprintf.cpp": "38e39cb3c400737edd4d04353f28781ca1675a7a7dd58dca93a336d9ab23dc2e",
+    "src/test/fuzz/system.cpp": "80134b66499342145b16e980ab9ca2cddda917b9922cd27281a01df16aa5f5db",
+    "src/test/fuzz/threadpool.cpp": "a0fbac26936cfe647433dd1bddee62ff70a856452dc2b0958109cf7d136b4bf0",
+    "src/test/fuzz/timeoffsets.cpp": "db59bfbdedc8c6d1aec9d67a94c22e2ec45a3efd5a5254517a0720b6c2e76237",
+    "src/test/fuzz/torcontrol.cpp": "61436b6623c4ea2fe77bee281cb312263e69c5831676deed18a826718c66a77c",
+    "src/test/fuzz/transaction.cpp": "c8e7b16ddf74a18d46cd15fb3371e3dcb530de78dba31dd9eac44f74238daa9a",
+    "src/test/fuzz/tx_in.cpp": "203dca65efc7fe2c322d65ff3ab492debd54254d951fcc5fdcbf3dd7eec1556b",
+    "src/test/fuzz/tx_out.cpp": "fda866ee1225a663919cb37975e1586b4b4adef87c4fe45da4c996d050fa1d10",
+    "src/test/fuzz/tx_pool.cpp": "17c9bcfaffe9c16116bf98c24a4963f63f4139ace418b76b28954e7e12853a8b",
+    "src/test/fuzz/txdownloadman.cpp": "9ab1071f9af0391135a1a520df1e6d01398038be6326a0a8cf572b6a79018629",
+    "src/test/fuzz/txgraph.cpp": "1111bbf135df029e1f5f2fa1c5269032b39174833382590c97cc94c0a4162238",
+    "src/test/fuzz/txorphan.cpp": "80b8e7a56ce3ed4ac9a9aee5b8be1efe13da2c17f47b47cd45f20bdd37513f2d",
+    "src/test/fuzz/txrequest.cpp": "b33fa73aee1dce43c8229bbb80aa6d590b4abe35d363267f237bdcead4ad3ae7",
+    "src/test/fuzz/util.cpp": "706dfde4c27b4645c5605e174b144b83adfb3c38f595b8cbbadbaef46291a4bf",
+    "src/test/fuzz/util.h": "e245c068af0d6021cfa23da36052fe31d4b0d46b42e500e7d43983f84739343b",
+    "src/test/fuzz/util/CMakeLists.txt": "d45aa479fa1e96f93822852526f0ced30ab9e0d8ef824612f9b723bce65f2ce9",
+    "src/test/fuzz/util/check_globals.cpp": "2b555292a01b78225e3395345dd4f4604e7ed68918eeb072cee8d9a50176ae9c",
+    "src/test/fuzz/util/check_globals.h": "4d823d9e5b7855fecefd7c5cbf52b08e88cfdd74cfb254040bff53ec3347da32",
+    "src/test/fuzz/util/descriptor.cpp": "0bb588d63e7ce29eeecf5de2257be74d45e939bd7ce4d74bca1cc006c265697d",
+    "src/test/fuzz/util/descriptor.h": "9b42c3ff9c517cf31966873d6e6d75a8a3b7ce60e2b9d2151ea2d92c0ea3cdcb",
+    "src/test/fuzz/util/mempool.cpp": "41574e9c83a44596f955ad476459ddb76be6ef3666432c05d681326890d220c7",
+    "src/test/fuzz/util/mempool.h": "eac6b5713f676ed987c3d1cccc174186ca6fcbd779b330a678bb04fe46d655a1",
+    "src/test/fuzz/util/net.cpp": "57868219be7c7ac7362226df1e5542cb3d2b9b0fa06a13ff1a232424f2aee694",
+    "src/test/fuzz/util/net.h": "69ba0b645d9d6b5be58cd454401de4a5518d48ca7af1640c0c7649b92eacbf85",
+    "src/test/fuzz/util/threadinterrupt.cpp": "17aefab058e3e15b6d0da5a967f0a4f17bf81d9ff20ed5a8534e7f476e40bf72",
+    "src/test/fuzz/util/threadinterrupt.h": "abfd78c634f09b0872dab0aab720a85b9f47d2bfd69a2819160d6937d2274bef",
+    "src/test/fuzz/util/wallet.h": "b58537e2a9a0f98505add325bd91e116f68459de339e4cabc22e4399b09c718a",
+    "src/test/fuzz/utxo_snapshot.cpp": "5a21dd8bc174dc716730fa5fbe87d3f5c2ee1dc2b8d3ac97b7eca1ac3309b4f6",
+    "src/test/fuzz/utxo_total_supply.cpp": "a0957e4bd219310d82c373a56e7a4a835acfa69bdbd734ec04425fbe99856dd6",
+    "src/test/fuzz/validation_load_mempool.cpp": "89088f197b28f8bbdfc8a665068053835f1f18ac6c9e312c6cd08e1fd4679459",
+    "src/test/fuzz/vecdeque.cpp": "81bd31a66b2487f0a8cf6541a899d9432d6d35e1ecdd830f5a08b5aa52bbe25c",
+    "src/test/fuzz/versionbits.cpp": "979a14f1c3fabae9a03abccb452dc40362bb11721b9b99362bd2c46bda0b074f",
+    "src/wallet/test/fuzz/CMakeLists.txt": "f01ed6d0fe3ec5fef3540fd4295f3b55e4d0374bba3ee2f902a093a26b702f2d",
+    "src/wallet/test/fuzz/coincontrol.cpp": "d7bf1dc1b3b4074ec56b349fb9afbb2cbdc6e02301d895882ec57c4c48ed0cc3",
+    "src/wallet/test/fuzz/coinselection.cpp": "b9e9b23925b40c61bd2255fb30593d66ee5a2a55027cc7fb40bd432a9f9c86ac",
+    "src/wallet/test/fuzz/crypter.cpp": "df808ceed8191b3f7de82a0cd62157d9895a49564195f4ffe418b8d28a10ad46",
+    "src/wallet/test/fuzz/fees.cpp": "a3b77af321a1f340d664579712dbb807d6213397f25585ab0e93e529fa9e4567",
+    "src/wallet/test/fuzz/scriptpubkeyman.cpp": "c79f177edeac0406e6369227a338cac9c7378d96d266dbbfa294b828003a98f3",
+    "src/wallet/test/fuzz/spend.cpp": "16c6a77830d8e4f74556a07c3cb7f3ef65156f03b363e40369a02ac533751b79",
+    "src/wallet/test/fuzz/wallet_bdb_parser.cpp": "45e56033aacf63ea8c752c6b2e4de02ed0bbdc211b77f581db58cc318e81b337",
+    "test/fuzz/test_runner.py": "cd764c351828e1ace46a81c1030cb2a96d60c482a1b9f5e2618be736bd61492f"
+  },
+  "targets": {
+    "addition_overflow": {
+      "source": "src/test/fuzz/addition_overflow.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "addr_info_deserialize": {
+      "source": "src/test/fuzz/deserialize.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "address_deserialize": {
+      "source": "src/test/fuzz/deserialize.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "addrman": {
+      "source": "src/test/fuzz/addrman.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "addrman_serdeser": {
+      "source": "src/test/fuzz/addrman.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "asmap": {
+      "source": "src/test/fuzz/asmap.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "asmap_direct": {
+      "source": "src/test/fuzz/asmap_direct.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "autofile": {
+      "source": "src/test/fuzz/autofile.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "banman": {
+      "source": "src/test/fuzz/banman.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "base32_encode_decode": {
+      "source": "src/test/fuzz/base_encode_decode.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "base58_encode_decode": {
+      "source": "src/test/fuzz/base_encode_decode.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "base58check_encode_decode": {
+      "source": "src/test/fuzz/base_encode_decode.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "base64_encode_decode": {
+      "source": "src/test/fuzz/base_encode_decode.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "bech32_random_decode": {
+      "source": "src/test/fuzz/bech32.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "bech32_roundtrip": {
+      "source": "src/test/fuzz/bech32.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "bip324_cipher_roundtrip": {
+      "source": "src/test/fuzz/bip324.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "bip324_ecdh": {
+      "source": "src/test/fuzz/key.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "bitdeque": {
+      "source": "src/test/fuzz/bitdeque.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "bitset": {
+      "source": "src/test/fuzz/bitset.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "block": {
+      "source": "src/test/fuzz/block.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "block_deserialize": {
+      "source": "src/test/fuzz/deserialize.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "block_file_info_deserialize": {
+      "source": "src/test/fuzz/deserialize.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "block_filter_deserialize": {
+      "source": "src/test/fuzz/deserialize.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "block_header": {
+      "source": "src/test/fuzz/block_header.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "block_header_and_short_txids_deserialize": {
+      "source": "src/test/fuzz/deserialize.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "block_index": {
+      "source": "src/test/fuzz/block_index.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "block_index_tree": {
+      "source": "src/test/fuzz/block_index_tree.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "blockfilter": {
+      "source": "src/test/fuzz/blockfilter.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "blockheader_deserialize": {
+      "source": "src/test/fuzz/deserialize.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "blocklocator_deserialize": {
+      "source": "src/test/fuzz/deserialize.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "blockmerkleroot": {
+      "source": "src/test/fuzz/deserialize.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "blocktransactions_deserialize": {
+      "source": "src/test/fuzz/deserialize.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "blocktransactionsrequest_deserialize": {
+      "source": "src/test/fuzz/deserialize.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "blockundo_deserialize": {
+      "source": "src/test/fuzz/deserialize.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "bloom_filter": {
+      "source": "src/test/fuzz/bloom_filter.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "bloomfilter_deserialize": {
+      "source": "src/test/fuzz/deserialize.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "bnb_finds_min_waste": {
+      "source": "src/wallet/test/fuzz/coinselection.cpp",
+      "requires_wallet": true,
+      "hidden": false
+    },
+    "buffered_file": {
+      "source": "src/test/fuzz/buffered_file.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "build_and_compare_feerate_diagram": {
+      "source": "src/test/fuzz/feeratediagram.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "chacha20_split_crypt": {
+      "source": "src/test/fuzz/crypto_chacha20.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "chacha20_split_keystream": {
+      "source": "src/test/fuzz/crypto_chacha20.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "chain": {
+      "source": "src/test/fuzz/chain.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "checkqueue": {
+      "source": "src/test/fuzz/checkqueue.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "clusterlin_chunking": {
+      "source": "src/test/fuzz/cluster_linearize.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "clusterlin_components": {
+      "source": "src/test/fuzz/cluster_linearize.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "clusterlin_depgraph_serialization": {
+      "source": "src/test/fuzz/cluster_linearize.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "clusterlin_depgraph_sim": {
+      "source": "src/test/fuzz/cluster_linearize.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "clusterlin_linearize": {
+      "source": "src/test/fuzz/cluster_linearize.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "clusterlin_make_connected": {
+      "source": "src/test/fuzz/cluster_linearize.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "clusterlin_postlinearize": {
+      "source": "src/test/fuzz/cluster_linearize.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "clusterlin_postlinearize_moved_leaf": {
+      "source": "src/test/fuzz/cluster_linearize.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "clusterlin_postlinearize_tree": {
+      "source": "src/test/fuzz/cluster_linearize.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "clusterlin_sfl": {
+      "source": "src/test/fuzz/cluster_linearize.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "clusterlin_simple_finder": {
+      "source": "src/test/fuzz/cluster_linearize.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "clusterlin_simple_linearize": {
+      "source": "src/test/fuzz/cluster_linearize.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "coin_grinder": {
+      "source": "src/wallet/test/fuzz/coinselection.cpp",
+      "requires_wallet": true,
+      "hidden": false
+    },
+    "coin_grinder_is_optimal": {
+      "source": "src/wallet/test/fuzz/coinselection.cpp",
+      "requires_wallet": true,
+      "hidden": false
+    },
+    "coincontrol": {
+      "source": "src/wallet/test/fuzz/coincontrol.cpp",
+      "requires_wallet": true,
+      "hidden": false
+    },
+    "coins_deserialize": {
+      "source": "src/test/fuzz/deserialize.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "coins_view": {
+      "source": "src/test/fuzz/coins_view.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "coins_view_db": {
+      "source": "src/test/fuzz/coins_view.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "coins_view_overlay": {
+      "source": "src/test/fuzz/coins_view.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "coinscache_sim": {
+      "source": "src/test/fuzz/coinscache_sim.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "coinselection_bnb": {
+      "source": "src/wallet/test/fuzz/coinselection.cpp",
+      "requires_wallet": true,
+      "hidden": false
+    },
+    "coinselection_knapsack": {
+      "source": "src/wallet/test/fuzz/coinselection.cpp",
+      "requires_wallet": true,
+      "hidden": false
+    },
+    "coinselection_srd": {
+      "source": "src/wallet/test/fuzz/coinselection.cpp",
+      "requires_wallet": true,
+      "hidden": false
+    },
+    "connman": {
+      "source": "src/test/fuzz/connman.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "crypter": {
+      "source": "src/wallet/test/fuzz/crypter.cpp",
+      "requires_wallet": true,
+      "hidden": false
+    },
+    "crypto": {
+      "source": "src/test/fuzz/crypto.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "crypto_aeadchacha20poly1305": {
+      "source": "src/test/fuzz/crypto_chacha20poly1305.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "crypto_aes256": {
+      "source": "src/test/fuzz/crypto_aes256.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "crypto_aes256cbc": {
+      "source": "src/test/fuzz/crypto_aes256cbc.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "crypto_chacha20": {
+      "source": "src/test/fuzz/crypto_chacha20.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "crypto_common": {
+      "source": "src/test/fuzz/crypto_common.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "crypto_diff_fuzz_chacha20": {
+      "source": "src/test/fuzz/crypto_diff_fuzz_chacha20.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "crypto_fschacha20": {
+      "source": "src/test/fuzz/crypto_chacha20.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "crypto_fschacha20poly1305": {
+      "source": "src/test/fuzz/crypto_chacha20poly1305.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "crypto_hkdf_hmac_sha256_l32": {
+      "source": "src/test/fuzz/crypto_hkdf_hmac_sha256_l32.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "crypto_poly1305": {
+      "source": "src/test/fuzz/crypto_poly1305.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "crypto_poly1305_split": {
+      "source": "src/test/fuzz/crypto_poly1305.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "cuckoocache": {
+      "source": "src/test/fuzz/cuckoocache.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "data_stream_addr_man": {
+      "source": "src/test/fuzz/addrman.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "decode_tx": {
+      "source": "src/test/fuzz/decode_tx.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "descriptor_parse": {
+      "source": "src/test/fuzz/descriptor_parse.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "difference_formatter": {
+      "source": "src/test/fuzz/difference_formatter.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "diskblockindex_deserialize": {
+      "source": "src/test/fuzz/deserialize.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "ellswift_roundtrip": {
+      "source": "src/test/fuzz/key.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "ephemeral_package_eval": {
+      "source": "src/test/fuzz/package_eval.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "eval_script": {
+      "source": "src/test/fuzz/eval_script.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "fee_rate": {
+      "source": "src/test/fuzz/fee_rate.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "fee_rate_deserialize": {
+      "source": "src/test/fuzz/deserialize.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "feefrac": {
+      "source": "src/test/fuzz/feefrac.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "feefrac_div_fallback": {
+      "source": "src/test/fuzz/feefrac.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "feefrac_mul_div": {
+      "source": "src/test/fuzz/feefrac.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "fees": {
+      "source": "src/test/fuzz/fees.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "flat_file_pos_deserialize": {
+      "source": "src/test/fuzz/deserialize.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "flatfile": {
+      "source": "src/test/fuzz/flatfile.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "float": {
+      "source": "src/test/fuzz/float.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "golomb_rice": {
+      "source": "src/test/fuzz/golomb_rice.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "headers_sync_state": {
+      "source": "src/test/fuzz/headerssync.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "hex": {
+      "source": "src/test/fuzz/hex.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "http_request": {
+      "source": "src/test/fuzz/http_request.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "i2p": {
+      "source": "src/test/fuzz/i2p.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "integer": {
+      "source": "src/test/fuzz/integer.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "inv_deserialize": {
+      "source": "src/test/fuzz/deserialize.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "key": {
+      "source": "src/test/fuzz/key.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "key_io": {
+      "source": "src/test/fuzz/key_io.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "key_origin_info_deserialize": {
+      "source": "src/test/fuzz/deserialize.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "kitchen_sink": {
+      "source": "src/test/fuzz/kitchen_sink.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "load_external_block_file": {
+      "source": "src/test/fuzz/load_external_block_file.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "local_address": {
+      "source": "src/test/fuzz/net.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "locale": {
+      "source": "src/test/fuzz/locale.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "merkle": {
+      "source": "src/test/fuzz/merkle.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "merkle_block_deserialize": {
+      "source": "src/test/fuzz/deserialize.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "merkleblock": {
+      "source": "src/test/fuzz/merkleblock.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "message": {
+      "source": "src/test/fuzz/message.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "messageheader_deserialize": {
+      "source": "src/test/fuzz/deserialize.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "mini_miner": {
+      "source": "src/test/fuzz/mini_miner.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "miniscript_script": {
+      "source": "src/test/fuzz/miniscript.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "miniscript_smart": {
+      "source": "src/test/fuzz/miniscript.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "miniscript_stable": {
+      "source": "src/test/fuzz/miniscript.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "miniscript_string": {
+      "source": "src/test/fuzz/miniscript.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "minisketch": {
+      "source": "src/test/fuzz/minisketch.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "mocked_descriptor_parse": {
+      "source": "src/test/fuzz/descriptor_parse.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "muhash": {
+      "source": "src/test/fuzz/muhash.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "multiplication_overflow": {
+      "source": "src/test/fuzz/multiplication_overflow.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "natpmp_request_port_map": {
+      "source": "src/test/fuzz/pcp.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "net": {
+      "source": "src/test/fuzz/net.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "net_permissions": {
+      "source": "src/test/fuzz/net_permissions.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "netaddr_deserialize": {
+      "source": "src/test/fuzz/deserialize.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "netaddress": {
+      "source": "src/test/fuzz/netaddress.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "netbase_dns_lookup": {
+      "source": "src/test/fuzz/netbase_dns_lookup.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "node_eviction": {
+      "source": "src/test/fuzz/node_eviction.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "num3072_inv": {
+      "source": "src/test/fuzz/muhash.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "num3072_mul": {
+      "source": "src/test/fuzz/muhash.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "out_point_deserialize": {
+      "source": "src/test/fuzz/deserialize.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "overflow": {
+      "source": "src/test/fuzz/overflow.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "p2p_handshake": {
+      "source": "src/test/fuzz/p2p_handshake.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "p2p_headers_presync": {
+      "source": "src/test/fuzz/p2p_headers_presync.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "p2p_transport_bidirectional": {
+      "source": "src/test/fuzz/p2p_transport_serialization.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "p2p_transport_bidirectional_v1v2": {
+      "source": "src/test/fuzz/p2p_transport_serialization.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "p2p_transport_bidirectional_v2": {
+      "source": "src/test/fuzz/p2p_transport_serialization.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "p2p_transport_serialization": {
+      "source": "src/test/fuzz/p2p_transport_serialization.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "package_rbf": {
+      "source": "src/test/fuzz/rbf.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "parse_hd_keypath": {
+      "source": "src/test/fuzz/parse_hd_keypath.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "parse_iso8601": {
+      "source": "src/test/fuzz/parse_iso8601.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "parse_numbers": {
+      "source": "src/test/fuzz/parse_numbers.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "parse_script": {
+      "source": "src/test/fuzz/parse_script.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "parse_univalue": {
+      "source": "src/test/fuzz/parse_univalue.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "partial_merkle_tree_deserialize": {
+      "source": "src/test/fuzz/deserialize.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "partially_downloaded_block": {
+      "source": "src/test/fuzz/partially_downloaded_block.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "partially_signed_transaction_deserialize": {
+      "source": "src/test/fuzz/deserialize.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "pcp_request_port_map": {
+      "source": "src/test/fuzz/pcp.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "policy_estimator": {
+      "source": "src/test/fuzz/policy_estimator.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "policy_estimator_io": {
+      "source": "src/test/fuzz/policy_estimator_io.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "pool_resource": {
+      "source": "src/test/fuzz/poolresource.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "pow": {
+      "source": "src/test/fuzz/pow.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "pow_transition": {
+      "source": "src/test/fuzz/pow.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "prefilled_transaction_deserialize": {
+      "source": "src/test/fuzz/deserialize.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "prevector": {
+      "source": "src/test/fuzz/prevector.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "primitives_transaction": {
+      "source": "src/test/fuzz/primitives_transaction.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "process_message": {
+      "source": "src/test/fuzz/process_message.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "process_messages": {
+      "source": "src/test/fuzz/process_messages.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "protocol": {
+      "source": "src/test/fuzz/protocol.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "psbt": {
+      "source": "src/test/fuzz/psbt.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "psbt_base64_decode": {
+      "source": "src/test/fuzz/base_encode_decode.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "psbt_input_deserialize": {
+      "source": "src/test/fuzz/deserialize.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "psbt_output_deserialize": {
+      "source": "src/test/fuzz/deserialize.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "pub_key_deserialize": {
+      "source": "src/test/fuzz/deserialize.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "random": {
+      "source": "src/test/fuzz/random.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "rbf": {
+      "source": "src/test/fuzz/rbf.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "rolling_bloom_filter": {
+      "source": "src/test/fuzz/rolling_bloom_filter.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "rpc": {
+      "source": "src/test/fuzz/rpc.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "script": {
+      "source": "src/test/fuzz/script.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "script_assets_test_minimizer": {
+      "source": "src/test/fuzz/script_assets_test_minimizer.cpp",
+      "requires_wallet": false,
+      "hidden": true
+    },
+    "script_descriptor_cache": {
+      "source": "src/test/fuzz/script_descriptor_cache.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "script_deserialize": {
+      "source": "src/test/fuzz/deserialize.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "script_flags": {
+      "source": "src/test/fuzz/script_flags.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "script_format": {
+      "source": "src/test/fuzz/script_format.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "script_interpreter": {
+      "source": "src/test/fuzz/script_interpreter.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "script_ops": {
+      "source": "src/test/fuzz/script_ops.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "script_parsing": {
+      "source": "src/test/fuzz/script_parsing.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "script_sigcache": {
+      "source": "src/test/fuzz/script_sigcache.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "script_sign": {
+      "source": "src/test/fuzz/script_sign.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "scriptnum_ops": {
+      "source": "src/test/fuzz/scriptnum_ops.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "scriptpubkeyman": {
+      "source": "src/wallet/test/fuzz/scriptpubkeyman.cpp",
+      "requires_wallet": true,
+      "hidden": false
+    },
+    "secp256k1_ec_seckey_import_export_der": {
+      "source": "src/test/fuzz/secp256k1_ec_seckey_import_export_der.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "secp256k1_ecdsa_signature_parse_der_lax": {
+      "source": "src/test/fuzz/secp256k1_ecdsa_signature_parse_der_lax.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "service_deserialize": {
+      "source": "src/test/fuzz/deserialize.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "sighash_cache": {
+      "source": "src/test/fuzz/script_interpreter.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "signature_checker": {
+      "source": "src/test/fuzz/signature_checker.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "signet": {
+      "source": "src/test/fuzz/signet.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "snapshotmetadata_deserialize": {
+      "source": "src/test/fuzz/deserialize.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "socks5": {
+      "source": "src/test/fuzz/socks5.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "span": {
+      "source": "src/test/fuzz/span.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "str_printf": {
+      "source": "src/test/fuzz/strprintf.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "string": {
+      "source": "src/test/fuzz/string.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "system": {
+      "source": "src/test/fuzz/system.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "threadpool": {
+      "source": "src/test/fuzz/threadpool.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "timeoffsets": {
+      "source": "src/test/fuzz/timeoffsets.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "torcontrol": {
+      "source": "src/test/fuzz/torcontrol.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "transaction": {
+      "source": "src/test/fuzz/transaction.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "tx_in": {
+      "source": "src/test/fuzz/tx_in.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "tx_in_deserialize": {
+      "source": "src/test/fuzz/deserialize.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "tx_out": {
+      "source": "src/test/fuzz/tx_out.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "tx_package_eval": {
+      "source": "src/test/fuzz/package_eval.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "tx_pool": {
+      "source": "src/test/fuzz/tx_pool.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "tx_pool_standard": {
+      "source": "src/test/fuzz/tx_pool.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "txdownloadman": {
+      "source": "src/test/fuzz/txdownloadman.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "txdownloadman_impl": {
+      "source": "src/test/fuzz/txdownloadman.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "txgraph": {
+      "source": "src/test/fuzz/txgraph.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "txorphan": {
+      "source": "src/test/fuzz/txorphan.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "txorphan_protected": {
+      "source": "src/test/fuzz/txorphan.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "txorphanage_sim": {
+      "source": "src/test/fuzz/txorphan.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "txoutcompressor_deserialize": {
+      "source": "src/test/fuzz/deserialize.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "txrequest": {
+      "source": "src/test/fuzz/txrequest.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "txundo_deserialize": {
+      "source": "src/test/fuzz/deserialize.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "uint160_deserialize": {
+      "source": "src/test/fuzz/deserialize.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "uint256_deserialize": {
+      "source": "src/test/fuzz/deserialize.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "utxo_snapshot": {
+      "source": "src/test/fuzz/utxo_snapshot.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "utxo_snapshot_invalid": {
+      "source": "src/test/fuzz/utxo_snapshot.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "utxo_total_supply": {
+      "source": "src/test/fuzz/utxo_total_supply.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "validation_load_mempool": {
+      "source": "src/test/fuzz/validation_load_mempool.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "vecdeque": {
+      "source": "src/test/fuzz/vecdeque.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "versionbits": {
+      "source": "src/test/fuzz/versionbits.cpp",
+      "requires_wallet": false,
+      "hidden": false
+    },
+    "wallet_bdb_parser": {
+      "source": "src/wallet/test/fuzz/wallet_bdb_parser.cpp",
+      "requires_wallet": true,
+      "hidden": false
+    },
+    "wallet_create_transaction": {
+      "source": "src/wallet/test/fuzz/spend.cpp",
+      "requires_wallet": true,
+      "hidden": false
+    },
+    "wallet_fees": {
+      "source": "src/wallet/test/fuzz/fees.cpp",
+      "requires_wallet": true,
+      "hidden": false
+    }
+  }
+}

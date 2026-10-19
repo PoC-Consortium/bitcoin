@@ -54,7 +54,11 @@ RECIPE_SOURCES.update({'.github/workflows/ci.yml', '.github/workflows/ci-pocx.ym
     '.github/workflows/ci-product.yml', 'test/pocx/ci_product.py', 'test/pocx/test_product_workflows.py',
     'test/pocx/bitcoin_fuzz_ci.py'})
 
-RECIPE_SOURCES.update({'test/pocx/bitcoin_fuzz_ci.py', 'test/pocx/ci_matrix.py', 'test/pocx/upstream-ci-matrix.json'})
+RECIPE_SOURCES.update({'test/pocx/bitcoin_fuzz_ci.py', 'test/pocx/check_drift.py',
+    'test/pocx/ci_fuzz_run.py',
+    'test/pocx/ci_matrix.py', 'test/pocx/upstream-ci-matrix.json',
+    'test/pocx/fuzz_parity.py', 'test/pocx/run_fuzz.py',
+    'test/pocx/stage_fuzz_corpus.py', 'test/pocx/test_fuzz_parity.py'})
 
 RECIPE_SOURCES.update({'test/pocx/common.py', 'test/pocx/runtime_evidence.py', 'test/pocx/ci_logging.py'})
 

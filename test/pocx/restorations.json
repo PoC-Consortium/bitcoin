@@ -91,10 +91,11 @@
       "baseline_sha256": "3742814daabb8eb8c5b9b1ad4940bc9668697cc98944a62ce8e9225af38b9b65",
       "restored_sha256": "5951e4d4337ee74b417878eadd2d02aff6ee1b7d20b5ea6a4728d0570bac863b",
       "replacement": "src/pocx/test/util/mining.cpp",
-      "replacement_sha256": "3742814daabb8eb8c5b9b1ad4940bc9668697cc98944a62ce8e9225af38b9b65",
+      "replacement_sha256": "3e48b1b78d683aecda822ae5765c22dae2245ef1318a2df7c80e55944037bf64",
       "evidence": "build-pocx-clean/pocx-unit-5r01tzf8/results.json",
-      "parity_review": "Owned mining support exactly matches inherited PoCX support.",
-      "scope": "Support exercised by the complete153-suite run; the unrelated storage regression remains required and failing."
+      "parity_review": "The original Bitcoin mining helper is restored byte-for-byte. Its selected PoCX-owned replacement retains the inherited fixture intent and now indexes forged headers to compute production retarget values through the height-200 snapshot corpus.",
+      "scope": "Support exercised by the complete153-suite run; the unrelated storage regression remains required and failing.",
+      "fuzz_snapshot_review": "Native GCC snapshot valid and invalid corpora passed; other current unit consumers still require local rerun."
     },
     "src/test/util/setup_common.cpp": {
       "upstream_revision": "9be056a8a72b624dae9623b2f7bded92c2a21c91",

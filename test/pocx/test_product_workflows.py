@@ -44,9 +44,12 @@ class ProductWorkflowsTest(unittest.TestCase):
         commands = script.splitlines()
         guard = 'python3 -B ../lint-worktree/test/pocx/check_drift.py'
         tests = 'python3 -B ../lint-worktree/test/pocx/test_unit_matrix.py'
+        fuzz_tests = 'python3 -B ../lint-worktree/test/pocx/test_fuzz_parity.py'
         self.assertIn(tests, commands)
+        self.assertIn(fuzz_tests, commands)
         self.assertLess(commands.index(guard), commands.index(tests))
-        self.assertLess(commands.index(tests), commands.index('../lint-worktree/ci/lint.py'))
+        self.assertLess(commands.index(tests), commands.index(fuzz_tests))
+        self.assertLess(commands.index(fuzz_tests), commands.index('../lint-worktree/ci/lint.py'))
 
     def test_only_two_triggered_workflows_select_independent_products(self):
         documents = {p.name: workflow(p.name) for p in (ROOT / '.github/workflows').glob('*.yml')}
@@ -90,11 +93,10 @@ class ProductWorkflowsTest(unittest.TestCase):
         self.assertEqual({k: len(v['include']) for k, v in original.items()},
                          {'linux': 14, 'macos': 2, 'windows': 2})
         self.assertEqual({k: len(v['include']) for k, v in native.items()},
-                         {'linux': 12, 'macos': 1, 'windows': 1})
+                         {'linux': 14, 'macos': 2, 'windows': 2})
         for output, job in ci_matrix.JOBS.items():
             self.assertEqual(original[output]['include'], reference['matrices'][job]['include'])
-            self.assertEqual(native[output]['include'], [row for row in original[output]['include']
-                if row.get('job-type') != 'fuzz' and row.get('file-env') not in ci_matrix.FUZZ_ENVIRONMENTS])
+            self.assertEqual(native[output]['include'], original[output]['include'])
             self.assertEqual(jobs[job]['strategy']['matrix'],
                              '${{ fromJSON(needs.runners.outputs.' + output + ') }}')
             self.assertIn('runners', jobs[job]['needs'])
@@ -134,14 +136,23 @@ class ProductWorkflowsTest(unittest.TestCase):
                 self.assertEqual(dict((key, json.loads(value)) for key, value in
                     (line.split('=', 1) for line in run.stdout.splitlines())), ci_matrix.matrices(product))
 
-    def test_original_fuzz_flags_and_windows_recipe_preserved_with_off_selection(self):
+    def test_inherited_fuzz_recipe_selects_one_product(self):
         flags = '-DBUILD_FOR_FUZZING=ON -DSANITIZERS=fuzzer,address -DENABLE_POCX=ON'
-        result = bitcoin_fuzz_ci.environment_for_fuzz({'CI_PRODUCT': 'bitcoin', 'BITCOIN_CONFIG': flags})
-        self.assertEqual(result['BITCOIN_CONFIG'], flags + ' -DENABLE_POCX=OFF')
-        for product in (None, 'pocx', '', 'other'):
+        for product, enabled in ci_product.PRODUCTS.items():
+            result = bitcoin_fuzz_ci.environment_for_fuzz({'CI_PRODUCT': product, 'BITCOIN_CONFIG': flags})
+            self.assertEqual(result['BITCOIN_CONFIG'], flags + ' -DENABLE_POCX=' + enabled)
+        for product in (None, '', 'other'):
             with self.assertRaises(ValueError):
                 bitcoin_fuzz_ci.environment_for_fuzz({'CI_PRODUCT': product})
-        for enabled in ('ON', 'OFF'):
+        original = (ROOT / 'ci/test/03_test_script.sh').read_text()
+        converted = bitcoin_fuzz_ci.pocx_posix_recipe(original)
+        marker = '\nif [ "$RUN_FUZZ_TESTS" = "true" ]; then\n'
+        self.assertEqual(converted.rpartition(marker)[0], original.rpartition(marker)[0])
+        self.assertIn('test/pocx/ci_fuzz_run.py', converted.rpartition(marker)[2])
+        self.assertNotIn('test/fuzz/test_runner.py', converted.rpartition(marker)[2])
+        with self.assertRaisesRegex(ValueError, 'dispatch changed'):
+            bitcoin_fuzz_ci.pocx_posix_recipe(original.rsplit(marker, 1)[0] + '\n# removed fuzz dispatch\n')
+        for product, enabled in ci_product.PRODUCTS.items():
             with tempfile.TemporaryDirectory() as directory:
                 root = Path(directory)
                 (root / 'build').mkdir()
@@ -150,15 +161,13 @@ class ProductWorkflowsTest(unittest.TestCase):
                 driver = SimpleNamespace(GENERATE_OPTIONS={'fuzz': ['-DBUILD_FOR_FUZZING=ON']})
                 for name in ('generate', 'build', 'check_manifests', 'prepare_tests', 'run_tests'):
                     setattr(driver, name, lambda kind, name=name: calls.append((name, kind)))
-                if enabled == 'ON':
-                    with self.assertRaises(ValueError):
-                        bitcoin_fuzz_ci.run_windows(root, load=lambda: driver)
-                    self.assertEqual(calls, [('generate', 'fuzz')])
-                else:
-                    bitcoin_fuzz_ci.run_windows(root, load=lambda: driver)
-                    self.assertEqual(calls, [(name, 'fuzz') for name in
-                        ('generate', 'build', 'check_manifests', 'prepare_tests', 'run_tests')])
-                self.assertEqual(driver.GENERATE_OPTIONS['fuzz'], ['-DBUILD_FOR_FUZZING=ON', '-DENABLE_POCX=OFF'])
+                bitcoin_fuzz_ci.run_windows(root, product=product, load=lambda: driver,
+                                            run_pocx=lambda: calls.append(('pocx_runner', 'fuzz')))
+                ending = 'run_tests' if product == 'bitcoin' else 'pocx_runner'
+                self.assertEqual(calls, [(name, 'fuzz') for name in
+                    ('generate', 'build', 'check_manifests', 'prepare_tests', ending)])
+                self.assertEqual(driver.GENERATE_OPTIONS['fuzz'],
+                                 ['-DBUILD_FOR_FUZZING=ON', '-DENABLE_POCX=' + enabled])
 
     def test_matrix_rejects_an_added_profile_before_creating_jobs(self):
         with tempfile.TemporaryDirectory() as directory:

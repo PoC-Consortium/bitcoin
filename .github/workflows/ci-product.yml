@@ -237,6 +237,14 @@ jobs:
           path: repo_archive/artifacts/pocx-inherited
           if-no-files-found: warn
 
+      - name: Upload PoCX native macOS fuzz evidence
+        if: always() && matrix.job-type == 'fuzz' && inputs.product == 'pocx'
+        uses: actions/upload-artifact@v7
+        with:
+          name: fuzz-pocx-${{ github.job }}-${{ strategy.job-index }}
+          path: repo_archive/artifacts/pocx-inherited/fuzz
+          if-no-files-found: warn
+
       - name: Save Ccache cache
         uses: actions/cache/save@v5
         if: github.event_name != 'pull_request' && github.ref_name == github.event.repository.default_branch && steps.ccache-cache.outputs.cache-hit != 'true'
@@ -315,7 +323,7 @@ jobs:
           TEST_RUNNER_EXTRA: "--timeout-factor=${{ env.TEST_RUNNER_TIMEOUT_FACTOR }} ${{ case(github.event_name == 'pull_request', '', '--extended') }}"
         run: py -3 test/pocx/windows_ci.py
 
-      - name: Run original Bitcoin native fuzz configuration
+      - name: Run selected product native fuzz configuration
         if: matrix.job-type == 'fuzz'
         run: py -3 test/pocx/bitcoin_fuzz_ci.py --windows
 
@@ -340,6 +348,14 @@ jobs:
         with:
           name: native-windows-${{ inputs.product }}-${{ matrix.job-type }}-${{ github.run_id }}
           path: artifacts/pocx-inherited
+          if-no-files-found: warn
+
+      - name: Retain PoCX native Windows fuzz evidence
+        if: always() && matrix.job-type == 'fuzz' && inputs.product == 'pocx'
+        uses: actions/upload-artifact@v7
+        with:
+          name: fuzz-pocx-${{ github.job }}-${{ strategy.job-index }}
+          path: artifacts/pocx-inherited/fuzz
           if-no-files-found: warn
 
   record-frozen-commit:
@@ -564,6 +580,14 @@ jobs:
           path: artifacts/pocx-inherited
           if-no-files-found: warn
 
+      - name: Upload PoCX Linux fuzz evidence
+        if: always() && contains(matrix.file-env, 'fuzz') && inputs.product == 'pocx'
+        uses: actions/upload-artifact@v7
+        with:
+          name: fuzz-pocx-${{ github.job }}-${{ strategy.job-index }}
+          path: artifacts/pocx-inherited/fuzz
+          if-no-files-found: warn
+
       - name: Save caches
         uses: ./.github/actions/cache/save
         with:
@@ -595,4 +619,5 @@ jobs:
           git worktree add ../lint-worktree HEAD
           python3 -B ../lint-worktree/test/pocx/check_drift.py
           python3 -B ../lint-worktree/test/pocx/test_unit_matrix.py
+          python3 -B ../lint-worktree/test/pocx/test_fuzz_parity.py
           ../lint-worktree/ci/lint.py

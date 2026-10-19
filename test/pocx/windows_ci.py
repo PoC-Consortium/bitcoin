@@ -37,7 +37,10 @@ REVIEW_SOURCES.update({'test/pocx/original_windows.py', 'test/pocx/test_original
 REVIEW_SOURCES.update({'.github/workflows/ci.yml', '.github/workflows/ci-pocx.yml',
     '.github/workflows/ci-product.yml', 'test/pocx/ci_product.py', 'test/pocx/test_product_workflows.py'})
 
-REVIEW_SOURCES.update({'test/pocx/bitcoin_fuzz_ci.py', 'test/pocx/ci_matrix.py', 'test/pocx/upstream-ci-matrix.json'})
+REVIEW_SOURCES.update({'test/pocx/bitcoin_fuzz_ci.py', 'test/pocx/ci_fuzz_run.py',
+    'test/pocx/ci_matrix.py', 'test/pocx/upstream-ci-matrix.json',
+    'test/pocx/fuzz_parity.py', 'test/pocx/run_fuzz.py',
+    'test/pocx/stage_fuzz_corpus.py', 'test/pocx/test_fuzz_parity.py'})
 
 REVIEW_SOURCES.update({'test/pocx/common.py', 'test/pocx/runtime_evidence.py', 'test/pocx/ci_logging.py'})
 

@@ -18,7 +18,9 @@
 #include <versionbits.h>
 
 #ifdef ENABLE_POCX
+#include <chain.h>
 #include <hash.h>
+#include <pocx/consensus/difficulty.h>
 #include <pocx/consensus/params.h>
 #include <pocx/regtest/forging.h>
 #include <util/time.h>
@@ -49,9 +51,13 @@ std::vector<std::shared_ptr<CBlock>> CreateBlockChain(size_t total_height, const
     // ForgeRegtestBlock's mocktime-aware branch needs a non-zero mocktime to
     // roll forward across the loop; anchor it at genesis time before we start.
     SetMockTime(std::chrono::seconds{params.GenesisBlock().nTime});
-    const uint64_t genesis_base_target = pocx::consensus::CalculateGenesisBaseTarget(
-        params.GetConsensus().nPowTargetSpacing,
-        params.GetConsensus().fPoCXLowCapacityCalibration);
+    // The snapshot fuzz target connects this chain through normal validation.
+    // Keep an index for each forged block so retargeting uses the same history
+    // as production block assembly, including the first adjustment at height 10.
+    std::vector<std::unique_ptr<CBlockIndex>> indexes;
+    indexes.reserve(total_height + 1);
+    indexes.push_back(std::make_unique<CBlockIndex>(params.GenesisBlock()));
+    indexes.back()->nHeight = 0;
 #endif
     // NOTE: here `height` does not correspond to the block height but the block height - 1.
     for (size_t height{0}; height < total_height; ++height) {
@@ -78,7 +84,7 @@ std::vector<std::shared_ptr<CBlock>> CreateBlockChain(size_t total_height, const
         // Populate the header fields BlockAssembler would normally fill in,
         // then route through the same hot-path forger as GenerateBlock.
         block.nHeight = static_cast<int>(height + 1);
-        block.nBaseTarget = genesis_base_target;
+        block.nBaseTarget = pocx::consensus::GetNextBaseTarget(indexes.back().get(), params.GetConsensus());
         HashWriter gensig_hasher{};
         gensig_hasher << prev_block.generationSignature;
         gensig_hasher << std::span<const uint8_t>(prev_block.pocxProof.account_id);
@@ -89,6 +95,11 @@ std::vector<std::shared_ptr<CBlock>> CreateBlockChain(size_t total_height, const
             assert(false && "CreateBlockChain: ForgeRegtestBlock failed");
         }
         time = block.nTime; // keep `time` in sync with the forger's nTime
+        auto index = std::make_unique<CBlockIndex>(block);
+        index->pprev = indexes.back().get();
+        index->nHeight = static_cast<int>(height + 1);
+        index->BuildSkip();
+        indexes.push_back(std::move(index));
 #else
         block.nBits = params.GenesisBlock().nBits;
         block.nNonce = 0;

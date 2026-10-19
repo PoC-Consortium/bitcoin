@@ -26,7 +26,10 @@ def check(root):
     import unit_parity
     import qt_parity
     import kernel_parity
+    import fuzz_parity
     issues = unit_parity.check(root) + qt_parity.check(root) + kernel_parity.check(root)
+    issues += [{'source': 'test/pocx/fuzz-parity.json', 'reason': issue}
+               for issue in fuzz_parity.check(root)]
     directories = [('src/test', '*.cpp'), ('src/wallet/test', '*.cpp'),
                    ('src/qt/test', '*.cpp'), ('src/test/fuzz', '*.cpp'),
                    ('test/functional', '*.py'), ('test/functional/test_framework', '**/*.py'),
@@ -36,6 +39,11 @@ def check(root):
     current = {path.relative_to(root).as_posix() for directory, pattern in directories
                for path in (root / directory).glob(pattern) if path.is_file()}
     known_paths = known.keys() | {entry['replacement'] for entry in entries if entry.get('replacement')}
+    # The separate fuzz review owns its adapted and native C++ sources. Its
+    # guard above checks exact declarations, selection and source hashes.
+    _, fuzz_review = fuzz_parity.records(root)
+    known_paths |= {name for name in fuzz_review['reviewed_sources']
+                    if name.startswith('src/pocx/test/fuzz/') and name.endswith('.cpp')}
     for source in sorted(current - known_paths):
         issues.append({'source': source, 'reason': 'new source requires classification'})
     for replacement in sorted(known_paths - known.keys()):

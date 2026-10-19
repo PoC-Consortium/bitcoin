@@ -5,33 +5,38 @@
   "source_sha256": {
     ".github/ci-windows.py": "9cec268ddaf98292b2067ae07ff99e8290a6e1a2e3a97aac9814c6642542e27b",
     ".github/workflows/ci-pocx.yml": "699f0a58e48d1f6348a65d9b0224d870d569da1088b457195aa78b55703fc88f",
-    ".github/workflows/ci-product.yml": "cf1ad7a7a0a0c0d6e8942ec1dac673eb596ee4315fe561e5009d4d8260a585ac",
+    ".github/workflows/ci-product.yml": "e8ed92a6a900467b6b6983adb76265c05693321bc058000a7174d0ef54f0242f",
     ".github/workflows/ci.yml": "178f16dc008944d5158cfe45e84da73c39839949ca82b0a6703805919f05e8a9",
     "test/pocx/bitcoin_baseline/windows/review.json": "f541b15bbe06f200838f6ba17cacfe279ac723fbc71a1b6994c822e45219a6e6",
     "test/pocx/bitcoin_baseline/windows/rpc_signer.py": "ea682c6093604670612eeae9936a9a3d4d0af232fe798d9edf7eea979c01639d",
-    "test/pocx/bitcoin_fuzz_ci.py": "efb42ae5a382d15b5964c4b808a89f04eefcbeed0a6ce4ecba44640fda905435",
+    "test/pocx/bitcoin_fuzz_ci.py": "422ff1e395bc00c9f9911499286c342e6e70d902f4e19007b87ca951830775f6",
     "test/pocx/build_configuration.py": "c9df217b325f1e3dfd8cd14e002f542bd78aa084b410e8f3b18d18a261a36456",
     "test/pocx/ci_evidence.py": "47b4c08cc84dd6bc1425138f24cfd98bb8d014f070b2f8e7fef32483986a4443",
+    "test/pocx/ci_fuzz_run.py": "2afd8626831debe8250d79edf4f208bed190cc11ec415798f9aac95b5cff8227",
     "test/pocx/ci_logging.py": "4191a50de16f7584bbf61db0068f3b426a5ace1923db5f45556d30f974554661",
-    "test/pocx/ci_matrix.py": "79d842b5789ce4df4b2a0cb9777faf2533980cd30ef1978f3761d3f9c6f3108f",
+    "test/pocx/ci_matrix.py": "3bb276db8487b928779de0ea6f7b2f87c29e4f1c313c7b9686d3876e159efeb5",
     "test/pocx/ci_product.py": "07783ef9d57662bff430b33a446d8b11321e3740226fbb53e31a5c217cd1938c",
     "test/pocx/common.py": "9c6d49f8ca052427557fd301d9195a00c6e09542dfd7ed63b15e0a4b81e72772",
-    "test/pocx/inherited_ci.py": "d1914ddcc689e1a0a5086a80754b47a23e0340dcfdaa4369a9201d1677208310",
+    "test/pocx/fuzz_parity.py": "d535924d50b0f22c740a04efc1915f9fd90db1754fd27781cd0b5bddaa9cbaf7",
+    "test/pocx/inherited_ci.py": "4aebe0837a9c2577898876fbe34cc6fe844790ea1c24f09fbc1a0d4d2a70bc53",
     "test/pocx/inherited_functional.py": "a00bb27b9a3705c3e8e61609b9ad57580eeb307f6028f3b345033af71d09957d",
     "test/pocx/inherited_prerequisites.py": "fc24680108346518b53bc32dc2cc626ce74b04d7426145fd3954b9bd61acb2c4",
     "test/pocx/inherited_selection.py": "9d9b69e92ccf55fad6bb3b003b31aa7d366233bf5dbc88581956a1f140dc767e",
     "test/pocx/inherited_tests.py": "a08946f019b624ecdd5b00709a44fdabf0133dc9de8cc0328ca0c82c70f05d10",
     "test/pocx/original_windows.py": "ab008c9c062aa4516c08bf21e5afe8f01ce9d1ddaef64d7e2731068a291d8c49",
     "test/pocx/process_tree.py": "12639a920fa4a656eec4f14ea02c4aaf1fe997cfc18c7df2566e82a1d3ab3f29",
+    "test/pocx/run_fuzz.py": "ac94c9f37177f5e5664d0ea6e5e815e775025cc92dceeefda7923ee430c2d6ed",
     "test/pocx/runtime_evidence.py": "ee1722ab10eba1dde4b66aed7d8f9737de2d171b725cf999b723219b2a5dd1b5",
+    "test/pocx/stage_fuzz_corpus.py": "1265412852278b39bddc47bee37ae395f4bb11936f6a121812e521d297c60f7e",
+    "test/pocx/test_fuzz_parity.py": "b4bcbbddb5ab8f2101f4c8142811434b5a10001823ba4ffb5dde90851c6be6e0",
     "test/pocx/test_inherited_selection.py": "195cf2982f72a156f385d08d504a741b5948f507da2017e121758a6bd8ae44ef",
     "test/pocx/test_original_windows.py": "27f47f07e52a7381e48ca4d1f77220c1efb073073be7f2fcba13a4c002d8c39f",
     "test/pocx/test_process_tree.py": "c2b1bc492945a007e023614d6e2529e231a3e94cdf41696ae4588bb6d2a9a64c",
-    "test/pocx/test_product_workflows.py": "52a1e6fbd18e5b662c3ff96c391fb953e05abfb3b6593e2a3b4319ee426b2dbf",
+    "test/pocx/test_product_workflows.py": "f7659c98c561d25f33a4f6f3d5e1de0794f32e1341dff5b6ec149478b41092ee",
     "test/pocx/test_windows_ci.py": "29970ab78210261789993f72f8ad0ce19924ba76e4dc4f70671097f7d34859c8",
     "test/pocx/unit_assets.py": "1c34c321789b13246532e2d702b2212a5812cdd88bd4f6289945aa7f5680f992",
     "test/pocx/upstream-ci-matrix.json": "2db9d8020ca1d07283cbc27a53e8bb3760bfbbfe4b5a805376f04467e64f3f7a",
-    "test/pocx/windows_ci.py": "fe3f5bd3f7f07f1c39ccac057752880b29b7ace7fccb9e44d9dfcaf25161402c"
+    "test/pocx/windows_ci.py": "d517748ae03a4d19e3bd0531f5f691302ac04eeeaf2a182787379510c4261c86"
   },
   "preserved_recipe": [
     "Visual Studio 2026 preset and all original standard options",
@@ -261,5 +266,6 @@
       "src/wallet/windows_fs.h": "e668a5f55252976d7031c91b2e86c284d8fd05f3c14bbf986de809ac24c7d2e5"
     }
   },
-  "unit_matrix_self_test_review": "The existing shared lint job executes test_unit_matrix.py after source drift checks and before inherited lint for each independently selected product. Configuration self-tests derive exact membership from the fixed original baseline and reviewed PoCX case lists, including debug and wallet-disabled variants. No matrix profiles, product cases, runner dependencies or artifact selection rules change."
+  "unit_matrix_self_test_review": "The existing shared lint job executes test_unit_matrix.py after source drift checks and before inherited lint for each independently selected product. Configuration self-tests derive exact membership from the fixed original baseline and reviewed PoCX case lists, including debug and wallet-disabled variants. No matrix profiles, product cases, runner dependencies or artifact selection rules change.",
+  "fuzz_parity_review": "The inherited OFF fuzz recipe, matrices and platform toolchain remain pinned. The corresponding ON rows select the separate reviewed PoCX fuzz sources, complete inherited corpora, native additions, strict registration/execution and provenance. Native Windows/macOS and hosted runs remain unverified locally; this records source review only."
 }

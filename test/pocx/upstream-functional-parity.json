@@ -1283,7 +1283,7 @@
       },
       "review": "Preserve all original assumeUTXO scenarios and assertions. Reproduce snapshot height299 with original34self-transfers,334chain transactions, common native cached199block funding and deterministic600second timestamps. Native299block/UTXO commitments are independently reconstructed and must be compiled into native regtest parameters; do not bypass validation. Real validated native branch replaces two PoW fork headers. Per-branch base-target/generation-signature checks replace fixed PoW bits/target equality. Use native test-network magic name and scale snapshot-coinbase spend24.99 to9.99 for native10reward, preserving0.01fee. All malformed snapshot cases, counts, prior invalidation, fork-work gates, background sync, indices, blockfile segmentation, mempool, services and restarts remain required. Functional-only native regtest height299 commitment amendment, independently reconstructed from both scenario chains and all snapshot bytes. Bitcoin preprocessed translation unit byte-identical; native preprocessed delta consists only of the two299hash literals. Evidence: artifacts/functional-green-20261009/native-assumeutxo-preprocessing-review.json and native-assumeutxo-vectors.json. All mainnet/testnet/signet/height110/height200 parameters and proof fixture bytes unchanged. Independently derive pinned298rollback and four corrupted-snapshot hashes from raw/serialized records. Preserve EOF-after-one-coin corruption precondition by truncating the native malformed two-coin group after its first coin. Provide known prevout amount when signing the native WPKH snapshot coin. Independently predict NORMAL/ASSUMED file allocation from native block sizes,64KiB limits and cursor operations, then compare every stored block byte in every expected file and reject extra files/records. Keep divergent298block branch at600second cadence and assert lower chainwork than snapshot before import. Build the competing native fork while disconnected, then reconnect and verify the original most-work reorg. Proof clock advancement during setup cannot expire an in-flight sanitizer block download. Both transports independently passed under TSan with512KiB stack and timeout factor40.",
       "dependencies": {
-        "src/kernel/chainparams.cpp": "4b5d359715ffba88fa6f811982629495a388dd5e0a401a5924bcf95355189ffb",
+        "src/kernel/chainparams.cpp": "4de3aa903eb7ab403350a43a6d5e0b68f3549e60490c632c75b45a8a067f111e",
         "src/pocx/consensus/regtest_functional_assumeutxo.inc": "9e1abbae3942cc638f94b7c9ad4733dc156e24430873ae099e7d9df08ff34262"
       }
     },
@@ -2142,9 +2142,9 @@
       "review": "Preserve chain/mining-info/default/custom-challenge configuration assertions, ten accepted real-proof BIP325 blocks, matching2of2 rejection, magic logging and invalid challenge startup errors. Original default-key fixture signatures cannot be re-signed for native headers/genesis; controlled42/43key1of2challenge supplies ten signatures, samekeys2of2rejects. Two extra nodes preserve exact default challenge configuration checks. Storage proof selectors are unchanged from independently Rust-verified kernel regtest fixtures, whose genesis generation signature matches Signet; Python independently recomputes every native base target/deadline/generation signature and signs the resulting headers. OP_TRUE positive uses a genuine storage proof, no regtest bypass. Only obsolete SHA256 networkhashps field excluded. Original BIP325 transaction construction reused from unmodified contrib/signet/miner.",
       "dependencies": {
         "contrib/signet/miner": "2df980a48e688a9e1b54f1764772edd941c0e7008bcc99faa65546d263e8dffe",
-        "test/pocx/kernel/provenance.json": "3c635037e245247642899804facafd7cd4bba33ef2d78b58a6500b09903cbee0",
+        "test/pocx/kernel/provenance.json": "d75ca23a4d220e9dafa987b596e5a3046aafdee6ed590cb4d984aff90a94c1dd",
         "src/pocx/rpc/mining.cpp": "5b79761cb582dbbf1e581366ee1e99cc24b7768685845d2e79f92901c619d959",
-        "src/kernel/chainparams.cpp": "4b5d359715ffba88fa6f811982629495a388dd5e0a401a5924bcf95355189ffb"
+        "src/kernel/chainparams.cpp": "4de3aa903eb7ab403350a43a6d5e0b68f3549e60490c632c75b45a8a067f111e"
       }
     },
     "feature_startupnotify.py": {
@@ -4264,7 +4264,7 @@
       "review": "Preserve single-signature challenge wallet import, two signed PSBT blocks and mandatory commitment assertions, OP_TRUE/OP16/single-push omitted-commitment assertions, unsigned manual PSBT workflow and exact height increments. Reuse unmodified contrib/signet/miner signet_txs/generate_psbt/get_solution_from_psbt/trivial_challenge helpers and actual walletprocesspsbt RPC. Only Bitcoin80byte header CLI assembly, compact-nBits override and bitcoin-util grind subprocess are inapplicable and replaced by real native Signet proof/header construction imported from the selected feature_signet adapter. No generic commitment or wallet assertions excluded; original tool file and original Bitcoin test untouched. Exact upstream CLI/grind interoperability is explicitly Bitcoin-only.",
       "dependencies": {
         "contrib/signet/miner": "2df980a48e688a9e1b54f1764772edd941c0e7008bcc99faa65546d263e8dffe",
-        "test/pocx/kernel/provenance.json": "3c635037e245247642899804facafd7cd4bba33ef2d78b58a6500b09903cbee0",
+        "test/pocx/kernel/provenance.json": "d75ca23a4d220e9dafa987b596e5a3046aafdee6ed590cb4d984aff90a94c1dd",
         "test/pocx/functional/feature_signet.py": "69b95779ebca236f8c6220a5a5598dde51f4c1c429036b5203711421714af3bc"
       }
     },
@@ -4420,7 +4420,7 @@
       },
       "review": "Preserve all original wallet assumeUTXO restore/backup/descriptor/rescan/background-sync scenarios. Share the deterministic native299block snapshot fixture with feature_assumeutxo, including34self-transfers and334chain transactions; native compiled commitment is required. Preserve1coin payments and all34coin wallet balances. Scale separate10coin payments to2coins so one native10coin UTXO covers both simultaneous payments and fees, preserving34payment count and exact secondary balance68. Native file-size pruning boundary requires independent block-layout review rather than removing backup/pruneheight coverage. Functional-only native regtest height299 commitment amendment, independently reconstructed from both scenario chains and all snapshot bytes. Bitcoin preprocessed translation unit byte-identical; native preprocessed delta consists only of the two299hash literals. Evidence: artifacts/functional-green-20261009/native-assumeutxo-preprocessing-review.json and native-assumeutxo-vectors.json. All mainnet/testnet/signet/height110/height200 parameters and proof fixture bytes unchanged. Preserve exact descriptor rescan error wording with native15second timestamp tolerance. All original exact pruneheight298 and backup balances34 remain unchanged and pass both private transport runs.",
       "dependencies": {
-        "src/kernel/chainparams.cpp": "4b5d359715ffba88fa6f811982629495a388dd5e0a401a5924bcf95355189ffb",
+        "src/kernel/chainparams.cpp": "4de3aa903eb7ab403350a43a6d5e0b68f3549e60490c632c75b45a8a067f111e",
         "src/pocx/consensus/regtest_functional_assumeutxo.inc": "9e1abbae3942cc638f94b7c9ad4733dc156e24430873ae099e7d9df08ff34262"
       }
     },
@@ -5567,7 +5567,7 @@
         "src/pocx/regtest/forging.cpp": "c5fc3a90375e8e435829725bf0f71f2cc63970986473976b3824b824df34fcf7",
         "src/pocx/regtest/forging.h": "a3c6d36b2345f3676f28b24e169e3a8fdb0778b78e5c5406d2b70f13b7eb96b1",
         "src/pocx/consensus/signature.cpp": "866c14307754479278dd46307a847994669d6b572e1011d09a1d8b3fb84fae69",
-        "src/kernel/chainparams.cpp": "4b5d359715ffba88fa6f811982629495a388dd5e0a401a5924bcf95355189ffb",
+        "src/kernel/chainparams.cpp": "4de3aa903eb7ab403350a43a6d5e0b68f3549e60490c632c75b45a8a067f111e",
         "src/rpc/mining.cpp": "43a0c08407392af60475990ed3fffd4dc5f384f83fc9ab9d613004284f83e80e",
         "test/pocx/stage.py": "d0cc068182448b8a9119a824b875e23e75959518b44b3f3b396f1e4147ec15b4",
         "test/functional/test_framework/key.py": "1f48819cbecacb5916a32a4930b4576ab362c190fa552342378e5c809a6bae77",
@@ -7638,7 +7638,7 @@
       "src/pocx/algorithms/quality.cpp": "0d1caf1eb4fd117b0be396107e3e178c24846ba5d1564abefd13090a76d10cc3",
       "src/pocx/test/pocx_real_proof_tests.cpp": "b531e28da4eef8fc92b7d867415ca3b8b88866fe7caa68c813f2c644535e22db",
       "src/validation.cpp": "380eae4c8e044e4c8180587da29720bd835752970958f07d4887085f84f4a2ca",
-      "src/kernel/chainparams.cpp": "8dfb7f1f5a8e98af703bfb492fd9d70bb619e66cf7a087279ad9e63ccc3ff348",
+      "src/kernel/chainparams.cpp": "4de3aa903eb7ab403350a43a6d5e0b68f3549e60490c632c75b45a8a067f111e",
       "src/node/blockstorage.cpp": "976d6f7c7f42ac45871563f564045bfbd6439643d201075dd2de8ee1001e0a89",
       "src/primitives/block.cpp": "7f2c51c31459e7ef26a3b02e680502889016392b20ac2ad912d03c2021fd6489",
       "src/primitives/block.h": "b791e3f8a070602d614dbb48874bf2c7beca5c6052f57b6e69793b4b5a8a66f3",
@@ -7918,5 +7918,12 @@
       "test/pocx/test_infrastructure.py": "6383c96b4a1a2c8236ac30c0d64259b084a43053d55a4f1b3526e98cfe32dd5e",
       "test/pocx/update_inventory.py": "37edc8f7f476e0aef8c46af1cebee79f90f8b6342f11c0a06296b57ca06ae60a"
     }
+  },
+  "fuzz_snapshot_fixture_review": {
+    "scope": "PoCX regtest height-200 assumeUTXO checkpoint; original Bitcoin values and height-299 functional fixture unchanged.",
+    "sources": {
+      "src/kernel/chainparams.cpp": "4de3aa903eb7ab403350a43a6d5e0b68f3549e60490c632c75b45a8a067f111e"
+    },
+    "execution_status": "Functional case results in this record remain historical; native fuzz snapshot corpus replay passed locally."
   }
 }

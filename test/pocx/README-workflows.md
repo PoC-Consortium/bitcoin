@@ -16,24 +16,25 @@ CI-POCX uses the same configurations, with reviewed adaptations, justified PoW
 exclusions and legitimate PoCX-only cases inside those configurations. Test
 counts may differ; additional cases do not justify new matrix combinations.
 
-PoCX fuzz conversion remains deferred. The four corresponding ON variants are
-absent from the generated matrix and remain an explicit parity gap. Bitcoin OFF
-retains all four upstream fuzz variants and ordinary fuzz-binary compilation.
-The fuzz selector calls the original recipes with explicit OFF selection; it
-preserves their compiler options, sanitizers, corpus handling and assertions.
+Both products select all four inherited fuzz variants. Bitcoin OFF retains the
+unchanged original fuzz recipe and sources. PoCX ON keeps the same platform,
+compiler, sanitizer, corpus and runtime profile, using the separate reviewed
+PoCX source selection and strict runner. The current fuzz package has local
+verification only; native Windows/macOS and hosted results remain unverified.
+See [README-fuzz.md](README-fuzz.md) for target-level classifications.
 
 `upstream-ci-matrix.json` contains the original Linux/macOS/VS matrix definitions.
 `ci_matrix.py` checks their pinned revision and canonical digest before emitting
 product matrices in the existing runner-selection job. Include-only matrices
-ensure deferred fuzz variants cannot be reintroduced by include/exclude rules.
+preserve the original exact configuration rows for each product.
 
 ## Job mapping
 
 | Job/check | Product workflow destination |
 | --- | --- |
-| Original 14 Linux/cross configurations | `ci-matrix`: all 14 for CI, 12 non-fuzz for CI-POCX |
-| Native macOS standard and fuzz | `macos-native-arm64`: both for CI, standard for CI-POCX |
-| Native Visual Studio standard and fuzz | `windows-native-dll`: both for CI, standard for CI-POCX |
+| Original 14 Linux/cross configurations | `ci-matrix`: all 14 in each product |
+| Native macOS standard and fuzz | `macos-native-arm64`: both in each product |
+| Native Visual Studio standard and fuzz | `windows-native-dll`: both in each product |
 | UCRT/MSVCRT producers and native consumers | `windows-cross` and `windows-native-test`, one selected product per CRT |
 | Ancestor compilation/tests | `test-each-commit`, original multi-commit PR condition |
 | Runner selection and immutable revision | Original `runners` and `record-frozen-commit` meta jobs |
@@ -54,8 +55,8 @@ remain unchanged. Owned runners select products explicitly and preserve inherite
 features, assertions and native platform requirements. macOS cross compilation
 does not establish native macOS runtime success; Windows payloads execute on
 Windows. An omitted `CI_PRODUCT` retains legacy paired local commands for existing
-platform handovers, including their equal non-fuzz feature profiles. Independent
-Bitcoin Actions jobs retain original fuzz compilation. Invalid explicit product
+platform handovers, including their corresponding inherited profiles. Independent
+Bitcoin Actions jobs retain original fuzz compilation and execution. Invalid explicit product
 selectors fail.
 
 Reports distinguish passes, failures, skips, configuration-disabled cases,
@@ -79,10 +80,9 @@ a missing required prerequisite, unexpected skip or failed process stays red.
 Original ARM/previous-release BCC activation is therefore corrected at its source,
 without disabling compiled tracepoints or changing test assertions.
 
-The changed configuration still needs hosted verification. Sanitizer time limits,
-restored OFF fuzz execution and reported PoCX Windows failures remain open until
-matching-revision executions provide evidence. Local checks do not establish a
-green pipeline.
+The changed fuzz configuration still needs matching-revision native macOS,
+native Windows and hosted verification. Local checks do not establish a green
+pipeline. No GitHub Actions run is part of this local fuzz package.
 
 ## Windows artifacts and diagnostics
 
@@ -114,7 +114,7 @@ OFF. Never relabel artifacts with another product or revision.
 ## Validation
 
 `test_product_workflows.py` checks the pinned upstream matrices, absence of extra
-jobs/events, product isolation, restored OFF fuzz dispatch and immutable Windows
+jobs/events, product isolation, separate OFF/ON fuzz dispatch and immutable Windows
 artifact rejection. Inherited/revision/Windows infrastructure tests cover failure
 propagation, raw live logs and bounded report retention. `actionlint` validates
 workflow syntax, dependencies and shell steps; the full inherited linter remains
