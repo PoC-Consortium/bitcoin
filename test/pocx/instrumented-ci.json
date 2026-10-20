@@ -28,7 +28,7 @@
     "depends/hosts/netbsd.mk": "576d8aab7ab3fc32dda4804c5f9ac4c3214928b4efef4eeaa7e6d5cbcc58a070",
     "depends/hosts/openbsd.mk": "96cec25960097044adb0dd9ce491552e864372139367750fa83c9a44af3e8df1",
     "depends/packages.md": "7c236c8fb321a30c0ceb6c213ad0abd5659af11a7c177208484086bc051087d0",
-    "depends/packages/boost.mk": "e5543917340002ef416aeefcf2ea0ffbb5d2d59023f10fe6f2865b572d3a8e0f",
+    "depends/packages/boost.mk": "7bcc59dba4c7a3e0973fdfa8ca721f9f08373c24681f35ede7a4de217e4b889f",
     "depends/packages/capnp.mk": "b1d8e52ecb70299f3024adc68304c1999bb9f0e702e6081886769438c1776193",
     "depends/packages/expat.mk": "c086910d3104fe3e69f65f6d1f0063a86506a381dac130ae8ed0828bb2cb1853",
     "depends/packages/fontconfig.mk": "f37da2d3312a35ec1531f41ad449af7cfa46e5c45a4193d2d1c8b7aee31b6ccb",

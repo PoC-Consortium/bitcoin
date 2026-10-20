@@ -578,6 +578,22 @@ class WindowsEnv : public Env {
       return Status::OK();
     }
     DWORD replace_error = ::GetLastError();
+    // A reader or scanner can briefly hold |to| without FILE_SHARE_DELETE.
+    // These failures leave both names in place, so retry the replacement for
+    // at most one second before reporting a persistent error.
+    for (int retry = 0;
+         retry < 20 && (replace_error == ERROR_SHARING_VIOLATION ||
+                        replace_error == ERROR_UNABLE_TO_REMOVE_REPLACED);
+         ++retry) {
+      ::Sleep(50);
+      if (::ReplaceFileW(wTo.c_str(), wFrom.c_str(),
+                         /*lpBackupFileName=*/nullptr,
+                         REPLACEFILE_IGNORE_MERGE_ERRORS,
+                         /*lpExclude=*/nullptr, /*lpReserved=*/nullptr)) {
+        return Status::OK();
+      }
+      replace_error = ::GetLastError();
+    }
     // In the case of FILE_ERROR_NOT_FOUND from ReplaceFile, it is likely that
     // |to| does not exist. In this case, the more relevant error comes from the
     // call to MoveFile.

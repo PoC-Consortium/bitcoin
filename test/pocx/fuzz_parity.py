@@ -29,7 +29,7 @@ def check(root=ROOT):
     issues = []
     if set(parity['targets']) != set(baseline['targets']):
         issues.append('Original fuzz target classification is incomplete')
-    originals = {str(path.relative_to(root)) for directory in
+    originals = {path.relative_to(root).as_posix() for directory in
                  ('src/test/fuzz', 'src/wallet/test/fuzz', 'test/fuzz')
                  for path in (root / directory).rglob('*')
                  if path.is_file() and '__pycache__' not in path.parts and path.suffix != '.pyc'}
@@ -61,7 +61,7 @@ def check(root=ROOT):
                 expression = '${PROJECT_SOURCE_DIR}/' + source
             if expression not in selected:
                 issues.append('Missing fuzz source selection: ' + source)
-    native_sources = {str(path.relative_to(root)) for path in
+    native_sources = {path.relative_to(root).as_posix() for path in
                       (root / 'src/pocx/test/fuzz').rglob('*.cpp')}
     declarations = [target for source in native_sources for target in
                     declared_targets((root / source).read_text())]
@@ -93,7 +93,7 @@ def check(root=ROOT):
         'test/pocx/test_fuzz_parity.py',
         'test/pocx/stage_fuzz_corpus.py',
     }
-    required |= {str(path.relative_to(root)) for path in (root / 'test/pocx/fuzz').rglob('*')
+    required |= {path.relative_to(root).as_posix() for path in (root / 'test/pocx/fuzz').rglob('*')
                  if path.is_file() and path.suffix in ('.py', '.json')}
     if not required.issubset(parity['reviewed_sources']):
         issues.append('Missing native fuzz source review')

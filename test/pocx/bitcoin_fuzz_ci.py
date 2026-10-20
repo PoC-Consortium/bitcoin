@@ -33,7 +33,7 @@ if [ "$RUN_FUZZ_TESTS" = "true" ]; then
   LD_LIBRARY_PATH="${DEPENDS_DIR}/${HOST}/lib" \\
   python3 "${BASE_ROOT_DIR}/test/pocx/ci_fuzz_run.py" \\
     --build-dir "${BASE_BUILD_DIR}" --upstream "${DIR_FUZZ_IN}" \\
-    --makejobs "${MAKEJOBS}" --fuzz-tests-config "${FUZZ_TESTS_CONFIG}"
+    --makejobs="${MAKEJOBS}" --fuzz-tests-config="${FUZZ_TESTS_CONFIG}"
 fi
 '''
     return prefix + replacement
