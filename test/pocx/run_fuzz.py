@@ -172,6 +172,7 @@ def run(args):
                   'empty_min_time': args.empty_min_time,
                   'corpus_provenance_sha256': sha256(staged) if staged.is_file() else None,
                   'sanitizers': re.findall(r'^SANITIZERS:[^=]+=(.*)$', cache, re.M), 'results': []}
+        run_deadline = time.monotonic() + args.run_timeout if args.run_timeout is not None else None
         def job(target):
             directory = corpus / target
             directory.mkdir(parents=True, exist_ok=True)
@@ -192,8 +193,13 @@ def run(args):
                    ('ASAN_OPTIONS', 'UBSAN_OPTIONS', 'LSAN_OPTIONS', 'MSAN_OPTIONS')}}
             raw = b''
             try:
+                remaining = run_deadline - time.monotonic() if run_deadline is not None else None
+                if remaining is not None and remaining <= 0:
+                    raise subprocess.TimeoutExpired(command, 0)
+                timeout = min(args.timeout, remaining) if args.timeout is not None and remaining is not None else (
+                    args.timeout if remaining is None else remaining)
                 result = subprocess.run(command, env=env, cwd=target_output, capture_output=True,
-                                        timeout=args.timeout)
+                                        timeout=timeout)
                 raw = result.stdout + result.stderr
                 row['returncode'] = result.returncode
                 if (target == 'pocx_shabal_avx2' and result.returncode == 77 and
@@ -207,7 +213,9 @@ def run(args):
                     row['status'] = 'passed'
             except subprocess.TimeoutExpired as error:
                 raw = (error.stdout or b'') + (error.stderr or b'')
-                row.update(status='incomplete', reason='Execution timeout', returncode=None)
+                reason = 'Whole-run replay ceiling reached' if (run_deadline is not None and
+                    (args.timeout is None or remaining <= args.timeout)) else 'Per-target replay ceiling reached'
+                row.update(status='incomplete', reason=reason, returncode=None)
             except (ValueError, OSError) as error:
                 row['reason'] = str(error)
             row['duration_seconds'] = time.monotonic() - started
@@ -223,7 +231,8 @@ def run(args):
                 row = future.result()
                 report['results'].append(row)
                 report_path.write_text(json.dumps(report, indent=2) + '\n')
-                print(f"{row['target']}: {row['status']} ({row['saved_inputs']} corpus inputs)", flush=True)
+                print(f"{row['target']}: {row['status']} ({row['saved_inputs']} corpus inputs)"
+                      + (f" - {row['reason']}" if row.get('reason') else ''), flush=True)
         verify_report(report_path, build=build, corpus=corpus, contract=contract,
                       binary=binary, provenance=provenance)
         print('Results: ' + str(output), flush=True)
@@ -239,10 +248,13 @@ def main():
     parser.add_argument('--config')
     parser.add_argument('--jobs', type=int, default=4)
     parser.add_argument('--empty-min-time', type=int, default=60)
-    parser.add_argument('--timeout', type=int, help='Optional local per-target deadline; inherited CI has no added deadline')
+    parser.add_argument('--timeout', type=int, help='Optional per-target replay ceiling in seconds')
+    parser.add_argument('--run-timeout', type=int, help='Optional whole-run replay ceiling in seconds')
     parser.add_argument('target', nargs='*')
     args = parser.parse_args()
-    if args.jobs < 1 or args.empty_min_time < 1 or (args.timeout is not None and args.timeout < 1):
+    if (args.jobs < 1 or args.empty_min_time < 1 or
+            (args.timeout is not None and args.timeout < 1) or
+            (args.run_timeout is not None and args.run_timeout < 1)):
         parser.error('Jobs and runtime budgets must be positive')
     return run(args)
 

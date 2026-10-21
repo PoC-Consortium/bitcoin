@@ -43,11 +43,15 @@ def run(build, upstream, *, config=None, jobs=None, makejobs=None, fuzz_tests_co
     problems = fuzz_parity.check()
     if problems:
         raise ValueError('Fuzz source review failed: ' + str(problems))
+    limits = fuzz_parity.records()[1]['hosted_replay_ceiling_seconds']
+    if any(type(limits.get(name)) is not int or limits[name] < 1 for name in ('per_target', 'whole_run')):
+        raise ValueError('Invalid reviewed hosted fuzz replay ceilings')
     build = build.resolve()
     corpus = stage_fuzz_corpus.stage(build, upstream.resolve(), selected_config=config)
     before = set(build.glob('fuzz-results-*'))
     command = [sys.executable, str(ROOT / 'test/pocx/run_fuzz.py'),
-               '--build-dir', str(build), '--corpus', str(corpus), '--jobs', str(jobs)]
+               '--build-dir', str(build), '--corpus', str(corpus), '--jobs', str(jobs),
+               '--timeout', str(limits['per_target']), '--run-timeout', str(limits['whole_run'])]
     if config is not None:
         command += ['--config', config]
     if fuzz_extra:
