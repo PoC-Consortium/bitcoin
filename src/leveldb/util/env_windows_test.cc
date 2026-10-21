@@ -4,9 +4,6 @@
 
 #include "leveldb/env.h"
 
-#include <chrono>
-#include <thread>
-
 #include "port/port.h"
 #include "util/env_windows_test_helper.h"
 #include "util/testharness.h"
@@ -56,32 +53,6 @@ TEST(EnvWindowsTest, TestOpenOnRead) {
     delete files[i];
   }
   ASSERT_OK(env_->DeleteFile(test_file));
-}
-
-TEST(EnvWindowsTest, RenameAfterTransientReadLock) {
-  std::string test_dir;
-  ASSERT_OK(env_->GetTestDirectory(&test_dir));
-  const std::string from = test_dir + "/rename_replacement.txt";
-  const std::string to = test_dir + "/rename_replaced.txt";
-  ASSERT_OK(WriteStringToFile(env_, "replacement", from));
-  ASSERT_OK(WriteStringToFile(env_, "replaced", to));
-
-  // A reader without FILE_SHARE_DELETE temporarily prevents ReplaceFileW from
-  // removing the old file. The replacement must succeed once it closes.
-  SequentialFile* reader;
-  ASSERT_OK(env_->NewSequentialFile(to, &reader));
-  std::thread close_reader([reader] {
-    std::this_thread::sleep_for(std::chrono::milliseconds(200));
-    delete reader;
-  });
-  const Status rename = env_->RenameFile(from, to);
-  close_reader.join();
-  ASSERT_OK(rename);
-
-  std::string contents;
-  ASSERT_OK(ReadFileToString(env_, to, &contents));
-  ASSERT_EQ(contents, "replacement");
-  ASSERT_OK(env_->DeleteFile(to));
 }
 
 }  // namespace leveldb

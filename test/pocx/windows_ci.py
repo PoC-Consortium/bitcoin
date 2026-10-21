@@ -46,6 +46,7 @@ REVIEW_SOURCES.update({'test/pocx/common.py', 'test/pocx/runtime_evidence.py', '
 
 REVIEW_SOURCES.update({'test/pocx/inherited_selection.py', 'test/pocx/inherited_prerequisites.py',
     'test/pocx/test_inherited_selection.py'})
+REVIEW_SOURCES.add('src/leveldb/util/env_windows.cc')
 
 
 def verify_recipe(root=ROOT):
