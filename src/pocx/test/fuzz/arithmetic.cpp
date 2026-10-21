@@ -16,7 +16,7 @@ class Wide {
 
 public:
     Wide() = default;
-    Wide(uint64_t value) { m[0] = value; m[1] = value >> 32; }
+    Wide(uint64_t value) { m[0] = static_cast<uint32_t>(value); m[1] = static_cast<uint32_t>(value >> 32); }
 
     uint64_t Low64() const { return uint64_t{m[0]} | (uint64_t{m[1]} << 32); }
 
@@ -34,7 +34,7 @@ public:
         uint64_t carry{0};
         for (int i = 0; i < 8; ++i) {
             const uint64_t sum = uint64_t{m[i]} + other.m[i] + carry;
-            result.m[i] = sum;
+            result.m[i] = static_cast<uint32_t>(sum);
             carry = sum >> 32;
         }
         assert(!carry);
@@ -49,7 +49,7 @@ public:
         for (unsigned i = words; i < 8; ++i) {
             uint64_t part = uint64_t{m[i - words]} << shift;
             if (shift && i > words) part |= uint64_t{m[i - words - 1]} >> (32 - shift);
-            result.m[i] = part;
+            result.m[i] = static_cast<uint32_t>(part);
         }
         return result;
     }
@@ -62,7 +62,7 @@ public:
         for (unsigned i = 0; i + words < 8; ++i) {
             uint64_t part = m[i + words] >> shift;
             if (shift && i + words + 1 < 8) part |= uint64_t{m[i + words + 1]} << (32 - shift);
-            result.m[i] = part;
+            result.m[i] = static_cast<uint32_t>(part);
         }
         return result;
     }
@@ -73,7 +73,7 @@ public:
         uint64_t carry{0};
         for (int i = 0; i < 8; ++i) {
             const uint64_t product = uint64_t{m[i]} * factor + carry;
-            result.m[i] = product;
+            result.m[i] = static_cast<uint32_t>(product);
             carry = product >> 32;
         }
         assert(!carry);
@@ -82,7 +82,8 @@ public:
 
     Wide Mul(uint64_t factor) const
     {
-        return Mul32(factor).Add(Mul32(factor >> 32).ShiftLeft(32));
+        return Mul32(static_cast<uint32_t>(factor)).Add(
+            Mul32(static_cast<uint32_t>(factor >> 32)).ShiftLeft(32));
     }
 
     Wide Div(uint64_t divisor) const
@@ -98,7 +99,7 @@ public:
                 for (int i = 0; i < 8; ++i) {
                     const uint64_t sub = uint64_t{limit.m[i]} + borrow;
                     const uint64_t value = remainder.m[i];
-                    remainder.m[i] = value < sub ? value + (uint64_t{1} << 32) - sub : value - sub;
+                    remainder.m[i] = static_cast<uint32_t>(value < sub ? value + (uint64_t{1} << 32) - sub : value - sub);
                     borrow = value < sub;
                 }
                 assert(!borrow);
