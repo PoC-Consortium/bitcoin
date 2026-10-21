@@ -27,7 +27,7 @@
     "test/pocx/functional_cases.py": "903124835dc4e3d902036a6789a72727f82ff334a2c0c236cc2ee2a49ef4b68f",
     "test/pocx/functional_environment.py": "0b9a8336bc866a3f7d145fc32933f00172113b24cc50563f54121a6d9256c10e",
     "test/pocx/functional_results.py": "ae45c2704a11b23688b523b9b273a591a0020176b4f44196e42fef740afb9cfc",
-    "test/pocx/inherited-ci.json": "419d8260d1e25199b10b1baef6c0ce08556672cc01c7712b8f47a96ee3dd615a",
+    "test/pocx/inherited-ci.json": "0d74084796d405267f621a100b702734cff7a1ecab9b8585812c8fa3749f709f",
     "test/pocx/inherited_ci.py": "4aebe0837a9c2577898876fbe34cc6fe844790ea1c24f09fbc1a0d4d2a70bc53",
     "test/pocx/inherited_functional.py": "a00bb27b9a3705c3e8e61609b9ad57580eeb307f6028f3b345033af71d09957d",
     "test/pocx/inherited_prerequisites.py": "fc24680108346518b53bc32dc2cc626ce74b04d7426145fd3954b9bd61acb2c4",
