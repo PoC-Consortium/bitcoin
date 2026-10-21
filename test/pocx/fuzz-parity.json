@@ -998,7 +998,7 @@
     "src/pocx/test/fuzz/adapted/tx_pool.cpp": "c0d4d99c1462cb3212d7a538b13ed886bb1a5a7531d85e724f2b5fffb3b5eb1f",
     "src/pocx/test/fuzz/adapted/utxo_snapshot.cpp": "4b45c308668da01180be03eeb12feb0b992cfb3b18f9e959b7d188ba24a7a7b2",
     "src/pocx/test/fuzz/adapted/versionbits.cpp": "bfafdb06813289529aa8cdf77aa84090b8a0b2f2cf908458ed62c773e5ceb1d3",
-    "src/pocx/test/fuzz/arithmetic.cpp": "256da53708837c3a82021b70fdf97efe535dd4bc732bb28088fe8d2d463acb79",
+    "src/pocx/test/fuzz/arithmetic.cpp": "6b2960e41474bd02316ea85462bac70a5ba28e983e89b1b6d6ca66634244dcb5",
     "src/pocx/test/fuzz/assignment_opcodes.cpp": "69f137452067b3f7691fc169a29eb0be9131e7d972f93962f4b5f98c4ae62e17",
     "src/pocx/test/fuzz/assignment_state.cpp": "db58d7fb44bf2b59e241bb0fb3242fc875915649b83959915893af6479998bc9",
     "src/pocx/test/fuzz/difficulty.cpp": "3420df829e4b95f8333444dffa48decc9c81d641bceea96eccb4d9147ebf0c9c",
