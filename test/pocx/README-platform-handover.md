@@ -38,9 +38,9 @@ git switch -c test/pocx-windows-native
 
 The verified code/provenance milestone is commit
 `c6576ae3e10665af15a2699d097652914baa9cae`. The publication commit adds only
-handover documentation and status records. `handover/verified-source-files.json`
-records the milestone's tracked-file hashes; subsequent runtime/source changes
-must be assessed for their effect on retained results.
+handover documentation and status records. Inspect that commit with Git for its
+tracked source tree; subsequent runtime/source changes must be assessed for
+their effect on retained results.
 
 The previous goal closed 49 current-machine conditions and 135 required
 framework/configuration entries. PoCX ASan passed 590/590 functional entries.

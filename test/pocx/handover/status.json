@@ -733,12 +733,11 @@
       "reason": "User excluded intermediate-history verification; preserve results for later squash merge outside this goal."
     }
   ],
-  "source_fingerprint_file": "verified-source-files.json",
+  "source_fingerprint_commit": "c6576ae3e10665af15a2699d097652914baa9cae",
   "portable_records": {
     "framework-parity-counts.csv": "6a07f59225ccaccc5c646d89c6ab8cc9bb37d0b7aba8f348cea6ff1d88c0b9dd",
     "deferred-conditions.csv": "8af6ec20d0216bfb423e70bd50909119be3ee8aafab57398bf56abe39e8dfda1",
-    "fully-enabled-framework-overview.csv": "0a2b3a9afee62978ad3691946e252204b52ce400e02ab81a34f0d61258f7acef",
-    "verified-source-files.json": "afccaf75796d5fb16de3dbc9f73cf25fd12401f805d43631b33a18ebebbb6ba4"
+    "fully-enabled-framework-overview.csv": "0a2b3a9afee62978ad3691946e252204b52ce400e02ab81a34f0d61258f7acef"
   },
   "retained_Linux_evidence": {
     "index_sha256": "8723245607059d76ddd11e426684fd9639dd82033644fb1b23ea16a8793e39c0",
