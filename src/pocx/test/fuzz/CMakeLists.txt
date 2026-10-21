@@ -3,19 +3,6 @@
 include(sources.cmake)
 add_subdirectory(${PROJECT_SOURCE_DIR}/src/test/fuzz/util ${CMAKE_CURRENT_BINARY_DIR}/util)
 add_executable(fuzz ${POCX_FUZZ_SOURCES})
-# Boost 1.88's cpp_int literals header fails with MSVC's conforming preprocessor
-# (boostorg/multiprecision#677). The arithmetic oracle does not use literals;
-# limit the compatibility flag to this one source until the pinned Boost is fixed.
-if(MSVC)
-  set_property(SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/arithmetic.cpp APPEND PROPERTY COMPILE_OPTIONS /Zc:preprocessor-)
-endif()
-# Boost.Multiprecision intentionally discards high unsigned limb bits when
-# shifting the independent time-bending oracle. Clang's integer sanitizer
-# reports that internal operation as unsigned-shift-base. Keep every other
-# sanitizer check on this source and all checks on production code.
-if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND SANITIZERS MATCHES "(^|,)integer(,|$)")
-  set_property(SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/arithmetic.cpp APPEND PROPERTY COMPILE_OPTIONS -fno-sanitize=unsigned-shift-base)
-endif()
 add_windows_application_manifest(fuzz)
 target_link_libraries(fuzz core_interface fuzzer_interface test_fuzz bitcoin_cli
   bitcoin_common bitcoin_util minisketch leveldb univalue secp256k1 Boost::headers libevent::extra)

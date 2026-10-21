@@ -89,14 +89,7 @@ def find_extra_boosts():
             raise e
 
     for boost in included_boosts:
-        include = re.findall(r'(?<=\<).+?(?=\>)', boost)[0]
-        source = boost.split(':', 1)[0]
-        # The PoCX fuzz arithmetic oracle deliberately uses independent
-        # arbitrary-precision math rather than the consensus arith_uint256
-        # implementation under test. Keep this exception confined to it.
-        if (source, include) == ('src/pocx/test/fuzz/arithmetic.cpp', 'boost/multiprecision/cpp_int.hpp'):
-            continue
-        filtered_included_boost_set.add(include)
+        filtered_included_boost_set.add(re.findall(r'(?<=\<).+?(?=\>)', boost)[0])
 
     for expected_boost in EXPECTED_BOOST_INCLUDES:
         for boost in filtered_included_boost_set:

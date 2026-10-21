@@ -4,30 +4,131 @@
 #include <pocx/consensus/params.h>
 #include <test/fuzz/FuzzedDataProvider.h>
 #include <test/fuzz/fuzz.h>
-#include <boost/multiprecision/cpp_int.hpp>
+#include <array>
 #include <cassert>
+#include <cstdint>
 
 namespace {
-using boost::multiprecision::cpp_int;
-cpp_int CubeRoot(const cpp_int& value)
+// Independent 256-bit unsigned arithmetic. Base-2^32 limbs keep every
+// intermediate in uint64_t range, including under the integer sanitizer.
+class Wide {
+    std::array<uint32_t, 8> m{};
+
+public:
+    Wide() = default;
+    Wide(uint64_t value) { m[0] = value; m[1] = value >> 32; }
+
+    uint64_t Low64() const { return uint64_t{m[0]} | (uint64_t{m[1]} << 32); }
+
+    int Compare(const Wide& other) const
+    {
+        for (int i = 7; i >= 0; --i) {
+            if (m[i] != other.m[i]) return m[i] < other.m[i] ? -1 : 1;
+        }
+        return 0;
+    }
+
+    Wide Add(const Wide& other) const
+    {
+        Wide result;
+        uint64_t carry{0};
+        for (int i = 0; i < 8; ++i) {
+            const uint64_t sum = uint64_t{m[i]} + other.m[i] + carry;
+            result.m[i] = sum;
+            carry = sum >> 32;
+        }
+        assert(!carry);
+        return result;
+    }
+
+    Wide ShiftLeft(unsigned bits) const
+    {
+        assert(bits < 256);
+        Wide result;
+        const unsigned words = bits / 32, shift = bits % 32;
+        for (unsigned i = words; i < 8; ++i) {
+            uint64_t part = uint64_t{m[i - words]} << shift;
+            if (shift && i > words) part |= uint64_t{m[i - words - 1]} >> (32 - shift);
+            result.m[i] = part;
+        }
+        return result;
+    }
+
+    Wide ShiftRight(unsigned bits) const
+    {
+        assert(bits < 256);
+        Wide result;
+        const unsigned words = bits / 32, shift = bits % 32;
+        for (unsigned i = 0; i + words < 8; ++i) {
+            uint64_t part = m[i + words] >> shift;
+            if (shift && i + words + 1 < 8) part |= uint64_t{m[i + words + 1]} << (32 - shift);
+            result.m[i] = part;
+        }
+        return result;
+    }
+
+    Wide Mul32(uint32_t factor) const
+    {
+        Wide result;
+        uint64_t carry{0};
+        for (int i = 0; i < 8; ++i) {
+            const uint64_t product = uint64_t{m[i]} * factor + carry;
+            result.m[i] = product;
+            carry = product >> 32;
+        }
+        assert(!carry);
+        return result;
+    }
+
+    Wide Mul(uint64_t factor) const
+    {
+        return Mul32(factor).Add(Mul32(factor >> 32).ShiftLeft(32));
+    }
+
+    Wide Div(uint64_t divisor) const
+    {
+        assert(divisor);
+        const Wide limit{divisor};
+        Wide remainder, quotient;
+        for (int bit = 255; bit >= 0; --bit) {
+            remainder = remainder.ShiftLeft(1);
+            remainder.m[0] |= (m[bit / 32] >> (bit % 32)) & 1;
+            if (remainder.Compare(limit) >= 0) {
+                uint64_t borrow{0};
+                for (int i = 0; i < 8; ++i) {
+                    const uint64_t sub = uint64_t{limit.m[i]} + borrow;
+                    const uint64_t value = remainder.m[i];
+                    remainder.m[i] = value < sub ? value + (uint64_t{1} << 32) - sub : value - sub;
+                    borrow = value < sub;
+                }
+                assert(!borrow);
+                quotient.m[bit / 32] |= uint32_t{1} << (bit % 32);
+            }
+        }
+        return quotient;
+    }
+};
+
+uint64_t CubeRoot(const Wide& value)
 {
-    cpp_int low{0}, high{cpp_int{1} << 86};
+    // spacing <= 86400 makes the largest input < 2^143, so its root < 2^48.
+    uint64_t low{0}, high{uint64_t{1} << 49};
     while (high - low > 1) {
-        cpp_int middle = (high + low) / 2;
-        if (middle * middle * middle <= value) low = middle;
+        const uint64_t middle = (high + low) / 2;
+        if (Wide{middle}.Mul(middle).Mul(middle).Compare(value) <= 0) low = middle;
         else high = middle;
     }
     return low;
 }
-// Independent arbitrary-precision evaluation of the specified fixed-point formula;
+// Independent wide-integer evaluation of the specified fixed-point formula;
 // no production arith_uint256 operations or root/scale helpers are reused.
 uint64_t Deadline(uint64_t quality, uint64_t target, uint64_t spacing)
 {
     if (!quality) return 0;
-    const cpp_int divisor = (CubeRoot(cpp_int{spacing} << 126) * 3927365422841ULL) >> 42;
-    const cpp_int scale = ((cpp_int{spacing} << 84) + divisor / 2) / divisor;
-    const cpp_int root = CubeRoot((cpp_int{quality} << 63) / target);
-    return ((scale * root + (cpp_int{1} << 62)) >> 63).convert_to<uint64_t>();
+    const uint64_t divisor = Wide{CubeRoot(Wide{spacing}.ShiftLeft(126))}.Mul(3927365422841ULL).ShiftRight(42).Low64();
+    const uint64_t scale = Wide{spacing}.ShiftLeft(84).Add(Wide{divisor / 2}).Div(divisor).Low64();
+    const uint64_t root = CubeRoot(Wide{quality}.ShiftLeft(63).Div(target));
+    return Wide{scale}.Mul(root).Add(Wide{uint64_t{1} << 62}).ShiftRight(63).Low64();
 }
 }
 

@@ -48,12 +48,9 @@ The native additions check these invariants:
 | `pocx_difficulty`, `pocx_time_bending`, `pocx_compression_bounds` | Native retarget envelope, rolling-window result, generation signature, fixed-point time bending and compression-height boundaries against independent arithmetic models. |
 | `pocx_headers_sync_configuration` | Actual PoCX mainnet header-sync resource configuration remains enabled. |
 
-The time-bending oracle uses Boost.Multiprecision so it does not share the
-consensus arithmetic implementation. The inherited include lint allows this
-header only in that oracle source. Clang's integer sanitizer reports Boost's
-intentional unsigned limb truncation during left shifts; the PoCX fuzz build
-disables only `unsigned-shift-base` for `arithmetic.cpp`. Other sanitizer checks
-on that file and all checks on production time-bending code remain active.
+The time-bending oracle uses a small, independent 256-bit integer in its fuzz
+source. It does not share the consensus arithmetic implementation and needs no
+additional dependency or sanitizer exception.
 
 The inherited `rpc` target uses a PoCX-owned adaptation: the original argument
 generator and Bitcoin command classifications remain intact. PoCX read-only
