@@ -1,6 +1,11 @@
 {
   "scope": "Full inherited fuzz target membership with separate native adaptations; classifications are source review decisions, not saved runtime pass claims.",
   "baseline_sha256": "26931d13b1b61638a0cc7c7d0683281d3689d9341013244624d5d1d621dc3671",
+  "hosted_replay_ceiling_seconds": {
+    "per_target": 14400,
+    "whole_run": 18900,
+    "review": "PoCX ASan full replay passed in 4h30 with its slowest target at 2h57; these ceilings leave headroom and fail before the six-hour hosted job limit."
+  },
   "targets": {
     "addition_overflow": {
       "classification": "reused",
@@ -980,7 +985,7 @@
   "reviewed_sources": {
     "src/CMakeLists.txt": "d3c20a568d31f6deb3759e4a60e265050202e10d0428ee189ff720c489eeb5bb",
     "src/kernel/chainparams.cpp": "4de3aa903eb7ab403350a43a6d5e0b68f3549e60490c632c75b45a8a067f111e",
-    "src/pocx/test/fuzz/CMakeLists.txt": "e6b397996bee843c9df0e8fc2ea1499110e57891864b0163b14e481307cc66d7",
+    "src/pocx/test/fuzz/CMakeLists.txt": "9643b8dbeb9b5e9e93aa6929af46968446d8e76ecd3e706a32d37f08e321b101",
     "src/pocx/test/fuzz/adapted/block_header.cpp": "be135373b5668f3cdbf2ee89ff6df466c7c287692362d7e0d007b03b8414fda8",
     "src/pocx/test/fuzz/adapted/block_index.cpp": "228b119742cc235ccf219a19f74b5d13c207752fa184b58a7110cdbd32424d2e",
     "src/pocx/test/fuzz/adapted/block_index_tree.cpp": "1da7ece040b6ff30d68381ff61ce0f3e28354e7ad17eccb47c86cdf61d5e6f5a",
@@ -993,7 +998,7 @@
     "src/pocx/test/fuzz/adapted/tx_pool.cpp": "c0d4d99c1462cb3212d7a538b13ed886bb1a5a7531d85e724f2b5fffb3b5eb1f",
     "src/pocx/test/fuzz/adapted/utxo_snapshot.cpp": "4b45c308668da01180be03eeb12feb0b992cfb3b18f9e959b7d188ba24a7a7b2",
     "src/pocx/test/fuzz/adapted/versionbits.cpp": "bfafdb06813289529aa8cdf77aa84090b8a0b2f2cf908458ed62c773e5ceb1d3",
-    "src/pocx/test/fuzz/arithmetic.cpp": "b4715ff929e8ae6e61d9c9cc564620be467caf3e55d6598e0c46ea11a52273cf",
+    "src/pocx/test/fuzz/arithmetic.cpp": "256da53708837c3a82021b70fdf97efe535dd4bc732bb28088fe8d2d463acb79",
     "src/pocx/test/fuzz/assignment_opcodes.cpp": "69f137452067b3f7691fc169a29eb0be9131e7d972f93962f4b5f98c4ae62e17",
     "src/pocx/test/fuzz/assignment_state.cpp": "db58d7fb44bf2b59e241bb0fb3242fc875915649b83959915893af6479998bc9",
     "src/pocx/test/fuzz/difficulty.cpp": "3420df829e4b95f8333444dffa48decc9c81d641bceea96eccb4d9147ebf0c9c",
@@ -1005,7 +1010,7 @@
     "src/pocx/test/util/mining.cpp": "3e48b1b78d683aecda822ae5765c22dae2245ef1318a2df7c80e55944037bf64",
     "test/pocx/bitcoin_fuzz_ci.py": "9901ad5250eaf67a0d2af0596fc4070085cd58a18a674595494579a40cdea278",
     "test/pocx/check_drift.py": "ed187c724cacd454ead3699db6dff30a4b2ad54bc7f3ea01169ea1482fd466a5",
-    "test/pocx/ci_fuzz_run.py": "2afd8626831debe8250d79edf4f208bed190cc11ec415798f9aac95b5cff8227",
+    "test/pocx/ci_fuzz_run.py": "4a185c6ccb0f23a3e8b7583f18b9f25d3102590741a2699e3899df6ff0655501",
     "test/pocx/ci_matrix.py": "3bb276db8487b928779de0ea6f7b2f87c29e4f1c313c7b9686d3876e159efeb5",
     "test/pocx/fuzz/fixtures/mainnet-header-context.json": "2fac9d6ee395db13398f6197a23abf180b94e600aed9879dd3853f3c96569b8c",
     "test/pocx/fuzz/fixtures/native-regtest-block.json": "eca8807b26d9a6e24306106c094060d16be3f53efcee06c5a6042c5333d8571e",
@@ -1015,7 +1020,7 @@
     "test/pocx/fuzz_build.py": "a6e2d1d9f73493cd1d347bae8ea5021cc3c6e387293e9c2b155f3d735d6a8b5d",
     "test/pocx/fuzz_parity.py": "7e40fb2725571dea4f6de8333dec7fac45d4f44826f537637f414a2a6d8bab05",
     "test/pocx/record_fuzz.py": "175b0fb26cd550c44f5095091eb929bcb743f6b6145dc120c7035e6f44e269d3",
-    "test/pocx/run_fuzz.py": "ac94c9f37177f5e5664d0ea6e5e815e775025cc92dceeefda7923ee430c2d6ed",
+    "test/pocx/run_fuzz.py": "2b0ff404bde8a1df4cae51392e2ae8f92292347748f66f216ad38b4d2e187321",
     "test/pocx/stage_fuzz_corpus.py": "1265412852278b39bddc47bee37ae395f4bb11936f6a121812e521d297c60f7e",
     "test/pocx/test_fuzz_parity.py": "b4bcbbddb5ab8f2101f4c8142811434b5a10001823ba4ffb5dde90851c6be6e0"
   },
