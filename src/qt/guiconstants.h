@@ -46,6 +46,15 @@ static const int TOOLTIP_WRAP_THRESHOLD = 80;
 /* Number of frames in spinner animation */
 #define SPINNER_FRAMES 36
 
+#ifdef ENABLE_POCX
+#define QAPP_ORG_NAME "Bitcoin-PoCX"
+#define QAPP_ORG_DOMAIN "bitcoin-pocx.org"
+#define QAPP_APP_NAME_DEFAULT "Bitcoin-PoCX-Qt"
+#define QAPP_APP_NAME_TESTNET "Bitcoin-PoCX-Qt-testnet"
+#define QAPP_APP_NAME_TESTNET4 "Bitcoin-PoCX-Qt-testnet4"
+#define QAPP_APP_NAME_SIGNET "Bitcoin-PoCX-Qt-signet"
+#define QAPP_APP_NAME_REGTEST "Bitcoin-PoCX-Qt-regtest"
+#else
 #define QAPP_ORG_NAME "Bitcoin"
 #define QAPP_ORG_DOMAIN "bitcoin.org"
 #define QAPP_APP_NAME_DEFAULT "Bitcoin-Qt"
@@ -53,6 +62,7 @@ static const int TOOLTIP_WRAP_THRESHOLD = 80;
 #define QAPP_APP_NAME_TESTNET4 "Bitcoin-Qt-testnet4"
 #define QAPP_APP_NAME_SIGNET "Bitcoin-Qt-signet"
 #define QAPP_APP_NAME_REGTEST "Bitcoin-Qt-regtest"
+#endif
 
 /* One gigabyte (GB) in bytes */
 static constexpr uint64_t GB_BYTES{1000000000};

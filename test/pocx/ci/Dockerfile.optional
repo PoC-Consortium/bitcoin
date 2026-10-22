@@ -1,0 +1,15 @@
+# Copyright (c) 2026 The Bitcoin PoCX developers
+# Distributed under the MIT software license; see COPYING.
+# Local reproduction of optional Linux runtime prerequisites. The inherited
+# Ubuntu/sanitizer jobs remain separately inventoried configurations.
+FROM debian:trixie-slim@sha256:a29215f6a35e51e22adffa17f89e9d2ef06214e64a2bad10d765c46aea49f11f
+ARG KERNEL_RELEASE
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates git iproute2 python3-bpfcc python3-zmq python3-venv \
+    libevent-core-2.1-7t64 libevent-extra-2.1-7t64 libevent-pthreads-2.1-7t64 \
+    libsqlite3-0 libstdc++6 libzmq5 \
+    "linux-headers-${KERNEL_RELEASE}" \
+    && rm -rf /var/lib/apt/lists/*
+RUN python3 -m venv --system-site-packages /opt/test-python \
+    && /opt/test-python/bin/pip install --no-cache-dir pycapnp==2.2.4
+ENV PATH="/opt/test-python/bin:${PATH}" PYTHONDONTWRITEBYTECODE=1

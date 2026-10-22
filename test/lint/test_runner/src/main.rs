@@ -9,6 +9,9 @@ mod lint_repo_hygiene;
 mod lint_text_format;
 mod util;
 
+#[path = "../../../pocx/lint/dispatch.rs"]
+mod pocx_lint;
+
 use std::env;
 use std::fs;
 use std::process::{Command, ExitCode};
@@ -175,7 +178,7 @@ fn run_all_python_linters() -> LintResult {
         if entry_fn.starts_with("lint-")
             && entry_fn.ends_with(".py")
             && !Command::new("python3")
-                .arg(entry.path())
+                .arg(pocx_lint::python_linter(entry.path()))
                 .status()
                 .expect("command error")
                 .success()

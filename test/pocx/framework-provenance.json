@@ -1,0 +1,230 @@
+{
+  "test/functional/test_framework/__init__.py": {
+    "reviewed_fork_revision": "5de2720ca47b3a753081e5ce545113cd3b616018",
+    "reviewed_fork_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "upstream_revision": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
+    "upstream_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "test/functional/test_framework/address.py": {
+    "reviewed_fork_revision": "5de2720ca47b3a753081e5ce545113cd3b616018",
+    "reviewed_fork_sha256": "63e83cdd2054afbccff8932729dc65cf8feafc8ce3bd9b0071d492058d12bf4f",
+    "upstream_revision": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
+    "upstream_sha256": "63e83cdd2054afbccff8932729dc65cf8feafc8ce3bd9b0071d492058d12bf4f"
+  },
+  "test/functional/test_framework/authproxy.py": {
+    "reviewed_fork_revision": "5de2720ca47b3a753081e5ce545113cd3b616018",
+    "reviewed_fork_sha256": "736246f2495578e0b1f38775ae44c59514e5bd45bf83b427d90b2370916d1a1a",
+    "upstream_revision": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
+    "upstream_sha256": "736246f2495578e0b1f38775ae44c59514e5bd45bf83b427d90b2370916d1a1a"
+  },
+  "test/functional/test_framework/blockfilter.py": {
+    "reviewed_fork_revision": "5de2720ca47b3a753081e5ce545113cd3b616018",
+    "reviewed_fork_sha256": "d759d7c22eb1fd5e517902d01a30938a991c3a34e6672c9d44a0b4f936a8fcfc",
+    "upstream_revision": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
+    "upstream_sha256": "d759d7c22eb1fd5e517902d01a30938a991c3a34e6672c9d44a0b4f936a8fcfc"
+  },
+  "test/functional/test_framework/blocktools.py": {
+    "reviewed_fork_revision": "5de2720ca47b3a753081e5ce545113cd3b616018",
+    "reviewed_fork_sha256": "a04bd5c095826c99f4f47e49db91136159b7dc7804ca751255785928d28f449f",
+    "upstream_revision": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
+    "upstream_sha256": "a04bd5c095826c99f4f47e49db91136159b7dc7804ca751255785928d28f449f"
+  },
+  "test/functional/test_framework/compressor.py": {
+    "reviewed_fork_revision": "5de2720ca47b3a753081e5ce545113cd3b616018",
+    "reviewed_fork_sha256": "a61c1d37abc5977a7398784b173bcb76e94a3549165a18f60e8d3d22cd9a2ead",
+    "upstream_revision": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
+    "upstream_sha256": "a61c1d37abc5977a7398784b173bcb76e94a3549165a18f60e8d3d22cd9a2ead"
+  },
+  "test/functional/test_framework/coverage.py": {
+    "reviewed_fork_revision": "5de2720ca47b3a753081e5ce545113cd3b616018",
+    "reviewed_fork_sha256": "e301f58d9be13a18d061bfdad130b4a40cfbf6ea6f741c36259e611c8ecc6eaa",
+    "upstream_revision": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
+    "upstream_sha256": "e301f58d9be13a18d061bfdad130b4a40cfbf6ea6f741c36259e611c8ecc6eaa"
+  },
+  "test/functional/test_framework/crypto/bip324_cipher.py": {
+    "reviewed_fork_revision": "5de2720ca47b3a753081e5ce545113cd3b616018",
+    "reviewed_fork_sha256": "11ebd09caf46d8a41156535597b1abb67cac1ffb8e50adbe0fcf61141c6412f1",
+    "upstream_revision": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
+    "upstream_sha256": "11ebd09caf46d8a41156535597b1abb67cac1ffb8e50adbe0fcf61141c6412f1"
+  },
+  "test/functional/test_framework/crypto/chacha20.py": {
+    "reviewed_fork_revision": "5de2720ca47b3a753081e5ce545113cd3b616018",
+    "reviewed_fork_sha256": "c0b383e8c1ee47cd3d0cb02630ad316cd8e915b857fa19193a7111d79cbe4878",
+    "upstream_revision": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
+    "upstream_sha256": "c0b383e8c1ee47cd3d0cb02630ad316cd8e915b857fa19193a7111d79cbe4878"
+  },
+  "test/functional/test_framework/crypto/ellswift.py": {
+    "reviewed_fork_revision": "5de2720ca47b3a753081e5ce545113cd3b616018",
+    "reviewed_fork_sha256": "a65d5a4afa54b94c7223face55e8860187a2b6547ede1bff49c822e343fcea7b",
+    "upstream_revision": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
+    "upstream_sha256": "a65d5a4afa54b94c7223face55e8860187a2b6547ede1bff49c822e343fcea7b"
+  },
+  "test/functional/test_framework/crypto/hkdf.py": {
+    "reviewed_fork_revision": "5de2720ca47b3a753081e5ce545113cd3b616018",
+    "reviewed_fork_sha256": "bcf95e28f8f3206aa8bdae8f27b9e3474b23740f17e9f40c66f356e656b37b6b",
+    "upstream_revision": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
+    "upstream_sha256": "bcf95e28f8f3206aa8bdae8f27b9e3474b23740f17e9f40c66f356e656b37b6b"
+  },
+  "test/functional/test_framework/crypto/muhash.py": {
+    "reviewed_fork_revision": "5de2720ca47b3a753081e5ce545113cd3b616018",
+    "reviewed_fork_sha256": "af45c2451c06abd530ae7d65f8778f7e1ebb76f7b68dcded3459fdcee376405c",
+    "upstream_revision": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
+    "upstream_sha256": "af45c2451c06abd530ae7d65f8778f7e1ebb76f7b68dcded3459fdcee376405c"
+  },
+  "test/functional/test_framework/crypto/poly1305.py": {
+    "reviewed_fork_revision": "5de2720ca47b3a753081e5ce545113cd3b616018",
+    "reviewed_fork_sha256": "f4eeb0fecc9f5850581a17fd926240aea9361c86c3268c9ef7b990f38839b8de",
+    "upstream_revision": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
+    "upstream_sha256": "f4eeb0fecc9f5850581a17fd926240aea9361c86c3268c9ef7b990f38839b8de"
+  },
+  "test/functional/test_framework/crypto/ripemd160.py": {
+    "reviewed_fork_revision": "5de2720ca47b3a753081e5ce545113cd3b616018",
+    "reviewed_fork_sha256": "99da6dafa9804d3ca5490a736354027b10ec3d517206caad6ea28c0e097f6b9a",
+    "upstream_revision": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
+    "upstream_sha256": "99da6dafa9804d3ca5490a736354027b10ec3d517206caad6ea28c0e097f6b9a"
+  },
+  "test/functional/test_framework/crypto/secp256k1.py": {
+    "reviewed_fork_revision": "5de2720ca47b3a753081e5ce545113cd3b616018",
+    "reviewed_fork_sha256": "cab75b7335f839b88eb8517b417715858e538aaf0071f6c01ec4eb3e1867f246",
+    "upstream_revision": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
+    "upstream_sha256": "cab75b7335f839b88eb8517b417715858e538aaf0071f6c01ec4eb3e1867f246"
+  },
+  "test/functional/test_framework/crypto/siphash.py": {
+    "reviewed_fork_revision": "5de2720ca47b3a753081e5ce545113cd3b616018",
+    "reviewed_fork_sha256": "7af3111be53124afb78a607cb9bfe3fdd5a64717c95a279d5962cda9a0853ab1",
+    "upstream_revision": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
+    "upstream_sha256": "7af3111be53124afb78a607cb9bfe3fdd5a64717c95a279d5962cda9a0853ab1"
+  },
+  "test/functional/test_framework/descriptors.py": {
+    "reviewed_fork_revision": "5de2720ca47b3a753081e5ce545113cd3b616018",
+    "reviewed_fork_sha256": "8c2a4490c1b2a09c6c6e209eda090b160214d8156e20d6db671459cb4090a16a",
+    "upstream_revision": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
+    "upstream_sha256": "8c2a4490c1b2a09c6c6e209eda090b160214d8156e20d6db671459cb4090a16a"
+  },
+  "test/functional/test_framework/ipc_util.py": {
+    "reviewed_fork_revision": "5de2720ca47b3a753081e5ce545113cd3b616018",
+    "reviewed_fork_sha256": "254befe9c3902827dc678fda20e2ab9acb82a815a76b35a03567f8460fa68ef7",
+    "upstream_revision": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
+    "upstream_sha256": "254befe9c3902827dc678fda20e2ab9acb82a815a76b35a03567f8460fa68ef7"
+  },
+  "test/functional/test_framework/key.py": {
+    "reviewed_fork_revision": "5de2720ca47b3a753081e5ce545113cd3b616018",
+    "reviewed_fork_sha256": "1f48819cbecacb5916a32a4930b4576ab362c190fa552342378e5c809a6bae77",
+    "upstream_revision": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
+    "upstream_sha256": "1f48819cbecacb5916a32a4930b4576ab362c190fa552342378e5c809a6bae77"
+  },
+  "test/functional/test_framework/mempool_util.py": {
+    "reviewed_fork_revision": "5de2720ca47b3a753081e5ce545113cd3b616018",
+    "reviewed_fork_sha256": "1cefffda4412f94b14600721af96edfa21f1efff70e2fd4b8f71fbfb6db64064",
+    "upstream_revision": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
+    "upstream_sha256": "1cefffda4412f94b14600721af96edfa21f1efff70e2fd4b8f71fbfb6db64064"
+  },
+  "test/functional/test_framework/messages.py": {
+    "reviewed_fork_revision": "5de2720ca47b3a753081e5ce545113cd3b616018",
+    "reviewed_fork_sha256": "c786651a517a49dd084b1d76072f755d40c5483f5be53b7322ca4f3403548b26",
+    "upstream_revision": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
+    "upstream_sha256": "c786651a517a49dd084b1d76072f755d40c5483f5be53b7322ca4f3403548b26"
+  },
+  "test/functional/test_framework/netutil.py": {
+    "reviewed_fork_revision": "5de2720ca47b3a753081e5ce545113cd3b616018",
+    "reviewed_fork_sha256": "2414c1653c53225b308cd54aaa43d2a884db17f8704ea5f87586f92f39aeeaec",
+    "upstream_revision": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
+    "upstream_sha256": "2414c1653c53225b308cd54aaa43d2a884db17f8704ea5f87586f92f39aeeaec"
+  },
+  "test/functional/test_framework/p2p.py": {
+    "reviewed_fork_revision": "5de2720ca47b3a753081e5ce545113cd3b616018",
+    "reviewed_fork_sha256": "7292865dedff7a0ea78675d6ea85e9135e81fb59ea9b7247b1d6bf42b48aa9f3",
+    "upstream_revision": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
+    "upstream_sha256": "7292865dedff7a0ea78675d6ea85e9135e81fb59ea9b7247b1d6bf42b48aa9f3"
+  },
+  "test/functional/test_framework/psbt.py": {
+    "reviewed_fork_revision": "5de2720ca47b3a753081e5ce545113cd3b616018",
+    "reviewed_fork_sha256": "ce272048b90776a218beedb9d4c0d0a3190c88db9557117c3b93de3f3e6069a3",
+    "upstream_revision": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
+    "upstream_sha256": "ce272048b90776a218beedb9d4c0d0a3190c88db9557117c3b93de3f3e6069a3"
+  },
+  "test/functional/test_framework/script.py": {
+    "reviewed_fork_revision": "5de2720ca47b3a753081e5ce545113cd3b616018",
+    "reviewed_fork_sha256": "24bdbfc18cfa1084c1c985218c0067c2e4c06cbd83488e5c08f2167a12bf3abf",
+    "upstream_revision": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
+    "upstream_sha256": "24bdbfc18cfa1084c1c985218c0067c2e4c06cbd83488e5c08f2167a12bf3abf"
+  },
+  "test/functional/test_framework/script_util.py": {
+    "reviewed_fork_revision": "5de2720ca47b3a753081e5ce545113cd3b616018",
+    "reviewed_fork_sha256": "bbc66982f39e345aa986b52c3d197b0e1c71788cb99cd352ad0c06d0e91673bc",
+    "upstream_revision": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
+    "upstream_sha256": "bbc66982f39e345aa986b52c3d197b0e1c71788cb99cd352ad0c06d0e91673bc"
+  },
+  "test/functional/test_framework/segwit_addr.py": {
+    "reviewed_fork_revision": "5de2720ca47b3a753081e5ce545113cd3b616018",
+    "reviewed_fork_sha256": "fbeb2a01fdae651877262c4902d237dd28d56f0e35b0fc137d3dd97854b18b08",
+    "upstream_revision": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
+    "upstream_sha256": "fbeb2a01fdae651877262c4902d237dd28d56f0e35b0fc137d3dd97854b18b08"
+  },
+  "test/functional/test_framework/socks5.py": {
+    "reviewed_fork_revision": "5de2720ca47b3a753081e5ce545113cd3b616018",
+    "reviewed_fork_sha256": "f883af2eddd126d72abdaf6f8d0c6b864d967bb801da58e0ba4013ef3a452dff",
+    "upstream_revision": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
+    "upstream_sha256": "f883af2eddd126d72abdaf6f8d0c6b864d967bb801da58e0ba4013ef3a452dff"
+  },
+  "test/functional/test_framework/test_framework.py": {
+    "reviewed_fork_revision": "5de2720ca47b3a753081e5ce545113cd3b616018",
+    "reviewed_fork_sha256": "895a5ac0606aa8d8c02252c1340951a92445168ed79c0a9c5ac2aadd29794d5b",
+    "upstream_revision": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
+    "upstream_sha256": "895a5ac0606aa8d8c02252c1340951a92445168ed79c0a9c5ac2aadd29794d5b"
+  },
+  "test/functional/test_framework/test_node.py": {
+    "reviewed_fork_revision": "5de2720ca47b3a753081e5ce545113cd3b616018",
+    "reviewed_fork_sha256": "59799d482ecf3aeb7f5ec2fa52ffe839f4e377ac0a903bf22daa5ecfaaa5d2ac",
+    "upstream_revision": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
+    "upstream_sha256": "59799d482ecf3aeb7f5ec2fa52ffe839f4e377ac0a903bf22daa5ecfaaa5d2ac"
+  },
+  "test/functional/test_framework/test_shell.py": {
+    "reviewed_fork_revision": "5de2720ca47b3a753081e5ce545113cd3b616018",
+    "reviewed_fork_sha256": "b3981abf63986b8069528a3a9d95b38317a5262ed729c4d6f1e3e686c0121137",
+    "upstream_revision": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
+    "upstream_sha256": "b3981abf63986b8069528a3a9d95b38317a5262ed729c4d6f1e3e686c0121137"
+  },
+  "test/functional/test_framework/util.py": {
+    "reviewed_fork_revision": "5de2720ca47b3a753081e5ce545113cd3b616018",
+    "reviewed_fork_sha256": "2e8499f47175e6a4df9508a37c30dc24ff90de8bc1ea117ff054f99c77bc8aa2",
+    "upstream_revision": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
+    "upstream_sha256": "2e8499f47175e6a4df9508a37c30dc24ff90de8bc1ea117ff054f99c77bc8aa2"
+  },
+  "test/functional/test_framework/v2_p2p.py": {
+    "reviewed_fork_revision": "5de2720ca47b3a753081e5ce545113cd3b616018",
+    "reviewed_fork_sha256": "d3cd3af20cc538025b0e7dcef5eb0e75a2c6d315c53f20fa98484d8a17465677",
+    "upstream_revision": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
+    "upstream_sha256": "d3cd3af20cc538025b0e7dcef5eb0e75a2c6d315c53f20fa98484d8a17465677"
+  },
+  "test/functional/test_framework/wallet.py": {
+    "reviewed_fork_revision": "5de2720ca47b3a753081e5ce545113cd3b616018",
+    "reviewed_fork_sha256": "17fddda59df48e25cffc6258ff899670c585193ab49e96f1a9118a635c242909",
+    "upstream_revision": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
+    "upstream_sha256": "17fddda59df48e25cffc6258ff899670c585193ab49e96f1a9118a635c242909"
+  },
+  "test/functional/test_framework/wallet_util.py": {
+    "reviewed_fork_revision": "5de2720ca47b3a753081e5ce545113cd3b616018",
+    "reviewed_fork_sha256": "941c73c108346824e3eb478fa0c20fb3d059b2123910d69a52547089391cffb0",
+    "upstream_revision": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
+    "upstream_sha256": "941c73c108346824e3eb478fa0c20fb3d059b2123910d69a52547089391cffb0"
+  },
+  "test/functional/test_framework/bip340_test_vectors.csv": {
+    "reviewed_fork_revision": "946555b7704f19f8a927c6f06830c95897b434d7",
+    "reviewed_fork_sha256": "01c8cabba63b4c9b2f44c975902990086a4fe56eee9d265b187d1e2c1d98ccfb",
+    "upstream_revision": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
+    "upstream_sha256": "01c8cabba63b4c9b2f44c975902990086a4fe56eee9d265b187d1e2c1d98ccfb"
+  },
+  "test/functional/test_framework/crypto/ellswift_decode_test_vectors.csv": {
+    "reviewed_fork_revision": "946555b7704f19f8a927c6f06830c95897b434d7",
+    "reviewed_fork_sha256": "a238a66b093bed3c571d5b57cb2bb1f69487788f0f872f7ea7501b5b98be20b0",
+    "upstream_revision": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
+    "upstream_sha256": "a238a66b093bed3c571d5b57cb2bb1f69487788f0f872f7ea7501b5b98be20b0"
+  },
+  "test/functional/test_framework/crypto/xswiftec_inv_test_vectors.csv": {
+    "reviewed_fork_revision": "946555b7704f19f8a927c6f06830c95897b434d7",
+    "reviewed_fork_sha256": "b5e8e0e9edfdee14c3ec4db3c6763543a9f17290a84a93de0ae2671c16f4432a",
+    "upstream_revision": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
+    "upstream_sha256": "b5e8e0e9edfdee14c3ec4db3c6763543a9f17290a84a93de0ae2671c16f4432a"
+  }
+}

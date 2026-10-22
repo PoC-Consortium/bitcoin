@@ -1,0 +1,40 @@
+Continue Bitcoin/PoCX testing on this Windows machine.
+
+Use https://github.com/PoC-Consortium/bitcoin.git, branch test/pocx-ci-parity-20261010,
+cloned with core.autocrlf=false into a short ASCII path. Read
+test/pocx/README-platform-handover.md and test/pocx/handover/status.json first.
+Create a separate test/pocx-windows-native branch and record the starting SHA.
+
+The completed Linux/current-machine milestone has 49 verified conditions and 135
+required framework/configuration entries. Its final ASan functional run passed
+590/590. Preserve that scoped evidence; do not rerun Linux baselines here.
+
+Scope on Windows: six deferred conditions, namely the original Bitcoin-OFF and
+PoCX-ON pairs for native VS/MSVC, UCRT artifact runtime, and MSVCRT artifact runtime.
+Inspect Windows/architecture, Visual Studio, SDK, CMake, Python, vcpkg, available
+memory/disk and optional WSL/Docker before execution. Reproduce the source CI
+recipes and record any differences from their configured host environments.
+
+Start with test/pocx/windows_ci.py --plan, then establish the real original-first
+native pair using that runner. For the artifact pairs, obtain matching-revision
+verified cross-built packages; generate them in WSL/Linux if none are available.
+Use windows_artifacts.py --verify and windows_artifact_ci.py on Windows, preserving
+the complete original phase before PoCX. Old Linux packages need revision and
+input verification; never patch provenance to make an old package appear current.
+
+Fresh native builds need no Linux databases, plot files, compiler caches or raw
+logs. Fixtures are committed or checksum-downloaded. Portable Linux summaries are
+in the repo; full historical evidence remains on the Linux machine if a later
+independent audit needs it.
+
+Keep original assertions and sources intact. Use separate PoCX adaptations,
+justify replaced-PoW exclusions, provision enabled prerequisites, preserve failures,
+and do not count skipped/inactive/unverified cases as passes. Run focused repairs
+and reuse valid evidence. Report each framework/configuration's original inventory,
+unchanged/adapted green cases, red cases, inactive/skipped/excluded cases and
+PoCX-only results, with source/toolchain/command/raw-report provenance.
+
+Fuzz, Linux ARM and intermediate-history verification are outside this session.
+Preserve existing commits. Coordinate shared-file repairs with the Mac branch,
+and batch any authorized pushes to avoid unnecessary Actions runs. Report real
+target-native execution separately from source checks, plans and cross-compilation.

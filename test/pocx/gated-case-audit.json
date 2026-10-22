@@ -1,0 +1,342 @@
+{
+  "scope": "Explicit ENABLE_POCX guards in baseline node/wallet/Qt test sources. Not full upstream case parity, not fuzz coverage. Source names alone do not prove equivalent assertions.",
+  "entries": [
+    {
+      "source": "src/test/blockchain_tests.cpp",
+      "selected_source": "src/pocx/test/adapted/blockchain_tests.cpp",
+      "baseline_revision": "5de2720ca47b3a753081e5ce545113cd3b616018",
+      "baseline_pocx_guards": [
+        {
+          "line": 16,
+          "text": "#ifndef ENABLE_POCX"
+        },
+        {
+          "line": 18,
+          "text": "#endif // ENABLE_POCX"
+        },
+        {
+          "line": 20,
+          "text": "#ifndef ENABLE_POCX"
+        },
+        {
+          "line": 60,
+          "text": "#ifndef ENABLE_POCX"
+        }
+      ],
+      "baseline_cases": [
+        "get_difficulty_for_very_low_target",
+        "get_difficulty_for_low_target",
+        "get_difficulty_for_mid_target",
+        "get_difficulty_for_high_target",
+        "get_difficulty_for_very_high_target",
+        "get_prune_height",
+        "num_chain_tx_max",
+        "invalidate_block"
+      ],
+      "current_source_cases": [
+        "get_difficulty_for_very_low_target",
+        "get_difficulty_for_low_target",
+        "get_difficulty_for_mid_target",
+        "get_difficulty_for_high_target",
+        "get_difficulty_for_very_high_target",
+        "get_difficulty_invalid_and_reference_target",
+        "get_prune_height",
+        "num_chain_tx_max",
+        "invalidate_block"
+      ],
+      "missing_case_names": [],
+      "remaining_pocx_guards": [],
+      "status": "source case-name accounting only; see notes",
+      "review_note": "Five previously disabled difficulty cases restored using fixed PoCX base-target vectors; sixth covers zero/reference/max. Passed artifacts/m2-difficulty-unit.xml."
+    },
+    {
+      "source": "src/test/blockencodings_tests.cpp",
+      "selected_source": "src/pocx/test/adapted/blockencodings_tests.cpp",
+      "baseline_revision": "5de2720ca47b3a753081e5ce545113cd3b616018",
+      "baseline_pocx_guards": [
+        {
+          "line": 39,
+          "text": "#ifndef ENABLE_POCX"
+        },
+        {
+          "line": 57,
+          "text": "#ifndef ENABLE_POCX"
+        },
+        {
+          "line": 285,
+          "text": "#ifndef ENABLE_POCX"
+        },
+        {
+          "line": 292,
+          "text": "#ifndef ENABLE_POCX"
+        }
+      ],
+      "baseline_cases": [
+        "SimpleRoundTripTest",
+        "NonCoinbasePreforwardRTTest",
+        "SufficientPreforwardRTTest",
+        "EmptyBlockRoundTripTest",
+        "ReceiveWithExtraTransactions",
+        "TransactionsRequestSerializationTest",
+        "TransactionsRequestDeserializationMaxTest",
+        "TransactionsRequestDeserializationOverflowTest"
+      ],
+      "current_source_cases": [
+        "SimpleRoundTripTest",
+        "NonCoinbasePreforwardRTTest",
+        "SufficientPreforwardRTTest",
+        "EmptyBlockRoundTripTest",
+        "ReceiveWithExtraTransactions",
+        "TransactionsRequestSerializationTest",
+        "TransactionsRequestDeserializationMaxTest",
+        "TransactionsRequestDeserializationOverflowTest"
+      ],
+      "missing_case_names": [],
+      "remaining_pocx_guards": [],
+      "status": "source case-name accounting only; see notes",
+      "review_note": "PoW solve loops removed; nonnull base-target header fixtures retain encoding assertions."
+    },
+    {
+      "source": "src/test/blockfilter_index_tests.cpp",
+      "selected_source": "src/pocx/test/adapted/blockfilter_index_tests.cpp",
+      "baseline_revision": "5de2720ca47b3a753081e5ce545113cd3b616018",
+      "baseline_pocx_guards": [
+        {
+          "line": 92,
+          "text": "#ifndef ENABLE_POCX"
+        }
+      ],
+      "baseline_cases": [
+        "blockfilter_index_initial_sync",
+        "blockfilter_index_init_destroy",
+        "index_reorg_crash"
+      ],
+      "current_source_cases": [
+        "blockfilter_index_initial_sync",
+        "blockfilter_index_init_destroy",
+        "index_reorg_crash"
+      ],
+      "missing_case_names": [],
+      "remaining_pocx_guards": [],
+      "status": "source case-name accounting only; see notes",
+      "review_note": "PoW solve replaced with branch-relative synthetic forging; index assertions retained."
+    },
+    {
+      "source": "src/test/coins_tests.cpp",
+      "selected_source": "src/test/coins_tests.cpp",
+      "baseline_revision": "5de2720ca47b3a753081e5ce545113cd3b616018",
+      "baseline_pocx_guards": [
+        {
+          "line": 60,
+          "text": "#ifdef ENABLE_POCX"
+        }
+      ],
+      "baseline_cases": [
+        "coins_cache_base_simulation_test",
+        "coins_cache_dbbase_simulation_test",
+        "updatecoins_simulation_test",
+        "ccoins_serialization",
+        "ccoins_access",
+        "ccoins_spend",
+        "ccoins_add",
+        "ccoins_write",
+        "ccoins_flush_behavior",
+        "coins_db_leveldb_layout",
+        "coins_resource_is_used",
+        "ccoins_addcoin_exception_keeps_usage_balanced",
+        "ccoins_emplace_duplicate_keeps_usage_balanced",
+        "ccoins_reset_guard",
+        "ccoins_peekcoin"
+      ],
+      "current_source_cases": [
+        "coins_cache_base_simulation_test",
+        "coins_cache_dbbase_simulation_test",
+        "updatecoins_simulation_test",
+        "ccoins_serialization",
+        "ccoins_access",
+        "ccoins_spend",
+        "ccoins_add",
+        "ccoins_write",
+        "ccoins_flush_behavior",
+        "coins_db_leveldb_layout",
+        "coins_resource_is_used",
+        "ccoins_addcoin_exception_keeps_usage_balanced",
+        "ccoins_emplace_duplicate_keeps_usage_balanced",
+        "ccoins_reset_guard",
+        "ccoins_peekcoin"
+      ],
+      "missing_case_names": [],
+      "remaining_pocx_guards": [
+        {
+          "line": 60,
+          "text": "#ifdef ENABLE_POCX"
+        }
+      ],
+      "status": "source case-name accounting only; see notes",
+      "review_note": "Guard adds required assignment parameters to mock BatchWrite signature; does not exclude a case."
+    },
+    {
+      "source": "src/test/headers_sync_chainwork_tests.cpp",
+      "selected_source": "src/pocx/test/adapted/headers_sync_chainwork_tests.cpp",
+      "baseline_revision": "5de2720ca47b3a753081e5ce545113cd3b616018",
+      "baseline_pocx_guards": [
+        {
+          "line": 66,
+          "text": "#ifndef ENABLE_POCX"
+        },
+        {
+          "line": 72,
+          "text": "#ifdef ENABLE_POCX"
+        },
+        {
+          "line": 84,
+          "text": "#ifdef ENABLE_POCX"
+        },
+        {
+          "line": 121,
+          "text": "#ifndef ENABLE_POCX"
+        },
+        {
+          "line": 138,
+          "text": "#ifndef ENABLE_POCX"
+        }
+      ],
+      "baseline_cases": [
+        "sneaky_redownload",
+        "happy_path",
+        "too_little_work"
+      ],
+      "current_source_cases": [
+        "pocx_invalid_transitions",
+        "sneaky_redownload",
+        "happy_path",
+        "too_little_work"
+      ],
+      "missing_case_names": [],
+      "remaining_pocx_guards": [],
+      "status": "source case-name accounting only; see notes",
+      "review_note": "PoCX base-target/gensig header fixtures replace nBits/PoW loops; work thresholds independently computed; adds presync/redownload mutation cases. Real-proof validation is separate."
+    },
+    {
+      "source": "src/test/miner_tests.cpp",
+      "selected_source": "src/pocx/test/adapted/miner_tests.cpp",
+      "baseline_revision": "5de2720ca47b3a753081e5ce545113cd3b616018",
+      "baseline_pocx_guards": [
+        {
+          "line": 784,
+          "text": "#ifndef ENABLE_POCX"
+        },
+        {
+          "line": 832,
+          "text": "#ifndef ENABLE_POCX"
+        },
+        {
+          "line": 843,
+          "text": "#ifdef ENABLE_POCX"
+        }
+      ],
+      "baseline_cases": [
+        "CreateNewBlock_validity"
+      ],
+      "current_source_cases": [
+        "CreateNewBlock_validity"
+      ],
+      "missing_case_names": [],
+      "remaining_pocx_guards": [],
+      "status": "source case-name accounting only; see notes",
+      "review_note": "Invalid-proof rejection adapted to missing PoCX signature. PoW-only submitSolution interface rejection tested explicitly, followed by accepted fully forged block. Original transaction selection assertions retained."
+    },
+    {
+      "source": "src/test/peerman_tests.cpp",
+      "selected_source": "src/pocx/test/adapted/peerman_tests.cpp",
+      "baseline_revision": "5de2720ca47b3a753081e5ce545113cd3b616018",
+      "baseline_pocx_guards": [
+        {
+          "line": 26,
+          "text": "#ifndef ENABLE_POCX"
+        }
+      ],
+      "baseline_cases": [
+        "connections_desirable_service_flags"
+      ],
+      "current_source_cases": [
+        "connections_desirable_service_flags"
+      ],
+      "missing_case_names": [],
+      "remaining_pocx_guards": [],
+      "status": "source case-name accounting only; see notes",
+      "review_note": "Synthetic valid forging replaces PoW loop; removed unchecked fChecked shortcut."
+    },
+    {
+      "source": "src/test/validation_block_tests.cpp",
+      "selected_source": "src/pocx/test/adapted/validation_block_tests.cpp",
+      "baseline_revision": "5de2720ca47b3a753081e5ce545113cd3b616018",
+      "baseline_pocx_guards": [
+        {
+          "line": 103,
+          "text": "#ifndef ENABLE_POCX"
+        }
+      ],
+      "baseline_cases": [
+        "processnewblock_signals_ordering",
+        "mempool_locks_reorg",
+        "witness_commitment_index"
+      ],
+      "current_source_cases": [
+        "processnewblock_signals_ordering",
+        "mempool_locks_reorg",
+        "witness_commitment_index"
+      ],
+      "missing_case_names": [],
+      "remaining_pocx_guards": [],
+      "status": "source case-name accounting only; see notes",
+      "review_note": "Branch-relative synthetic forging replaces PoW loop."
+    },
+    {
+      "source": "src/qt/test/uritests.cpp",
+      "selected_source": "src/qt/test/uritests.cpp",
+      "baseline_revision": "5de2720ca47b3a753081e5ce545113cd3b616018",
+      "baseline_pocx_guards": [
+        {
+          "line": 93,
+          "text": "#ifdef ENABLE_POCX"
+        }
+      ],
+      "baseline_cases": [],
+      "current_source_cases": [],
+      "missing_case_names": [],
+      "remaining_pocx_guards": [
+        {
+          "line": 93,
+          "text": "#ifdef ENABLE_POCX"
+        }
+      ],
+      "status": "Executed as part of complete PoCX Qt test executable; passed",
+      "review_note": "PoCX guard adds native btcx URI parsing/formatting and bitcoin compatibility assertions; does not exclude upstream URI cases. GUI execution passed.",
+      "execution_evidence": "artifacts/m2-qt-tests3.xml"
+    },
+    {
+      "source": "src/qt/test/wallettests.cpp",
+      "selected_source": "src/qt/test/wallettests.cpp",
+      "baseline_revision": "5de2720ca47b3a753081e5ce545113cd3b616018",
+      "baseline_pocx_guards": [
+        {
+          "line": 332,
+          "text": "#ifdef ENABLE_POCX"
+        }
+      ],
+      "baseline_cases": [],
+      "current_source_cases": [],
+      "missing_case_names": [],
+      "remaining_pocx_guards": [
+        {
+          "line": 332,
+          "text": "#ifdef ENABLE_POCX"
+        }
+      ],
+      "status": "Executed as part of complete PoCX Qt test executable; passed",
+      "review_note": "PoCX guard changes expected payment URI scheme from bitcoin to btcx; no block-forging guard is present in this file. GUI execution passed.",
+      "execution_evidence": "artifacts/m2-qt-tests3.xml"
+    }
+  ]
+}

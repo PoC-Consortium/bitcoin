@@ -1,0 +1,273 @@
+{
+  "scope": "Source-reviewed original-first native Windows standard recipe. Read-only plans and synthetic controller checks are infrastructure evidence only.",
+  "leveldb_rename_retry_review": "Shared Windows portability fix: local full Bitcoin-OFF and PoCX-ON functional runs intermittently failed when LevelDB ReplaceFileW encountered a transient sharing violation or ERROR_UNABLE_TO_REMOVE_REPLACED (1175) during MANIFEST/CURRENT replacement. A local standalone LevelDB regression reproduces a 200 ms read lock and passes with the bounded retry. Rename failure still propagates after at most one second; no consensus behavior changes. The vendored test is removed because product CMake never builds it.",
+  "upstream_revision": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
+  "unchanged_upstream_recipe": ".github/ci-windows.py",
+  "source_sha256": {
+    ".github/ci-windows.py": "9cec268ddaf98292b2067ae07ff99e8290a6e1a2e3a97aac9814c6642542e27b",
+    ".github/workflows/ci-pocx.yml": "699f0a58e48d1f6348a65d9b0224d870d569da1088b457195aa78b55703fc88f",
+    ".github/workflows/ci-product.yml": "e8ed92a6a900467b6b6983adb76265c05693321bc058000a7174d0ef54f0242f",
+    ".github/workflows/ci.yml": "178f16dc008944d5158cfe45e84da73c39839949ca82b0a6703805919f05e8a9",
+    "src/leveldb/util/env_windows.cc": "71841e55c077377656f5b7e18d5758e51cb19600b6f8ac34e24aa8875dd210dc",
+    "test/pocx/bitcoin_baseline/windows/review.json": "f541b15bbe06f200838f6ba17cacfe279ac723fbc71a1b6994c822e45219a6e6",
+    "test/pocx/bitcoin_baseline/windows/rpc_signer.py": "ea682c6093604670612eeae9936a9a3d4d0af232fe798d9edf7eea979c01639d",
+    "test/pocx/bitcoin_fuzz_ci.py": "9901ad5250eaf67a0d2af0596fc4070085cd58a18a674595494579a40cdea278",
+    "test/pocx/build_configuration.py": "c9df217b325f1e3dfd8cd14e002f542bd78aa084b410e8f3b18d18a261a36456",
+    "test/pocx/ci_evidence.py": "47b4c08cc84dd6bc1425138f24cfd98bb8d014f070b2f8e7fef32483986a4443",
+    "test/pocx/ci_fuzz_run.py": "4a185c6ccb0f23a3e8b7583f18b9f25d3102590741a2699e3899df6ff0655501",
+    "test/pocx/ci_logging.py": "4191a50de16f7584bbf61db0068f3b426a5ace1923db5f45556d30f974554661",
+    "test/pocx/ci_matrix.py": "3bb276db8487b928779de0ea6f7b2f87c29e4f1c313c7b9686d3876e159efeb5",
+    "test/pocx/ci_product.py": "07783ef9d57662bff430b33a446d8b11321e3740226fbb53e31a5c217cd1938c",
+    "test/pocx/common.py": "9c6d49f8ca052427557fd301d9195a00c6e09542dfd7ed63b15e0a4b81e72772",
+    "test/pocx/fuzz_parity.py": "7e40fb2725571dea4f6de8333dec7fac45d4f44826f537637f414a2a6d8bab05",
+    "test/pocx/inherited_ci.py": "4aebe0837a9c2577898876fbe34cc6fe844790ea1c24f09fbc1a0d4d2a70bc53",
+    "test/pocx/inherited_functional.py": "a00bb27b9a3705c3e8e61609b9ad57580eeb307f6028f3b345033af71d09957d",
+    "test/pocx/inherited_prerequisites.py": "fc24680108346518b53bc32dc2cc626ce74b04d7426145fd3954b9bd61acb2c4",
+    "test/pocx/inherited_selection.py": "9d9b69e92ccf55fad6bb3b003b31aa7d366233bf5dbc88581956a1f140dc767e",
+    "test/pocx/inherited_tests.py": "a08946f019b624ecdd5b00709a44fdabf0133dc9de8cc0328ca0c82c70f05d10",
+    "test/pocx/original_windows.py": "ab008c9c062aa4516c08bf21e5afe8f01ce9d1ddaef64d7e2731068a291d8c49",
+    "test/pocx/process_tree.py": "12639a920fa4a656eec4f14ea02c4aaf1fe997cfc18c7df2566e82a1d3ab3f29",
+    "test/pocx/run_fuzz.py": "2b0ff404bde8a1df4cae51392e2ae8f92292347748f66f216ad38b4d2e187321",
+    "test/pocx/runtime_evidence.py": "ee1722ab10eba1dde4b66aed7d8f9737de2d171b725cf999b723219b2a5dd1b5",
+    "test/pocx/stage_fuzz_corpus.py": "1265412852278b39bddc47bee37ae395f4bb11936f6a121812e521d297c60f7e",
+    "test/pocx/test_fuzz_parity.py": "b4bcbbddb5ab8f2101f4c8142811434b5a10001823ba4ffb5dde90851c6be6e0",
+    "test/pocx/test_inherited_selection.py": "195cf2982f72a156f385d08d504a741b5948f507da2017e121758a6bd8ae44ef",
+    "test/pocx/test_original_windows.py": "27f47f07e52a7381e48ca4d1f77220c1efb073073be7f2fcba13a4c002d8c39f",
+    "test/pocx/test_process_tree.py": "c2b1bc492945a007e023614d6e2529e231a3e94cdf41696ae4588bb6d2a9a64c",
+    "test/pocx/test_product_workflows.py": "c57862b423943bab77b2a59cbb431892a492c7df4d9de2d3266fb7fe40899ee1",
+    "test/pocx/test_windows_ci.py": "29970ab78210261789993f72f8ad0ce19924ba76e4dc4f70671097f7d34859c8",
+    "test/pocx/unit_assets.py": "1c34c321789b13246532e2d702b2212a5812cdd88bd4f6289945aa7f5680f992",
+    "test/pocx/upstream-ci-matrix.json": "2db9d8020ca1d07283cbc27a53e8bb3760bfbbfe4b5a805376f04467e64f3f7a",
+    "test/pocx/windows_ci.py": "a7e2254a7c34dc58c9f2dea7dbf214ba440268b5c0c5cffdf03d761180e6d9c4"
+  },
+  "preserved_recipe": [
+    "Visual Studio 2026 preset and all original standard options",
+    "Single generation retry after 12 seconds",
+    "Parallel Release build with single-job verbose fallback",
+    "All original executable manifest checks and exact exemption set",
+    "pyzmq provisioning and original functional timeout/extended setting"
+  ],
+  "owned_changes": [
+    "Explicit isolated Bitcoin-OFF build and complete test phase before PoCX-ON",
+    "Checksum-verified immutable original unit assets",
+    "Real host process-controller lifecycle probes before framework execution",
+    "Strict configuration-specific unit, Qt, kernel and auxiliary verification",
+    "Both functional transports with inherited timeout-factor preserved",
+    "Bounded framework reports retained and uploaded on success and failure",
+    "LF checkout for byte-exact source verification"
+  ],
+  "execution_status": "unverified; no actual native Windows execution recorded",
+  "cross_artifact_consumers": "pending; this driver requires a native Visual Studio build tree",
+  "windows_functional_dispatch_review": "Keep the unchanged upstream runner for all original variants; separately execute the ancient-release UTXO case in an ASCII-only directory in both transports on Windows. Wallet multiwallet variants remain required. Disabled benchmark builds preserve the source-guarded unexpanded case; enabled builds require actual listing. Pin bytecode and previous-release environment behavior; retain elapsed time and full raw logs. Callback verification is infrastructure only, not hosted or Windows execution.",
+  "unix_makefiles_evidence_review": "The shared build evidence collector now supports the unmodified inherited Unix Makefiles configuration, binding root and recursive make rules, target flags/dependencies/link commands, CTest registrations and built binaries. Missing root graphs and changed inputs fail. Existing Ninja and Visual Studio branches are unchanged; this is evidence-infrastructure support, not target-platform runtime verification.",
+  "shared_workflow_review": "Add opt-in manual baseline_only=false by default. An explicit true workflow_dispatch runs one Ubuntu24 original bitcoin-unit job with two build jobs and retained reports. All nine existing jobs are gated off only for this manual selection; original conditions, steps, matrices, platforms and dependency edges are structurally unchanged for normal/default runs. No required CI configuration removed and no hosted execution inferred.",
+  "shared_helper_updates_review": {
+    ".github/workflows/ci.yml": {
+      "previous_reviewed_revision": "43b023c7e9e7f875415f14dfd9c3eede1ee4dc72",
+      "previous_sha256": "3baa49659590322fede674c0b1f12a7b4346b8fc1affcdcc18ebbe6f92176e33",
+      "sha256": "0faba4651593cda133121fbfc2d31edc32084be95872812dac72dbf1e20bb3dd",
+      "review": "Add opt-in manual baseline_only=false by default. An explicit true workflow_dispatch runs one Ubuntu24 original bitcoin-unit job with two build jobs and retained reports. All nine existing jobs are gated off only for this manual selection; original conditions, steps, matrices, platforms and dependency edges are structurally unchanged for normal/default runs. No required CI configuration removed and no hosted execution inferred."
+    },
+    "test/pocx/ci_evidence.py": {
+      "previous_reviewed_revision": "a175541176185ded6cb1736287532a913ed2db54",
+      "previous_sha256": "d5584b065776634fde0399e3ebbc20b23bf83cc0d5a849c26944a7aa1f9bb478",
+      "sha256": "8f0c10ed4d1f455a940e8787c655b5fc20c35622d7ff1bbb744f79afb2dc1243",
+      "review": "Supports declared Unix Makefiles rules/flags/links and ignores regenerated compiler_depend.make caches, while Ninja and Visual Studio behavior stays unchanged."
+    },
+    "test/pocx/inherited_ci.py": {
+      "previous_reviewed_revision": "a175541176185ded6cb1736287532a913ed2db54",
+      "previous_sha256": "b468e0dd9a93706bb7afdbffc17877222a4fed5c168effdbd358bf1eeaa13f6b",
+      "sha256": "237ac870e7fe5c67f626a0a65d5fc315a0154044de09839368e55950e71c7f72",
+      "review": "Extends recipe dependency inventory to cover owned tracing/image helpers; execution order and Windows pair gating unchanged."
+    },
+    "test/pocx/inherited_functional.py": {
+      "previous_reviewed_revision": "e46a1e4ecb8e3c61a1712a055ca70faf5cd42349",
+      "previous_sha256": "cadc51ab9d186e1de4b9388ae207a7f9ac69458074386e7d5ce0890b8d564b86",
+      "sha256": "516ca111810bb927e3a54ddcf44d799d5d6e46cd68249bcec4f00d1ffddd9167",
+      "review": "Recognize unconditional feature guards inherited by a single test class through an unambiguous single-base chain in sibling source modules, without importing or executing those modules. Record the actual declaration source; child overrides, conditional guards, ambiguous classes/bases and cycles remain unverified. Missing enabled prerequisites and failed cases remain failures or unverified. Three existing native wallet-dependent scripts inherit their original skip guard; no test is newly disabled. Existing run commands, original-first ordering, selections, assertions and builds are unchanged."
+    }
+  },
+  "original_failure_reporting_review": "Retain parsed original functional case results before rejecting a failed aggregate/exit, and explicitly record missing original case/transport evidence as unverified. Counts and CSV remain available on failure. Fail-fast original-before-native gating, assertions, selections and successful execution commands are unchanged. Infrastructure fixtures cover actual failed aggregates and abnormal exits; this is not new target-platform runtime evidence.",
+  "inherited_feature_guard_review": "Recognize unconditional feature guards inherited by a single test class through an unambiguous single-base chain in sibling source modules, without importing or executing those modules. Record the actual declaration source; child overrides, conditional guards, ambiguous classes/bases and cycles remain unverified. Missing enabled prerequisites and failed cases remain failures or unverified. Three existing native wallet-dependent scripts inherit their original skip guard; no test is newly disabled. Existing run commands, original-first ordering, selections, assertions and builds are unchanged.",
+  "inherited_cli_guard_review": {
+    "previous_sha256": "1a6b54bf4c50a2188d6834e269cab43aabc012625e0cfaf5d7d2e8d89ee88b85",
+    "sha256": "6fc43cec5640b33de7e34d236a4ded1276720d70171fb5bf899d96f0297802c7",
+    "review": "Record an original or separate native functional CLI opt-out only when --usecli is requested and the statically identified executed test class has one unconditional literal self.supports_cli=False assignment. Unused helper classes, conditional values, overwrites, inherited or ambiguous classes, and non-CLI profiles cannot justify this exclusion. Failed cases and missing enabled prerequisites remain red or unverified. Original test assertions, selections and commands are unchanged; these cases remain required in the already retained non-CLI profiles. Frozen running jobs remain unchanged; their raw reports will be retained independently. An explicitly declared opt-out in a class with plain mixins is accepted only after statically resolving each mixin and rejecting inherited/decorated classes or runtime setup/dispatch/CLI attribute overrides."
+  },
+  "cli_consumer_dependency_review": {
+    "scope": "Synchronize the exact reviewed dependency hashes. No target-platform runtime execution is inferred. Frozen active jobs remain unchanged.",
+    "updates": {
+      "test/pocx/inherited_ci.py": {
+        "previous_sha256": "f4159b0177030cd881e55a9ce876e864f694cf5bdce4cda6d9fdf96af59cd42f",
+        "sha256": "9044f35b052ac10391e5b854efd2851bf162ee55a901c270b17e006e0fbd8744",
+        "review": "a0fb62aaed: add the already reviewed old-BCC header compatibility helper to the inherited source guard; original recipes unchanged."
+      }
+    }
+  },
+  "windows_path_portability_review": {
+    "scope": "Canonical slash-separated repository/source keys and portable filename assertions on Windows; source selection, assertions, flags and historical execution fields unchanged. Current Windows runtime still requires execution; previous Linux runtime records are historical and no new pass is inferred. Revalidate Linux drift/staging/evidence infrastructure.",
+    "sources": {
+      "test/pocx/ci_evidence.py": {
+        "previous_sha256": "8f0c10ed4d1f455a940e8787c655b5fc20c35622d7ff1bbb744f79afb2dc1243",
+        "sha256": "3300f6b9e2510e1725351fccb10b306f4dfac020595f38f30735373b9f34538d"
+      },
+      "test/pocx/test_windows_ci.py": {
+        "previous_sha256": "13a91129fb07c1faa40412488372899923a798b8bfa73e21ee88d61d86f39750",
+        "sha256": "9fe03a9cad21112bd7a964f22e100748463a3dcb6c2190c65b1032bed24b7317"
+      }
+    }
+  },
+  "windows_functional_native_review": {
+    "scope": "Windows native follow-up: short unique source-owned data paths preserve original long wallet names; blank CRCRLF CSV separators ignored but exact inventories/statuses remain required; exact independently localized OS error2 signer expectation in AST-guarded owned view; pre-existing POSIX/Windows unsupported guards reported disabled, never passed; Windows job owns original functional descendants. All upstream source files, assertions, selections and production behavior unchanged. Seven focused Bitcoin reproductions passed; complete original/native platform pairs still require execution. Linux behavior unchanged except portable CSV record handling/source-provenance expansion; revalidate infrastructure.",
+    "sources": {
+      "test/pocx/inherited_ci.py": "e0dc7430cc00fa964f74549a0a4b831a52cd5cee07f9ac7900185398ab598334",
+      "test/pocx/inherited_functional.py": "38faa96c36ca54baabc9206725858729ca41ac78d235d1bb7bd3c299d25bc897",
+      "test/pocx/windows_ci.py": "bec35450318ba0465e1be89370cda825f300cf2be6d76481a1600941e93c9909"
+    }
+  },
+  "product_workflow_reorganization_review": {
+    "scope": "Independent CI (bitcoin/OFF) and CI-POCX (pocx/ON) with shared inherited matrix and explicit selected-product runners. Keep legacy local pairs, source/test drift checks, reviewed exclusions and immutable revision/source/configuration/PE provenance. No assertion, feature, platform-native runtime or upstream recipe changes approved by this organization review.",
+    "selected_product_environment": "CI_PRODUCT=bitcoin or CI_PRODUCT=pocx; unset retains the local ordered pair",
+    "windows_artifact_format": "Format2 holds exactly one product; format1 retains legacy local pairs. Actions producer and consumer require their matching single product at the same frozen revision.",
+    "source_changes": {
+      ".github/workflows/ci-pocx.yml": {
+        "previous_sha256": null,
+        "sha256": "ea2b11ff35304fe0d1ae65fc02c071860b5e7fd6ec6e520dd4832ff5a7ec0341"
+      },
+      ".github/workflows/ci-product.yml": {
+        "previous_sha256": null,
+        "sha256": "0aca92bf412d114ea7cfe745bf9c2393dcae4648eaf8ee695ae2a9b9ccd51bd1"
+      },
+      ".github/workflows/ci.yml": {
+        "previous_sha256": "0faba4651593cda133121fbfc2d31edc32084be95872812dac72dbf1e20bb3dd",
+        "sha256": "25e3550fc74c70ca4ab56a90e7a3d3b776255dbbcd0a71e80ec1df69b061256d"
+      },
+      "test/pocx/ci_evidence.py": {
+        "previous_sha256": "3300f6b9e2510e1725351fccb10b306f4dfac020595f38f30735373b9f34538d",
+        "sha256": "47b4c08cc84dd6bc1425138f24cfd98bb8d014f070b2f8e7fef32483986a4443"
+      },
+      "test/pocx/ci_product.py": {
+        "previous_sha256": null,
+        "sha256": "50989a8e49ae46323fb972bbd1a8077f4ddb7371b236549083afa0681c72d75c"
+      },
+      "test/pocx/inherited_ci.py": {
+        "previous_sha256": "e0dc7430cc00fa964f74549a0a4b831a52cd5cee07f9ac7900185398ab598334",
+        "sha256": "451b7e05f866473c87eaedc25976758a303f1773f533357f03ed0f1488e76061"
+      },
+      "test/pocx/inherited_tests.py": {
+        "previous_sha256": "b1fb1313f9c510735ecbf42cf7d092201031d8516051e463351b233125af3a74",
+        "sha256": "a08946f019b624ecdd5b00709a44fdabf0133dc9de8cc0328ca0c82c70f05d10"
+      },
+      "test/pocx/test_product_workflows.py": {
+        "previous_sha256": null,
+        "sha256": "536e0f1d8b182dfb800751f20d497b55e58ad5c5a055efbba721e995e1d22597"
+      },
+      "test/pocx/test_windows_ci.py": {
+        "previous_sha256": "9fe03a9cad21112bd7a964f22e100748463a3dcb6c2190c65b1032bed24b7317",
+        "sha256": "cef4a20ea0f1a3ecfc9e35df76248852b2703b3b402359c0d7a68e2af83a925a"
+      },
+      "test/pocx/windows_ci.py": {
+        "previous_sha256": "bec35450318ba0465e1be89370cda825f300cf2be6d76481a1600941e93c9909",
+        "sha256": "484a36206a3b854c36c302e7cf0d007afd26246cc3176aa39819f214c0c3bc0b"
+      }
+    },
+    "execution_status": "Source organization reviewed; focused infrastructure validation only. Historical platform results do not establish hosted execution of the new workflows."
+  },
+  "upstream_scope_and_ci_repair_review": {
+    "scope": "Match pinned upstream matrices and push/PR events without additional profiles. Restore original Bitcoin fuzz execution and ordinary fuzz-binary compilation; defer ON fuzz explicitly. Keep product independence and frozen-revision native Windows artifact checks. Add bounded short-path failure diagnostics and raw live build output. Repair inherited lint findings. Restore upstream functional BASE/EXTENDED/exclusion and effective transport selections with format11 proofs and complete-selection RPC coverage. Preserve original optional prerequisite omissions as explicit skips, with mandatory ASan tracing. Original test scenarios/assertions and original environment/driver recipes remain unchanged.",
+    "execution_status": "Changed source revision still requires hosted execution; infrastructure checks do not establish a green product pipeline.",
+    "source_changes": {
+      ".github/workflows/ci-pocx.yml": {
+        "previous_sha256": "ea2b11ff35304fe0d1ae65fc02c071860b5e7fd6ec6e520dd4832ff5a7ec0341",
+        "sha256": "699f0a58e48d1f6348a65d9b0224d870d569da1088b457195aa78b55703fc88f"
+      },
+      ".github/workflows/ci-product.yml": {
+        "previous_sha256": "0aca92bf412d114ea7cfe745bf9c2393dcae4648eaf8ee695ae2a9b9ccd51bd1",
+        "sha256": "b5547b12474809b5be68c4df9babf7c16bed7685f0e4a84805c354f4480c5117"
+      },
+      ".github/workflows/ci.yml": {
+        "previous_sha256": "25e3550fc74c70ca4ab56a90e7a3d3b776255dbbcd0a71e80ec1df69b061256d",
+        "sha256": "178f16dc008944d5158cfe45e84da73c39839949ca82b0a6703805919f05e8a9"
+      },
+      "test/pocx/bitcoin_fuzz_ci.py": {
+        "previous_sha256": null,
+        "sha256": "efb42ae5a382d15b5964c4b808a89f04eefcbeed0a6ce4ecba44640fda905435"
+      },
+      "test/pocx/ci_logging.py": {
+        "previous_sha256": null,
+        "sha256": "4191a50de16f7584bbf61db0068f3b426a5ace1923db5f45556d30f974554661"
+      },
+      "test/pocx/ci_matrix.py": {
+        "previous_sha256": null,
+        "sha256": "79d842b5789ce4df4b2a0cb9777faf2533980cd30ef1978f3761d3f9c6f3108f"
+      },
+      "test/pocx/ci_product.py": {
+        "previous_sha256": "50989a8e49ae46323fb972bbd1a8077f4ddb7371b236549083afa0681c72d75c",
+        "sha256": "07783ef9d57662bff430b33a446d8b11321e3740226fbb53e31a5c217cd1938c"
+      },
+      "test/pocx/common.py": {
+        "previous_sha256": null,
+        "sha256": "9c6d49f8ca052427557fd301d9195a00c6e09542dfd7ed63b15e0a4b81e72772"
+      },
+      "test/pocx/inherited_ci.py": {
+        "previous_sha256": "451b7e05f866473c87eaedc25976758a303f1773f533357f03ed0f1488e76061",
+        "sha256": "d1914ddcc689e1a0a5086a80754b47a23e0340dcfdaa4369a9201d1677208310"
+      },
+      "test/pocx/inherited_functional.py": {
+        "previous_sha256": "38faa96c36ca54baabc9206725858729ca41ac78d235d1bb7bd3c299d25bc897",
+        "sha256": "973625dcf2d81fb8720cdb0541dc6ce4201ceb355b7d47f90cdcf47279012200"
+      },
+      "test/pocx/inherited_prerequisites.py": {
+        "previous_sha256": null,
+        "sha256": "fc24680108346518b53bc32dc2cc626ce74b04d7426145fd3954b9bd61acb2c4"
+      },
+      "test/pocx/inherited_selection.py": {
+        "previous_sha256": null,
+        "sha256": "9d9b69e92ccf55fad6bb3b003b31aa7d366233bf5dbc88581956a1f140dc767e"
+      },
+      "test/pocx/original_windows.py": {
+        "previous_sha256": "2598717ba1d532ebe4444d5cec2ae88f6cfed8132e514658600a71f551336e15",
+        "sha256": "ab008c9c062aa4516c08bf21e5afe8f01ce9d1ddaef64d7e2731068a291d8c49"
+      },
+      "test/pocx/runtime_evidence.py": {
+        "previous_sha256": null,
+        "sha256": "ee1722ab10eba1dde4b66aed7d8f9737de2d171b725cf999b723219b2a5dd1b5"
+      },
+      "test/pocx/test_inherited_selection.py": {
+        "previous_sha256": null,
+        "sha256": "195cf2982f72a156f385d08d504a741b5948f507da2017e121758a6bd8ae44ef"
+      },
+      "test/pocx/test_original_windows.py": {
+        "previous_sha256": "d1ae65726b2ff2017ff72e5026ac80a6c3e6584c4c0c8df4b0e9e0d946c730f3",
+        "sha256": "27f47f07e52a7381e48ca4d1f77220c1efb073073be7f2fcba13a4c002d8c39f"
+      },
+      "test/pocx/test_product_workflows.py": {
+        "previous_sha256": "536e0f1d8b182dfb800751f20d497b55e58ad5c5a055efbba721e995e1d22597",
+        "sha256": "b8a97fa29a37de2a44a5ac9547680196484a94cb15651a47a47cf061557f3ba2"
+      },
+      "test/pocx/test_windows_ci.py": {
+        "previous_sha256": "cef4a20ea0f1a3ecfc9e35df76248852b2703b3b402359c0d7a68e2af83a925a",
+        "sha256": "29970ab78210261789993f72f8ad0ce19924ba76e4dc4f70671097f7d34859c8"
+      },
+      "test/pocx/upstream-ci-matrix.json": {
+        "previous_sha256": null,
+        "sha256": "2db9d8020ca1d07283cbc27a53e8bb3760bfbbfe4b5a805376f04467e64f3f7a"
+      },
+      "test/pocx/windows_ci.py": {
+        "previous_sha256": "484a36206a3b854c36c302e7cf0d007afd26246cc3176aa39819f214c0c3bc0b",
+        "sha256": "fe3f5bd3f7f07f1c39ccac057752880b29b7ace7fccb9e44d9dfcaf25161402c"
+      }
+    }
+  },
+  "testing_review_20261019": {
+    "scope": "Owned functional console reports case names/statuses and explicit reviewed subcase exclusions. Shared MinGW filesystem correction relocated into wallet ownership; same implementation for both products.",
+    "sources": {
+      "test/pocx/inherited_functional.py": "a00bb27b9a3705c3e8e61609b9ad57580eeb307f6028f3b345033af71d09957d",
+      "src/wallet/db.cpp": "698cb5b8a40a21ffbc2e63ce8bcab9b6b1049ff57fd3c91ecd030874b6aec564",
+      "src/wallet/wallet.cpp": "a1f338dc22725c3d9fdcaa529ca91b2aff58fdda90ca8625412faa6def10947b",
+      "src/wallet/windows_fs.h": "e668a5f55252976d7031c91b2e86c284d8fd05f3c14bbf986de809ac24c7d2e5"
+    }
+  },
+  "unit_matrix_self_test_review": "The existing shared lint job executes test_unit_matrix.py after source drift checks and before inherited lint for each independently selected product. Configuration self-tests derive exact membership from the fixed original baseline and reviewed PoCX case lists, including debug and wallet-disabled variants. No matrix profiles, product cases, runner dependencies or artifact selection rules change.",
+  "fuzz_parity_review": "The inherited OFF fuzz recipe, matrices and platform toolchain remain pinned. The corresponding ON rows select the separate reviewed PoCX fuzz sources, complete inherited corpora, native additions, strict registration/execution and provenance. Native Windows/macOS and hosted runs remain unverified locally; this records source review only."
+}

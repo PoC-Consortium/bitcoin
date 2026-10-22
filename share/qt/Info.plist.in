@@ -54,7 +54,7 @@
       <string>org.bitcoin.BitcoinPayment</string>
       <key>CFBundleURLSchemes</key>
       <array>
-        <string>bitcoin</string>
+        <string>@CLIENT_URI_SCHEME@</string>
       </array>
     </dict>
   </array>

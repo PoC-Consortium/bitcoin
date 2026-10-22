@@ -26,6 +26,9 @@
 #include <qt/walletframe.h>
 #include <qt/walletmodel.h>
 #include <qt/walletview.h>
+#ifdef ENABLE_POCX
+#include <qt/forgingassignmentdialog.h>
+#endif
 #endif // ENABLE_WALLET
 
 #ifdef Q_OS_MACOS
@@ -270,11 +273,23 @@ void BitcoinGUI::createActions()
     tabGroup->addAction(sendCoinsAction);
 
     receiveCoinsAction = new QAction(platformStyle->SingleColorIcon(":/icons/receiving_addresses"), tr("&Receive"), this);
+#ifdef ENABLE_POCX
+    receiveCoinsAction->setStatusTip(tr("Request payments (generates QR codes and btcx: URIs)"));
+#else
     receiveCoinsAction->setStatusTip(tr("Request payments (generates QR codes and bitcoin: URIs)"));
+#endif
     receiveCoinsAction->setToolTip(receiveCoinsAction->statusTip());
     receiveCoinsAction->setCheckable(true);
     receiveCoinsAction->setShortcut(QKeySequence(QStringLiteral("Alt+3")));
     tabGroup->addAction(receiveCoinsAction);
+
+#ifdef ENABLE_POCX
+    forgingAssignmentAction = new QAction(platformStyle->SingleColorIcon(":/icons/tx_mined"), tr("&Forging Assignment"), this);
+    forgingAssignmentAction->setStatusTip(tr("Manage forging rights assignments for your plots"));
+    forgingAssignmentAction->setToolTip(forgingAssignmentAction->statusTip());
+    forgingAssignmentAction->setCheckable(true);
+    tabGroup->addAction(forgingAssignmentAction);
+#endif
 
     historyAction = new QAction(platformStyle->SingleColorIcon(":/icons/history"), tr("&Transactions"), this);
     historyAction->setStatusTip(tr("Browse transaction history"));
@@ -294,6 +309,10 @@ void BitcoinGUI::createActions()
     connect(receiveCoinsAction, &QAction::triggered, this, &BitcoinGUI::gotoReceiveCoinsPage);
     connect(historyAction, &QAction::triggered, [this]{ showNormalIfMinimized(); });
     connect(historyAction, &QAction::triggered, this, &BitcoinGUI::gotoHistoryPage);
+#ifdef ENABLE_POCX
+    connect(forgingAssignmentAction, &QAction::triggered, [this]{ showNormalIfMinimized(); });
+    connect(forgingAssignmentAction, &QAction::triggered, this, &BitcoinGUI::gotoForgingAssignmentPage);
+#endif
 #endif // ENABLE_WALLET
 
     quitAction = new QAction(tr("E&xit"), this);
@@ -340,7 +359,11 @@ void BitcoinGUI::createActions()
     usedReceivingAddressesAction->setStatusTip(tr("Show the list of used receiving addresses and labels"));
 
     openAction = new QAction(tr("Open &URI…"), this);
+#ifdef ENABLE_POCX
+    openAction->setStatusTip(tr("Open a btcx: URI"));
+#else
     openAction->setStatusTip(tr("Open a bitcoin: URI"));
+#endif
 
     m_open_wallet_action = new QAction(tr("Open Wallet"), this);
     m_open_wallet_action->setEnabled(false);
@@ -636,6 +659,9 @@ void BitcoinGUI::createToolBars()
         toolbar->addAction(overviewAction);
         toolbar->addAction(sendCoinsAction);
         toolbar->addAction(receiveCoinsAction);
+#ifdef ENABLE_POCX
+        toolbar->addAction(forgingAssignmentAction);
+#endif
         toolbar->addAction(historyAction);
         overviewAction->setChecked(true);
 
@@ -1028,6 +1054,14 @@ void BitcoinGUI::gotoSendCoinsPage(QString addr)
     sendCoinsAction->setChecked(true);
     if (walletFrame) walletFrame->gotoSendCoinsPage(addr);
 }
+
+#ifdef ENABLE_POCX
+void BitcoinGUI::gotoForgingAssignmentPage()
+{
+    forgingAssignmentAction->setChecked(true);
+    if (walletFrame) walletFrame->gotoForgingAssignmentPage();
+}
+#endif
 
 void BitcoinGUI::gotoSignMessageTab(QString addr)
 {

@@ -20,7 +20,9 @@
 #include <any>
 
 using node::NodeContext;
+#ifndef ENABLE_POCX
 using node::UpdateTime;
+#endif
 
 NodeContext& EnsureAnyNodeContext(const std::any& context)
 {
@@ -134,6 +136,7 @@ AddrMan& EnsureAnyAddrman(const std::any& context)
     return EnsureAddrman(EnsureAnyNodeContext(context));
 }
 
+#ifndef ENABLE_POCX
 void NextEmptyBlockIndex(CBlockIndex& tip, const Consensus::Params& consensusParams, CBlockIndex& next_index)
 {
     CBlockHeader next_header{};
@@ -148,3 +151,4 @@ void NextEmptyBlockIndex(CBlockIndex& tip, const Consensus::Params& consensusPar
     next_index.nNonce = next_header.nNonce;
     next_index.nHeight = tip.nHeight + 1;
 }
+#endif

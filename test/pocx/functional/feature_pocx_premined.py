@@ -1,0 +1,153 @@
+#!/usr/bin/env python3
+# Copyright (c) 2026 The Bitcoin PoCX developers
+# Distributed under the MIT software license; see COPYING.
+"""Verify the shared pre-funded fixture before migrating its upstream consumers."""
+from decimal import Decimal
+from pathlib import Path
+from unittest.mock import patch
+from test_framework import blocktools
+from test_framework.address import address_to_scriptpubkey, create_deterministic_address_bcrt1_p2tr_op_true
+from test_framework.test_framework import BitcoinTestFramework
+from test_framework.test_node import TestNode
+from test_framework.util import assert_equal
+
+
+class PoCXPreminedTest(BitcoinTestFramework):
+    def set_test_params(self):
+        self.num_nodes = 3
+        self.uses_wallet = True
+        # Exercise the default upstream pre-funded fixture, not clean-chain setup.
+
+    def skip_test_if_missing_module(self):
+        self.skip_if_no_wallet()
+
+    def run_test(self):
+        tips = [node.getbestblockhash() for node in self.nodes]
+        assert_equal(len(set(tips)), 1)
+        taproot = create_deterministic_address_bcrt1_p2tr_op_true()[0]
+        addresses = [key.address for key in TestNode.PRIV_KEYS[:3]] + [taproot]
+        first = self.nodes[0]
+        genesis = first.getblockhash(0)
+        previous = genesis
+        allocations = [0] * 4
+        for height in range(1, 201):
+            blockhash = first.getblockhash(height)
+            block = first.getblock(blockhash, 2)
+            assert_equal(block['height'], height)
+            assert_equal(block['previousblockhash'], previous)
+            assert_equal(block['confirmations'], 201 - height)
+            owner = ((height - 1) // 25) % 4 if height < 200 else 0
+            output = block['tx'][0]['vout'][0]
+            assert_equal(output['value'], Decimal('10'))
+            assert_equal(output['scriptPubKey']['hex'], address_to_scriptpubkey(addresses[owner]).hex())
+            allocations[owner] += 1
+            previous = blockhash
+        assert_equal(allocations, [51, 50, 50, 49])
+        for index, node in enumerate(self.nodes):
+            assert_equal(node.getblockcount(), 200)
+            assert_equal(node.getblockchaininfo()['initialblockdownload'], False)
+            assert_equal(node.getbalance(), Decimal('250'))
+            balances = node.getbalances()['mine']
+            assert_equal(balances['trusted'], Decimal('250'))
+            assert_equal(balances['immature'], Decimal('260' if index == 0 else '250'))
+            destination = node.get_deterministic_priv_key().address
+            assert destination.startswith('rpocx1')
+            assert_equal(node.getaddressinfo(destination)['ismine'], True)
+            assert_equal(node.validateaddress(destination)['scriptPubKey'], address_to_scriptpubkey(destination).hex())
+            assert node.verifychain(4, 0)
+        # Demonstrate that deterministic generate() uses the owned destination
+        # and that funded wallets can spend, relay and confirm through real nodes.
+        recipient = self.nodes[1].getnewaddress()
+        transaction = first.sendtoaddress(recipient, Decimal('1'))
+        self.sync_mempools()
+        assert transaction in self.nodes[2].getrawmempool()
+        blocks = self.generate(first, 1)
+        assert_equal(first.getblockcount(), 201)
+        assert_equal(first.gettransaction(transaction)['confirmations'], 1)
+        assert_equal(first.getblock(blocks[0], 2)['tx'][0]['vout'][0]['scriptPubKey']['hex'],
+                     address_to_scriptpubkey(first.get_deterministic_priv_key().address).hex())
+        assert_equal(list(Path(self.options.cachedir).glob('**/blocks')), [])
+
+        # A fast machine can relay a whole batch before a download expires.
+        # Require an explicit, completed relay barrier before the next proof
+        # preview, so this catches the clock race regardless of scheduling.
+        pending = []
+        original_generate = first.generate
+        original_preview = blocktools.create_pocx_block
+        original_sync_blocks = self.sync_blocks
+
+        def mine(*args, **kwargs):
+            blocks = original_generate(*args, **kwargs)
+            pending.extend(blocks)
+            return blocks
+
+        def preview(*args, **kwargs):
+            assert_equal(pending, [])
+            return original_preview(*args, **kwargs)
+
+        def relay(*args, **kwargs):
+            original_sync_blocks(*args, **kwargs)
+            assert all(node.getbestblockhash() == first.getbestblockhash() for node in self.nodes)
+            pending.clear()
+
+        with patch.object(first, 'generate', side_effect=mine), patch.object(
+                blocktools, 'create_pocx_block', side_effect=preview), patch.object(
+                self, 'sync_blocks', side_effect=relay):
+            generated = self.generate(first, 6)
+        assert_equal(len(generated), 6)
+        assert_equal(pending, [])
+
+        # The default batch must also build a replacement from a shorter fork.
+        # Observers cannot adopt its first block: they still have more work.
+        # Requiring matching tips between every block would deadlock here.
+        self.log.info('Generate through a shorter competing fork before synchronizing all peers')
+        old_tip = first.getbestblockhash()
+        first.invalidateblock(generated[-3])
+        assert int(first.getblockchaininfo()['chainwork'], 16) < int(
+            self.nodes[1].getblockchaininfo()['chainwork'], 16)
+        assert_equal(self.nodes[1].getbestblockhash(), old_tip)
+        replacement = self.generatetoaddress(first, 5, first.getnewaddress())
+        assert_equal(len(replacement), 5)
+        assert all(node.getbestblockhash() == replacement[-1] for node in self.nodes)
+        assert all(node.getpeerinfo() for node in self.nodes)
+
+        # Synchronization waits advance the fixture clock too. A stopped node
+        # must retain that progress for restart, even if no more blocks follow.
+        self.log.info('Preserve stopped-node clocks during block and mempool synchronization')
+        stopped = self.nodes[2]
+        self.stop_node(2)
+        active = self.nodes[:2]
+        observer = active[1]
+        stale_tip = observer.getblockhash(observer.getblockcount() - 1)
+        for method, synchronize, stale in (
+                ('getbestblockhash', self.sync_blocks, stale_tip),
+                ('getrawmempool', self.sync_mempools, [transaction])):
+            self.log.info('Check stopped-node clock after a delayed %s poll', method)
+            query = getattr(observer, method)
+            reads = []
+
+            def delayed_poll(*args, **kwargs):
+                # One stale observation deterministically exercises the wait,
+                # including on machines where relay already finished.
+                reads.append(None)
+                return stale if len(reads) == 1 else query(*args, **kwargs)
+
+            previous_clock = stopped.mocktime
+            with patch.object(observer, method, side_effect=delayed_poll), patch.object(
+                    stopped, 'setmocktime', side_effect=AssertionError('RPC on a stopped node')):
+                synchronize(active, wait=0.05)
+            assert len(reads) >= 2
+            assert stopped.mocktime > previous_clock
+            assert_equal(stopped.mocktime, max(node.mocktime for node in active))
+            assert_equal(stopped.running, False)
+
+        restart_clock = stopped.mocktime
+        self.start_node(2)
+        assert_equal(stopped.mocktime, restart_clock)
+        self.connect_nodes(1, 2)
+        self.sync_all()
+        assert all(node.getbestblockhash() == replacement[-1] for node in self.nodes)
+
+
+if __name__ == '__main__':
+    PoCXPreminedTest(__file__).main()

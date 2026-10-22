@@ -1,0 +1,67 @@
+{
+  "scope": "Authoritative product workflow configuration; not execution evidence.",
+  "upstream_revision": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
+  "upstream_reference_run": "https://github.com/bitcoin/bitcoin/actions/runs/28793907018",
+  "matrix_source": "test/pocx/upstream-ci-matrix.json",
+  "matrix_selector": "test/pocx/ci_matrix.py",
+  "products": {
+    "bitcoin": {
+      "workflow": ".github/workflows/ci.yml",
+      "name": "CI",
+      "ENABLE_POCX": "OFF",
+      "fuzz": {
+        "configurations": "inherited",
+        "target_suite": "bitcoin"
+      }
+    },
+    "pocx": {
+      "workflow": ".github/workflows/ci-pocx.yml",
+      "name": "CI-POCX",
+      "ENABLE_POCX": "ON",
+      "fuzz": {
+        "configurations": "inherited",
+        "target_suite": "pocx"
+      }
+    }
+  },
+  "shared_workflow": ".github/workflows/ci-product.yml",
+  "jobs": [
+    "runners",
+    "test-each-commit",
+    "macos-native-arm64",
+    "windows-native-dll",
+    "record-frozen-commit",
+    "windows-cross",
+    "windows-native-test",
+    "ci-matrix",
+    "lint"
+  ],
+  "windows_crts": [
+    "msvcrt",
+    "ucrt"
+  ],
+  "events": [
+    "push",
+    "pull_request"
+  ],
+  "ancestor_condition": "Multi-commit pull requests only, as upstream.",
+  "additional_matrix_configurations": [],
+  "additional_scheduled_or_manual_profiles": [],
+  "pocx_case_policy": "Reviewed inherited adaptations, legitimate PoCX-only cases and justified PoW exclusions within corresponding inherited configurations; no extra platform/configuration combinations.",
+  "source_reviews": [
+    "test/pocx/inherited-ci.json",
+    "test/pocx/windows-ci.json",
+    "test/pocx/windows-artifacts.json",
+    "test/pocx/upstream-functional-parity.json"
+  ],
+  "windows_artifact_policy": "Each product produces and consumes its own matching frozen-revision artifact per CRT, without an other-product test prerequisite; native Windows execution remains required.",
+  "status_policy": "Failures, skips, inactive cases, cancellations, unverified cases and reviewed exclusions remain distinct from passes.",
+  "pending_repairs": [
+    "Verify exact inherited functional selections and original optional prerequisite boundaries on hosted platforms.",
+    "Verify current PoCX fuzz configurations on native macOS and Windows and in hosted Linux CI.",
+    "Verify current OFF fuzz configurations on their target platforms at the matching revision."
+  ],
+  "execution_status": "Changed configuration requires matching-revision hosted verification; infrastructure checks are not proof of a green pipeline.",
+  "functional_selection": "Inherited BASE/EXTENDED, explicit exclusions and effective per-case transports. Format11 proofs bind selection and RPC coverage; PoCX-only cases remain within corresponding configurations.",
+  "optional_prerequisites": "Preserve original packages and privileges; BCC required only in ASan. Source-guarded missing optional modules remain upstream-optional-skip, never pass."
+}

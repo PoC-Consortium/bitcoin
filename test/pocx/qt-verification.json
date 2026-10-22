@@ -1,0 +1,54 @@
+{
+  "status": "passed",
+  "verified_at_utc": "2026-10-09T11:31:35Z",
+  "source_revision": "4733fb8c0598c38004f7fd8d277da34488be27a2",
+  "scope": "Qt ownership cleanup: Linux Qt 6.8.2 Release, GUI/tests/wallet/IPC ON, kernel/fuzz/USDT OFF. Standalone Qt package, independent of pending kernel/functional/fuzz/combined-CI packages.",
+  "bitcoin_original_green": 9,
+  "pocx_original_reused_green": 7,
+  "pocx_original_adapted_green": 2,
+  "pocx_additional_native_green": 1,
+  "pocx_additional_native_assertions": 9,
+  "failed": 0,
+  "skipped": 0,
+  "missing_original": 0,
+  "excluded_original": 0,
+  "original_cpp_header_files_upstream_identical": 15,
+  "remaining_inline_pocx_adaptations": 0,
+  "source_review_sha256": "dc028f0c7adb3425a046f07c2007650d0b07e8af212cc128f4d4cb8af67243d9",
+  "raw_evidence": {
+    "bitcoin": "artifacts/qt-package-20261009/bitcoin-verification.json",
+    "pocx": "artifacts/qt-package-20261009/pocx-verification.json",
+    "source_audit": "artifacts/qt-package-20261009/standalone-source-audit.json",
+    "shared_infrastructure": "artifacts/ownership-cleanup-20261009/shared-infrastructure.log",
+    "bitcoin_build": "build-b/qt-package-bitcoin/build.json",
+    "pocx_build": "build-p/qt-package-pocx/build.json"
+  },
+  "limitations": [
+    "This establishes parity with the original Qt suite and preserves the nine existing native URI assertions.",
+    "Dedicated Qt coverage for forging-assignment/revocation dialogs and native transaction presentation remains absent.",
+    "Source ownership drift is guarded by qt_parity.py; permanent runtime case-membership integration into the packaged Qt CI runner remains separate work."
+  ],
+  "standalone_package_verified": true,
+  "standalone_checkout": "/home/johnny/Code/bitcoin-pocx/bitcoin-unit-package-20261009",
+  "profiles": {
+    "bitcoin": {
+      "complete_pass": true,
+      "methods_green": 9,
+      "owned_qt_sources": [],
+      "binary_sha256": "77f7cba32c3475ea70f373dcb09598c32313efd8252a639e2289ebbdcb37108a",
+      "cache_sha256": "237d8404bb0cdcb3adcf1b025556da188383048ddf54315c3146b95d0c02dda6"
+    },
+    "pocx": {
+      "complete_pass": true,
+      "methods_green": 10,
+      "owned_qt_sources": [
+        "src/pocx/test/qt/pocxuritests.cpp",
+        "src/pocx/test/qt/rpcnestedtests.cpp",
+        "src/pocx/test/qt/test_main.cpp",
+        "src/pocx/test/qt/wallettests.cpp"
+      ],
+      "binary_sha256": "8b67e4813daeae582f3e12f9147b4d507563fed7002ae6d5fc7dbd2b2ac7dcf2",
+      "cache_sha256": "2c2da6a5337e563c4adf5a264b9861fa172f7f1e1135a4247eb1c237473309bb"
+    }
+  }
+}

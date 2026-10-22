@@ -1,0 +1,1036 @@
+{
+  "scope": "Full inherited fuzz target membership with separate native adaptations; classifications are source review decisions, not saved runtime pass claims.",
+  "baseline_sha256": "26931d13b1b61638a0cc7c7d0683281d3689d9341013244624d5d1d621dc3671",
+  "hosted_replay_ceiling_seconds": {
+    "per_target": 14400,
+    "whole_run": 18900,
+    "review": "PoCX ASan full replay passed in 4h30 with its slowest target at 2h57; these ceilings leave headroom and fail before the six-hour hosted job limit."
+  },
+  "targets": {
+    "addition_overflow": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/addition_overflow.cpp"
+    },
+    "addr_info_deserialize": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/deserialize.cpp"
+    },
+    "address_deserialize": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/deserialize.cpp"
+    },
+    "addrman": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/addrman.cpp"
+    },
+    "addrman_serdeser": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/addrman.cpp"
+    },
+    "asmap": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/asmap.cpp"
+    },
+    "asmap_direct": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/asmap_direct.cpp"
+    },
+    "autofile": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/autofile.cpp"
+    },
+    "banman": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/banman.cpp"
+    },
+    "base32_encode_decode": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/base_encode_decode.cpp"
+    },
+    "base58_encode_decode": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/base_encode_decode.cpp"
+    },
+    "base58check_encode_decode": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/base_encode_decode.cpp"
+    },
+    "base64_encode_decode": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/base_encode_decode.cpp"
+    },
+    "bech32_random_decode": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/bech32.cpp"
+    },
+    "bech32_roundtrip": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/bech32.cpp"
+    },
+    "bip324_cipher_roundtrip": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/bip324.cpp"
+    },
+    "bip324_ecdh": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/key.cpp"
+    },
+    "bitdeque": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/bitdeque.cpp"
+    },
+    "bitset": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/bitset.cpp"
+    },
+    "block": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/block.cpp"
+    },
+    "block_deserialize": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/deserialize.cpp"
+    },
+    "block_file_info_deserialize": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/deserialize.cpp"
+    },
+    "block_filter_deserialize": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/deserialize.cpp"
+    },
+    "block_header": {
+      "classification": "adapted",
+      "replacement": "src/pocx/test/fuzz/adapted/block_header.cpp",
+      "review": "Preserve all inherited hash, time, null/reset and locator assertions. Parse the full native wire header and add byte roundtrip/signature-excluded-hash invariants; nBaseTarget replaces nBits."
+    },
+    "block_header_and_short_txids_deserialize": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/deserialize.cpp"
+    },
+    "block_index": {
+      "classification": "adapted",
+      "replacement": "src/pocx/test/fuzz/adapted/block_index.cpp",
+      "review": "Preserve database metadata roundtrip, flag and load assertions. Native base target and nonce replace compact PoW fields. LoadBlockIndexGuts tests metadata decoding; this does not claim disk proof validation."
+    },
+    "block_index_tree": {
+      "classification": "adapted",
+      "replacement": "src/pocx/test/fuzz/adapted/block_index_tree.cpp",
+      "review": "Preserve mocked tree operations and all tree-work/pruning/activation assertions; native parent height, target and nonce retain unique header identities. Original validation is deliberately mocked in this harness."
+    },
+    "blockfilter": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/blockfilter.cpp"
+    },
+    "blockheader_deserialize": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/deserialize.cpp"
+    },
+    "blocklocator_deserialize": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/deserialize.cpp"
+    },
+    "blockmerkleroot": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/deserialize.cpp"
+    },
+    "blocktransactions_deserialize": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/deserialize.cpp"
+    },
+    "blocktransactionsrequest_deserialize": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/deserialize.cpp"
+    },
+    "blockundo_deserialize": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/deserialize.cpp"
+    },
+    "bloom_filter": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/bloom_filter.cpp"
+    },
+    "bloomfilter_deserialize": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/deserialize.cpp"
+    },
+    "bnb_finds_min_waste": {
+      "classification": "reused",
+      "replacement": "src/wallet/test/fuzz/coinselection.cpp"
+    },
+    "buffered_file": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/buffered_file.cpp"
+    },
+    "build_and_compare_feerate_diagram": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/feeratediagram.cpp"
+    },
+    "chacha20_split_crypt": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/crypto_chacha20.cpp"
+    },
+    "chacha20_split_keystream": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/crypto_chacha20.cpp"
+    },
+    "chain": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/chain.cpp"
+    },
+    "checkqueue": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/checkqueue.cpp"
+    },
+    "clusterlin_chunking": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/cluster_linearize.cpp"
+    },
+    "clusterlin_components": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/cluster_linearize.cpp"
+    },
+    "clusterlin_depgraph_serialization": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/cluster_linearize.cpp"
+    },
+    "clusterlin_depgraph_sim": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/cluster_linearize.cpp"
+    },
+    "clusterlin_linearize": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/cluster_linearize.cpp"
+    },
+    "clusterlin_make_connected": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/cluster_linearize.cpp"
+    },
+    "clusterlin_postlinearize": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/cluster_linearize.cpp"
+    },
+    "clusterlin_postlinearize_moved_leaf": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/cluster_linearize.cpp"
+    },
+    "clusterlin_postlinearize_tree": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/cluster_linearize.cpp"
+    },
+    "clusterlin_sfl": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/cluster_linearize.cpp"
+    },
+    "clusterlin_simple_finder": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/cluster_linearize.cpp"
+    },
+    "clusterlin_simple_linearize": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/cluster_linearize.cpp"
+    },
+    "coin_grinder": {
+      "classification": "reused",
+      "replacement": "src/wallet/test/fuzz/coinselection.cpp"
+    },
+    "coin_grinder_is_optimal": {
+      "classification": "reused",
+      "replacement": "src/wallet/test/fuzz/coinselection.cpp"
+    },
+    "coincontrol": {
+      "classification": "reused",
+      "replacement": "src/wallet/test/fuzz/coincontrol.cpp"
+    },
+    "coins_deserialize": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/deserialize.cpp"
+    },
+    "coins_view": {
+      "classification": "adapted",
+      "replacement": "src/pocx/test/fuzz/adapted/coins_view.cpp",
+      "review": "Preserve every cache-mutation, UTXO and DB assertion. Extend the BatchWrite override to accept and forward native assignment/deletion maps, retaining the original mutation guard before and after the base implementation."
+    },
+    "coins_view_db": {
+      "classification": "adapted",
+      "replacement": "src/pocx/test/fuzz/adapted/coins_view.cpp",
+      "review": "Preserve every cache-mutation, UTXO and DB assertion. Extend the BatchWrite override to accept and forward native assignment/deletion maps, retaining the original mutation guard before and after the base implementation."
+    },
+    "coins_view_overlay": {
+      "classification": "adapted",
+      "replacement": "src/pocx/test/fuzz/adapted/coins_view.cpp",
+      "review": "Preserve every cache-mutation, UTXO and DB assertion. Extend the BatchWrite override to accept and forward native assignment/deletion maps, retaining the original mutation guard before and after the base implementation."
+    },
+    "coinscache_sim": {
+      "classification": "adapted",
+      "replacement": "src/pocx/test/fuzz/adapted/coinscache_sim.cpp",
+      "review": "Preserve the complete UTXO cache hierarchy simulation and all original assertions. Extend the bottom view BatchWrite signature for native assignment/deletion maps and require both maps empty, because this inherited harness creates only UTXOs. Native assignment state has its own model-based target."
+    },
+    "coinselection_bnb": {
+      "classification": "reused",
+      "replacement": "src/wallet/test/fuzz/coinselection.cpp"
+    },
+    "coinselection_knapsack": {
+      "classification": "reused",
+      "replacement": "src/wallet/test/fuzz/coinselection.cpp"
+    },
+    "coinselection_srd": {
+      "classification": "reused",
+      "replacement": "src/wallet/test/fuzz/coinselection.cpp"
+    },
+    "connman": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/connman.cpp"
+    },
+    "crypter": {
+      "classification": "reused",
+      "replacement": "src/wallet/test/fuzz/crypter.cpp"
+    },
+    "crypto": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/crypto.cpp"
+    },
+    "crypto_aeadchacha20poly1305": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/crypto_chacha20poly1305.cpp"
+    },
+    "crypto_aes256": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/crypto_aes256.cpp"
+    },
+    "crypto_aes256cbc": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/crypto_aes256cbc.cpp"
+    },
+    "crypto_chacha20": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/crypto_chacha20.cpp"
+    },
+    "crypto_common": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/crypto_common.cpp"
+    },
+    "crypto_diff_fuzz_chacha20": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/crypto_diff_fuzz_chacha20.cpp"
+    },
+    "crypto_fschacha20": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/crypto_chacha20.cpp"
+    },
+    "crypto_fschacha20poly1305": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/crypto_chacha20poly1305.cpp"
+    },
+    "crypto_hkdf_hmac_sha256_l32": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/crypto_hkdf_hmac_sha256_l32.cpp"
+    },
+    "crypto_poly1305": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/crypto_poly1305.cpp"
+    },
+    "crypto_poly1305_split": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/crypto_poly1305.cpp"
+    },
+    "cuckoocache": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/cuckoocache.cpp"
+    },
+    "data_stream_addr_man": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/addrman.cpp"
+    },
+    "decode_tx": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/decode_tx.cpp"
+    },
+    "descriptor_parse": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/descriptor_parse.cpp"
+    },
+    "difference_formatter": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/difference_formatter.cpp"
+    },
+    "diskblockindex_deserialize": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/deserialize.cpp"
+    },
+    "ellswift_roundtrip": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/key.cpp"
+    },
+    "ephemeral_package_eval": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/package_eval.cpp"
+    },
+    "eval_script": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/eval_script.cpp"
+    },
+    "fee_rate": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/fee_rate.cpp"
+    },
+    "fee_rate_deserialize": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/deserialize.cpp"
+    },
+    "feefrac": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/feefrac.cpp"
+    },
+    "feefrac_div_fallback": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/feefrac.cpp"
+    },
+    "feefrac_mul_div": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/feefrac.cpp"
+    },
+    "fees": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/fees.cpp"
+    },
+    "flat_file_pos_deserialize": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/deserialize.cpp"
+    },
+    "flatfile": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/flatfile.cpp"
+    },
+    "float": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/float.cpp"
+    },
+    "golomb_rice": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/golomb_rice.cpp"
+    },
+    "headers_sync_state": {
+      "classification": "adapted",
+      "replacement": "src/pocx/test/fuzz/adapted/headerssync.cpp",
+      "review": "Preserve the headers-sync loop, redownload and minimum-work assertion using actual mainnet parameters. Initialize native next target. Optional continuity repair also repairs native generation signature, target and zero-deadline timing, so repaired inputs reach both sync phases."
+    },
+    "hex": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/hex.cpp"
+    },
+    "http_request": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/http_request.cpp"
+    },
+    "i2p": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/i2p.cpp"
+    },
+    "integer": {
+      "classification": "adapted",
+      "replacement": "src/pocx/test/fuzz/adapted/integer.cpp",
+      "review": "Preserve all non-PoW integer/assertion coverage. Replace the single CheckProofOfWorkImpl call with native GetBlockProof arithmetic; the original PoW hash threshold operation is inapplicable."
+    },
+    "inv_deserialize": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/deserialize.cpp"
+    },
+    "key": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/key.cpp"
+    },
+    "key_io": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/key_io.cpp"
+    },
+    "key_origin_info_deserialize": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/deserialize.cpp"
+    },
+    "kitchen_sink": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/kitchen_sink.cpp"
+    },
+    "load_external_block_file": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/load_external_block_file.cpp"
+    },
+    "local_address": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/net.cpp"
+    },
+    "locale": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/locale.cpp"
+    },
+    "merkle": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/merkle.cpp"
+    },
+    "merkle_block_deserialize": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/deserialize.cpp"
+    },
+    "merkleblock": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/merkleblock.cpp"
+    },
+    "message": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/message.cpp"
+    },
+    "messageheader_deserialize": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/deserialize.cpp"
+    },
+    "mini_miner": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/mini_miner.cpp"
+    },
+    "miniscript_script": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/miniscript.cpp"
+    },
+    "miniscript_smart": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/miniscript.cpp"
+    },
+    "miniscript_stable": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/miniscript.cpp"
+    },
+    "miniscript_string": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/miniscript.cpp"
+    },
+    "minisketch": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/minisketch.cpp"
+    },
+    "mocked_descriptor_parse": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/descriptor_parse.cpp"
+    },
+    "muhash": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/muhash.cpp"
+    },
+    "multiplication_overflow": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/multiplication_overflow.cpp"
+    },
+    "natpmp_request_port_map": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/pcp.cpp"
+    },
+    "net": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/net.cpp"
+    },
+    "net_permissions": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/net_permissions.cpp"
+    },
+    "netaddr_deserialize": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/deserialize.cpp"
+    },
+    "netaddress": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/netaddress.cpp"
+    },
+    "netbase_dns_lookup": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/netbase_dns_lookup.cpp"
+    },
+    "node_eviction": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/node_eviction.cpp"
+    },
+    "num3072_inv": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/muhash.cpp"
+    },
+    "num3072_mul": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/muhash.cpp"
+    },
+    "out_point_deserialize": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/deserialize.cpp"
+    },
+    "overflow": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/overflow.cpp"
+    },
+    "p2p_handshake": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/p2p_handshake.cpp"
+    },
+    "p2p_headers_presync": {
+      "classification": "adapted",
+      "replacement": "src/pocx/test/fuzz/adapted/p2p_headers_presync.cpp",
+      "review": "Preserve all low-work header, compact-block and block message paths and both work/index-growth assertions. Select regtest with an explicit high minimumchainwork fixture because native mainnet intentionally starts at zero. Use the existing synthetic capacity proof and real signing path instead of the inherited fuzz-only PoW shortcut."
+    },
+    "p2p_transport_bidirectional": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/p2p_transport_serialization.cpp"
+    },
+    "p2p_transport_bidirectional_v1v2": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/p2p_transport_serialization.cpp"
+    },
+    "p2p_transport_bidirectional_v2": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/p2p_transport_serialization.cpp"
+    },
+    "p2p_transport_serialization": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/p2p_transport_serialization.cpp"
+    },
+    "package_rbf": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/rbf.cpp"
+    },
+    "parse_hd_keypath": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/parse_hd_keypath.cpp"
+    },
+    "parse_iso8601": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/parse_iso8601.cpp"
+    },
+    "parse_numbers": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/parse_numbers.cpp"
+    },
+    "parse_script": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/parse_script.cpp"
+    },
+    "parse_univalue": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/parse_univalue.cpp"
+    },
+    "partial_merkle_tree_deserialize": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/deserialize.cpp"
+    },
+    "partially_downloaded_block": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/partially_downloaded_block.cpp"
+    },
+    "partially_signed_transaction_deserialize": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/deserialize.cpp"
+    },
+    "pcp_request_port_map": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/pcp.cpp"
+    },
+    "policy_estimator": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/policy_estimator.cpp"
+    },
+    "policy_estimator_io": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/policy_estimator_io.cpp"
+    },
+    "pool_resource": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/poolresource.cpp"
+    },
+    "pow": {
+      "classification": "excluded",
+      "reason": "SHA256/nBits PoW hash-threshold, compact-target and PoW retarget operations is replaced by PoCX. Native retarget/envelope/generation-signature fuzzing is provided by pocx_difficulty; generic chainwork arithmetic remains covered by integer and block_index_tree."
+    },
+    "pow_transition": {
+      "classification": "excluded",
+      "reason": "SHA256/nBits PoW difficulty transition across a Bitcoin adjustment interval is replaced by PoCX. Native retarget/envelope/generation-signature fuzzing is provided by pocx_difficulty; generic chainwork arithmetic remains covered by integer and block_index_tree."
+    },
+    "prefilled_transaction_deserialize": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/deserialize.cpp"
+    },
+    "prevector": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/prevector.cpp"
+    },
+    "primitives_transaction": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/primitives_transaction.cpp"
+    },
+    "process_message": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/process_message.cpp"
+    },
+    "process_messages": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/process_messages.cpp"
+    },
+    "protocol": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/protocol.cpp"
+    },
+    "psbt": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/psbt.cpp"
+    },
+    "psbt_base64_decode": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/base_encode_decode.cpp"
+    },
+    "psbt_input_deserialize": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/deserialize.cpp"
+    },
+    "psbt_output_deserialize": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/deserialize.cpp"
+    },
+    "pub_key_deserialize": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/deserialize.cpp"
+    },
+    "random": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/random.cpp"
+    },
+    "rbf": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/rbf.cpp"
+    },
+    "rolling_bloom_filter": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/rolling_bloom_filter.cpp"
+    },
+    "rpc": {
+      "classification": "adapted",
+      "replacement": "src/pocx/test/fuzz/adapted/rpc.cpp",
+      "review": "Preserve every inherited RPC argument generator, exception rule and original safe/unsafe classification. Classify PoCX read-only get_assignment/get_mining_info as safe; classify wallet-mutating create_assignment/revoke_assignment and proof/block-submitting submit_nonce as unsafe. Unknown registered RPC methods still abort rather than silently disappear."
+    },
+    "script": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/script.cpp"
+    },
+    "script_assets_test_minimizer": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/script_assets_test_minimizer.cpp"
+    },
+    "script_descriptor_cache": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/script_descriptor_cache.cpp"
+    },
+    "script_deserialize": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/deserialize.cpp"
+    },
+    "script_flags": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/script_flags.cpp"
+    },
+    "script_format": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/script_format.cpp"
+    },
+    "script_interpreter": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/script_interpreter.cpp"
+    },
+    "script_ops": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/script_ops.cpp"
+    },
+    "script_parsing": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/script_parsing.cpp"
+    },
+    "script_sigcache": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/script_sigcache.cpp"
+    },
+    "script_sign": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/script_sign.cpp"
+    },
+    "scriptnum_ops": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/scriptnum_ops.cpp"
+    },
+    "scriptpubkeyman": {
+      "classification": "reused",
+      "replacement": "src/wallet/test/fuzz/scriptpubkeyman.cpp"
+    },
+    "secp256k1_ec_seckey_import_export_der": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/secp256k1_ec_seckey_import_export_der.cpp"
+    },
+    "secp256k1_ecdsa_signature_parse_der_lax": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/secp256k1_ecdsa_signature_parse_der_lax.cpp"
+    },
+    "service_deserialize": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/deserialize.cpp"
+    },
+    "sighash_cache": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/script_interpreter.cpp"
+    },
+    "signature_checker": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/signature_checker.cpp"
+    },
+    "signet": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/signet.cpp"
+    },
+    "snapshotmetadata_deserialize": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/deserialize.cpp"
+    },
+    "socks5": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/socks5.cpp"
+    },
+    "span": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/span.cpp"
+    },
+    "str_printf": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/strprintf.cpp"
+    },
+    "string": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/string.cpp"
+    },
+    "system": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/system.cpp"
+    },
+    "threadpool": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/threadpool.cpp"
+    },
+    "timeoffsets": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/timeoffsets.cpp"
+    },
+    "torcontrol": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/torcontrol.cpp"
+    },
+    "transaction": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/transaction.cpp"
+    },
+    "tx_in": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/tx_in.cpp"
+    },
+    "tx_in_deserialize": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/deserialize.cpp"
+    },
+    "tx_out": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/tx_out.cpp"
+    },
+    "tx_package_eval": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/package_eval.cpp"
+    },
+    "tx_pool": {
+      "classification": "adapted",
+      "replacement": "src/pocx/test/fuzz/adapted/tx_pool.cpp",
+      "review": "Preserve inherited mempool acceptance, package, RBF, fee conservation, eviction, reorg and validation-event assertions. PoCX block time must be nondecreasing, so fuzzed mock time is at least the tip timestamp. Derive the fixed conservation baseline from the actual mature fixture outputs because native subsidy differs from Bitcoin 50-coin early rewards."
+    },
+    "tx_pool_standard": {
+      "classification": "adapted",
+      "replacement": "src/pocx/test/fuzz/adapted/tx_pool.cpp",
+      "review": "Preserve inherited mempool acceptance, package, RBF, fee conservation, eviction, reorg and validation-event assertions. PoCX block time must be nondecreasing, so fuzzed mock time is at least the tip timestamp. Derive the fixed conservation baseline from the actual mature fixture outputs because native subsidy differs from Bitcoin 50-coin early rewards."
+    },
+    "txdownloadman": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/txdownloadman.cpp"
+    },
+    "txdownloadman_impl": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/txdownloadman.cpp"
+    },
+    "txgraph": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/txgraph.cpp"
+    },
+    "txorphan": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/txorphan.cpp"
+    },
+    "txorphan_protected": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/txorphan.cpp"
+    },
+    "txorphanage_sim": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/txorphan.cpp"
+    },
+    "txoutcompressor_deserialize": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/deserialize.cpp"
+    },
+    "txrequest": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/txrequest.cpp"
+    },
+    "txundo_deserialize": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/deserialize.cpp"
+    },
+    "uint160_deserialize": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/deserialize.cpp"
+    },
+    "uint256_deserialize": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/deserialize.cpp"
+    },
+    "utxo_snapshot": {
+      "classification": "adapted",
+      "replacement": "src/pocx/test/fuzz/adapted/utxo_snapshot.cpp",
+      "review": "Preserve valid/invalid snapshot metadata, coins, hardcoded assumeUTXO checkpoint assertions and second-load rejection. Select regtest global chain parameters before the shared native CreateBlockChain helper forges and signs PoCX headers; the later TestingSetup remains the original independent chainstate fixture. Native fixture computes each base target from indexed history and pins the PoCX-only height-200 assumeUTXO values; fuzzed mock time stays at least at fixture tip so valid headers can be processed."
+    },
+    "utxo_snapshot_invalid": {
+      "classification": "adapted",
+      "replacement": "src/pocx/test/fuzz/adapted/utxo_snapshot.cpp",
+      "review": "Preserve valid/invalid snapshot metadata, coins, hardcoded assumeUTXO checkpoint assertions and second-load rejection. Select regtest global chain parameters before the shared native CreateBlockChain helper forges and signs PoCX headers; the later TestingSetup remains the original independent chainstate fixture. Native fixture computes each base target from indexed history and pins the PoCX-only height-200 assumeUTXO values; fuzzed mock time stays at least at fixture tip so valid headers can be processed."
+    },
+    "utxo_total_supply": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/utxo_total_supply.cpp"
+    },
+    "validation_load_mempool": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/validation_load_mempool.cpp"
+    },
+    "vecdeque": {
+      "classification": "reused",
+      "replacement": "src/test/fuzz/vecdeque.cpp"
+    },
+    "versionbits": {
+      "classification": "adapted",
+      "replacement": "src/pocx/test/fuzz/adapted/versionbits.cpp",
+      "review": "Preserve every deployment/signalling assertion. Replace irrelevant compact PoW difficulty with native base target; no native validation bypass is added."
+    },
+    "wallet_bdb_parser": {
+      "classification": "reused",
+      "replacement": "src/wallet/test/fuzz/wallet_bdb_parser.cpp"
+    },
+    "wallet_create_transaction": {
+      "classification": "reused",
+      "replacement": "src/wallet/test/fuzz/spend.cpp"
+    },
+    "wallet_fees": {
+      "classification": "reused",
+      "replacement": "src/wallet/test/fuzz/fees.cpp"
+    }
+  },
+  "native_targets": {
+    "pocx_assignment_opcodes": {
+      "source": "src/pocx/test/fuzz/assignment_opcodes.cpp",
+      "condition": "always"
+    },
+    "pocx_assignment_state": {
+      "source": "src/pocx/test/fuzz/assignment_state.cpp",
+      "condition": "always"
+    },
+    "pocx_compression_bounds": {
+      "source": "src/pocx/test/fuzz/arithmetic.cpp",
+      "condition": "always"
+    },
+    "pocx_difficulty": {
+      "source": "src/pocx/test/fuzz/difficulty.cpp",
+      "condition": "always"
+    },
+    "pocx_headers_sync_configuration": {
+      "source": "src/pocx/test/fuzz/adapted/headerssync.cpp",
+      "condition": "always"
+    },
+    "pocx_proof_parameters": {
+      "source": "src/pocx/test/fuzz/proof_parameters.cpp",
+      "condition": "always"
+    },
+    "pocx_shabal": {
+      "source": "src/pocx/test/fuzz/shabal.cpp",
+      "condition": "always"
+    },
+    "pocx_shabal_avx2": {
+      "source": "src/pocx/test/fuzz/shabal.cpp",
+      "condition": "HAVE_AVX2"
+    },
+    "pocx_shabal_sse2": {
+      "source": "src/pocx/test/fuzz/shabal.cpp",
+      "condition": "x86_64"
+    },
+    "pocx_signature": {
+      "source": "src/pocx/test/fuzz/signature.cpp",
+      "condition": "always"
+    },
+    "pocx_time_bending": {
+      "source": "src/pocx/test/fuzz/arithmetic.cpp",
+      "condition": "always"
+    }
+  },
+  "reviewed_sources": {
+    "src/CMakeLists.txt": "d3c20a568d31f6deb3759e4a60e265050202e10d0428ee189ff720c489eeb5bb",
+    "src/kernel/chainparams.cpp": "4de3aa903eb7ab403350a43a6d5e0b68f3549e60490c632c75b45a8a067f111e",
+    "src/pocx/test/fuzz/CMakeLists.txt": "9643b8dbeb9b5e9e93aa6929af46968446d8e76ecd3e706a32d37f08e321b101",
+    "src/pocx/test/fuzz/adapted/block_header.cpp": "be135373b5668f3cdbf2ee89ff6df466c7c287692362d7e0d007b03b8414fda8",
+    "src/pocx/test/fuzz/adapted/block_index.cpp": "228b119742cc235ccf219a19f74b5d13c207752fa184b58a7110cdbd32424d2e",
+    "src/pocx/test/fuzz/adapted/block_index_tree.cpp": "1da7ece040b6ff30d68381ff61ce0f3e28354e7ad17eccb47c86cdf61d5e6f5a",
+    "src/pocx/test/fuzz/adapted/coins_view.cpp": "f77d4c6e6597354b355ebfa1b3f4aa10e9bd23e399fc28aad533faf1d5b8bf86",
+    "src/pocx/test/fuzz/adapted/coinscache_sim.cpp": "0985fbd31cdb74e597781a925416490eb1b8eb5377c8ef9d19fca6f001a6b881",
+    "src/pocx/test/fuzz/adapted/headerssync.cpp": "d48e8b5c68fee183427f94a4618525661ff600147c8d7c5f427ec294d3297c5d",
+    "src/pocx/test/fuzz/adapted/integer.cpp": "755cd77915a3789c07080904d87f9cbc3bbf3302bdb34547a230c426c89ca10c",
+    "src/pocx/test/fuzz/adapted/p2p_headers_presync.cpp": "2159c68eee24a2a962a8d4862efd35fe755e855a75c98339ce8784c5f2af797c",
+    "src/pocx/test/fuzz/adapted/rpc.cpp": "5f67b437b5dc9719d77aeb3b50d7531af385f621507c3152c01b3389cc5b4ff7",
+    "src/pocx/test/fuzz/adapted/tx_pool.cpp": "c0d4d99c1462cb3212d7a538b13ed886bb1a5a7531d85e724f2b5fffb3b5eb1f",
+    "src/pocx/test/fuzz/adapted/utxo_snapshot.cpp": "4b45c308668da01180be03eeb12feb0b992cfb3b18f9e959b7d188ba24a7a7b2",
+    "src/pocx/test/fuzz/adapted/versionbits.cpp": "bfafdb06813289529aa8cdf77aa84090b8a0b2f2cf908458ed62c773e5ceb1d3",
+    "src/pocx/test/fuzz/arithmetic.cpp": "6b2960e41474bd02316ea85462bac70a5ba28e983e89b1b6d6ca66634244dcb5",
+    "src/pocx/test/fuzz/assignment_opcodes.cpp": "69f137452067b3f7691fc169a29eb0be9131e7d972f93962f4b5f98c4ae62e17",
+    "src/pocx/test/fuzz/assignment_state.cpp": "db58d7fb44bf2b59e241bb0fb3242fc875915649b83959915893af6479998bc9",
+    "src/pocx/test/fuzz/difficulty.cpp": "3420df829e4b95f8333444dffa48decc9c81d641bceea96eccb4d9147ebf0c9c",
+    "src/pocx/test/fuzz/proof_parameters.cpp": "71b0cc5c7da6c6ddfd8a44b9351558079f0d1a3d5e232e774101d39f73e3c954",
+    "src/pocx/test/fuzz/provenance.cmake": "4556c40a27b99775d504a92fa18ae68eb37e48697a131509bfa6263449901fc8",
+    "src/pocx/test/fuzz/shabal.cpp": "152d139d7784ee7253a71ed4434382687ec3e94dc87428b3c3b36f7c02c58e66",
+    "src/pocx/test/fuzz/signature.cpp": "f942590d90533465edf06fb7bf362f97d0d4a387c84a5533ec0fe11c5cc1b6ed",
+    "src/pocx/test/fuzz/sources.cmake": "da277eb84386e76a86210361bb6eb3127f355f1ba140e6ec196ad9997ba65112",
+    "src/pocx/test/util/mining.cpp": "3e48b1b78d683aecda822ae5765c22dae2245ef1318a2df7c80e55944037bf64",
+    "test/pocx/bitcoin_fuzz_ci.py": "9901ad5250eaf67a0d2af0596fc4070085cd58a18a674595494579a40cdea278",
+    "test/pocx/check_drift.py": "ed187c724cacd454ead3699db6dff30a4b2ad54bc7f3ea01169ea1482fd466a5",
+    "test/pocx/ci_fuzz_run.py": "4a185c6ccb0f23a3e8b7583f18b9f25d3102590741a2699e3899df6ff0655501",
+    "test/pocx/ci_matrix.py": "3bb276db8487b928779de0ea6f7b2f87c29e4f1c313c7b9686d3876e159efeb5",
+    "test/pocx/fuzz/fixtures/mainnet-header-context.json": "2fac9d6ee395db13398f6197a23abf180b94e600aed9879dd3853f3c96569b8c",
+    "test/pocx/fuzz/fixtures/native-regtest-block.json": "eca8807b26d9a6e24306106c094060d16be3f53efcee06c5a6042c5333d8571e",
+    "test/pocx/fuzz/generate_corpus.py": "ec3908ba1f5a68fdef7a9f0af990e04635c21188a3c35c7f1f7fbec49efc011f",
+    "test/pocx/fuzz/generate_index_corpus.py": "5dcf669d7a015aab9ad58359e38cd04f4363861fd3fe1c00d20068c6bc9a0112",
+    "test/pocx/fuzz/generate_network_corpus.py": "1ca19052872f0c37ecb5911b45369226dcc5ed7c39914a1ee43baae898a1f1e8",
+    "test/pocx/fuzz_build.py": "a6e2d1d9f73493cd1d347bae8ea5021cc3c6e387293e9c2b155f3d735d6a8b5d",
+    "test/pocx/fuzz_parity.py": "7e40fb2725571dea4f6de8333dec7fac45d4f44826f537637f414a2a6d8bab05",
+    "test/pocx/record_fuzz.py": "175b0fb26cd550c44f5095091eb929bcb743f6b6145dc120c7035e6f44e269d3",
+    "test/pocx/run_fuzz.py": "2b0ff404bde8a1df4cae51392e2ae8f92292347748f66f216ad38b4d2e187321",
+    "test/pocx/stage_fuzz_corpus.py": "1265412852278b39bddc47bee37ae395f4bb11936f6a121812e521d297c60f7e",
+    "test/pocx/test_fuzz_parity.py": "b4bcbbddb5ab8f2101f4c8142811434b5a10001823ba4ffb5dde90851c6be6e0"
+  },
+  "validation_limits": "Windows/MSVC and macOS require native execution in a later session. No GitHub Actions execution is authorized for this goal.",
+  "snapshot_fixture_review": {
+    "scope": "Separate owned snapshot adaptation, real native retarget history and PoCX-only regtest checkpoint; inherited assertions retained.",
+    "sources": {
+      "src/pocx/test/util/mining.cpp": "3e48b1b78d683aecda822ae5765c22dae2245ef1318a2df7c80e55944037bf64",
+      "src/kernel/chainparams.cpp": "4de3aa903eb7ab403350a43a6d5e0b68f3549e60490c632c75b45a8a067f111e"
+    },
+    "execution_status": "Native GCC inherited corpus: valid 565/565, invalid 711/711 inputs passed; LLVM sanitizer replay remains pending."
+  }
+}

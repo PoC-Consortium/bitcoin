@@ -1,0 +1,288 @@
+{
+  "scope": "Reviewed unchanged POSIX and ancestor-commit recipes with separate original-first orchestration and strict original/native runtime selection. Configured coverage is not executed coverage.",
+  "upstream_revision": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
+  "unchanged_upstream_recipe": "ci/test/03_test_script.sh",
+  "owned_recipe_changes": [
+    "Replace moving unit asset download with checksum-verified pinned asset provisioning",
+    "Replace raw CTest invocation with configuration-specific unit/Qt/kernel/auxiliary verification",
+    "Replace original-only functional invocation with both-transport original/native strict dispatch"
+  ],
+  "build_pair_changes": [
+    "Explicit ENABLE_POCX=OFF baseline in a separate build/install prefix before ON",
+    "BUILD_FUZZ_BINARY=OFF and BUILD_FOR_FUZZING=OFF on both sides; fuzz jobs retain the original driver",
+    "Keep native output paths for existing artifact consumers; original build/install artifacts use the bitcoin-baseline suffix"
+  ],
+  "execution_status": "unverified for actual inherited POSIX/hosted recipes",
+  "source_sha256": {
+    ".github/ci-test-each-commit-exec.py": "7d6c921986188b726f82bb08a782be738f6dfc2460d1f64272ae8bd8715d040b",
+    ".github/workflows/ci-pocx.yml": "699f0a58e48d1f6348a65d9b0224d870d569da1088b457195aa78b55703fc88f",
+    ".github/workflows/ci-product.yml": "e8ed92a6a900467b6b6983adb76265c05693321bc058000a7174d0ef54f0242f",
+    ".github/workflows/ci.yml": "178f16dc008944d5158cfe45e84da73c39839949ca82b0a6703805919f05e8a9",
+    "ci/test/02_run_container.py": "c495e29a2ba3a3ed1a008e27b157917e0184b2874d5faffd3a8465f38890b480",
+    "ci/test/03_test_script.sh": "cfd9e9583398dee9527a2fb7ea099104a8cab53f7bf5ccdceb3f4e84425ebb8b",
+    "ci/test_imagefile": "1474ad98f223b4069eb297e201ea2148621c8a077d8706a34c45a761a23e45b5",
+    "test/pocx/bitcoin_baseline/usdt/interface_usdt_coinselection.py": "937ed589df1a6bf42d62ae4b20d4a9a11b00f8b68f712be21d708bfc25e7e2e5",
+    "test/pocx/bitcoin_baseline/usdt/interface_usdt_mempool.py": "73336cf4489b45fc87729287814236d5f5e20ca528427500a18aaa00885d173a",
+    "test/pocx/bitcoin_baseline/usdt/interface_usdt_net.py": "113bc1b4208988dc906187b5c4baebde9af438dc5684a5009f0cf49c0dadeb55",
+    "test/pocx/bitcoin_baseline/usdt/interface_usdt_utxocache.py": "10059ade02b7eaf59ecd5df1e2a4df1ca3895da27aa0a533c4fee4d9a453e73c",
+    "test/pocx/bitcoin_baseline/usdt/interface_usdt_validation.py": "d4a7dfc3fda13e7b0ca0609dd97fd25195d6a3939a4bcea7efd85b808a910bca",
+    "test/pocx/bitcoin_baseline/usdt/review.json": "3f3fc24dc1c06bf8efac4bc8b8748f2fa2eb77d27b5283ab1cd8c35605f5203a",
+    "test/pocx/bitcoin_baseline/windows/review.json": "f541b15bbe06f200838f6ba17cacfe279ac723fbc71a1b6994c822e45219a6e6",
+    "test/pocx/bitcoin_baseline/windows/rpc_signer.py": "ea682c6093604670612eeae9936a9a3d4d0af232fe798d9edf7eea979c01639d",
+    "test/pocx/bitcoin_fuzz_ci.py": "9901ad5250eaf67a0d2af0596fc4070085cd58a18a674595494579a40cdea278",
+    "test/pocx/check_drift.py": "ed187c724cacd454ead3699db6dff30a4b2ad54bc7f3ea01169ea1482fd466a5",
+    "test/pocx/ci/00_setup_env_native_asan_tracing.sh": "caa30536d110b2b66754837ae1dce4398e389747cdd98996d75db2ae949a5f5d",
+    "test/pocx/ci/inherited_runtime_env.sh": "8b7df8cb2248723207ef035ef360cd14fad617b6b91c2747de983c82fa8274e4",
+    "test/pocx/ci/inherited_test_script.sh": "25b6f367bed45e7c7d040ae2a82bba21b278790d83c536ade4d7b7a835273930",
+    "test/pocx/ci/test_imagefile": "8611a47495fdc3b331d403ef3ee90cd9a1a20b4e6dcae1795148ba5db7f64d55",
+    "test/pocx/ci_fuzz_run.py": "4a185c6ccb0f23a3e8b7583f18b9f25d3102590741a2699e3899df6ff0655501",
+    "test/pocx/ci_logging.py": "4191a50de16f7584bbf61db0068f3b426a5ace1923db5f45556d30f974554661",
+    "test/pocx/ci_matrix.py": "3bb276db8487b928779de0ea6f7b2f87c29e4f1c313c7b9686d3876e159efeb5",
+    "test/pocx/ci_product.py": "07783ef9d57662bff430b33a446d8b11321e3740226fbb53e31a5c217cd1938c",
+    "test/pocx/common.py": "9c6d49f8ca052427557fd301d9195a00c6e09542dfd7ed63b15e0a4b81e72772",
+    "test/pocx/framework/bcc_headers.py": "54c095668335ee50fdb0b2b4842e21eced9c9b2c175652463937f1be05b786ec",
+    "test/pocx/framework/bpf_abi.py": "5bb74f7e8fb3bdf815defbbc2d35362690a2e09f8898645ced8fbcac60259571",
+    "test/pocx/fuzz_parity.py": "7e40fb2725571dea4f6de8333dec7fac45d4f44826f537637f414a2a6d8bab05",
+    "test/pocx/inherited_ci.py": "4aebe0837a9c2577898876fbe34cc6fe844790ea1c24f09fbc1a0d4d2a70bc53",
+    "test/pocx/inherited_functional.py": "a00bb27b9a3705c3e8e61609b9ad57580eeb307f6028f3b345033af71d09957d",
+    "test/pocx/inherited_prerequisites.py": "fc24680108346518b53bc32dc2cc626ce74b04d7426145fd3954b9bd61acb2c4",
+    "test/pocx/inherited_selection.py": "9d9b69e92ccf55fad6bb3b003b31aa7d366233bf5dbc88581956a1f140dc767e",
+    "test/pocx/inherited_tests.py": "a08946f019b624ecdd5b00709a44fdabf0133dc9de8cc0328ca0c82c70f05d10",
+    "test/pocx/original_usdt.py": "2dfc1b954ded722a934f70a67e91141540e8449ff725a9e0b7f11a4f7019375b",
+    "test/pocx/original_windows.py": "ab008c9c062aa4516c08bf21e5afe8f01ce9d1ddaef64d7e2731068a291d8c49",
+    "test/pocx/pocx_bootstrap.py": "72e0a27abe139a6079220174cc1c103c173a0f632c1aa6034ddcc2075d58322d",
+    "test/pocx/revision_ci.py": "582d033ed07a3861c82674635411760279868cda4ad5168dd372e4c59dc5d33c",
+    "test/pocx/run_fuzz.py": "2b0ff404bde8a1df4cae51392e2ae8f92292347748f66f216ad38b4d2e187321",
+    "test/pocx/runtime_evidence.py": "ee1722ab10eba1dde4b66aed7d8f9737de2d171b725cf999b723219b2a5dd1b5",
+    "test/pocx/stage_fuzz_corpus.py": "1265412852278b39bddc47bee37ae395f4bb11936f6a121812e521d297c60f7e",
+    "test/pocx/test_bpf_abi.py": "5c12703a7db6d67143ec11a6082faeabf64a848534ec2b0aa7abec4c29e1f812",
+    "test/pocx/test_fuzz_parity.py": "b4bcbbddb5ab8f2101f4c8142811434b5a10001823ba4ffb5dde90851c6be6e0",
+    "test/pocx/test_inherited_selection.py": "195cf2982f72a156f385d08d504a741b5948f507da2017e121758a6bd8ae44ef",
+    "test/pocx/test_original_windows.py": "27f47f07e52a7381e48ca4d1f77220c1efb073073be7f2fcba13a4c002d8c39f",
+    "test/pocx/test_product_workflows.py": "c57862b423943bab77b2a59cbb431892a492c7df4d9de2d3266fb7fe40899ee1",
+    "test/pocx/test_windows_cross.py": "3ab7f0396721814e68a53ecd8d1a5428bbebf7d2064b1928ef93edf98688392b",
+    "test/pocx/upstream-ci-matrix.json": "2db9d8020ca1d07283cbc27a53e8bb3760bfbbfe4b5a805376f04467e64f3f7a",
+    "test/pocx/windows_cross.py": "aaa5ec71734e514b049cd40bd99f176ca96324569b63566c35d7a264da51e9ce"
+  },
+  "evidence_retention": "Copy newly created bounded framework report trees into artifacts/pocx-inherited on success and failure; export container reports before cleanup; upload in inherited POSIX jobs",
+  "unchanged_upstream_revision_recipe": ".github/ci-test-each-commit-exec.py",
+  "owned_revision_recipe": "test/pocx/revision_ci.py",
+  "revision_runtime_prerequisites": "Hosted job provisions BCC, matching kernel headers and pinned pycapnp; original USDT cases require root; published report permissions allow ordinary artifact upload. Actual hosted execution unverified.",
+  "native_feature_skip_review": "Require the owned runner raw exit to agree exactly with terminal case statuses:0only for allpassed,1for any nonpass. Explicit source-guarded disabled features remain configuration-disabled even though the strict runner returns1. Case-level failures and skips for enabled or missing prerequisites still fail; inconsistent or abnormal exits fail. Controller fixtures verify both transports and preserve every skip row without relabeling it passed. No original test or feature inventory changed; actual inherited runtime remains unverified.",
+  "configuration_dispatch_review": "Shared strict dispatch selects explicit multi-configuration binaries and CTest configuration; inherited functional timeout-factor flags are validated and preserved. Auxiliary registration identity uses resolved executable paths. Native Windows runtime remains unverified.",
+  "windows_functional_dispatch_review": "Keep the unchanged upstream runner for all original variants; separately execute the ancient-release UTXO case in an ASCII-only directory in both transports on Windows. Wallet multiwallet variants remain required. Disabled benchmark builds preserve the source-guarded unexpanded case; enabled builds require actual listing. Pin bytecode and previous-release environment behavior; retain elapsed time and full raw logs. Callback verification is infrastructure only, not hosted or Windows execution.",
+  "windows_cross_export_review": "Both reviewed CRT profiles build OFF then ON with unchanged compiler/features, export their immutable pair inside the container before cleanup, and publish one stable payload plus bounded reports. Cross-build success explicitly does not establish a target-host test baseline. Export/source/publication failures fail CI. Fuzz routing and native/POSIX execution remain unchanged. Actual hosted compilation and Windows execution unverified.",
+  "restored_upstream_profiles": {
+    "profiles": [
+      "ci/test/00_setup_env_i686_no_ipc.sh",
+      "ci/test/00_setup_env_native_previous_releases.sh"
+    ],
+    "coverage": "Preserve original and native RPC coverage gates per transport with unchanged upstream evaluator; run the historical slow dbcrash exclusion as a documented selection extension. No execution claim."
+  },
+  "runtime_stack_review": "Preserve the inherited512KiB soft stack limit for every test process. Apply it as a soft limit only so reviewed Qt/kernel build subprocesses can restore their normal8MiB stack without changing caller/test limits. Original upstream recipe and assertions remain byte-identical. Real execution of the actual owned shell block verifies enabled/disabled conditions, preserved hard limit and isolated build-child limits; full inherited target recipes remain separately required.",
+  "asan_tracing_environment_review": "Select an owned FILE_ENV wrapper which exports INSTALL_BCC_TRACING_TOOLS=true before sourcing the unchanged upstream ASAN environment. Both host setup and Docker image build receive the intended BCC/header packages and capability flags. Remove workflow sed mutation which invalidated the original environment source checksum. Compiler/options, original source hashes and test selections unchanged. Actual hosted execution remains unverified. Non-fuzz container builds select a separate owned imagefile which copies original environment scripts and owned wrappers to their declared paths. The upstream imagefile/base-install command and dedicated fuzz image/driver remain unchanged. The runtime-inputs image stage permits testing actual Docker COPY and environment sourcing without reinstalling tools.",
+  "enabled_linux_tracing_review": "Provision BCC Python bindings/tools for the eight reviewed Linux functional recipes that enable USDT. Source the same owned helper in host/container setup and image build; preserve all compiler, feature, dependency and test settings. Match running-host kernel headers in the workflow, mount headers/modules read-only, and allow the required original root/BPF tracing inside isolated containers. Build-only, non-Linux and dedicated fuzz jobs preserve their previous environment. Source-only environment and actual image-input checks are infrastructure evidence, never framework/hosted passes.",
+  "original_failure_reporting_review": "Retain parsed original functional case results before rejecting a failed aggregate/exit, and explicitly record missing original case/transport evidence as unverified. Counts and CSV remain available on failure. Fail-fast original-before-native gating, assertions, selections and successful execution commands are unchanged. Infrastructure fixtures cover actual failed aggregates and abnormal exits; this is not new target-platform runtime evidence.",
+  "enabled_linux_python_prerequisites_review": "Provision Python ZeroMQ for the reviewed Debian/Ubuntu functional recipes and add pinned pycapnp only where IPC is enabled and the original environment omitted it. Preserve existing pip requirements; Ubuntu22.04 does not receive the unsupported --break-system-packages option. Export added PIP_PACKAGES through host/container setup. Original compiler, dependency build flags, features, test selections and assertions remain unchanged. Actual-recipe regression checks all eight environments, disabled/fuzz routing and idempotence; package/runtime execution remains separately required.",
+  "iwyu_source_restoration": {
+    "scope": "The unchanged upstream recipe rejects enforced include edits but permits its subsequent warning phase to apply suggestions. The owned controller retains per-consensus suggestions and original/analysis hashes, then restores exact input C/C++ bytes/modes before the next consensus phase. Nonzero recipe exits still stop before native; unrelated source drift and changes in other recipes remain fatal.",
+    "sources": [
+      "test/pocx/inherited_ci.py",
+      "test/pocx/test_inherited_ci.py"
+    ],
+    "diagnostic": "artifacts/ci-parity-20261010/iwyu-source-guard-diagnostic/results.json",
+    "runtime_scope": "Infrastructure contract regression only; no full IWYU analysis or framework pass inferred."
+  },
+  "inherited_feature_guard_review": "Recognize unconditional feature guards inherited by a single test class through an unambiguous single-base chain in sibling source modules, without importing or executing those modules. Record the actual declaration source; child overrides, conditional guards, ambiguous classes/bases and cycles remain unverified. Missing enabled prerequisites and failed cases remain failures or unverified. Three existing native wallet-dependent scripts inherit their original skip guard; no test is newly disabled. Existing run commands, original-first ordering, selections, assertions and builds are unchanged.",
+  "original_i686_usdt_review": "Original32-bit ELF tracing requires destination widths matching the BCC-generated target argument type. Stage five separate original-script copies whose only AST change is an explicit owned BPF constructor import. Preserve original event fields, BPF programs, callbacks and assertions. The constructor introduces typed temporary reads for i686 only, preserving read return codes and untouched destination on failure; ELF64 programs pass through byte-identically. The private original view binds every original/adapted input and the unchanged binary build. Native still requires a complete original baseline; source gates and failures remain fatal.",
+  "original_old_bcc_headers_review": {
+    "selector": "test/pocx/framework/bcc_headers.py",
+    "scope": "Only verified BCC0.18/Linux6.12/x86_64. Original assertions and BPF text retained; compiler warnings remain enabled. Original source and binary builds immutable, private verified compatibility imports only.",
+    "runtime_status": "Compiler canary passed with identical BPF instructions; affected domain reruns remain required."
+  },
+  "inherited_cli_guard_review": {
+    "previous_sha256": "1a6b54bf4c50a2188d6834e269cab43aabc012625e0cfaf5d7d2e8d89ee88b85",
+    "sha256": "6fc43cec5640b33de7e34d236a4ded1276720d70171fb5bf899d96f0297802c7",
+    "review": "Record an original or separate native functional CLI opt-out only when --usecli is requested and the statically identified executed test class has one unconditional literal self.supports_cli=False assignment. Unused helper classes, conditional values, overwrites, inherited or ambiguous classes, and non-CLI profiles cannot justify this exclusion. Failed cases and missing enabled prerequisites remain red or unverified. Original test assertions, selections and commands are unchanged; these cases remain required in the already retained non-CLI profiles. Frozen running jobs remain unchanged; their raw reports will be retained independently. An explicitly declared opt-out in a class with plain mixins is accepted only after statically resolving each mixin and rejecting inherited/decorated classes or runtime setup/dispatch/CLI attribute overrides."
+  },
+  "windows_functional_native_review": {
+    "scope": "Windows native follow-up: short unique source-owned data paths preserve original long wallet names; blank CRCRLF CSV separators ignored but exact inventories/statuses remain required; exact independently localized OS error2 signer expectation in AST-guarded owned view; pre-existing POSIX/Windows unsupported guards reported disabled, never passed; Windows job owns original functional descendants. All upstream source files, assertions, selections and production behavior unchanged. Seven focused Bitcoin reproductions passed; complete original/native platform pairs still require execution. Linux behavior unchanged except portable CSV record handling/source-provenance expansion; revalidate infrastructure.",
+    "sources": {
+      "test/pocx/inherited_ci.py": "e0dc7430cc00fa964f74549a0a4b831a52cd5cee07f9ac7900185398ab598334",
+      "test/pocx/inherited_functional.py": "38faa96c36ca54baabc9206725858729ca41ac78d235d1bb7bd3c299d25bc897"
+    }
+  },
+  "product_workflow_reorganization_review": {
+    "scope": "Independent CI (bitcoin/OFF) and CI-POCX (pocx/ON) with shared inherited matrix and explicit selected-product runners. Keep legacy local pairs, source/test drift checks, reviewed exclusions and immutable revision/source/configuration/PE provenance. No assertion, feature, platform-native runtime or upstream recipe changes approved by this organization review.",
+    "selected_product_environment": "CI_PRODUCT=bitcoin or CI_PRODUCT=pocx; unset retains the local ordered pair",
+    "windows_artifact_format": "Format2 holds exactly one product; format1 retains legacy local pairs. Actions producer and consumer require their matching single product at the same frozen revision.",
+    "source_changes": {
+      ".github/workflows/ci-pocx.yml": {
+        "previous_sha256": null,
+        "sha256": "ea2b11ff35304fe0d1ae65fc02c071860b5e7fd6ec6e520dd4832ff5a7ec0341"
+      },
+      ".github/workflows/ci-product.yml": {
+        "previous_sha256": null,
+        "sha256": "0aca92bf412d114ea7cfe745bf9c2393dcae4648eaf8ee695ae2a9b9ccd51bd1"
+      },
+      ".github/workflows/ci.yml": {
+        "previous_sha256": null,
+        "sha256": "25e3550fc74c70ca4ab56a90e7a3d3b776255dbbcd0a71e80ec1df69b061256d"
+      },
+      "ci/test/02_run_container.py": {
+        "previous_sha256": "84e4a1adb04972ec0d3c74a598f0995fde6465592c62f84139db41fcab6a7b65",
+        "sha256": "2becef70fc04eaae9b346d9afb3ef6b6590fe6a490b24c4b15ca0ac8c60ca20f"
+      },
+      "test/pocx/ci_product.py": {
+        "previous_sha256": null,
+        "sha256": "50989a8e49ae46323fb972bbd1a8077f4ddb7371b236549083afa0681c72d75c"
+      },
+      "test/pocx/inherited_ci.py": {
+        "previous_sha256": "e0dc7430cc00fa964f74549a0a4b831a52cd5cee07f9ac7900185398ab598334",
+        "sha256": "451b7e05f866473c87eaedc25976758a303f1773f533357f03ed0f1488e76061"
+      },
+      "test/pocx/inherited_tests.py": {
+        "previous_sha256": "b1fb1313f9c510735ecbf42cf7d092201031d8516051e463351b233125af3a74",
+        "sha256": "a08946f019b624ecdd5b00709a44fdabf0133dc9de8cc0328ca0c82c70f05d10"
+      },
+      "test/pocx/revision_ci.py": {
+        "previous_sha256": "4ae8bac50834eb3d9bb3a883b6d8897c51730f6989e981bcd589c14fbd7e0998",
+        "sha256": "820892e710eb2fca178be77df4568f617603df68f9c265a16f178c8713c087df"
+      },
+      "test/pocx/test_product_workflows.py": {
+        "previous_sha256": null,
+        "sha256": "536e0f1d8b182dfb800751f20d497b55e58ad5c5a055efbba721e995e1d22597"
+      },
+      "test/pocx/test_windows_cross.py": {
+        "previous_sha256": "fe09e5b453625b7c849f4c9177392f9b7c72931f530a21e353101d6b36ebbe57",
+        "sha256": "8e424e8bdc6d5e213944db9df22b084cc68b60472b1efe3d8c2ca8d5cbf1bac6"
+      },
+      "test/pocx/windows_cross.py": {
+        "previous_sha256": "92e2796dc4101adb5bb0788b9e9407f075c0ee81ce5bf659c996ab710c54e35c",
+        "sha256": "73b65ca5b7ecb28e07c20a6b0ed563bf4359d5911d4e81df3050a560c8c0d92d"
+      }
+    },
+    "execution_status": "Source organization reviewed; focused infrastructure validation only. Historical platform results do not establish hosted execution of the new workflows."
+  },
+  "upstream_scope_and_ci_repair_review": {
+    "scope": "Match pinned upstream matrices and push/PR events without additional profiles. Restore original Bitcoin fuzz execution and ordinary fuzz-binary compilation; defer ON fuzz explicitly. Keep product independence and frozen-revision native Windows artifact checks. Add bounded short-path failure diagnostics and raw live build output. Repair inherited lint findings. Restore upstream functional BASE/EXTENDED/exclusion and effective transport selections with format11 proofs and complete-selection RPC coverage. Preserve original optional prerequisite omissions as explicit skips, with mandatory ASan tracing. Original test scenarios/assertions and original environment/driver recipes remain unchanged.",
+    "execution_status": "Changed source revision still requires hosted execution; infrastructure checks do not establish a green product pipeline.",
+    "source_changes": {
+      ".github/workflows/ci-pocx.yml": {
+        "previous_sha256": "ea2b11ff35304fe0d1ae65fc02c071860b5e7fd6ec6e520dd4832ff5a7ec0341",
+        "sha256": "699f0a58e48d1f6348a65d9b0224d870d569da1088b457195aa78b55703fc88f"
+      },
+      ".github/workflows/ci-product.yml": {
+        "previous_sha256": "0aca92bf412d114ea7cfe745bf9c2393dcae4648eaf8ee695ae2a9b9ccd51bd1",
+        "sha256": "b5547b12474809b5be68c4df9babf7c16bed7685f0e4a84805c354f4480c5117"
+      },
+      ".github/workflows/ci.yml": {
+        "previous_sha256": "25e3550fc74c70ca4ab56a90e7a3d3b776255dbbcd0a71e80ec1df69b061256d",
+        "sha256": "178f16dc008944d5158cfe45e84da73c39839949ca82b0a6703805919f05e8a9"
+      },
+      "ci/test/02_run_container.py": {
+        "previous_sha256": "2becef70fc04eaae9b346d9afb3ef6b6590fe6a490b24c4b15ca0ac8c60ca20f",
+        "sha256": "5d39f118d96eedda9e90286c4560b705c63e768bed78d4184806faf75c79dc76"
+      },
+      "test/pocx/bitcoin_fuzz_ci.py": {
+        "previous_sha256": null,
+        "sha256": "efb42ae5a382d15b5964c4b808a89f04eefcbeed0a6ce4ecba44640fda905435"
+      },
+      "test/pocx/ci/inherited_runtime_env.sh": {
+        "previous_sha256": "0b8f000c75cea73e06df91589da76f06d5773db321199d3468d68ceb5adb8f91",
+        "sha256": "8b7df8cb2248723207ef035ef360cd14fad617b6b91c2747de983c82fa8274e4"
+      },
+      "test/pocx/ci_logging.py": {
+        "previous_sha256": null,
+        "sha256": "4191a50de16f7584bbf61db0068f3b426a5ace1923db5f45556d30f974554661"
+      },
+      "test/pocx/ci_matrix.py": {
+        "previous_sha256": null,
+        "sha256": "79d842b5789ce4df4b2a0cb9777faf2533980cd30ef1978f3761d3f9c6f3108f"
+      },
+      "test/pocx/ci_product.py": {
+        "previous_sha256": "50989a8e49ae46323fb972bbd1a8077f4ddb7371b236549083afa0681c72d75c",
+        "sha256": "07783ef9d57662bff430b33a446d8b11321e3740226fbb53e31a5c217cd1938c"
+      },
+      "test/pocx/common.py": {
+        "previous_sha256": null,
+        "sha256": "9c6d49f8ca052427557fd301d9195a00c6e09542dfd7ed63b15e0a4b81e72772"
+      },
+      "test/pocx/inherited_ci.py": {
+        "previous_sha256": "451b7e05f866473c87eaedc25976758a303f1773f533357f03ed0f1488e76061",
+        "sha256": "d1914ddcc689e1a0a5086a80754b47a23e0340dcfdaa4369a9201d1677208310"
+      },
+      "test/pocx/inherited_functional.py": {
+        "previous_sha256": "38faa96c36ca54baabc9206725858729ca41ac78d235d1bb7bd3c299d25bc897",
+        "sha256": "973625dcf2d81fb8720cdb0541dc6ce4201ceb355b7d47f90cdcf47279012200"
+      },
+      "test/pocx/inherited_prerequisites.py": {
+        "previous_sha256": null,
+        "sha256": "fc24680108346518b53bc32dc2cc626ce74b04d7426145fd3954b9bd61acb2c4"
+      },
+      "test/pocx/inherited_selection.py": {
+        "previous_sha256": null,
+        "sha256": "9d9b69e92ccf55fad6bb3b003b31aa7d366233bf5dbc88581956a1f140dc767e"
+      },
+      "test/pocx/original_usdt.py": {
+        "previous_sha256": "6d16fb36c3d615b6d871486f94ef6019b293b710f3aab71953d6fbbe58c8b67c",
+        "sha256": "2dfc1b954ded722a934f70a67e91141540e8449ff725a9e0b7f11a4f7019375b"
+      },
+      "test/pocx/original_windows.py": {
+        "previous_sha256": "2598717ba1d532ebe4444d5cec2ae88f6cfed8132e514658600a71f551336e15",
+        "sha256": "ab008c9c062aa4516c08bf21e5afe8f01ce9d1ddaef64d7e2731068a291d8c49"
+      },
+      "test/pocx/revision_ci.py": {
+        "previous_sha256": "820892e710eb2fca178be77df4568f617603df68f9c265a16f178c8713c087df",
+        "sha256": "582d033ed07a3861c82674635411760279868cda4ad5168dd372e4c59dc5d33c"
+      },
+      "test/pocx/runtime_evidence.py": {
+        "previous_sha256": null,
+        "sha256": "ee1722ab10eba1dde4b66aed7d8f9737de2d171b725cf999b723219b2a5dd1b5"
+      },
+      "test/pocx/test_bpf_abi.py": {
+        "previous_sha256": "75a17d5360c9958e9dc2146a5031f7d25668cd13c38b70625eb8abee744a0d4a",
+        "sha256": "5c12703a7db6d67143ec11a6082faeabf64a848534ec2b0aa7abec4c29e1f812"
+      },
+      "test/pocx/test_inherited_selection.py": {
+        "previous_sha256": null,
+        "sha256": "195cf2982f72a156f385d08d504a741b5948f507da2017e121758a6bd8ae44ef"
+      },
+      "test/pocx/test_original_windows.py": {
+        "previous_sha256": "d1ae65726b2ff2017ff72e5026ac80a6c3e6584c4c0c8df4b0e9e0d946c730f3",
+        "sha256": "27f47f07e52a7381e48ca4d1f77220c1efb073073be7f2fcba13a4c002d8c39f"
+      },
+      "test/pocx/test_product_workflows.py": {
+        "previous_sha256": "536e0f1d8b182dfb800751f20d497b55e58ad5c5a055efbba721e995e1d22597",
+        "sha256": "b8a97fa29a37de2a44a5ac9547680196484a94cb15651a47a47cf061557f3ba2"
+      },
+      "test/pocx/test_windows_cross.py": {
+        "previous_sha256": "8e424e8bdc6d5e213944db9df22b084cc68b60472b1efe3d8c2ca8d5cbf1bac6",
+        "sha256": "3ab7f0396721814e68a53ecd8d1a5428bbebf7d2064b1928ef93edf98688392b"
+      },
+      "test/pocx/upstream-ci-matrix.json": {
+        "previous_sha256": null,
+        "sha256": "2db9d8020ca1d07283cbc27a53e8bb3760bfbbfe4b5a805376f04467e64f3f7a"
+      },
+      "test/pocx/windows_cross.py": {
+        "previous_sha256": "73b65ca5b7ecb28e07c20a6b0ed563bf4359d5911d4e81df3050a560c8c0d92d",
+        "sha256": "aaa5ec71734e514b049cd40bd99f176ca96324569b63566c35d7a264da51e9ce"
+      }
+    }
+  },
+  "workflow_default_timeout_review": {
+    "change": "Remove every explicit job timeout from the shared CI implementation so both CI and CI-POCX use the GitHub default job limit. Preserve the frozen upstream matrix as reference data and retain per-test wait scaling and process cleanup limits.",
+    "regression": "The product workflow wiring check rejects explicit timeout-minutes on any job or step in all three active workflow files."
+  },
+  "testing_review_20261019": {
+    "scope": "Owned functional console reports case names/statuses and explicit reviewed subcase exclusions. Shared MinGW filesystem correction relocated into wallet ownership; same implementation for both products.",
+    "sources": {
+      "test/pocx/inherited_functional.py": "a00bb27b9a3705c3e8e61609b9ad57580eeb307f6028f3b345033af71d09957d",
+      "src/wallet/db.cpp": "698cb5b8a40a21ffbc2e63ce8bcab9b6b1049ff57fd3c91ecd030874b6aec564",
+      "src/wallet/wallet.cpp": "a1f338dc22725c3d9fdcaa529ca91b2aff58fdda90ca8625412faa6def10947b",
+      "src/wallet/windows_fs.h": "e668a5f55252976d7031c91b2e86c284d8fd05f3c14bbf986de809ac24c7d2e5"
+    }
+  },
+  "unit_matrix_self_test_review": "The existing shared lint job executes test_unit_matrix.py after source drift checks and before inherited lint for each independently selected product. Configuration self-tests derive exact membership from the fixed original baseline and reviewed PoCX case lists, including debug and wallet-disabled variants. No matrix profiles, product cases, runner dependencies or artifact selection rules change.",
+  "fuzz_parity_review": "The inherited OFF fuzz recipe, matrices and platform toolchain remain pinned. The corresponding ON rows select the separate reviewed PoCX fuzz sources, complete inherited corpora, native additions, strict registration/execution and provenance. Native Windows/macOS and hosted runs remain unverified locally; this records source review only."
+}

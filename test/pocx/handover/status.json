@@ -1,0 +1,770 @@
+{
+  "format": 1,
+  "recorded_at": "2026-10-16",
+  "repository": "https://github.com/PoC-Consortium/bitcoin.git",
+  "publication_branch": "test/pocx-ci-parity-20261010",
+  "verified_source_commit": "c6576ae3e10665af15a2699d097652914baa9cae",
+  "scope": "Completed current-machine non-fuzz verification; target-native platform conditions remain deferred.",
+  "current_machine_conditions_verified": 49,
+  "required_framework_configuration_entries_verified": 135,
+  "owned_ASan_functional": {
+    "passed": 590,
+    "failed": 0,
+    "skipped": 0
+  },
+  "owned_ASan_original_slot_mapping": {
+    "passed": 1676,
+    "justified_PoW_exclusions": 12
+  },
+  "owned_ASan_PoCX_only": {
+    "passed": 82,
+    "failed": 0
+  },
+  "failed_or_unverified_required_current_machine_cases": 0,
+  "disabled_needing_fix": 0,
+  "raw_condition_specific_case_status_counts": {
+    "passed": 38070,
+    "configuration-inactive": 342,
+    "skipped": 45,
+    "justified-exclusion": 142,
+    "configuration-disabled": 628
+  },
+  "original_slot_mapping_status_counts": {
+    "passed": 19682,
+    "justified-exclusion": 153,
+    "configuration-inactive": 168,
+    "skipped": 15,
+    "configuration-disabled": 292
+  },
+  "PoCX_only_status_counts": {
+    "passed": 960,
+    "configuration-inactive": 10,
+    "configuration-disabled": 46
+  },
+  "minimal_profile_optional_skips": {
+    "raw_records_preserved": 45,
+    "logical_scripts": 15,
+    "all_have_passing_enabled_profile_coverage": true,
+    "skips_counted_as_passes": false
+  },
+  "deferred": {
+    "Windows_conditions": 6,
+    "macOS_ARM64_conditions": 2,
+    "Linux_ARM_conditions": 2,
+    "intermediate_history_conditions": 1
+  },
+  "fuzz_modernization": "outside scope; separate future package",
+  "verified_conditions": [
+    {
+      "family": "owned",
+      "identity": "drift",
+      "consensus": "drift",
+      "required_frameworks": [
+        "source-review"
+      ],
+      "status": "verified-current-machine",
+      "retained_proof_sha256": "a0fde26d3023bc0b2e57174bba990b26177ae67e746cf164160435e0fc8c791e"
+    },
+    {
+      "family": "owned",
+      "identity": "bitcoin-unit",
+      "consensus": "bitcoin",
+      "required_frameworks": [
+        "unit",
+        "auxiliary"
+      ],
+      "status": "verified-current-machine",
+      "retained_proof_sha256": "a1b8f92950d05198b4b82a24fdd266250cd2f81651d5e09e98e54e8f61db13e0"
+    },
+    {
+      "family": "owned",
+      "identity": "bitcoin-functional",
+      "consensus": "bitcoin",
+      "required_frameworks": [
+        "functional"
+      ],
+      "status": "verified-current-machine",
+      "retained_proof_sha256": "eceb826347716007759b7718e383885b400aa7223f686f8880af9d5290762146"
+    },
+    {
+      "family": "owned",
+      "identity": "bitcoin-qt",
+      "consensus": "bitcoin",
+      "required_frameworks": [
+        "qt"
+      ],
+      "status": "verified-current-machine",
+      "retained_proof_sha256": "a1b8f92950d05198b4b82a24fdd266250cd2f81651d5e09e98e54e8f61db13e0"
+    },
+    {
+      "family": "owned",
+      "identity": "bitcoin-kernel",
+      "consensus": "bitcoin",
+      "required_frameworks": [
+        "kernel"
+      ],
+      "status": "verified-current-machine",
+      "retained_proof_sha256": "a1b8f92950d05198b4b82a24fdd266250cd2f81651d5e09e98e54e8f61db13e0"
+    },
+    {
+      "family": "owned",
+      "identity": "bitcoin-functional-optional",
+      "consensus": "bitcoin",
+      "required_frameworks": [
+        "functional"
+      ],
+      "status": "verified-current-machine",
+      "retained_proof_sha256": "a66e30a0e14733852979c15701c7f73a46aab7f1463e3235516db8ac2a1ce9c9"
+    },
+    {
+      "family": "owned",
+      "identity": "pocx-functional-optional",
+      "consensus": "pocx",
+      "required_frameworks": [
+        "functional"
+      ],
+      "status": "verified-current-machine",
+      "retained_proof_sha256": "9adce258c229d32efecace84c24e5f2143026778660c13ab8cbff3611e0e2678"
+    },
+    {
+      "family": "owned",
+      "identity": "bitcoin-asan",
+      "consensus": "bitcoin",
+      "required_frameworks": [
+        "unit",
+        "auxiliary",
+        "qt",
+        "kernel",
+        "functional"
+      ],
+      "status": "verified-current-machine",
+      "retained_proof_sha256": "a75213462634e5f652f77cff44e59b57d348f6861637ad7b23911043bdc9a4e7"
+    },
+    {
+      "family": "owned",
+      "identity": "pocx-asan",
+      "consensus": "pocx",
+      "required_frameworks": [
+        "unit",
+        "auxiliary",
+        "qt",
+        "kernel",
+        "functional"
+      ],
+      "status": "verified-current-machine",
+      "retained_proof_sha256": "25364eabdac64bb35f5bf579f4f3c3a25eaed6a51cdbb03c8693045f99608eb6"
+    },
+    {
+      "family": "owned",
+      "identity": "bitcoin-tsan",
+      "consensus": "bitcoin",
+      "required_frameworks": [
+        "unit",
+        "auxiliary",
+        "kernel",
+        "functional"
+      ],
+      "status": "verified-current-machine",
+      "retained_proof_sha256": "b07aac720bfe9d09264502b7f141407ee9ab864254c6f5925380e9fe2b19ff67"
+    },
+    {
+      "family": "owned",
+      "identity": "pocx-tsan",
+      "consensus": "pocx",
+      "required_frameworks": [
+        "unit",
+        "auxiliary",
+        "kernel",
+        "functional"
+      ],
+      "status": "verified-current-machine",
+      "retained_proof_sha256": "21c3603baddde7a9d241afc2f0d87ca0f863ecb1aa90f57348dce29910186dc1"
+    },
+    {
+      "family": "owned",
+      "identity": "bitcoin-msan",
+      "consensus": "bitcoin",
+      "required_frameworks": [
+        "unit",
+        "auxiliary",
+        "kernel",
+        "functional"
+      ],
+      "status": "verified-current-machine",
+      "retained_proof_sha256": "9cbedbf22c6e2931f367c6e33b397c82b150242d44f6fa7e490c9b6bae245fb3"
+    },
+    {
+      "family": "owned",
+      "identity": "pocx-msan",
+      "consensus": "pocx",
+      "required_frameworks": [
+        "unit",
+        "auxiliary",
+        "kernel",
+        "functional"
+      ],
+      "status": "verified-current-machine",
+      "retained_proof_sha256": "c5ec8bdec393730b83a34824919ebe79719fb07eac83702eaf4903edc4e090d8"
+    },
+    {
+      "family": "owned",
+      "identity": "bitcoin-wallet-disabled",
+      "consensus": "bitcoin",
+      "required_frameworks": [
+        "unit",
+        "auxiliary"
+      ],
+      "status": "verified-current-machine",
+      "retained_proof_sha256": "a1b8f92950d05198b4b82a24fdd266250cd2f81651d5e09e98e54e8f61db13e0"
+    },
+    {
+      "family": "owned",
+      "identity": "bitcoin-ipc-disabled",
+      "consensus": "bitcoin",
+      "required_frameworks": [
+        "unit",
+        "auxiliary"
+      ],
+      "status": "verified-current-machine",
+      "retained_proof_sha256": "a1b8f92950d05198b4b82a24fdd266250cd2f81651d5e09e98e54e8f61db13e0"
+    },
+    {
+      "family": "owned",
+      "identity": "pocx-unit",
+      "consensus": "pocx",
+      "required_frameworks": [
+        "unit",
+        "auxiliary"
+      ],
+      "status": "verified-current-machine",
+      "retained_proof_sha256": "a3d80db6a7bda0bd1a590fb09f3a2d0f015d3768a1a3d0b131a4ed4283f40745"
+    },
+    {
+      "family": "owned",
+      "identity": "pocx-functional",
+      "consensus": "pocx",
+      "required_frameworks": [
+        "functional"
+      ],
+      "status": "verified-current-machine",
+      "retained_proof_sha256": "aa6344bca6eacdb14dc1dd852bccc21e2dd5521a7f99b069ac6a2ad20a9266f2"
+    },
+    {
+      "family": "owned",
+      "identity": "pocx-qt",
+      "consensus": "pocx",
+      "required_frameworks": [
+        "qt"
+      ],
+      "status": "verified-current-machine",
+      "retained_proof_sha256": "f6f8f96a22e9ff7296f0d23ca07d50cb51b456120addf29756460ef2f82a4b74"
+    },
+    {
+      "family": "owned",
+      "identity": "pocx-wallet-disabled",
+      "consensus": "pocx",
+      "required_frameworks": [
+        "unit",
+        "auxiliary"
+      ],
+      "status": "verified-current-machine",
+      "retained_proof_sha256": "44112ac5a7a3041398932b27bc5cb4d77320c3e69600fd3be733bf10e7e64caf"
+    },
+    {
+      "family": "owned",
+      "identity": "pocx-ipc-disabled",
+      "consensus": "pocx",
+      "required_frameworks": [
+        "unit",
+        "auxiliary"
+      ],
+      "status": "verified-current-machine",
+      "retained_proof_sha256": "7a0c37355a8a6cc881b2dccc5bbda3d43fc2333fd2875d3f46ba6b985329cc5d"
+    },
+    {
+      "family": "owned",
+      "identity": "pocx-kernel",
+      "consensus": "pocx",
+      "required_frameworks": [
+        "kernel"
+      ],
+      "status": "verified-current-machine",
+      "retained_proof_sha256": "2d10c10df0bfb5eace36bac619f4374836815ed58a3ad922b1290f79e759adea"
+    },
+    {
+      "family": "owned",
+      "identity": "pocx-real-proof",
+      "consensus": "pocx",
+      "required_frameworks": [
+        "real-proof"
+      ],
+      "status": "verified-current-machine",
+      "retained_proof_sha256": "42ed4f6b9332fad07d2eca5fb5f1ca316f97e0be91b7dbdfcd890dbd11c8f01a"
+    },
+    {
+      "family": "inherited",
+      "identity": "ci-matrix:./ci/test/00_setup_env_i686_no_ipc.sh",
+      "consensus": "bitcoin",
+      "required_frameworks": [
+        "unit",
+        "qt",
+        "kernel",
+        "auxiliary",
+        "functional"
+      ],
+      "status": "verified-current-machine",
+      "retained_proof_sha256": "48a00aa9b01975e3b7dc6078a261d93764e5ca452a167e4395285b19fa184007"
+    },
+    {
+      "family": "inherited",
+      "identity": "ci-matrix:./ci/test/00_setup_env_i686_no_ipc.sh",
+      "consensus": "pocx",
+      "required_frameworks": [
+        "unit",
+        "qt",
+        "kernel",
+        "auxiliary",
+        "functional"
+      ],
+      "status": "verified-current-machine",
+      "retained_proof_sha256": "4edd0001f40161a02815a86689153f82015ba3bb06758d6d1a457ca4e658f838"
+    },
+    {
+      "family": "inherited",
+      "identity": "ci-matrix:./ci/test/00_setup_env_mac_cross.sh",
+      "consensus": "bitcoin",
+      "required_frameworks": [
+        "build/deploy"
+      ],
+      "status": "verified-current-machine",
+      "retained_proof_sha256": "baa790c261998fbab4a4c70066b96c8e463f8538b32d48b942c60b23461880b8"
+    },
+    {
+      "family": "inherited",
+      "identity": "ci-matrix:./ci/test/00_setup_env_mac_cross.sh",
+      "consensus": "pocx",
+      "required_frameworks": [
+        "build/deploy"
+      ],
+      "status": "verified-current-machine",
+      "retained_proof_sha256": "9383b839964e4a54420beebdec1cbeb35bfa9657e2acd94d94c39cc997cf99dd"
+    },
+    {
+      "family": "inherited",
+      "identity": "ci-matrix:./ci/test/00_setup_env_mac_cross_intel.sh",
+      "consensus": "bitcoin",
+      "required_frameworks": [
+        "build/deploy"
+      ],
+      "status": "verified-current-machine",
+      "retained_proof_sha256": "baa790c261998fbab4a4c70066b96c8e463f8538b32d48b942c60b23461880b8"
+    },
+    {
+      "family": "inherited",
+      "identity": "ci-matrix:./ci/test/00_setup_env_mac_cross_intel.sh",
+      "consensus": "pocx",
+      "required_frameworks": [
+        "build/deploy"
+      ],
+      "status": "verified-current-machine",
+      "retained_proof_sha256": "df5910d06b994a87349a5015696c473369e18103f24012ce4ea7ed129a250479"
+    },
+    {
+      "family": "inherited",
+      "identity": "ci-matrix:./ci/test/00_setup_env_native_alpine_musl.sh",
+      "consensus": "bitcoin",
+      "required_frameworks": [
+        "unit",
+        "qt",
+        "kernel",
+        "auxiliary",
+        "functional"
+      ],
+      "status": "verified-current-machine",
+      "retained_proof_sha256": "dbe22f82db02453af8f6ce78343dbd9bf59221634f4e25ff419b6b0932819c89"
+    },
+    {
+      "family": "inherited",
+      "identity": "ci-matrix:./ci/test/00_setup_env_native_alpine_musl.sh",
+      "consensus": "pocx",
+      "required_frameworks": [
+        "unit",
+        "qt",
+        "kernel",
+        "auxiliary",
+        "functional"
+      ],
+      "status": "verified-current-machine",
+      "retained_proof_sha256": "a2bb09b179527115d1bf04cbff516a3c4d6cf4a3a483a9e3966b8437ec394d6c"
+    },
+    {
+      "family": "inherited",
+      "identity": "ci-matrix:./ci/test/00_setup_env_native_asan.sh",
+      "consensus": "bitcoin",
+      "required_frameworks": [
+        "unit",
+        "qt",
+        "kernel",
+        "auxiliary",
+        "functional"
+      ],
+      "status": "verified-current-machine",
+      "retained_proof_sha256": "cd2651ce204328831b35106cb5a1c0eb6c2f4fcc8158b40724e968983ce82e24"
+    },
+    {
+      "family": "inherited",
+      "identity": "ci-matrix:./ci/test/00_setup_env_native_asan.sh",
+      "consensus": "pocx",
+      "required_frameworks": [
+        "unit",
+        "qt",
+        "kernel",
+        "auxiliary",
+        "functional"
+      ],
+      "status": "verified-current-machine",
+      "retained_proof_sha256": "689ac2afd9a0a902127d069c0824dfe55047d731fcef8639ce9d4c7757fbad12"
+    },
+    {
+      "family": "inherited",
+      "identity": "ci-matrix:./ci/test/00_setup_env_native_iwyu.sh",
+      "consensus": "bitcoin",
+      "required_frameworks": [
+        "build/deploy",
+        "iwyu"
+      ],
+      "status": "verified-current-machine",
+      "retained_proof_sha256": "c38573e27d7db3fa71d00ff3acd9fc16a3cf50bc2ac6bb9dfa5605526845ab3b"
+    },
+    {
+      "family": "inherited",
+      "identity": "ci-matrix:./ci/test/00_setup_env_native_iwyu.sh",
+      "consensus": "pocx",
+      "required_frameworks": [
+        "build/deploy",
+        "iwyu"
+      ],
+      "status": "verified-current-machine",
+      "retained_proof_sha256": "c38573e27d7db3fa71d00ff3acd9fc16a3cf50bc2ac6bb9dfa5605526845ab3b"
+    },
+    {
+      "family": "inherited",
+      "identity": "ci-matrix:./ci/test/00_setup_env_native_msan.sh",
+      "consensus": "bitcoin",
+      "required_frameworks": [
+        "unit",
+        "qt",
+        "kernel",
+        "auxiliary",
+        "functional"
+      ],
+      "status": "verified-current-machine",
+      "retained_proof_sha256": "a2e92d5c23c0aa46806ba81c28a33f8cb6980fdb3197424d13725f4b831a4e22"
+    },
+    {
+      "family": "inherited",
+      "identity": "ci-matrix:./ci/test/00_setup_env_native_msan.sh",
+      "consensus": "pocx",
+      "required_frameworks": [
+        "unit",
+        "qt",
+        "kernel",
+        "auxiliary",
+        "functional"
+      ],
+      "status": "verified-current-machine",
+      "retained_proof_sha256": "6818d9d3d3c44aae4368f576affb71cba1e4c410158601a96459e6998a1f8a47"
+    },
+    {
+      "family": "inherited",
+      "identity": "ci-matrix:./ci/test/00_setup_env_native_nowallet.sh",
+      "consensus": "bitcoin",
+      "required_frameworks": [
+        "unit",
+        "qt",
+        "kernel",
+        "auxiliary",
+        "functional"
+      ],
+      "status": "verified-current-machine",
+      "retained_proof_sha256": "f8ea601b015b068d135ec0198a96decd61035af15e314a54402708f7d5dee5e9"
+    },
+    {
+      "family": "inherited",
+      "identity": "ci-matrix:./ci/test/00_setup_env_native_nowallet.sh",
+      "consensus": "pocx",
+      "required_frameworks": [
+        "unit",
+        "qt",
+        "kernel",
+        "auxiliary",
+        "functional"
+      ],
+      "status": "verified-current-machine",
+      "retained_proof_sha256": "082b5d4738cd4c87fe4de11c30135c3611bbb0b64186fff4bf930179e12c0474"
+    },
+    {
+      "family": "inherited",
+      "identity": "ci-matrix:./ci/test/00_setup_env_native_previous_releases.sh",
+      "consensus": "bitcoin",
+      "required_frameworks": [
+        "unit",
+        "qt",
+        "kernel",
+        "auxiliary",
+        "functional"
+      ],
+      "status": "verified-current-machine",
+      "retained_proof_sha256": "d7447a06b2a0eaffd47d7d50e27cccf6341fbf0babdf633ef8dc2a14aaaa3e8d"
+    },
+    {
+      "family": "inherited",
+      "identity": "ci-matrix:./ci/test/00_setup_env_native_previous_releases.sh",
+      "consensus": "pocx",
+      "required_frameworks": [
+        "unit",
+        "qt",
+        "kernel",
+        "auxiliary",
+        "functional"
+      ],
+      "status": "verified-current-machine",
+      "retained_proof_sha256": "9f8810f7d79302cbbb7ef6919e95ee43b3f3cbf5a468fe91c9609a9fbb2a0126"
+    },
+    {
+      "family": "inherited",
+      "identity": "ci-matrix:./ci/test/00_setup_env_native_tidy.sh",
+      "consensus": "bitcoin",
+      "required_frameworks": [
+        "build/deploy",
+        "tidy"
+      ],
+      "status": "verified-current-machine",
+      "retained_proof_sha256": "cfde5e5f0308c1f2cfdc3c0805692d1b7e2b44aa1b53e0e60453fc26d6bae402"
+    },
+    {
+      "family": "inherited",
+      "identity": "ci-matrix:./ci/test/00_setup_env_native_tidy.sh",
+      "consensus": "pocx",
+      "required_frameworks": [
+        "build/deploy",
+        "tidy"
+      ],
+      "status": "verified-current-machine",
+      "retained_proof_sha256": "e3861294df7c3cc6d6d5940afdc68aba458581b240c27491c7f34be4af6ff0f6"
+    },
+    {
+      "family": "inherited",
+      "identity": "ci-matrix:./ci/test/00_setup_env_native_tsan.sh",
+      "consensus": "bitcoin",
+      "required_frameworks": [
+        "unit",
+        "qt",
+        "kernel",
+        "auxiliary",
+        "functional"
+      ],
+      "status": "verified-current-machine",
+      "retained_proof_sha256": "9cc10c67f495e0570d81adc5ed10b6458cc2ad7f96a73234913eb7d12c6f46ac"
+    },
+    {
+      "family": "inherited",
+      "identity": "ci-matrix:./ci/test/00_setup_env_native_tsan.sh",
+      "consensus": "pocx",
+      "required_frameworks": [
+        "unit",
+        "qt",
+        "kernel",
+        "auxiliary",
+        "functional"
+      ],
+      "status": "verified-current-machine",
+      "retained_proof_sha256": "117e01f5201dedcbe5f72dcb7473a36cd2f0a0da035b61a1ecc60d7db2eda951"
+    },
+    {
+      "family": "inherited",
+      "identity": "windows-cross:./ci/test/00_setup_env_win64.sh",
+      "consensus": "bitcoin",
+      "required_frameworks": [
+        "build/deploy"
+      ],
+      "status": "verified-current-machine",
+      "retained_proof_sha256": "baa790c261998fbab4a4c70066b96c8e463f8538b32d48b942c60b23461880b8"
+    },
+    {
+      "family": "inherited",
+      "identity": "windows-cross:./ci/test/00_setup_env_win64.sh",
+      "consensus": "pocx",
+      "required_frameworks": [
+        "build/deploy"
+      ],
+      "status": "verified-current-machine",
+      "retained_proof_sha256": "dc881910de1d5880a93ce38384128dbfe17965bc6ac037f39cac4bc688515f3e"
+    },
+    {
+      "family": "inherited",
+      "identity": "windows-cross:./ci/test/00_setup_env_win64_msvcrt.sh",
+      "consensus": "bitcoin",
+      "required_frameworks": [
+        "build/deploy"
+      ],
+      "status": "verified-current-machine",
+      "retained_proof_sha256": "baa790c261998fbab4a4c70066b96c8e463f8538b32d48b942c60b23461880b8"
+    },
+    {
+      "family": "inherited",
+      "identity": "windows-cross:./ci/test/00_setup_env_win64_msvcrt.sh",
+      "consensus": "pocx",
+      "required_frameworks": [
+        "build/deploy"
+      ],
+      "status": "verified-current-machine",
+      "retained_proof_sha256": "47d7ef51d831bc11a7836305134d504012ff8ea82089491d0221f296fa506b50"
+    },
+    {
+      "family": "inherited",
+      "identity": "lint",
+      "consensus": "shared source checks",
+      "required_frameworks": [
+        "lint"
+      ],
+      "status": "verified-current-machine",
+      "retained_proof_sha256": "c8b5455bddec36020c8dce1be7ed70e750b86b979d4705554d3450844fab94d1"
+    }
+  ],
+  "deferred_conditions": [
+    {
+      "family": "inherited",
+      "condition": "ci-matrix:./ci/test/00_setup_env_arm.sh",
+      "consensus": "bitcoin",
+      "configured_runner": "ubuntu-24.04-arm",
+      "status": "deferred",
+      "required_frameworks": "unit;qt;kernel;auxiliary;functional",
+      "reason": "User deferred target-native execution to a suitable ARM, macOS or Windows machine."
+    },
+    {
+      "family": "inherited",
+      "condition": "ci-matrix:./ci/test/00_setup_env_arm.sh",
+      "consensus": "pocx",
+      "configured_runner": "ubuntu-24.04-arm",
+      "status": "deferred",
+      "required_frameworks": "unit;qt;kernel;auxiliary;functional",
+      "reason": "User deferred target-native execution to a suitable ARM, macOS or Windows machine."
+    },
+    {
+      "family": "inherited",
+      "condition": "macos-native-arm64:./ci/test/00_setup_env_mac_native.sh",
+      "consensus": "bitcoin",
+      "configured_runner": "macos-native-arm64",
+      "status": "deferred",
+      "required_frameworks": "unit;qt;kernel;auxiliary;functional",
+      "reason": "User deferred target-native execution to a suitable ARM, macOS or Windows machine."
+    },
+    {
+      "family": "inherited",
+      "condition": "macos-native-arm64:./ci/test/00_setup_env_mac_native.sh",
+      "consensus": "pocx",
+      "configured_runner": "macos-native-arm64",
+      "status": "deferred",
+      "required_frameworks": "unit;qt;kernel;auxiliary;functional",
+      "reason": "User deferred target-native execution to a suitable ARM, macOS or Windows machine."
+    },
+    {
+      "family": "inherited",
+      "condition": "windows-native-dll:standard",
+      "consensus": "bitcoin",
+      "configured_runner": "windows-native-dll",
+      "status": "deferred",
+      "required_frameworks": "unit;qt;kernel;auxiliary;functional",
+      "reason": "User deferred target-native execution to a suitable ARM, macOS or Windows machine."
+    },
+    {
+      "family": "inherited",
+      "condition": "windows-native-dll:standard",
+      "consensus": "pocx",
+      "configured_runner": "windows-native-dll",
+      "status": "deferred",
+      "required_frameworks": "unit;qt;kernel;auxiliary;functional",
+      "reason": "User deferred target-native execution to a suitable ARM, macOS or Windows machine."
+    },
+    {
+      "family": "inherited",
+      "condition": "windows-native-test:msvcrt",
+      "consensus": "bitcoin",
+      "configured_runner": "windows-native-test",
+      "status": "deferred",
+      "required_frameworks": "unit;qt;kernel;auxiliary;functional",
+      "reason": "User deferred target-native execution to a suitable ARM, macOS or Windows machine."
+    },
+    {
+      "family": "inherited",
+      "condition": "windows-native-test:msvcrt",
+      "consensus": "pocx",
+      "configured_runner": "windows-native-test",
+      "status": "deferred",
+      "required_frameworks": "unit;qt;kernel;auxiliary;functional",
+      "reason": "User deferred target-native execution to a suitable ARM, macOS or Windows machine."
+    },
+    {
+      "family": "inherited",
+      "condition": "windows-native-test:ucrt",
+      "consensus": "bitcoin",
+      "configured_runner": "windows-native-test",
+      "status": "deferred",
+      "required_frameworks": "unit;qt;kernel;auxiliary;functional",
+      "reason": "User deferred target-native execution to a suitable ARM, macOS or Windows machine."
+    },
+    {
+      "family": "inherited",
+      "condition": "windows-native-test:ucrt",
+      "consensus": "pocx",
+      "configured_runner": "windows-native-test",
+      "status": "deferred",
+      "required_frameworks": "unit;qt;kernel;auxiliary;functional",
+      "reason": "User deferred target-native execution to a suitable ARM, macOS or Windows machine."
+    },
+    {
+      "family": "inherited",
+      "condition": "test-each-commit",
+      "consensus": "original-first pairs per selected commit",
+      "configured_runner": "",
+      "status": "deferred",
+      "required_frameworks": "unit;qt;kernel;auxiliary;functional",
+      "reason": "User excluded intermediate-history verification; preserve results for later squash merge outside this goal."
+    }
+  ],
+  "source_fingerprint_commit": "c6576ae3e10665af15a2699d097652914baa9cae",
+  "portable_records": {
+    "framework-parity-counts.csv": "6a07f59225ccaccc5c646d89c6ab8cc9bb37d0b7aba8f348cea6ff1d88c0b9dd",
+    "deferred-conditions.csv": "8af6ec20d0216bfb423e70bd50909119be3ee8aafab57398bf56abe39e8dfda1",
+    "fully-enabled-framework-overview.csv": "0a2b3a9afee62978ad3691946e252204b52ce400e02ab81a34f0d61258f7acef"
+  },
+  "retained_Linux_evidence": {
+    "index_sha256": "8723245607059d76ddd11e426684fd9639dd82033644fb1b23ea16a8793e39c0",
+    "final_report_sha256": "8818ef83c0c64acc105cbc86e04ed39899615991a08a497131e93ffe78ec1719",
+    "independent_audit_sha256": "e12b476fedb83f3dfead43b6860732b8cb21582afa9f5e8273ec27f86be08593",
+    "raw_execution_evidence_included_in_Git_handover": false,
+    "raw_evidence_required_to_independently_reaudit_prior_Linux_results": true,
+    "raw_evidence_required_for_fresh_native_target_testing": false,
+    "original_machine_workspace_relative_directory": "bitcoin-tests-m0-m1-20261007/artifacts/ci-parity-20261010"
+  },
+  "data_transfer": {
+    "native_Windows_and_macOS": "Fresh clone plus public build dependencies; no Linux generated data required.",
+    "Windows_artifact_runtime": "Requires matching-revision Bitcoin/PoCX PE bundles per CRT; rebuild in WSL/Linux or obtain from matching producer.",
+    "existing_Linux_bundles": "Optional reuse candidates only; validate revision/source/configuration before reuse.",
+    "fixtures": "Committed PoCX vectors and kernel fixtures; checksum-provisioned upstream unit assets.",
+    "previous_releases": "Download target-platform versions using test/get_previous_releases.py when required."
+  },
+  "runtime_changes_in_publication": false,
+  "history_rewritten": false,
+  "hosted_or_deferred_platform_runtime_pass_inferred": false,
+  "counting_note": "Counts repeat cases across CI conditions. Original inventory slots, native case rows, benchmark slots and aggregate executions remain separate. Skips and inactive cases are never passes. Deferred work is never passed.",
+  "csv_export": {
+    "transform": "CRLF to LF only; parsed CSV records verified unchanged",
+    "original_record_sha256": {
+      "deferred-conditions.csv": "90d8150e7ef65b3482a1159787661b4d9444fe6f4a489656d0846034cc9fab9a",
+      "framework-parity-counts.csv": "a0c9d0261df7b7d561f351ba1c552fc8e46bc9629bbd9e79e7ca6005df0cc053",
+      "fully-enabled-framework-overview.csv": "af8f03d257e1312acb0749bed8a3ae277c632cd1b6ff60f3aa1608a181d4e24f"
+    }
+  }
+}

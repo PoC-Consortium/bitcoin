@@ -20,7 +20,15 @@ from collections import namedtuple
 
 settings = {}
 
-def calc_hash_str(blk_hdr):
+def calc_hash_str(blk_hdr, block_format='bitcoin'):
+    if block_format == 'pocx':
+        # CBlockHeader::GetHash serializes the native header with its final
+        # 65-byte signature zeroed. The signature remains intact in the copy.
+        if len(blk_hdr) != 286:
+            raise ValueError('PoCX block header must contain 286 bytes')
+        blk_hdr = blk_hdr[:-65] + bytes(65)
+    elif block_format != 'bitcoin':
+        raise ValueError('Unknown block format: ' + block_format)
     blk_hdr_hash = hashlib.sha256(hashlib.sha256(blk_hdr).digest()).digest()
     return blk_hdr_hash[::-1].hex()
 
@@ -92,6 +100,10 @@ BlockExtent = namedtuple('BlockExtent', ['fn', 'offset', 'inhdr', 'blkhdr', 'siz
 class BlockDataCopier:
     def __init__(self, settings, blkindex, blkmap):
         self.settings = settings
+        self.block_format = settings.get('block_format', 'bitcoin')
+        if self.block_format not in ('bitcoin', 'pocx'):
+            raise ValueError('Unknown block format: ' + self.block_format)
+        self.header_size = 286 if self.block_format == 'pocx' else 80
         self.blkindex = blkindex
         self.blkmap = blkmap
 
@@ -224,11 +236,11 @@ class BlockDataCopier:
                 continue
             inLenLE = inhdr[4:]
             su = struct.unpack("<I", inLenLE)
-            inLen = su[0] - 80 # length without header
-            blk_hdr = self.read_xored(self.inF, 80)
+            inLen = su[0] - self.header_size # length without header
+            blk_hdr = self.read_xored(self.inF, self.header_size)
             inExtent = BlockExtent(self.inFn, self.inF.tell(), inhdr, blk_hdr, inLen)
 
-            self.hash_str = calc_hash_str(blk_hdr)
+            self.hash_str = calc_hash_str(blk_hdr, self.block_format)
             if self.hash_str not in blkmap:
                 # Because blocks can be written to files out-of-order as of 0.10, the script
                 # may encounter blocks it doesn't know about. Treat as debug output.

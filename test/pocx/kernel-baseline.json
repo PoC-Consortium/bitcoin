@@ -1,0 +1,32 @@
+{
+  "upstream_revision": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
+  "profile": "Linux Release, ENABLE_POCX=OFF, kernel library/tests ON, wallet/IPC/tests ON, GUI/fuzz/USDT OFF",
+  "counting_unit": "Enabled Boost kernel API test case; one CTest wrapper runs all cases",
+  "case_count": 16,
+  "cases": [
+    "btck_block",
+    "btck_block_hash_tests",
+    "btck_block_header_tests",
+    "btck_block_tree_entry_tests",
+    "btck_chainman_in_memory_tests",
+    "btck_chainman_mainnet_tests",
+    "btck_chainman_regtest_tests",
+    "btck_chainman_tests",
+    "btck_context_tests",
+    "btck_precomputed_txdata",
+    "btck_script_pubkey",
+    "btck_script_verify_tests",
+    "btck_transaction_input",
+    "btck_transaction_output",
+    "btck_transaction_tests",
+    "logging_tests"
+  ],
+  "upstream_files_sha256": {
+    "src/test/kernel/CMakeLists.txt": "1f726aa339f2ce8b5a90243847adb1a6d8aa26a7b6ed437ae59b24b37a9d9510",
+    "src/test/kernel/block_data.h": "37237946a7f8174b99f08390daea444e03d3557342f0a65dfc6c68a4a5ae16f5",
+    "src/test/kernel/test_kernel.cpp": "b239ffd7977a3390d024745b00b5ab485817c26648f0d5328d94c60730c1dbc4"
+  },
+  "verification": "artifacts/kernel-baseline-20261009/verification.json",
+  "source_audit": "artifacts/kernel-baseline-20261009/compiler-source-audit.json",
+  "scope": "Baseline established using this fork with PoCX disabled; original test source, fixtures and CMake file independently match pinned upstream. Native adaptations/runtime and other platform/build profiles are separate checks."
+}

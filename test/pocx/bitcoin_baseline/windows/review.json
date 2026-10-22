@@ -1,0 +1,14 @@
+{
+  "source": "test/functional/rpc_signer.py",
+  "source_sha256": "c3386fba2ec9121ef6f2bbe00730563c955f545de385f0d0c3d1e349ca12bc10",
+  "replacement": "test/pocx/bitcoin_baseline/windows/rpc_signer.py",
+  "replacement_sha256": "ea682c6093604670612eeae9936a9a3d4d0af232fe798d9edf7eea979c01639d",
+  "scope": "Windows host locale fixture correction, shared Bitcoin/PoCX. Preserve every assertion and scenario; expected Windows error2 string independently obtained from OS FormatError, not from the RPC under test. Upstream test stays byte-identical. AST guard permits only ctypes import and this exact expected-message substitution. Raw upstream German-host failure retained; focused corrected Bitcoin case passed; full platform pair remains unverified.",
+  "multiwallet": {
+    "source": "test/functional/wallet_multiwallet.py",
+    "source_sha256": "8241af7710a2cf97fe19ce17f59f681a0db9d96f87ae9cf7d0a83ae8b7c30279",
+    "replacement": "test/pocx/bitcoin_baseline/windows/wallet_multiwallet.py",
+    "replacement_sha256": "8bd68b3037529c28dfa8f1fbbf0621e5e81b7b0a50f8b8553973cc3c21e2107b",
+    "scope": "Only exact create_directories expected prefix, selected by verified cross-artifact environment; all scenarios, RPC code, log and wallet assertions preserved."
+  }
+}

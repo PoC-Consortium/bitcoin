@@ -44,6 +44,9 @@ linearize-hashes.py.
 * `max_out_sz`: Maximum size for files created by the `output_file` option.
 (Default: `1000*1000*1000 bytes`)
 * `netmagic`: Network magic number.
+* `block_format`: `bitcoin` (default) or `pocx`. PoCX uses a 286-byte header
+and computes block hashes with the final 65-byte signature zeroed. The copied
+blocks retain their original signatures and complete contents.
 * `out_of_order_cache_sz`: If out-of-order blocks are being read, the block can
 be written to a cache so that the blockchain doesn't have to be sought again.
 This option specifies the cache size. (Default: `100*1000*1000 bytes`)

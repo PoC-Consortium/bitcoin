@@ -13,6 +13,7 @@
 #include <serialize.h>
 #include <uint256.h>
 #include <util/log.h>
+#include <util/strencodings.h>
 #include <util/threadnames.h>
 #include <util/vector.h>
 
@@ -29,6 +30,11 @@ static constexpr uint8_t DB_BEST_BLOCK{'B'};
 static constexpr uint8_t DB_HEAD_BLOCKS{'H'};
 // Keys used in previous version that might still be found in the DB:
 static constexpr uint8_t DB_COINS{'c'};
+
+#ifdef ENABLE_POCX
+// PoCX forging assignment database keys (OP_RETURN-only architecture)
+static constexpr uint8_t DB_ASSIGNMENT_HISTORY{'A'};    // (plotAddress, height, txid) -> ForgingAssignment
+#endif
 
 // Threshold for warning when writing this many dirty cache entries to disk.
 static constexpr size_t WARN_FLUSH_COINS_COUNT{10'000'000};
@@ -112,7 +118,12 @@ std::vector<uint256> CCoinsViewDB::GetHeadBlocks() const {
     return vhashHeadBlocks;
 }
 
-void CCoinsViewDB::BatchWrite(CoinsViewCacheCursor& cursor, const uint256& hashBlock)
+void CCoinsViewDB::BatchWrite(CoinsViewCacheCursor& cursor, const uint256& hashBlock
+#ifdef ENABLE_POCX
+    , const ForgingAssignmentsMap& assignments
+    , const DeletedAssignmentsSet& deletedAssignments
+#endif
+)
 {
     CDBBatch batch(*m_db);
     size_t count = 0;
@@ -168,6 +179,13 @@ void CCoinsViewDB::BatchWrite(CoinsViewCacheCursor& cursor, const uint256& hashB
             }
         }
     }
+
+#ifdef ENABLE_POCX
+    // Bundle forging assignment updates into the final batch so they commit atomically
+    // with DB_BEST_BLOCK. If this batch is lost on crash, HEAD_BLOCKS replay rebuilds
+    // both coins and assignments from block data via RollforwardBlock.
+    WriteAssignmentsToBatch(batch, assignments, deletedAssignments);
+#endif
 
     // In the last batch, mark the database as consistent with hashBlock again.
     batch.Erase(DB_HEAD_BLOCKS);
@@ -279,3 +297,89 @@ void CCoinsViewDBCursor::Next()
         keyTmp.first = entry.key;
     }
 }
+
+#ifdef ENABLE_POCX
+// ============================================================================
+// PoCX Forging Assignment Database Implementation (OP_RETURN-only architecture)
+// ============================================================================
+
+namespace {
+
+// Serialization structures for database keys.
+// Key format: (prefix, plotAddress, height, txid). All rows for a plot share
+// the (prefix, plotAddress) byte-prefix, so they are contiguous and a single
+// Seek + scan reads exactly one plot's history. Iteration order within a plot
+// is unspecified (height is not byte-ordered), so readers must not assume it.
+struct AssignmentHistoryKey {
+    uint8_t prefix{DB_ASSIGNMENT_HISTORY};
+    std::array<uint8_t, 20> plotAddress;
+    int assignment_height;
+    uint256 assignment_txid;
+
+    AssignmentHistoryKey(const std::array<uint8_t, 20>& plot, int height, const uint256& txid)
+        : plotAddress(plot), assignment_height(height), assignment_txid(txid) {}
+
+    SERIALIZE_METHODS(AssignmentHistoryKey, obj) {
+        READWRITE(obj.prefix, obj.plotAddress, obj.assignment_height, obj.assignment_txid);
+    }
+};
+
+} // namespace
+
+std::vector<ForgingAssignment> CCoinsViewDB::GetForgingAssignmentHistory(
+    const std::array<uint8_t, 20>& plotAddress) const
+{
+    std::vector<ForgingAssignment> history;
+    std::unique_ptr<CDBIterator> pcursor(m_db->NewIterator());
+
+    // Seek to first assignment for this plot (height=0)
+    AssignmentHistoryKey seek_key(plotAddress, 0, uint256());
+    pcursor->Seek(seek_key);
+
+    while (pcursor->Valid()) {
+        AssignmentHistoryKey key(plotAddress, 0, uint256());
+        if (!pcursor->GetKey(key)) break;
+
+        // Stop if we've moved past this plot's assignments
+        if (key.prefix != DB_ASSIGNMENT_HISTORY || key.plotAddress != plotAddress) {
+            break;
+        }
+
+        ForgingAssignment assignment;
+        if (!pcursor->GetValue(assignment)) {
+            // Consensus state that cannot be read must not be treated as absent
+            // and an exception could be swallowed by an RPC or p2p handler, so
+            // terminate here, like the crash path in BatchWrite above.
+            LogError("PoCX: unreadable assignment record for plot %s at height %d, txid %s; "
+                     "the chainstate database is corrupted, refusing to continue\n",
+                     HexStr(plotAddress), key.assignment_height, key.assignment_txid.ToString());
+            _Exit(EXIT_FAILURE);
+        }
+        history.push_back(assignment);
+
+        pcursor->Next();
+    }
+
+    return history;
+}
+
+void CCoinsViewDB::WriteAssignmentsToBatch(
+    CDBBatch& batch,
+    const ForgingAssignmentsMap& assignments,
+    const DeletedAssignmentsSet& deletedAssignments)
+{
+    // Write history rows, but skip rows that are about to be erased — emitting
+    // both a Write and an Erase for the same key into one batch is wasted I/O.
+    for (const auto& [key, assignment] : assignments) {
+        if (deletedAssignments.contains(AssignmentRowKey(assignment))) continue;
+        batch.Write(AssignmentHistoryKey(assignment.plotAddress, assignment.assignment_height,
+                                         assignment.assignment_txid), assignment);
+    }
+
+    // Erase tombstoned rows. Each tombstone names its physical row, so a txid
+    // re-mined at another height erases the old row and writes the new one.
+    for (const auto& row : deletedAssignments) {
+        batch.Erase(AssignmentHistoryKey(row.plotAddress, row.assignment_height, row.assignment_txid));
+    }
+}
+#endif

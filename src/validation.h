@@ -389,7 +389,13 @@ public:
 /** Functions for validating blocks and updating the block tree */
 
 /** Context-independent validity checks */
+#ifdef ENABLE_POCX
+/** Reuse context-free PoCX header checks when reading untrusted block files. */
+bool CheckBlockHeader(const CBlockHeader& block, BlockValidationState& state, const Consensus::Params& consensusParams, bool fCheckPOW = true, bool skip_pocx_proof = false);
+bool CheckBlock(const CBlock& block, BlockValidationState& state, const Consensus::Params& consensusParams, bool fCheckPOW = true, bool fCheckMerkleRoot = true, bool skip_pocx_proof = false);
+#else
 bool CheckBlock(const CBlock& block, BlockValidationState& state, const Consensus::Params& consensusParams, bool fCheckPOW = true, bool fCheckMerkleRoot = true);
+#endif
 
 /**
  * Verify a block, including transactions.
@@ -414,8 +420,10 @@ BlockValidationState TestBlockValidity(
     bool check_pow,
     bool check_merkle_root) EXCLUSIVE_LOCKS_REQUIRED(cs_main);
 
+#ifndef ENABLE_POCX
 /** Check that the proof of work on each blockheader matches the value in nBits */
 bool HasValidProofOfWork(std::span<const CBlockHeader> headers, const Consensus::Params& consensusParams);
+#endif
 
 /** Check if a block has been mutated (with respect to its merkle root and witness commitments). */
 bool IsBlockMutated(const CBlock& block, bool check_witness_root);
@@ -884,6 +892,13 @@ protected:
         DisconnectedBlockTransactions& disconnectpool,
         bool fAddToMempool) EXCLUSIVE_LOCKS_REQUIRED(cs_main, m_mempool->cs);
 
+#ifdef ENABLE_POCX
+    /** Evict mempool assignment/revocation transactions whose plot state at
+     *  next_block_height no longer admits them (re-runs the admission state
+     *  check only), with their descendants. */
+    void RemoveInvalidAssignmentTxsFromMempool(int next_block_height) EXCLUSIVE_LOCKS_REQUIRED(cs_main, m_mempool->cs);
+#endif
+
     /** Check warning conditions and do some notifications on new chain tip set. */
     void UpdateTip(const CBlockIndex* pindexNew)
         EXCLUSIVE_LOCKS_REQUIRED(::cs_main);
@@ -964,11 +979,20 @@ private:
      * block index (permanent memory storage), indicating that the header is
      * known to be part of a sufficiently high-work chain (anti-dos check).
      */
+#ifdef ENABLE_POCX
+    bool AcceptBlockHeader(
+        const CBlockHeader& block,
+        BlockValidationState& state,
+        CBlockIndex** ppindex,
+        bool min_pow_checked,
+        bool skip_pocx_proof = false) EXCLUSIVE_LOCKS_REQUIRED(cs_main);
+#else
     bool AcceptBlockHeader(
         const CBlockHeader& block,
         BlockValidationState& state,
         CBlockIndex** ppindex,
         bool min_pow_checked) EXCLUSIVE_LOCKS_REQUIRED(cs_main);
+#endif
     friend Chainstate;
 
     /** Most recent headers presync progress update, for rate-limiting. */

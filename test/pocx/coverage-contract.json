@@ -1,0 +1,31 @@
+{
+  "scope": "M0 and M1 only",
+  "fixed_before_implementation": "PROGRESS.md initial required migration set",
+  "unit_required": ["pocx_tests", "pocx_simd_tests", "crypto_tests", "serialize_tests", "uint256_tests", "util_string_tests", "util_check_tests"],
+  "unit_selection_reason": "All existing PoCX cases plus unchanged compatible crypto, serialization, uint256 and utility sources. Entire inherited unit selection remains registered, including incompatible util_tests address fixtures.",
+  "functional_required": {
+    "feature_pocx_assignment_lifecycle.py": {
+      "source": "wrapper/scripts/assignments/test-assignment-lifecycle-v2.sh",
+      "preconditions": ["fresh regtest", "mocktime before wallet creation", "wallet enabled", "fallbackfee=0.00001", "101 blocks to coinbase maturity", "fund plot with 1 coin and confirm", "refund plot with 1 coin and mine 2 blocks before revocation"],
+      "phase_mapping": {
+        "phase1_setup": "Phase 1: mature funds, plot funding, UNASSIGNED, empty mempool",
+        "phase2_assignment": "Phase 2: assignment RPC, mempool txid, confirmation, ASSIGNING, empty mempool, all four activation boundaries, ASSIGNED, 6a2c504f4358 OP_RETURN prefix",
+        "phase3_revocation": "Phase 3: refund, revocation RPC, mempool txid, REVOKING, empty mempool, all eight revocation boundaries, REVOKED, 6a1858434f50 OP_RETURN prefix",
+        "phase4_single_state_rollback": "Phase 4: invalidate each state transition, state and signer checks, returned mempool transactions, reconsider original chain",
+        "phase5_multi_state_rollback": "Phase 5: REVOKED to ASSIGNED to UNASSIGNED, reconsider with descendants back to REVOKED",
+        "phase6_historic_verification": "Phase 6: all five historical states with original heights and expected signer"
+      },
+      "duplicate_aliases": "Original ASSIGNING/ASSIGNED_CONFIRMED and REVOKING/REVOKED_CONFIRMED are identical block hashes; conversion stores each hash once without losing a transition assertion.",
+      "strengthened_checks": ["every preactivation boundary", "exact restored tip", "verifychain(4,0)"]
+    },
+    "feature_pocx_mining.py": {
+      "source": "wrapper/scripts/mining/test-regtest-mining-v2.sh",
+      "preconditions": ["fresh regtest", "mocktime", "new wallet", "owned mining address"],
+      "assertions": ["100 blocks in one generatetoaddress call", "height exactly 100", "100 distinct accepted blocks", "tip is last returned block", "height/previous hash/confirmation continuity", "coinbase pays requested address", "verifychain(4,0)"],
+      "timing": "Elapsed scenario time is recorded by runner; throughput was diagnostic in original script, not a pass/fail threshold."
+    }
+  },
+  "bitcoin_required": ["ENABLE_POCX=OFF build", "all registered CTest checks (optional script assets explicitly skipped)", "feature_abortnode.py"],
+  "infrastructure_required": ["dedicated executable and support library", "exact compiled-suite CTest registration", "missing and empty selections fail", "deterministic ordinary-copy staging", "explicit replacement manifest", "import-origin verification", "binary/profile checks", "per-test process ownership, ports, timeouts and result logs", "no upstream Python edits", "original worktrees unchanged"],
+  "preserved_not_claimed_green": ["all inherited PoCX unit sources and gated cases", "wallet and IPC sources", "Qt and kernel targets (not configured)", "remaining wrapper scripts", "upstream functional inventory", "fuzz source inventory (PoCX stub has no coverage)"]
+}

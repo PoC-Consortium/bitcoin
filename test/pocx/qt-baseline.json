@@ -1,0 +1,44 @@
+{
+  "upstream_revision": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
+  "profile": "Linux, Qt 6, Release, GUI/tests/wallet/IPC ON, PoCX/kernel/fuzz/USDT OFF",
+  "counting_unit": "Qt test method (excluding setup/cleanup and parameterized GUI callbacks)",
+  "case_count": 9,
+  "cases": [
+    "AddressBookTests::addressBookTests",
+    "AppTests::appTests",
+    "OptionTests::extractFilter",
+    "OptionTests::integerGetArgBug",
+    "OptionTests::migrateSettings",
+    "OptionTests::parametersInteraction",
+    "RPCNestedTests::rpcNestedTests",
+    "URITests::uriTests",
+    "WalletTests::walletTests"
+  ],
+  "upstream_files_sha256": {
+    "src/qt/test/CMakeLists.txt": "c67e7c546995e4f483fddaeb64717e32d61cd2596f6ebaa79ba711132dc22722",
+    "src/qt/test/addressbooktests.cpp": "ba8066f58f952907b86ebb98e2f099cd43b480944f48f7b6dc3eed4f9cb408a7",
+    "src/qt/test/addressbooktests.h": "9d1b67f8c77c19b11f9a5052072e52536217ba0c2fa44a4f206c67711570ae71",
+    "src/qt/test/apptests.cpp": "21ef531edc948b9456b3aee292c641b08e4e522960939d0186f96b2cb8259dc4",
+    "src/qt/test/apptests.h": "056ff68bfd2dd7c21ec32874ac3fa27259ee4751e3343f591ba96a8abf62638f",
+    "src/qt/test/optiontests.cpp": "54e19ae887168c80eb6daa70ecc313beb350b459c65551e52cf399990c340163",
+    "src/qt/test/optiontests.h": "67b6bcf7a7b2f3365c1e09bea0e010bcdf908fcd33d5edce3650df1764697612",
+    "src/qt/test/rpcnestedtests.cpp": "d71684596b9484bb1e5904e268f6e1a3636cb634af75a5787f704552cf4ec529",
+    "src/qt/test/rpcnestedtests.h": "658a2c4485ce7a9f38bef5ed581b587b2091604c57e315431f748c788424b48a",
+    "src/qt/test/test_main.cpp": "9eb782de8668a6c834a1dc41fb04ca3f07cd19e85d78eda4c6263a0b2d37c27b",
+    "src/qt/test/uritests.cpp": "4eb3e3b3fef31a03886e4d8a28bce2077340ac4ed3106b7ccea729bfa9d768cf",
+    "src/qt/test/uritests.h": "78d9cdb9e131d08db63f48f3485680c152cbe5bf8f80ca661efeadd3670096a9",
+    "src/qt/test/util.cpp": "f6ba75e482e515caf67020a5bf2602139ebf47c52c964956c965a50429d14a8d",
+    "src/qt/test/util.h": "73ceec39e5db51c18be08e2670bbd93191c19cd7ce16733a47ff75470d55d35e",
+    "src/qt/test/wallettests.cpp": "3482b5feae0639d009e756a6e7f2104cf151866c6937bb279d16d19ff8ce6e6f",
+    "src/qt/test/wallettests.h": "677798d5efd339a666e07a60f6a7f40d40b75901f1f81caa0c5c893c0bae2c27"
+  },
+  "baseline_verification": "artifacts/ownership-cleanup-20261009/bitcoin-verification.json",
+  "source_audit": "artifacts/ownership-cleanup-20261009/qt-source-audit.json",
+  "notes": [
+    "This pins the original Bitcoin v31.1 Qt cases, not the fork's test-file count.",
+    "All 15 original Qt C++ source/header files match upstream byte-for-byte. Native expectations and additions are selected exclusively from PoCX-owned files.",
+    "Six classes contribute 12 initTestCase/cleanupTestCase lifecycle records; those are not 12 additional test cases.",
+    "The local evidence records a fresh configure and incremental rebuild of the Qt target before execution; this was not a from-empty build or a separate pristine-upstream build.",
+    "This baseline does not establish coverage on macOS, Windows, other Qt versions or wallet-disabled builds."
+  ]
+}

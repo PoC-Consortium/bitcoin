@@ -1,0 +1,60 @@
+# Copyright (c) 2026 The Bitcoin PoCX developers
+# Distributed under the MIT software license; see COPYING.
+
+# Keep the installed tool and kernel API unchanged. The test executable compiles
+# the original tool source and sets NodeClock before its original main executes.
+get_target_property(kernel_type bitcoinkernel TYPE)
+set(clock_kernel bitcoinkernel)
+if(NOT kernel_type STREQUAL "STATIC_LIBRARY")
+  # SetMockTime is intentionally absent from the shared kernel API. Build a
+  # private static copy of exactly its selected implementation for this driver,
+  # retaining the same compilation/link interfaces. Never install this library.
+  get_target_property(kernel_sources bitcoinkernel SOURCES)
+  get_target_property(kernel_directory bitcoinkernel SOURCE_DIR)
+  set(clock_sources)
+  foreach(source IN LISTS kernel_sources)
+    if(source MATCHES "^\\$<")
+      # The kernel's conditional sources are relative to src/kernel. Object
+      # library expressions already evaluate to absolute object file paths.
+      string(REPLACE ":../" ":${PROJECT_SOURCE_DIR}/src/" source "${source}")
+    elseif(NOT IS_ABSOLUTE "${source}")
+      set(source "${kernel_directory}/${source}")
+    endif()
+    list(APPEND clock_sources "${source}")
+  endforeach()
+  add_library(pocx_chainstate_test_kernel STATIC ${clock_sources})
+  foreach(property COMPILE_DEFINITIONS COMPILE_OPTIONS INCLUDE_DIRECTORIES)
+    get_target_property(value bitcoinkernel ${property})
+    if(value)
+      set_property(TARGET pocx_chainstate_test_kernel PROPERTY ${property} "${value}")
+    endif()
+  endforeach()
+  # Register private dependencies through CMake's link interface so consumers
+  # of this static copy also link libraries such as bcrypt on Windows.
+  get_target_property(kernel_libraries bitcoinkernel LINK_LIBRARIES)
+  if(kernel_libraries)
+    target_link_libraries(pocx_chainstate_test_kernel PRIVATE ${kernel_libraries})
+  endif()
+  target_compile_definitions(pocx_chainstate_test_kernel PUBLIC BITCOINKERNEL_STATIC)
+  set(clock_kernel pocx_chainstate_test_kernel)
+endif()
+
+# Compile the original entry point directly, preserving main's implicit success
+# return and keeping implementation files out of preprocessor includes.
+add_executable(pocx_chainstate_test_clock
+  chainstate_test_clock.cpp
+  ${PROJECT_SOURCE_DIR}/src/bitcoin-chainstate.cpp
+)
+target_link_libraries(pocx_chainstate_test_clock PRIVATE core_interface ${clock_kernel})
+add_windows_application_manifest(pocx_chainstate_test_clock)
+
+# Object library paths vary by configuration with generators such as Visual
+# Studio. Keep each inventory beside its configuration's other generated files.
+set(kernel_inventory_directory "${CMAKE_CURRENT_BINARY_DIR}")
+if(CMAKE_CONFIGURATION_TYPES)
+  string(APPEND kernel_inventory_directory "/$<CONFIG>")
+endif()
+file(GENERATE OUTPUT "${kernel_inventory_directory}/clock-kernel-sources.txt"
+  CONTENT "$<JOIN:$<TARGET_PROPERTY:${clock_kernel},SOURCES>,\n>\n")
+file(GENERATE OUTPUT "${kernel_inventory_directory}/original-kernel-sources.txt"
+  CONTENT "$<JOIN:$<TARGET_PROPERTY:bitcoinkernel,SOURCES>,\n>\n")

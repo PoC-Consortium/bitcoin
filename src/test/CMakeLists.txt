@@ -170,6 +170,16 @@ target_link_libraries(test_bitcoin
   $<TARGET_NAME_IF_EXISTS:USDT::headers>
 )
 
+# Enable AVX2 tests when PoCX and AVX2 are available
+if(ENABLE_POCX AND HAVE_AVX2)
+  target_compile_definitions(test_bitcoin PRIVATE ENABLE_AVX2)
+endif()
+
+# SSE2 is baseline on x86-64, no special compiler flags needed
+if(ENABLE_POCX AND CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|amd64")
+  target_compile_definitions(test_bitcoin PRIVATE ENABLE_SSE2)
+endif()
+
 if(ENABLE_WALLET)
   add_subdirectory(${PROJECT_SOURCE_DIR}/src/wallet/test wallet)
 endif()

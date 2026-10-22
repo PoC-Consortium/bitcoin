@@ -1,0 +1,41 @@
+Continue Bitcoin/PoCX testing on this Mac.
+
+Use https://github.com/PoC-Consortium/bitcoin.git, branch test/pocx-ci-parity-20261010.
+Read test/pocx/README-platform-handover.md and test/pocx/handover/status.json first.
+Create a separate test/pocx-macos-native branch and record the starting SHA.
+
+The completed Linux/current-machine milestone has 49 verified conditions and 135
+required framework/configuration entries. Its final ASan functional run passed
+590/590. Preserve that scoped evidence; do not rerun Linux baselines here.
+
+Scope: the two deferred native macOS ARM64 conditions, original Bitcoin with
+ENABLE_POCX=OFF and the matching PoCX configuration with ENABLE_POCX=ON. Inspect
+uname -m, macOS/Xcode/SDK/compiler versions, Homebrew, Python, memory and disk.
+The configured CI environment is macOS 15/Xcode 16.2 on Apple Silicon. An Intel Mac
+or Rosetta process cannot close the ARM64 condition; record environment differences
+and qualify coverage rather than silently claiming the exact CI environment.
+
+Use the macos-native-arm64 recipe in .github/workflows/ci.yml and
+ci/test/00_setup_env_mac_native.sh, with ci/test_run_all.sh selecting the owned
+original-first inherited_ci.py entrypoint. Use a dedicated test account because
+the inherited host script creates a sentinel at the default Bitcoin data path.
+Preserve actual user data. Retain GUI/wallet/IPC/ZMQ, deployment, linker-stack,
+warning and functional-transport settings; keep the non-fuzz scope.
+
+A fresh clone plus public build dependencies is sufficient. PoCX fixtures are
+committed; unit vectors are checksum-downloaded. Linux binaries, databases,
+compiler caches, plots and wrapper scripts are unnecessary. Portable Linux
+summaries are in Git; raw historical proofs remain on the Linux machine for audit.
+
+Establish the complete matching original baseline before PoCX. Keep original
+assertions and sources intact; use separate PoCX adaptations and justify only
+genuinely replaced-PoW exclusions. Provision prerequisites, preserve failed runs,
+and never count skipped/inactive/unverified cases as passes. Run focused affected
+checks after repairs and reuse valid results. Report per-framework inventories,
+unchanged/adapted passes, failures, inactive/skipped/excluded cases and PoCX-only
+outcomes, retaining source, toolchain, command and raw-report provenance.
+
+Windows, Linux ARM, fuzz and intermediate-history verification are outside this
+session. Preserve existing commits. Coordinate shared-file repairs with the Windows
+branch and list affected Linux checks if shared code changes. Batch authorized
+pushes and avoid unnecessary hosted Actions runs.

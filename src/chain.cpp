@@ -133,6 +133,32 @@ arith_uint256 GetBitsProof(uint32_t bits)
     return (~bnTarget / (bnTarget + 1)) + 1;
 }
 
+#ifdef ENABLE_POCX
+arith_uint256 GetBlockProof(const CBlockIndex& block)
+{
+    // nBaseTarget = minimum required work, nNextBaseTarget = actual work including quality
+    // work = (2^64 / nNextBaseTarget)
+    const arith_uint256 TWO64 = arith_uint256(1) << 64;
+    if (block.nNextBaseTarget > 0) {
+        return TWO64 / arith_uint256(block.nNextBaseTarget);
+    }
+    // Headerssync/claimed-work fallback; one-block offset, negligible for chain comparison.
+    // The header's base target is attacker-chosen for network headers: zero is zero work, not a throw.
+    if (block.nBaseTarget == 0) return 0;
+    return TWO64 / arith_uint256(block.nBaseTarget);
+}
+
+arith_uint256 GetBlockProof(const CBlockHeader& header)
+{
+    // Headers only carry nBaseTarget; the one-block offset vs nNextBaseTarget
+    // is negligible for chain-work comparison (same fallback as above).
+    const arith_uint256 TWO64 = arith_uint256(1) << 64;
+    // Claimed work is computed from untrusted headers before contextual validation.
+    if (header.nBaseTarget == 0) return 0;
+    return TWO64 / arith_uint256(header.nBaseTarget);
+}
+#endif
+
 int64_t GetBlockProofEquivalentTime(const CBlockIndex& to, const CBlockIndex& from, const CBlockIndex& tip, const Consensus::Params& params)
 {
     arith_uint256 r;

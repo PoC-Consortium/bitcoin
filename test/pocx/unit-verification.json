@@ -1,0 +1,68 @@
+{
+  "status": "passed",
+  "verified_at_utc": "2026-10-09T08:07:06.395630+00:00",
+  "scope": "Standalone wallet/IPC-enabled unit package; optional Qt/kernel, functional, fuzz and combined CI are separate packages.",
+  "upstream_revision": "9be056a8a72b624dae9623b2f7bded92c2a21c91",
+  "bitcoin": {
+    "original_cases_green": 737,
+    "unit_suites_green": 149,
+    "auxiliary_groups_green": 6,
+    "ctest_groups_green": 155,
+    "failed": 0,
+    "skipped": 0,
+    "binary_sha256": "00b7e4f3362c2f4abd62bb03e23baad5a1bc44dc59188a9a890630d8372b815f",
+    "source_audit": {
+      "original_unit_and_support_sources": 168,
+      "missing_original_sources": [],
+      "pocx_macro_commands": [],
+      "pocx_source_commands": [],
+      "reviewed_source_hashes_match": true,
+      "upstream_identical_original_sources": 168,
+      "scope": "Actual test_bitcoin dependency compiler commands; all 168 original unit/support source files independently compared byte-for-byte with pinned upstream v31.1."
+    }
+  },
+  "pocx": {
+    "applicable_original_green": 727,
+    "additional_native_green": 33,
+    "excluded": 10,
+    "suites_green": 154,
+    "red": 0,
+    "skipped": 0,
+    "original_reused_green": 507,
+    "original_adapted_green": 220,
+    "total_executed_cases": 760,
+    "missing_applicable_cases": 0,
+    "binary_sha256": "55946578f76ec410882c8073b6ae62ae8d30449b5c9e39802550754f1e94a015"
+  },
+  "unit_infrastructure": {
+    "passed": 11,
+    "failed": 0,
+    "skipped": 0
+  },
+  "source_review_sha256": "8e120513dc51b1b952774859a89931b752199748cbaad1a114a32051f9020802",
+  "existing_native_header_rules_body_unchanged": true,
+  "external_script_assets": {
+    "repository": "bitcoin-core/qa-assets",
+    "commit": "0739b29cfb99e8de42298f550e9cdbf1a7659dcf",
+    "sha256": "cd789a58ec45916e1721cdd14e82ca4c93100959f1cef4e229b22e3bf539f095",
+    "vectors": 2244
+  },
+  "reproduction": "test/pocx/README-unit.md",
+  "raw_evidence_retained_locally": {
+    "checkout": "/home/johnny/Code/bitcoin-pocx/bitcoin-unit-package-20261009",
+    "bitcoin_junit": "build-b/ownership-cleanup-junit.xml",
+    "pocx_results": "build-p/pocx-unit-5n38ggnb/results.json",
+    "pocx_junit": "build-p/pocx-unit-5n38ggnb/junit.xml",
+    "infrastructure": "build-p/ownership-cleanup-infrastructure.log",
+    "compiler_source_audit": "build-b/ownership-cleanup-source-audit.json"
+  },
+  "limitations": "Passing original units demonstrates unit compatibility, not identical production binaries or complete functional/fuzz coverage. Runtime registration and source provenance supplement the recorded assertion/precondition reviews.",
+  "ownership_cleanup": {
+    "original_unit_support_files_upstream_identical": 168,
+    "remaining_inline_pocx_adaptations": 0,
+    "owned_adapted_cpp_files": 28,
+    "coins_original_cases_moved_to_owned_source": 15,
+    "case_membership_and_assertions_unchanged": true,
+    "classification_note": "Moving the 15 coins cases from a shared source to an owned adaptation changes the source-ownership split from 522/205 to 507/220; total applicable cases and test behavior are unchanged."
+  }
+}

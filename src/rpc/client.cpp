@@ -66,8 +66,10 @@ static const CRPCConvertParam vRPCConvertParams[] =
     { "generatetodescriptor", 2, "maxtries" },
     { "generateblock", 1, "transactions" },
     { "generateblock", 2, "submit" },
+#ifndef ENABLE_POCX
     { "getnetworkhashps", 0, "nblocks" },
     { "getnetworkhashps", 1, "height" },
+#endif
     { "sendtoaddress", 0, "address", ParamFormat::STRING },
     { "sendtoaddress", 1, "amount" },
     { "sendtoaddress", 2, "comment", ParamFormat::STRING },
@@ -370,6 +372,9 @@ static const CRPCConvertParam vRPCConvertParams[] =
     { "stop", 0, "wait" },
     { "addnode", 2, "v2transport" },
     { "addconnection", 2, "v2transport" },
+#ifdef ENABLE_POCX
+#include <pocx/rpc/client_conversion_params.inc>
+#endif
     { "decodepsbt", 0, "psbt", ParamFormat::STRING },
     { "analyzepsbt", 0, "psbt", ParamFormat::STRING},
     { "verifymessage", 1, "signature", ParamFormat::STRING },

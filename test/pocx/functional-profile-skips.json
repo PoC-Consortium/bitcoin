@@ -1,0 +1,132 @@
+{
+  "scope": "Exact optional-feature skip reasons reviewed against the unchanged Bitcoin270PASS/17SKIP baseline. Passing cases remain required when their environment/build prerequisites are supplied. No applicable failure or unexpected skip is waived.",
+  "cases": {
+    "feature_bind_port_discover.py": {
+      "reasons": [
+        "To run this test make sure that 1.1.1.1 and 2.2.2.2 (routable addresses) are assigned to the interfaces on this machine and rerun with --ihave1111and2222"
+      ],
+      "limitation": "To run this test make sure that 1.1.1.1 and 2.2.2.2 (routable addresses) are assigned to the interfaces on this machine and rerun with --ihave1111and2222"
+    },
+    "feature_bind_port_externalip.py": {
+      "reasons": [
+        "To run this test make sure that 1.1.1.1 (a routable address) is assigned to one of the interfaces on this machine and rerun with --ihave1111"
+      ],
+      "limitation": "To run this test make sure that 1.1.1.1 (a routable address) is assigned to one of the interfaces on this machine and rerun with --ihave1111"
+    },
+    "feature_coinstatsindex_compatibility.py": {
+      "reasons": [
+        "previous releases not available or disabled"
+      ],
+      "limitation": "previous releases not available or disabled"
+    },
+    "feature_unsupported_utxo_db.py": {
+      "reasons": [
+        "previous releases not available or disabled"
+      ],
+      "limitation": "previous releases not available or disabled"
+    },
+    "interface_ipc.py": {
+      "reasons": [
+        "capnp module not available."
+      ],
+      "limitation": "capnp module not available."
+    },
+    "interface_ipc_mining.py": {
+      "reasons": [
+        "capnp module not available."
+      ],
+      "limitation": "capnp module not available."
+    },
+    "interface_usdt_coinselection.py": {
+      "reasons": [
+        "bitcoind has not been built with USDT tracepoints enabled."
+      ],
+      "limitation": "bitcoind has not been built with USDT tracepoints enabled.",
+      "build_options": {
+        "WITH_USDT": "OFF"
+      }
+    },
+    "interface_usdt_mempool.py": {
+      "reasons": [
+        "bitcoind has not been built with USDT tracepoints enabled."
+      ],
+      "limitation": "bitcoind has not been built with USDT tracepoints enabled.",
+      "build_options": {
+        "WITH_USDT": "OFF"
+      }
+    },
+    "interface_usdt_net.py": {
+      "reasons": [
+        "bitcoind has not been built with USDT tracepoints enabled."
+      ],
+      "limitation": "bitcoind has not been built with USDT tracepoints enabled.",
+      "build_options": {
+        "WITH_USDT": "OFF"
+      }
+    },
+    "interface_usdt_utxocache.py": {
+      "reasons": [
+        "bitcoind has not been built with USDT tracepoints enabled."
+      ],
+      "limitation": "bitcoind has not been built with USDT tracepoints enabled.",
+      "build_options": {
+        "WITH_USDT": "OFF"
+      }
+    },
+    "interface_usdt_validation.py": {
+      "reasons": [
+        "bitcoind has not been built with USDT tracepoints enabled."
+      ],
+      "limitation": "bitcoind has not been built with USDT tracepoints enabled.",
+      "build_options": {
+        "WITH_USDT": "OFF"
+      }
+    },
+    "interface_zmq.py": {
+      "reasons": [
+        "python3-zmq module not available.",
+        "bitcoind has not been built with zmq enabled."
+      ],
+      "limitation": "python3-zmq module not available.",
+      "build_options": {
+        "WITH_ZMQ": "OFF"
+      }
+    },
+    "mempool_compatibility.py": {
+      "reasons": [
+        "previous releases not available or disabled"
+      ],
+      "limitation": "previous releases not available or disabled"
+    },
+    "tool_bench_sanity_check.py": {
+      "reasons": [
+        "bench_bitcoin has not been compiled"
+      ],
+      "limitation": "bench_bitcoin has not been compiled",
+      "build_options": {
+        "BUILD_BENCH": "OFF"
+      }
+    },
+    "tool_bitcoin_chainstate.py": {
+      "reasons": [
+        "bitcoin-chainstate has not been compiled"
+      ],
+      "limitation": "bitcoin-chainstate has not been compiled",
+      "build_options": {
+        "BUILD_UTIL_CHAINSTATE": "OFF"
+      }
+    },
+    "wallet_backwards_compatibility.py": {
+      "reasons": [
+        "previous releases not available or disabled"
+      ],
+      "limitation": "previous releases not available or disabled"
+    },
+    "wallet_migration.py": {
+      "reasons": [
+        "previous releases not available or disabled"
+      ],
+      "limitation": "previous releases not available or disabled"
+    }
+  }
+}

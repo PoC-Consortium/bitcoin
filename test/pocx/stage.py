@@ -1,0 +1,138 @@
+#!/usr/bin/env python3
+# Copyright (c) 2026 The Bitcoin PoCX developers
+# Distributed under the MIT software license, see the accompanying file COPYING.
+"""Build a disposable, hashed functional tree. Never write into upstream sources."""
+import argparse
+import configparser
+import json
+import os
+from pathlib import Path
+import shutil
+import subprocess
+
+from common import ROOT, OWNED, sha256, short_tmpdir as short_tmpdir, build_options
+import build_configuration
+import original_windows
+
+
+def unique_object(pairs):
+    result = {}
+    for key, value in pairs:
+        if key in result:
+            raise ValueError(f"Duplicate manifest key: {key}")
+        result[key] = value
+    return result
+
+
+def framework_sources(root):
+    """Include the upstream cryptographic test vectors alongside Python modules."""
+    directory = root / 'test/functional'
+    return {path.relative_to(directory).as_posix(): path
+            for path in sorted((directory / 'test_framework').rglob('*'))
+            if path.is_file() and path.suffix in ('.py', '.csv') and '__pycache__' not in path.parts}
+
+
+def stage(build, manifest_path=None, *, selected_config=None):
+    build = Path(build).resolve()
+    cache = (build / "CMakeCache.txt").read_text()
+    if "ENABLE_POCX:BOOL=ON\n" not in cache:
+        raise ValueError("PoCX runner requires ENABLE_POCX=ON")
+    build_configuration.require_source(cache, ROOT)
+    selected_config = build_configuration.configuration(cache, selected_config)
+    if build == ROOT or not build.is_relative_to(ROOT):
+        raise ValueError("Build must be a separate directory inside the isolated worktree")
+    manifest = json.loads(Path(manifest_path or OWNED / "manifest.json").read_text(), object_pairs_hook=unique_object)
+    if not manifest["tests"] and not manifest["reused_tests"]:
+        raise ValueError("Empty test selection")
+    sources = framework_sources(ROOT)
+    for dest, source in manifest["replacements"].items():
+        if dest not in sources:
+            raise ValueError(f"Replacement has no upstream destination: {dest}")
+        sources[dest] = OWNED / source
+    for dest, source in manifest.get('framework_copies', {}).items():
+        if dest in sources:
+            raise ValueError(f'Conflicting framework copy destination: {dest}')
+        original = (ROOT / 'test/functional' / source).resolve()
+        if not original.is_relative_to(ROOT / 'test/functional/test_framework'):
+            raise ValueError(f'Framework copy source outside upstream framework: {source}')
+        sources[dest] = original
+    for dest, source in manifest.get('framework_additions', {}).items():
+        destination = Path(dest)
+        owned_source = (OWNED / source).resolve()
+        if (dest in sources or destination.is_absolute() or '..' in destination.parts or
+                destination.parts[:1] != ('test_framework',) or destination.suffix != '.py' or
+                not owned_source.is_relative_to(OWNED / 'framework')):
+            raise ValueError(f'Invalid owned framework addition: {dest}: {source}')
+        sources[dest] = owned_source
+    for dest, source in manifest.get('support_copies', {}).items():
+        if dest in sources:
+            raise ValueError(f'Conflicting support copy destination: {dest}')
+        destination = Path(dest)
+        original = (ROOT / 'test/functional' / source).resolve()
+        if (destination.is_absolute() or '..' in destination.parts or
+                not destination.parts or destination.parts[0] not in ('data', 'mocks') or
+                not original.is_relative_to(ROOT / 'test/functional' / destination.parts[0])):
+            raise ValueError(f'Support copy outside upstream data/mocks: {dest}: {source}')
+        sources[dest] = original
+    for dest, source in manifest.get('support_replacements', {}).items():
+        replacement = (OWNED / source).resolve()
+        if dest not in manifest.get('support_copies', {}) or not replacement.is_relative_to(OWNED):
+            raise ValueError(f'Unknown or escaping native support replacement: {dest}: {source}')
+        sources[dest] = replacement
+    for dest, source in manifest["tests"].items():
+        if dest in sources:
+            raise ValueError(f"Conflicting destination: {dest}")
+        sources[dest] = OWNED / source
+    for name in manifest["reused_tests"]:
+        if name in sources:
+            raise ValueError(f"Conflicting destination: {name}")
+        sources[name] = ROOT / "test/functional" / name
+    if os.name == 'nt':
+        for name, source in original_windows.replacements(ROOT).items():
+            if name in manifest['tests']:
+                # Owned PoCX adaptations retain their own scenarios and fixtures.
+                continue
+            if name not in manifest['reused_tests']:
+                raise ValueError('Windows fixture replacement must retain its selected case')
+            sources[name] = source
+    for dest, source in sources.items():
+        if Path(dest).is_absolute() or ".." in Path(dest).parts or not source.is_file():
+            raise ValueError(f"Invalid or missing source: {dest}: {source}")
+    target = build / "pocx-functional"
+    temporary = build / "pocx-functional.new"
+    if temporary.exists():
+        shutil.rmtree(temporary)
+    temporary.mkdir()
+    hashes = {}
+    for dest, source in sorted(sources.items()):
+        out = temporary / dest
+        out.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(source, out)
+        hashes[dest] = {"source": source.relative_to(ROOT).as_posix(), "sha256": sha256(source)}
+    config = configparser.ConfigParser()
+    config.read(build / "test/config.ini")
+    config["environment"]["SRCDIR"] = str(ROOT)
+    config["environment"]["BUILDDIR"] = str(build)
+    with (temporary / "config.ini").open("w") as stream:
+        config.write(stream)
+    provenance = {"revision": subprocess.check_output(["git", "-C", str(ROOT), "rev-parse", "HEAD"], text=True).strip(),
+                  "build": str(build), "cache_sha256": sha256(build / "CMakeCache.txt"), "build_options": build_options(cache), "files": hashes,
+                  'build_configuration': selected_config,
+                  'staging_helpers': {name: sha256(ROOT / name) for name in (
+                      'test/pocx/stage.py', 'test/pocx/build_configuration.py',
+                      'test/pocx/functional_execution.py', 'test/pocx/functional_environment.py',
+                      'test/pocx/process_tree.py', 'test/pocx/original_windows.py',
+                      original_windows.REVIEW, original_windows.REPLACEMENT)}}
+    (temporary / "provenance.json").write_text(json.dumps(provenance, indent=2) + "\n")
+    if target.exists():
+        shutil.rmtree(target)
+    temporary.rename(target)
+    return target, manifest, provenance
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--build-dir", required=True)
+    parser.add_argument('--config')
+    args = parser.parse_args()
+    print(stage(args.build_dir, selected_config=args.config)[0])

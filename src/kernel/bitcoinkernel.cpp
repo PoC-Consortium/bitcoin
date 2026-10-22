@@ -1377,7 +1377,12 @@ uint32_t btck_block_header_get_timestamp(const btck_BlockHeader* header)
 
 uint32_t btck_block_header_get_bits(const btck_BlockHeader* header)
 {
+#ifdef ENABLE_POCX
+    // PoCX headers carry no compact difficulty; keep the C ABI stable.
+    return 0;
+#else
     return btck_BlockHeader::get(header).nBits;
+#endif
 }
 
 int32_t btck_block_header_get_version(const btck_BlockHeader* header)
@@ -1387,7 +1392,12 @@ int32_t btck_block_header_get_version(const btck_BlockHeader* header)
 
 uint32_t btck_block_header_get_nonce(const btck_BlockHeader* header)
 {
+#ifdef ENABLE_POCX
+    // PoCX headers carry no PoW nonce; keep the C ABI stable.
+    return 0;
+#else
     return btck_BlockHeader::get(header).nNonce;
+#endif
 }
 
 void btck_block_header_destroy(btck_BlockHeader* header)

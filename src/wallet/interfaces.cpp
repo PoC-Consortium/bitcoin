@@ -26,6 +26,11 @@
 #include <wallet/load.h>
 #include <wallet/receive.h>
 #include <wallet/rpc/wallet.h>
+#ifdef ENABLE_POCX
+#include <pocx/mining/wallet_signing.h>
+#include <pocx/rpc/assignments_wallet.h>
+#include <primitives/block.h>
+#endif
 #include <wallet/spend.h>
 #include <wallet/wallet.h>
 
@@ -521,6 +526,17 @@ public:
     }
     CWallet* wallet() override { return m_wallet.get(); }
 
+#ifdef ENABLE_POCX
+    pocx::mining::AccountKeyAvailability haveAccountKey(const std::string& account_id) override
+    {
+        return pocx::mining::HaveAccountKey(account_id, this);
+    }
+    bool signPoCXBlock(const std::string& account_id, CBlock& block) override
+    {
+        return pocx::mining::SignPoCXBlock(this, block.GetHash(), account_id, block);
+    }
+#endif
+
     WalletContext& m_context;
     std::shared_ptr<CWallet> m_wallet;
 };
@@ -546,6 +562,17 @@ public:
             }, command.argNames, command.unique_id);
             m_rpc_handlers.emplace_back(m_context.chain->handleRpc(m_rpc_commands.back()));
         }
+#ifdef ENABLE_POCX
+        // Register PoCX assignment wallet commands (OP_RETURN-based)
+        for (const CRPCCommand& command : pocx::rpc::GetAssignmentsWalletRPCCommands()) {
+            m_rpc_commands.emplace_back(command.category, command.name, [this, &command](const JSONRPCRequest& request, UniValue& result, bool last_handler) {
+                JSONRPCRequest wallet_request = request;
+                wallet_request.context = &m_context;
+                return command.actor(wallet_request, result, last_handler);
+            }, command.argNames, command.unique_id);
+            m_rpc_handlers.emplace_back(m_context.chain->handleRpc(m_rpc_commands.back()));
+        }
+#endif
     }
     bool verify() override { return VerifyWallets(m_context); }
     bool load() override { return LoadWallets(m_context); }

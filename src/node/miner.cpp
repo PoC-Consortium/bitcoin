@@ -18,6 +18,9 @@
 #include <logging.h>
 #include <node/context.h>
 #include <node/kernel_notifications.h>
+#ifdef ENABLE_POCX
+#include <pocx/consensus/difficulty.h>
+#endif
 #include <policy/feerate.h>
 #include <policy/policy.h>
 #include <pow.h>
@@ -57,9 +60,14 @@ int64_t UpdateTime(CBlockHeader* pblock, const Consensus::Params& consensusParam
     }
 
     // Updating time can change work required on testnet:
+#ifndef ENABLE_POCX
     if (consensusParams.fPowAllowMinDifficultyBlocks) {
         pblock->nBits = GetNextWorkRequired(pindexPrev, pblock, consensusParams);
     }
+#else
+    // PoCX: Skip PoW difficulty adjustment, use PoCX base target instead
+    (void)consensusParams; // Suppress unused variable warning
+#endif
 
     return nNewTime - nOldTime;
 }
@@ -217,8 +225,17 @@ std::unique_ptr<CBlockTemplate> BlockAssembler::CreateNewBlock()
     // Fill in header
     pblock->hashPrevBlock  = pindexPrev->GetBlockHash();
     UpdateTime(pblock, chainparams.GetConsensus(), pindexPrev);
+#ifdef ENABLE_POCX
+    pblock->nHeight = nHeight;
+    pblock->generationSignature = pocx::consensus::GetNextGenerationSignature(pindexPrev);
+    pblock->nBaseTarget = pindexPrev->nNextBaseTarget;
+    pblock->pocxProof.SetNull();
+    pblock->vchPubKey.fill(0);
+    pblock->vchSignature.fill(0);
+#else
     pblock->nBits          = GetNextWorkRequired(pindexPrev, pblock, chainparams.GetConsensus());
     pblock->nNonce         = 0;
+#endif
 
     if (m_options.test_block_validity) {
         // if nHeight <= 16, and include_dummy_extranonce=false this will fail due to bad-cb-length.
@@ -342,7 +359,9 @@ void AddMerkleRootAndCoinbase(CBlock& block, CTransactionRef coinbase, uint32_t 
     }
     block.nVersion = version;
     block.nTime = timestamp;
+#ifndef ENABLE_POCX
     block.nNonce = nonce;
+#endif
     block.hashMerkleRoot = BlockMerkleRoot(block);
 
     // Reset cached checks

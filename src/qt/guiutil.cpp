@@ -148,9 +148,17 @@ void AddButtonShortcut(QAbstractButton* button, const QKeySequence& shortcut)
 
 bool parseBitcoinURI(const QUrl &uri, SendCoinsRecipient *out)
 {
+#ifdef ENABLE_POCX
+    // PoCX uses the btcx: payment URI scheme. The upstream bitcoin: scheme is
+    // still accepted on parse so QR codes produced by pre-v31 releases keep
+    // working; the address itself must still decode as a PoCX address.
+    if (!uri.isValid() || (uri.scheme() != QString("btcx") && uri.scheme() != QString("bitcoin")))
+        return false;
+#else
     // return if URI is not valid or is no bitcoin: URI
     if(!uri.isValid() || uri.scheme() != QString("bitcoin"))
         return false;
+#endif
 
     SendCoinsRecipient rv;
     rv.address = uri.path();
@@ -212,7 +220,11 @@ QString formatBitcoinURI(const SendCoinsRecipient &info)
 {
     bool bech_32 = info.address.startsWith(QString::fromStdString(Params().Bech32HRP() + "1"));
 
+#ifdef ENABLE_POCX
+    QString ret = QString("btcx:%1").arg(bech_32 ? info.address.toUpper() : info.address);
+#else
     QString ret = QString("bitcoin:%1").arg(bech_32 ? info.address.toUpper() : info.address);
+#endif
     int paramCount = 0;
 
     if (info.amount)

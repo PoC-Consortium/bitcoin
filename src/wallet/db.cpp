@@ -8,6 +8,7 @@
 #include <logging.h>
 #include <util/fs.h>
 #include <wallet/db.h>
+#include <wallet/windows_fs.h>
 
 #include <algorithm>
 #include <exception>
@@ -28,9 +29,10 @@ std::vector<std::pair<fs::path, std::string>> ListDatabases(const fs::path& wall
     for (auto it = fs::recursive_directory_iterator(wallet_dir, ec); it != fs::recursive_directory_iterator(); it.increment(ec)) {
         assert(!ec); // Loop should exit on error.
         try {
+            detail::PreserveWalletNoFollow(it);
             const fs::path path{it->path().lexically_relative(wallet_dir)};
 
-            if (it->status().type() == fs::file_type::directory) {
+            if (detail::WalletEntryStatus(*it).type() == fs::file_type::directory) {
                 if (IsBDBFile(BDBDataFile(it->path()))) {
                     // Found a directory which contains wallet.dat btree file, add it as a wallet with BERKELEY format.
                     paths.emplace_back(path, "bdb");
@@ -38,7 +40,7 @@ std::vector<std::pair<fs::path, std::string>> ListDatabases(const fs::path& wall
                     // Found a directory which contains wallet.dat sqlite file, add it as a wallet with SQLITE format.
                     paths.emplace_back(path, "sqlite");
                 }
-            } else if (it.depth() == 0 && it->symlink_status().type() == fs::file_type::regular && it->path().extension() != ".bak") {
+            } else if (it.depth() == 0 && detail::WalletEntryStatus(*it, false).type() == fs::file_type::regular && it->path().extension() != ".bak") {
                 if (it->path().filename() == "wallet.dat") {
                     // Found top-level wallet.dat file, add top level directory ""
                     // as a wallet.

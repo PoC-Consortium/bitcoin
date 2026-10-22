@@ -9,10 +9,22 @@
 #include <util/check.h>
 #include <util/time.h>
 #include <util/vector.h>
+#ifdef ENABLE_POCX
+#include <pocx/consensus/difficulty.h>
+#endif
 
 // Our memory analysis in headerssync-params.py assumes this many bytes for a
 // CompressedHeader (we should re-calculate parameters if we compress further).
+#ifdef ENABLE_POCX
+// The same fields have four bytes less tail padding on four-byte-aligned
+// uint64_t ABIs (including i686 SysV). Keep an exact check for both layouts;
+// the maximum per-header memory requirement remains 264 bytes.
+static_assert(alignof(uint64_t) == 4 || alignof(uint64_t) == 8);
+static_assert(sizeof(CompressedHeader) == (alignof(uint64_t) == 8 ? 264 : 260),
+              "CompressedHeader size changed - update memory analysis");
+#else
 static_assert(sizeof(CompressedHeader) == 48);
+#endif
 
 HeadersSyncState::HeadersSyncState(NodeId id,
                                    const Consensus::Params& consensus_params,
@@ -186,11 +198,32 @@ bool HeadersSyncState::ValidateAndProcessSingleHeader(const CBlockHeader& curren
     // work chain if they compress the work into as few blocks as possible,
     // so don't let anyone give a chain that would violate the difficulty
     // adjustment maximum.
+#ifndef ENABLE_POCX
     if (!PermittedDifficultyTransition(m_consensus_params, next_height,
                 m_last_header_received.nBits, current.nBits)) {
         LogDebug(BCLog::NET, "Initial headers sync aborted with peer=%d: invalid difficulty transition at height=%i (presync phase)\n", m_id, next_height);
         return false;
     }
+#else
+    // First header: exact match with the chain start's nNextBaseTarget; later ones a permitted step.
+    const bool base_target_ok = (m_current_height == m_chain_start.nHeight)
+        ? current.nBaseTarget == m_chain_start.nNextBaseTarget
+        : pocx::consensus::PermittedBaseTargetTransition(m_last_header_received.nBaseTarget, current.nBaseTarget);
+    if (!base_target_ok) {
+        LogDebug(BCLog::NET, "Initial headers sync aborted with peer=%d: invalid base target transition at height=%i (presync phase)\n", m_id, next_height);
+        return false;
+    }
+    if (!pocx::consensus::PermittedGenerationSignatureTransition(
+                m_last_header_received.generationSignature, m_last_header_received.pocxProof.account_id, current.generationSignature)) {
+        LogDebug(BCLog::NET, "Initial headers sync aborted with peer=%d: invalid generation signature transition at height=%i (presync phase)\n", m_id, next_height);
+        return false;
+    }
+    if (!pocx::consensus::PermittedTimingTransition(m_last_header_received.nTime, current.nTime, current.pocxProof.quality,
+                                                    current.nBaseTarget, m_consensus_params.nPowTargetSpacing)) {
+        LogDebug(BCLog::NET, "Initial headers sync aborted with peer=%d: invalid timing transition at height=%i (presync phase)\n", m_id, next_height);
+        return false;
+    }
+#endif
 
     if (next_height % m_params.commitment_period == m_commit_offset) {
         // Add a commitment.
@@ -226,6 +259,7 @@ bool HeadersSyncState::ValidateAndStoreRedownloadedHeader(const CBlockHeader& he
         return false;
     }
 
+#ifndef ENABLE_POCX
     // Check that the difficulty adjustments are within our tolerance:
     uint32_t previous_nBits{0};
     if (!m_redownloaded_headers.empty()) {
@@ -239,6 +273,29 @@ bool HeadersSyncState::ValidateAndStoreRedownloadedHeader(const CBlockHeader& he
         LogDebug(BCLog::NET, "Initial headers sync aborted with peer=%d: invalid difficulty transition at height=%i (redownload phase)\n", m_id, next_height);
         return false;
     }
+#else
+    const bool first = m_redownloaded_headers.empty();
+    const uint256& prev_gensig = first ? m_chain_start.generationSignature : m_redownloaded_headers.back().generationSignature;
+    const auto& prev_account_id = first ? m_chain_start.pocxProof.account_id : m_redownloaded_headers.back().pocxProof.account_id;
+    const uint32_t prev_time = first ? m_chain_start.nTime : m_redownloaded_headers.back().nTime;
+    const bool base_target_ok = first
+        ? header.nBaseTarget == m_chain_start.nNextBaseTarget
+        : pocx::consensus::PermittedBaseTargetTransition(m_redownloaded_headers.back().nBaseTarget, header.nBaseTarget);
+
+    if (!base_target_ok) {
+        LogDebug(BCLog::NET, "Initial headers sync aborted with peer=%d: invalid base target transition at height=%i (redownload phase)\n", m_id, next_height);
+        return false;
+    }
+    if (!pocx::consensus::PermittedGenerationSignatureTransition(prev_gensig, prev_account_id, header.generationSignature)) {
+        LogDebug(BCLog::NET, "Initial headers sync aborted with peer=%d: invalid generation signature transition at height=%i (redownload phase)\n", m_id, next_height);
+        return false;
+    }
+    if (!pocx::consensus::PermittedTimingTransition(prev_time, header.nTime, header.pocxProof.quality,
+                                                    header.nBaseTarget, m_consensus_params.nPowTargetSpacing)) {
+        LogDebug(BCLog::NET, "Initial headers sync aborted with peer=%d: invalid timing transition at height=%i (redownload phase)\n", m_id, next_height);
+        return false;
+    }
+#endif
 
     // Track work on the redownloaded chain
     m_redownload_chain_work += GetBlockProof(header);

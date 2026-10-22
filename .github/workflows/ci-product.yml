@@ -1,0 +1,623 @@
+# Copyright (c) The Bitcoin Core developers
+# Copyright (c) 2026 The Bitcoin PoCX developers
+# Distributed under the MIT software license; see COPYING.
+# Implementation only: CI and CI-POCX are the two independently triggered workflows.
+# Leave job time limits unset so both products use GitHub's default.
+name: Product CI implementation
+on:
+  workflow_call:
+    inputs:
+      product:
+        description: 'bitcoin (ENABLE_POCX=OFF) or pocx (ENABLE_POCX=ON)'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+env:
+  CI_PRODUCT: ${{ inputs.product }}
+  CI_FAILFAST_TEST_LEAVE_DANGLING: 1  # GHA does not care about dangling processes and setting this variable avoids killing the CI script itself on error
+  REPO_USE_WARP_RUNNERS: 'bitcoin/bitcoin' # Use warp runners for this repo, instead of falling back to the slow GHA runners
+
+defaults:
+  run:
+    # Enforce fail-fast behavior for all platforms.
+    # See: https://docs.github.com/en/actions/writing-workflows/workflow-syntax-for-github-actions#exit-codes-and-error-action-preference
+    shell: bash
+
+jobs:
+  runners:
+    name: '[meta] determine runners'
+    runs-on: ubuntu-slim
+    outputs:
+      provider: ${{ steps.runners.outputs.provider }}
+      linux: ${{ steps.matrix.outputs.linux }}
+      macos: ${{ steps.matrix.outputs.macos }}
+      windows: ${{ steps.matrix.outputs.windows }}
+    steps:
+      - &ANNOTATION_PR_NUMBER
+        name: Annotate with pull request number
+        # This annotation is machine-readable and can be used to assign a check
+        # run to its corresponding pull request. Running in all check runs is
+        # required, because check re-runs discard the annotations of other
+        # tasks in the test suite.
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            echo "::notice title=debug_pull_request_number_str::${{ github.event.number }}"
+          fi
+      - id: runners
+        run: |
+          if [[ "${REPO_USE_WARP_RUNNERS}" == "${{ github.repository }}" ]]; then
+            echo "provider=warp" >> "$GITHUB_OUTPUT"
+            echo "::notice title=Runner Selection::Using Warp Runners"
+          else
+            echo "provider=gha" >> "$GITHUB_OUTPUT"
+            echo "::notice title=Runner Selection::Using GitHub-hosted runners"
+          fi
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.ref || '' }}
+      - id: matrix
+        name: Select inherited product matrices
+        run: python3 test/pocx/ci_matrix.py >> "$GITHUB_OUTPUT"
+
+  test-each-commit:
+    name: 'test ancestor commits'
+    needs: runners
+    runs-on: ${{ needs.runners.outputs.provider == 'warp' && 'warp-ubuntu-latest-x64-8x' || 'ubuntu-latest' }}
+    env:
+      TEST_RUNNER_PORT_MIN: "14000"  # Use a larger port range to avoid colliding with other CI services.
+    if: ${{ (github.event_name == 'pull_request' && github.event.pull_request.commits != 1) }}
+    steps:
+      - name: Determine fetch depth
+        run: echo "FETCH_DEPTH=$((${{ github.event.pull_request.commits }} + 2))" >> "$GITHUB_ENV"
+      - *ANNOTATION_PR_NUMBER
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: ${{ env.FETCH_DEPTH }}
+      - name: Determine commit range
+        run: |
+          # Checkout HEAD~ and find the test base commit.
+          # Checkout HEAD~ because it would be wasteful to rerun
+          # tests on the PR head commit that are already run
+          # by other jobs.
+          git checkout HEAD~
+          # Moreover, pull requests that contain a merge commit
+          # are generally draft pull requests that merge in other
+          # pull requests, so only check the relevant commits
+          # after the last merge commit. A merge commit could
+          # also be a subtree merge commit, which may be
+          # worthwhile to check. However, it is rare that the
+          # subtree merge commit is not the top commit (which
+          # would be skipped anyway by this task, because it is
+          # run by all other tasks). Also, `git rebase --exec`
+          # does not work on merge commits, so if this was
+          # important to check, the logic would have to be
+          # rewritten.
+          #
+          # Figure out test base commit by listing ancestors of
+          # HEAD, excluding ancestors of the most recent merge
+          # commit, ordering them from oldest to newest, and
+          # taking the first one.
+          #
+          # In the command below, the ^@ suffix is used to refer
+          # to all parents of the merge commit as described in:
+          # https://git-scm.com/docs/git-rev-parse#_other_rev_parent_shorthand_notations
+          # and the ^ prefix is used to exclude these parents
+          # and all their ancestors from the rev-list output
+          # as described in:
+          # https://git-scm.com/docs/git-rev-list
+          MERGE_BASE=$(git rev-list -n1 --merges HEAD)
+          EXCLUDE_MERGE_BASE_ANCESTORS=()
+          # MERGE_BASE can be empty due to limited fetch-depth
+          if test -n "$MERGE_BASE"; then
+            EXCLUDE_MERGE_BASE_ANCESTORS=("^${MERGE_BASE}^@")
+          fi
+          echo "TEST_BASE=$(git rev-list -n${{ github.event.pull_request.commits }} --reverse HEAD "${EXCLUDE_MERGE_BASE_ANCESTORS[@]}" | head -1)" >> "$GITHUB_ENV"
+      - run: |
+          git fetch origin "${GITHUB_BASE_REF}"
+          git config user.email "ci@example.com"
+          git config user.name "CI"
+      - run: |
+          sudo apt-get update
+          sudo apt-get install clang mold ccache build-essential cmake ninja-build pkgconf python3-zmq python3-venv libevent-dev libboost-dev libsqlite3-dev systemtap-sdt-dev libzmq3-dev qt6-base-dev qt6-tools-dev qt6-l10n-tools libqrencode-dev capnproto libcapnp-dev -y
+          python3 -m venv --system-site-packages .ci-venv
+          .ci-venv/bin/pip install pycapnp==2.2.4
+      - name: Compile and run tests
+        run: |
+          # Run tests on commits after the last merge commit and before the PR head commit
+          # Preserve upstream optional tracing guards in the ancestor job.
+          git rebase --exec "git merge --no-commit origin/${GITHUB_BASE_REF} && env CI_PRODUCT=\"${CI_PRODUCT}\" GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=safe.directory GIT_CONFIG_VALUE_0=\"${GITHUB_WORKSPACE}\" .ci-venv/bin/python ./test/pocx/revision_ci.py --phase-consensus \"${CI_PRODUCT}\" && git reset --hard" ${{ env.TEST_BASE }}
+
+      - name: Upload selected product test evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: inherited-tests-${{ inputs.product }}-${{ github.job }}
+          path: |
+            artifacts/pocx-inherited
+            ci_build*/pocx-inherited-*/*.json
+            ci_build*/pocx-inherited-*/*.xml
+            ci_build*/pocx-inherited-*/*.csv
+            ci_build*/pocx-inherited-*/*.log
+            ci_build*/pocx-inherited-*/*/*.json
+            ci_build*/pocx-inherited-*/*/*.xml
+            ci_build*/pocx-inherited-*/*/*.csv
+            ci_build*/pocx-inherited-*/*/*.log
+            ci_build*/bitcoin-unit-*/*.json
+            ci_build*/bitcoin-unit-*/*.xml
+            ci_build*/bitcoin-unit-*/*.csv
+            ci_build*/bitcoin-unit-*/*.log
+            ci_build*/pocx-unit-*/*.json
+            ci_build*/pocx-unit-*/*.xml
+            ci_build*/pocx-unit-*/*.csv
+            ci_build*/pocx-unit-*/*.log
+          if-no-files-found: warn
+
+  macos-native-arm64:
+    needs: runners
+    name: ${{ matrix.job-name }}
+    # Use any image to support the xcode-select below, but hardcode version to avoid silent upgrades (and breaks).
+    # See: https://github.com/actions/runner-images#available-images.
+    runs-on: macos-15
+
+    # When a contributor maintains a fork of the repo, any pull request they make
+    # to their own fork, or to the main repository, will trigger two CI runs:
+    # one for the branch push and one for the pull request.
+    # This can be avoided by setting SKIP_BRANCH_PUSH=true as a custom env variable
+    # in Github repository settings.
+    if: ${{ (vars.SKIP_BRANCH_PUSH != 'true' || github.event_name == 'pull_request') }}
+
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.runners.outputs.macos) }}
+
+    env:
+      DANGER_RUN_CI_ON_HOST: 1
+      BASE_ROOT_DIR: ${{ github.workspace }}/repo_archive
+
+    steps:
+      - *ANNOTATION_PR_NUMBER
+
+      - &CHECKOUT
+        name: Checkout
+        uses: actions/checkout@v6
+        with:
+          # Ensure the latest merged pull request state is used, even on re-runs.
+          ref: &CHECKOUT_REF_TMPL ${{ github.event_name == 'pull_request' && github.ref || '' }}
+
+      - name: Clang version
+        run: |
+          # Use the latest Xcode supported by the version of macOS denoted in
+          # doc/release-notes-empty-template.md and providing at least the
+          # minimum clang version denoted in doc/dependencies.md.
+          # See: https://developer.apple.com/documentation/xcode-release-notes/xcode-16_2-release-notes
+          sudo xcode-select --switch /Applications/Xcode_16.2.app
+          clang --version
+
+      - name: Install Homebrew packages
+        env:
+          HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK: 1
+        run: |
+          # A workaround for "The `brew link` step did not complete successfully" error.
+          brew install --quiet python@3 || brew link --overwrite python@3
+          brew install --quiet coreutils ninja pkgconf ccache boost libevent zeromq qt@6 qrencode capnp
+
+      - name: Set Ccache directory
+        run: echo "CCACHE_DIR=${RUNNER_TEMP}/ccache_dir" >> "$GITHUB_ENV"
+
+      - name: Restore Ccache cache
+        id: ccache-cache
+        uses: actions/cache/restore@v5
+        with:
+          path: ${{ env.CCACHE_DIR }}
+          key: ${{ inputs.product }}-${{ github.job }}-${{ matrix.job-type }}-ccache-${{ github.run_id }}
+          restore-keys: ${{ inputs.product }}-${{ github.job }}-${{ matrix.job-type }}-ccache-
+
+      - name: Create git archive
+        run: |
+          git log -1
+          git archive --format=tar --prefix=repo_archive/ --output=repo.tar HEAD
+          tar -xf repo.tar
+
+      - name: CI script
+        run: |
+          cd repo_archive
+          ./ci/test_run_all.sh
+        env:
+          FILE_ENV: ${{ matrix.file-env }}
+
+      - name: Upload selected product test evidence
+        if: always() && matrix.job-type == 'standard'
+        uses: actions/upload-artifact@v7
+        with:
+          name: inherited-tests-${{ inputs.product }}-${{ github.job }}-${{ strategy.job-index }}
+          path: repo_archive/artifacts/pocx-inherited
+          if-no-files-found: warn
+
+      - name: Upload PoCX native macOS fuzz evidence
+        if: always() && matrix.job-type == 'fuzz' && inputs.product == 'pocx'
+        uses: actions/upload-artifact@v7
+        with:
+          name: fuzz-pocx-${{ github.job }}-${{ strategy.job-index }}
+          path: repo_archive/artifacts/pocx-inherited/fuzz
+          if-no-files-found: warn
+
+      - name: Save Ccache cache
+        uses: actions/cache/save@v5
+        if: github.event_name != 'pull_request' && github.ref_name == github.event.repository.default_branch && steps.ccache-cache.outputs.cache-hit != 'true'
+        with:
+          path: ${{ env.CCACHE_DIR }}
+          # https://github.com/actions/cache/blob/main/tips-and-workarounds.md#update-a-cache
+          key: ${{ inputs.product }}-${{ github.job }}-${{ matrix.job-type }}-ccache-${{ github.run_id }}
+
+  windows-native-dll:
+    needs: runners
+    name: ${{ matrix.job-name }}
+    runs-on: windows-2025-vs2026
+
+    if: ${{ (vars.SKIP_BRANCH_PUSH != 'true' || github.event_name == 'pull_request') }}
+
+    env:
+      PYTHONUTF8: 1
+      TEST_RUNNER_TIMEOUT_FACTOR: 40
+      # Source review hashes require the repository's LF bytes on Windows too.
+      GIT_CONFIG_COUNT: 1
+      GIT_CONFIG_KEY_0: core.autocrlf
+      GIT_CONFIG_VALUE_0: 'false'
+
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.runners.outputs.windows) }}
+
+    steps:
+      - *ANNOTATION_PR_NUMBER
+
+      - *CHECKOUT
+
+      - &IMPORT_VS_ENV
+        name: Import Visual Studio env vars
+        run: py -3 .github/ci-windows.py "standard" github_import_vs_env
+
+      - name: Get tool information
+        run: |
+          set -o errexit -o pipefail -o xtrace -o nounset
+
+          cmake -version | tee cmake_version
+          echo '---'
+          msbuild.exe -version | tee msbuild_version
+          echo "${VCToolsVersion-}" | tee toolset_version
+          py -3 --version
+          bash --version
+
+      - name: Using vcpkg with MSBuild
+        run: |
+          echo "set(VCPKG_BUILD_TYPE release)" >> "${VCPKG_INSTALLATION_ROOT}/triplets/x64-windows.cmake"
+          # Workaround for libevent, which requires CMake 3.1 but is incompatible with CMake >= 4.0.
+          sed -i '1s/^/set(ENV{CMAKE_POLICY_VERSION_MINIMUM} 3.5)\n/' "${VCPKG_INSTALLATION_ROOT}/scripts/ports.cmake"
+
+      - name: Set VCPKG_ROOT
+        run: |
+          echo "VCPKG_ROOT=${VCPKG_INSTALLATION_ROOT}" >> "$GITHUB_ENV"
+
+      - name: Restore vcpkg tools cache
+        id: vcpkg-tools-cache
+        uses: actions/cache/restore@v5
+        with:
+          path: C:/vcpkg/downloads/tools
+          key: ${{ inputs.product }}-${{ github.job }}-vcpkg-tools-${{ github.run_id }}
+          restore-keys: ${{ inputs.product }}-${{ github.job }}-vcpkg-tools-
+
+      - name: Restore vcpkg binary cache
+        uses: actions/cache/restore@v5
+        id: vcpkg-binary-cache
+        with:
+          path: ~/AppData/Local/vcpkg/archives
+          key: ${{ inputs.product }}-${{ github.job }}-vcpkg-binary-${{ hashFiles('cmake_version', 'msbuild_version', 'toolset_version', 'vcpkg.json') }}
+
+      - name: Verify selected product on native Windows
+        if: matrix.job-type == 'standard'
+        env:
+          TEST_RUNNER_EXTRA: "--timeout-factor=${{ env.TEST_RUNNER_TIMEOUT_FACTOR }} ${{ case(github.event_name == 'pull_request', '', '--extended') }}"
+        run: py -3 test/pocx/windows_ci.py
+
+      - name: Run selected product native fuzz configuration
+        if: matrix.job-type == 'fuzz'
+        run: py -3 test/pocx/bitcoin_fuzz_ci.py --windows
+
+      - name: Save vcpkg binary cache
+        uses: actions/cache/save@v5
+        if: github.event_name != 'pull_request' && github.ref_name == github.event.repository.default_branch && steps.vcpkg-binary-cache.outputs.cache-hit != 'true' && matrix.job-type == 'standard'
+        with:
+          path: ~/AppData/Local/vcpkg/archives
+          key: ${{ inputs.product }}-${{ github.job }}-vcpkg-binary-${{ hashFiles('cmake_version', 'msbuild_version', 'toolset_version', 'vcpkg.json') }}
+
+      - name: Save vcpkg tools cache
+        uses: actions/cache/save@v5
+        # Only save cache from one job as they share tools. If the matrix is expanded to jobs with unique tools, this may need amending.
+        if: github.event_name != 'pull_request' && github.ref_name == github.event.repository.default_branch && steps.vcpkg-tools-cache.outputs.cache-hit != 'true' && matrix.job-type == 'standard'
+        with:
+          path: C:/vcpkg/downloads/tools
+          key: ${{ inputs.product }}-${{ github.job }}-vcpkg-tools-${{ github.run_id }}
+
+      - name: Retain selected product native Windows test evidence
+        if: always() && matrix.job-type == 'standard'
+        uses: actions/upload-artifact@v7
+        with:
+          name: native-windows-${{ inputs.product }}-${{ matrix.job-type }}-${{ github.run_id }}
+          path: artifacts/pocx-inherited
+          if-no-files-found: warn
+
+      - name: Retain PoCX native Windows fuzz evidence
+        if: always() && matrix.job-type == 'fuzz' && inputs.product == 'pocx'
+        uses: actions/upload-artifact@v7
+        with:
+          name: fuzz-pocx-${{ github.job }}-${{ strategy.job-index }}
+          path: artifacts/pocx-inherited/fuzz
+          if-no-files-found: warn
+
+  record-frozen-commit:
+    # Record frozen commit, so that the native tests on cross-builds can run on
+    # the exact same commit id of the build.
+    name: '[meta] record frozen commit'
+    runs-on: ubuntu-slim
+    outputs:
+      commit: ${{ steps.record-commit.outputs.commit }}
+    steps:
+      - *ANNOTATION_PR_NUMBER
+      - *CHECKOUT
+      - name: Record commit
+        id: record-commit
+        run: echo "commit=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+  windows-cross:
+    name: 'Windows-cross to x86_64, ${{ matrix.crt }}'
+    needs: [runners, record-frozen-commit]
+    runs-on: ${{ needs.runners.outputs.provider == 'warp' && 'warp-ubuntu-latest-x64-4x' || 'ubuntu-latest' }}
+    if: ${{ (vars.SKIP_BRANCH_PUSH != 'true' || github.event_name == 'pull_request') }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        crt: [msvcrt, ucrt]
+        include:
+          - crt: msvcrt
+            file-env: './ci/test/00_setup_env_win64_msvcrt.sh'
+            artifact-name: 'x86_64-w64-mingw32-bitcoin-pocx-tests'
+          - crt: ucrt
+            file-env: './ci/test/00_setup_env_win64.sh'
+            artifact-name: 'x86_64-w64-mingw32ucrt-bitcoin-pocx-tests'
+
+    env:
+      FILE_ENV: ${{ matrix.file-env }}
+      DANGER_CI_ON_HOST_FOLDERS: 1
+      GIT_CONFIG_COUNT: 1
+      GIT_CONFIG_KEY_0: core.autocrlf
+      GIT_CONFIG_VALUE_0: 'false'
+
+    steps:
+      - *ANNOTATION_PR_NUMBER
+
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ needs.record-frozen-commit.outputs.commit }}
+
+      - name: Configure environment
+        uses: ./.github/actions/configure-environment
+
+      - name: Restore caches
+        id: restore-cache
+        uses: ./.github/actions/cache/restore
+        with:
+          provider: ${{ needs.runners.outputs.provider }}
+
+      - name: Configure Docker
+        uses: ./.github/actions/configure-docker
+        with:
+          provider: ${{ needs.runners.outputs.provider }}
+
+      - name: CI script
+        run: ./ci/test_run_all.sh
+
+      - name: Upload selected product test evidence
+        if: always() && env.RUN_FUZZ_TESTS != 'true'
+        uses: actions/upload-artifact@v7
+        with:
+          name: inherited-tests-${{ inputs.product }}-${{ github.job }}-${{ strategy.job-index }}
+          path: |
+            artifacts/pocx-inherited
+            !artifacts/pocx-inherited/windows-cross-pair
+          if-no-files-found: warn
+
+      - name: Save caches
+        uses: ./.github/actions/cache/save
+        with:
+          provider: ${{ needs.runners.outputs.provider }}
+
+      - name: Upload verified selected-product cross-build bundle
+        uses: actions/upload-artifact@v7
+        with:
+          name: ${{ matrix.artifact-name }}-${{ inputs.product }}-${{ github.run_id }}
+          path: artifacts/pocx-inherited/windows-cross-pair
+          if-no-files-found: error
+
+  windows-native-test:
+    name: 'Windows, ${{ matrix.crt }}, test cross-built'
+    runs-on: windows-2022
+    needs: [windows-cross, record-frozen-commit]
+
+    strategy:
+      fail-fast: false
+      matrix:
+        crt: [msvcrt, ucrt]
+        include:
+          - crt: msvcrt
+            artifact-name: 'x86_64-w64-mingw32-bitcoin-pocx-tests'
+          - crt: ucrt
+            artifact-name: 'x86_64-w64-mingw32ucrt-bitcoin-pocx-tests'
+
+    env:
+      PYTHONUTF8: 1
+      TEST_RUNNER_TIMEOUT_FACTOR: 40
+      PREVIOUS_RELEASES_DIR: ${{ github.workspace }}/prev_releases
+      GIT_CONFIG_COUNT: 1
+      GIT_CONFIG_KEY_0: core.autocrlf
+      GIT_CONFIG_VALUE_0: 'false'
+
+    steps:
+      - *ANNOTATION_PR_NUMBER
+
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ needs.record-frozen-commit.outputs.commit }}
+
+      - name: Download verified selected-product cross-build bundle
+        uses: actions/download-artifact@v8
+        with:
+          name: ${{ matrix.artifact-name }}-${{ inputs.product }}-${{ github.run_id }}
+          path: artifacts/windows-cross-pair
+
+      - name: Verify immutable cross-build inputs
+        run: py -3 test/pocx/windows_artifacts.py --verify artifacts/windows-cross-pair --product "${{ inputs.product }}"
+
+      - *IMPORT_VS_ENV
+
+      - name: Install functional ZMQ prerequisite
+        shell: pwsh
+        run: py -3 -m pip install pyzmq
+
+      - name: Download checksum-verified previous releases
+        shell: pwsh
+        run: py -3 test/get_previous_releases.py --target-dir "$env:PREVIOUS_RELEASES_DIR"
+
+      - name: Run complete selected-product artifact tests
+        shell: pwsh
+        env:
+          TEST_RUNNER_EXTRA: "--timeout-factor=${{ env.TEST_RUNNER_TIMEOUT_FACTOR }} --extended"
+        run: |
+          py -3 test/pocx/windows_artifact_ci.py --artifacts artifacts/windows-cross-pair --product "${{ inputs.product }}" --output artifacts/windows-cross-runtime --timeout-factor "$env:TEST_RUNNER_TIMEOUT_FACTOR"
+
+      - name: Retain bounded Bitcoin and PoCX runtime evidence
+        if: always()
+        run: py -3 test/pocx/windows_cross.py --collect-runtime artifacts/windows-cross-runtime --output artifacts/windows-cross-evidence
+
+      - name: Upload Bitcoin and PoCX cross-runtime test evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: windows-cross-runtime-${{ inputs.product }}-${{ matrix.crt }}-${{ github.run_id }}
+          path: artifacts/windows-cross-evidence
+          if-no-files-found: warn
+
+  ci-matrix:
+    name: ${{ matrix.name }}
+    needs: runners
+    runs-on: ${{ needs.runners.outputs.provider == 'warp' && matrix.warp-runner || matrix.fallback-runner }}
+    if: ${{ (vars.SKIP_BRANCH_PUSH != 'true' || github.event_name == 'pull_request') }}
+
+    env:
+      DANGER_CI_ON_HOST_FOLDERS: 1
+      FILE_ENV: ${{ matrix.file-env }}
+
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.runners.outputs.linux) }}
+
+    steps:
+      - *ANNOTATION_PR_NUMBER
+
+      - *CHECKOUT
+
+      - name: Configure environment
+        uses: ./.github/actions/configure-environment
+
+      - name: Restore caches
+        id: restore-cache
+        uses: ./.github/actions/cache/restore
+        with:
+          provider: ${{ matrix.provider || needs.runners.outputs.provider }}
+
+      - name: Configure Docker
+        uses: ./.github/actions/configure-docker
+        with:
+          provider: ${{ matrix.provider || needs.runners.outputs.provider }}
+
+      - name: Clear unnecessary files
+        if: ${{ needs.runners.outputs.provider == 'gha' && true || false }} # Only needed on GHA runners
+        uses: ./.github/actions/clear-files
+
+      - name: Enable bpfcc script
+        if: ${{ env.CONTAINER_NAME == 'ci_native_asan' }}
+        # Select an owned wrapper available inside the image build too. Keep the
+        # checksum-reviewed original environment script unchanged.
+        run: echo 'FILE_ENV=./test/pocx/ci/00_setup_env_native_asan_tracing.sh' >> "$GITHUB_ENV"
+
+      - name: Provision matching headers for enabled Linux USDT tests
+        if: >-
+          ${{ env.CONTAINER_NAME == 'ci_native_asan' }}
+        run: |
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y "linux-headers-$(uname -r)"
+          test -d "/lib/modules/$(uname -r)/build"
+
+      - name: Set mmap_rnd_bits
+        if: ${{ env.CONTAINER_NAME == 'ci_native_tsan' || env.CONTAINER_NAME == 'ci_native_msan' || env.CONTAINER_NAME == 'ci_native_fuzz_msan' }}
+        # Prevents crashes due to high ASLR entropy
+        run: sudo sysctl -w vm.mmap_rnd_bits=28
+
+      - name: CI script
+        run: ./ci/test_run_all.sh
+
+      - name: Upload selected product test evidence
+        if: always() && !contains(matrix.file-env, 'fuzz')
+        uses: actions/upload-artifact@v7
+        with:
+          name: inherited-tests-${{ inputs.product }}-${{ github.job }}-${{ strategy.job-index }}
+          path: artifacts/pocx-inherited
+          if-no-files-found: warn
+
+      - name: Upload PoCX Linux fuzz evidence
+        if: always() && contains(matrix.file-env, 'fuzz') && inputs.product == 'pocx'
+        uses: actions/upload-artifact@v7
+        with:
+          name: fuzz-pocx-${{ github.job }}-${{ strategy.job-index }}
+          path: artifacts/pocx-inherited/fuzz
+          if-no-files-found: warn
+
+      - name: Save caches
+        uses: ./.github/actions/cache/save
+        with:
+          provider: ${{ matrix.provider || needs.runners.outputs.provider }}
+
+  lint:
+    name: 'lint'
+    needs: runners
+    runs-on: ${{ needs.runners.outputs.provider == 'warp' && 'warp-ubuntu-latest-x64-2x' || 'ubuntu-latest' }}
+    if: ${{ (vars.SKIP_BRANCH_PUSH != 'true' || github.event_name == 'pull_request') }}
+    env:
+      CONTAINER_NAME: "bitcoin-linter"
+    steps:
+      - *ANNOTATION_PR_NUMBER
+
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          ref: *CHECKOUT_REF_TMPL
+          fetch-depth: 0
+
+      - name: Configure Docker
+        uses: ./.github/actions/configure-docker
+        with:
+          provider: ${{ needs.runners.outputs.provider }}
+
+      - name: CI script
+        run: |
+          git worktree add ../lint-worktree HEAD
+          python3 -B ../lint-worktree/test/pocx/check_drift.py
+          python3 -B ../lint-worktree/test/pocx/test_unit_matrix.py
+          python3 -B ../lint-worktree/test/pocx/test_fuzz_parity.py
+          ../lint-worktree/ci/lint.py

@@ -67,12 +67,24 @@ WalletDescriptor GenerateWalletDescriptor(const CExtPubKey& master_key, const Ou
     } // no default case, so the compiler can warn about missing cases
     assert(!desc_prefix.empty());
 
+#ifdef ENABLE_POCX
+    // BTCX mainnet derives at the registered SLIP-44 coin type 1347371864'
+    // (0x504F4358, "POCX"); testnet and regtest derive at 1' per SLIP-44.
+    // Only newly generated descriptors are affected; existing wallets keep
+    // the descriptors stored on disk.
+    if (Params().IsTestChain()) {
+        desc_prefix += "/1h";
+    } else {
+        desc_prefix += "/1347371864h";
+    }
+#else
     // Mainnet derives at 0', testnet and regtest derive at 1'
     if (Params().IsTestChain()) {
         desc_prefix += "/1h";
     } else {
         desc_prefix += "/0h";
     }
+#endif
 
     std::string internal_path = internal ? "/1" : "/0";
     std::string desc_str = desc_prefix + "/0h" + internal_path + desc_suffix;

@@ -33,7 +33,13 @@
 #include <QUrlQuery>
 
 const int BITCOIN_IPC_CONNECT_TIMEOUT = 1000; // milliseconds
+#ifdef ENABLE_POCX
+const QString BITCOIN_IPC_PREFIX("btcx:");
+// Pre-v31 releases emitted bitcoin: URIs; keep accepting them for one release.
+const QString BITCOIN_IPC_LEGACY_PREFIX("bitcoin:");
+#else
 const QString BITCOIN_IPC_PREFIX("bitcoin:");
+#endif
 
 //
 // Create a name that is unique for:
@@ -80,6 +86,12 @@ void PaymentServer::ipcParseCommandLine(int argc, char* argv[])
         {
             savedPaymentRequests.insert(arg);
         }
+#ifdef ENABLE_POCX
+        else if (arg.startsWith(BITCOIN_IPC_LEGACY_PREFIX, Qt::CaseInsensitive)) // legacy bitcoin: URI
+        {
+            savedPaymentRequests.insert(arg);
+        }
+#endif
     }
 }
 
@@ -189,12 +201,22 @@ void PaymentServer::handleURIOrFile(const QString& s)
         return;
     }
 
+#ifdef ENABLE_POCX
+    if (s.startsWith("btcx://", Qt::CaseInsensitive) || s.startsWith("bitcoin://", Qt::CaseInsensitive))
+    {
+        Q_EMIT message(tr("URI handling"), tr("'btcx://' is not a valid URI. Use 'btcx:' instead."),
+            CClientUIInterface::MSG_ERROR);
+    }
+    else if (s.startsWith(BITCOIN_IPC_PREFIX, Qt::CaseInsensitive) ||
+             s.startsWith(BITCOIN_IPC_LEGACY_PREFIX, Qt::CaseInsensitive)) // btcx: URI (or legacy bitcoin:)
+#else
     if (s.startsWith("bitcoin://", Qt::CaseInsensitive))
     {
         Q_EMIT message(tr("URI handling"), tr("'bitcoin://' is not a valid URI. Use 'bitcoin:' instead."),
             CClientUIInterface::MSG_ERROR);
     }
     else if (s.startsWith(BITCOIN_IPC_PREFIX, Qt::CaseInsensitive)) // bitcoin: URI
+#endif
     {
         QUrlQuery uri((QUrl(s)));
         // normal URI

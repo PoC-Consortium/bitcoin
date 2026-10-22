@@ -1,0 +1,12 @@
+family,condition,consensus,configured_runner,status,required_frameworks,reason
+inherited,ci-matrix:./ci/test/00_setup_env_arm.sh,bitcoin,ubuntu-24.04-arm,deferred,unit;qt;kernel;auxiliary;functional,"User deferred target-native execution to a suitable ARM, macOS or Windows machine."
+inherited,ci-matrix:./ci/test/00_setup_env_arm.sh,pocx,ubuntu-24.04-arm,deferred,unit;qt;kernel;auxiliary;functional,"User deferred target-native execution to a suitable ARM, macOS or Windows machine."
+inherited,macos-native-arm64:./ci/test/00_setup_env_mac_native.sh,bitcoin,macos-native-arm64,deferred,unit;qt;kernel;auxiliary;functional,"User deferred target-native execution to a suitable ARM, macOS or Windows machine."
+inherited,macos-native-arm64:./ci/test/00_setup_env_mac_native.sh,pocx,macos-native-arm64,deferred,unit;qt;kernel;auxiliary;functional,"User deferred target-native execution to a suitable ARM, macOS or Windows machine."
+inherited,windows-native-dll:standard,bitcoin,windows-native-dll,deferred,unit;qt;kernel;auxiliary;functional,"User deferred target-native execution to a suitable ARM, macOS or Windows machine."
+inherited,windows-native-dll:standard,pocx,windows-native-dll,deferred,unit;qt;kernel;auxiliary;functional,"User deferred target-native execution to a suitable ARM, macOS or Windows machine."
+inherited,windows-native-test:msvcrt,bitcoin,windows-native-test,deferred,unit;qt;kernel;auxiliary;functional,"User deferred target-native execution to a suitable ARM, macOS or Windows machine."
+inherited,windows-native-test:msvcrt,pocx,windows-native-test,deferred,unit;qt;kernel;auxiliary;functional,"User deferred target-native execution to a suitable ARM, macOS or Windows machine."
+inherited,windows-native-test:ucrt,bitcoin,windows-native-test,deferred,unit;qt;kernel;auxiliary;functional,"User deferred target-native execution to a suitable ARM, macOS or Windows machine."
+inherited,windows-native-test:ucrt,pocx,windows-native-test,deferred,unit;qt;kernel;auxiliary;functional,"User deferred target-native execution to a suitable ARM, macOS or Windows machine."
+inherited,test-each-commit,original-first pairs per selected commit,,deferred,unit;qt;kernel;auxiliary;functional,User excluded intermediate-history verification; preserve results for later squash merge outside this goal.

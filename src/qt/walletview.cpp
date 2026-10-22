@@ -17,6 +17,9 @@
 #include <qt/transactiontablemodel.h>
 #include <qt/transactionview.h>
 #include <qt/walletmodel.h>
+#ifdef ENABLE_POCX
+#include <qt/forgingassignmentdialog.h>
+#endif
 
 #include <interfaces/node.h>
 #include <node/interface_ui.h>
@@ -63,6 +66,11 @@ WalletView::WalletView(WalletModel* wallet_model, const PlatformStyle* _platform
     sendCoinsPage = new SendCoinsDialog(platformStyle);
     sendCoinsPage->setModel(walletModel);
 
+#ifdef ENABLE_POCX
+    forgingAssignmentPage = new ForgingAssignmentDialog(platformStyle);
+    forgingAssignmentPage->setModel(walletModel);
+#endif
+
     usedSendingAddressesPage = new AddressBookPage(platformStyle, AddressBookPage::ForEditing, AddressBookPage::SendingTab, this);
     usedSendingAddressesPage->setModel(walletModel->getAddressTableModel());
 
@@ -73,6 +81,9 @@ WalletView::WalletView(WalletModel* wallet_model, const PlatformStyle* _platform
     addWidget(transactionsPage);
     addWidget(receiveCoinsPage);
     addWidget(sendCoinsPage);
+#ifdef ENABLE_POCX
+    addWidget(forgingAssignmentPage);
+#endif
 
     connect(overviewPage, &OverviewPage::transactionClicked, this, &WalletView::transactionClicked);
     // Clicking on a transaction on the overview pre-selects the transaction on the transaction history page
@@ -165,6 +176,13 @@ void WalletView::gotoSendCoinsPage(QString addr)
     if (!addr.isEmpty())
         sendCoinsPage->setAddress(addr);
 }
+
+#ifdef ENABLE_POCX
+void WalletView::gotoForgingAssignmentPage()
+{
+    setCurrentWidget(forgingAssignmentPage);
+}
+#endif
 
 void WalletView::gotoSignMessageTab(QString addr)
 {

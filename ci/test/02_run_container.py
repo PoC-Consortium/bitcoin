@@ -20,7 +20,45 @@ def run(cmd, **kwargs):
         sys.exit(str(e))
 
 
+def test_script(root, environment):
+    if environment.get('RUN_FUZZ_TESTS') == 'true':
+        return ['python3', f'{root}/test/pocx/bitcoin_fuzz_ci.py']
+    return ['python3', f'{root}/test/pocx/inherited_ci.py']
+
+
+def imagefile(root, environment):
+    if environment.get('RUN_FUZZ_TESTS') == 'true':
+        return f'{root}/ci/test_imagefile'
+    return f'{root}/test/pocx/ci/test_imagefile'
+
+
+def configure_runtime_environment(root, environment):
+    updated = dict(environment)
+    if updated.get('RUN_FUZZ_TESTS') == 'true':
+        return updated
+    command = ['bash', '-ec', r'source "$1"; printf "%s\0%s\0%s\0" "${PACKAGES:-}" "${PIP_PACKAGES:-}" "${CI_CONTAINER_CAP:-}"',
+               'bash', f'{root}/test/pocx/ci/inherited_runtime_env.sh']
+    values = subprocess.check_output(command, env=updated).decode().split('\0')
+    if len(values) != 4 or values[-1] != '':
+        raise ValueError('Incomplete inherited runtime environment')
+    for key, value in zip(('PACKAGES', 'PIP_PACKAGES', 'CI_CONTAINER_CAP'), values[:3]):
+        if key in updated or value:
+            updated[key] = value
+    return updated
+
+
+def capture_evidence(container_id, environment, *, invoke=run):
+    destination = Path(environment['BASE_READ_ONLY_DIR']) / 'artifacts'
+    destination.mkdir(parents=True, exist_ok=True)
+    result = invoke(['docker', 'cp',
+        f"{container_id}:{environment['BASE_ROOT_DIR']}/artifacts/pocx-inherited",
+        str(destination)], check=False)
+    if result.returncode:
+        raise RuntimeError('Failed to retain inherited CI evidence from container')
+
+
 def main():
+    os.environ.update(configure_runtime_environment(os.environ['BASE_READ_ONLY_DIR'], os.environ))
     print("Export only allowed settings:")
     settings = run(
         ["bash", "-c", "grep export ./ci/test/00_setup_env*.sh"],
@@ -32,6 +70,7 @@ def main():
     # they will not be passed on.
     settings.update([
         "BASE_BUILD_DIR",
+        "CI_PRODUCT",
         "CI_FAILFAST_TEST_LEAVE_DANGLING",
     ])
 
@@ -65,7 +104,7 @@ def main():
         # Using buildx is required to properly load the correct driver, for use with registry caching. Neither build, nor BUILDKIT=1 currently do this properly
         cmd_build = ["docker", "buildx", "build"]
         cmd_build += [
-            f"--file={os.environ['BASE_READ_ONLY_DIR']}/ci/test_imagefile",
+            '--file=' + imagefile(os.environ['BASE_READ_ONLY_DIR'], os.environ),
             f"--build-arg=CI_IMAGE_NAME_TAG={os.environ['CI_IMAGE_NAME_TAG']}",
             f"--build-arg=FILE_ENV={os.environ['FILE_ENV']}",
             f"--build-arg=BASE_ROOT_DIR={os.environ['BASE_ROOT_DIR']}",
@@ -173,7 +212,18 @@ def main():
         f"{os.environ['BASE_ROOT_DIR']}",
     ])
     ci_exec([f"{os.environ['BASE_ROOT_DIR']}/ci/test/01_base_install.sh"])
-    ci_exec([f"{os.environ['BASE_ROOT_DIR']}/ci/test/03_test_script.sh"])
+    try:
+        ci_exec(test_script(os.environ['BASE_ROOT_DIR'], os.environ))
+    finally:
+        retain_fuzz = os.getenv('RUN_FUZZ_TESTS') == 'true' and os.getenv('CI_PRODUCT') == 'pocx'
+        if not os.getenv('DANGER_RUN_CI_ON_HOST') and (os.getenv('RUN_FUZZ_TESTS') != 'true' or retain_fuzz):
+            failed = sys.exc_info()[0] is not None
+            try:
+                capture_evidence(container_id, os.environ)
+            except Exception as error:
+                if not failed:
+                    raise
+                print(f'Evidence capture also failed: {error}', file=sys.stderr, flush=True)
 
     if not os.getenv("DANGER_RUN_CI_ON_HOST"):
         print("Stop and remove CI container by ID")

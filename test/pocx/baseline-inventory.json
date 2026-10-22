@@ -1,0 +1,5005 @@
+[
+  {
+    "source": "src/test/addrman_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/allocator_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/amount_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/argsman_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/arith_uint256_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/banman_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/base32_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/base58_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/base64_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/bech32_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/bip324_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/bip328_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/bip32_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/blockchain_tests.cpp",
+    "classification": "adapted",
+    "execution": "not run",
+    "gates": [
+      "#ifndef ENABLE_POCX",
+      "#endif // ENABLE_POCX",
+      "#ifndef ENABLE_POCX",
+      "#ifndef ENABLE_POCX"
+    ],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/blockencodings_tests.cpp",
+    "classification": "adapted",
+    "execution": "not run",
+    "gates": [
+      "#ifndef ENABLE_POCX",
+      "#ifndef ENABLE_POCX",
+      "#ifndef ENABLE_POCX",
+      "#ifndef ENABLE_POCX"
+    ],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/blockfilter_index_tests.cpp",
+    "classification": "adapted",
+    "execution": "not run",
+    "gates": [
+      "#ifndef ENABLE_POCX"
+    ],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/blockfilter_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/blockmanager_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/bloom_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/bswap_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/caches_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/chain_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/chainstate_write_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/checkqueue_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/cluster_linearize_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/coins_tests.cpp",
+    "classification": "adapted",
+    "execution": "not run",
+    "gates": [
+      "#ifdef ENABLE_POCX"
+    ],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/coinscachepair_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/coinstatsindex_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/coinsviewoverlay_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/common_url_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/compress_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/crypto_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/cuckoocache_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/dbwrapper_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/denialofservice_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/descriptor_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/disconnected_transactions.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/feefrac_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/feerounder_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/flatfile_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fs_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/addition_overflow.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/addrman.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/asmap.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/asmap_direct.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/autofile.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/banman.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/base_encode_decode.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/bech32.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/bip324.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/bitdeque.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/bitset.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/block.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/block_header.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/block_index.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/block_index_tree.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/blockfilter.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/bloom_filter.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/buffered_file.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/chain.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/checkqueue.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/cluster_linearize.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/coins_view.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/coinscache_sim.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/connman.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/crypto.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/crypto_aes256.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/crypto_aes256cbc.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/crypto_chacha20.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/crypto_chacha20poly1305.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/crypto_common.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/crypto_diff_fuzz_chacha20.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/crypto_hkdf_hmac_sha256_l32.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/crypto_poly1305.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/cuckoocache.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/decode_tx.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/descriptor_parse.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/deserialize.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/difference_formatter.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/eval_script.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/fee_rate.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/feefrac.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/feeratediagram.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/fees.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/flatfile.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/float.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/fuzz.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/golomb_rice.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/headerssync.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/hex.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/http_request.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/i2p.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/integer.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/key.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/key_io.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/kitchen_sink.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/load_external_block_file.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/locale.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/merkle.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/merkleblock.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/message.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/mini_miner.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/miniscript.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/minisketch.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/muhash.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/multiplication_overflow.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/net.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/net_permissions.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/netaddress.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/netbase_dns_lookup.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/node_eviction.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/overflow.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/p2p_handshake.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/p2p_headers_presync.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/p2p_transport_serialization.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/package_eval.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/parse_hd_keypath.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/parse_iso8601.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/parse_numbers.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/parse_script.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/parse_univalue.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/partially_downloaded_block.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/pcp.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/policy_estimator.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/policy_estimator_io.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/poolresource.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/pow.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/prevector.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/primitives_transaction.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/process_message.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/process_messages.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/protocol.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/psbt.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/random.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/rbf.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/rolling_bloom_filter.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/rpc.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/script.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/script_assets_test_minimizer.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/script_descriptor_cache.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/script_flags.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/script_format.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/script_interpreter.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/script_ops.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/script_parsing.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/script_sigcache.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/script_sign.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/scriptnum_ops.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/secp256k1_ec_seckey_import_export_der.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/secp256k1_ecdsa_signature_parse_der_lax.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/signature_checker.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/signet.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/socks5.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/span.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/string.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/strprintf.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/system.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/threadpool.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/timeoffsets.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/torcontrol.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/transaction.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/tx_in.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/tx_out.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/tx_pool.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/txdownloadman.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/txgraph.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/txorphan.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/txrequest.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/util/check_globals.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/util/descriptor.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/util/mempool.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/util/net.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/util/threadinterrupt.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/util.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/utxo_snapshot.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/utxo_total_supply.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/validation_load_mempool.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/vecdeque.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/fuzz/versionbits.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/getarg_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/hash_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/headers_sync_chainwork_tests.cpp",
+    "classification": "adapted",
+    "execution": "not run",
+    "gates": [
+      "#ifndef ENABLE_POCX",
+      "#ifdef ENABLE_POCX",
+      "#ifdef ENABLE_POCX",
+      "#ifndef ENABLE_POCX",
+      "#ifndef ENABLE_POCX"
+    ],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/httpserver_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/i2p_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/interfaces_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/kernel/test_kernel.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/key_io_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/key_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/logging_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/main.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/mempool_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/merkle_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/merkleblock_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/miner_tests.cpp",
+    "classification": "adapted",
+    "execution": "not run",
+    "gates": [
+      "#ifndef ENABLE_POCX",
+      "#ifndef ENABLE_POCX",
+      "#ifdef ENABLE_POCX"
+    ],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/miniminer_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/miniscript_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/minisketch_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/mock_process.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/multisig_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/net_peer_connection_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/net_peer_eviction_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/net_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/netbase_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/node_init_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/node_warnings_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/orphanage_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/pcp_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/peerman_tests.cpp",
+    "classification": "adapted",
+    "execution": "not run",
+    "gates": [
+      "#ifndef ENABLE_POCX"
+    ],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/pmt_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/pocx_simd_tests.cpp",
+    "classification": "PoCX-specific",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/pocx_tests.cpp",
+    "classification": "PoCX-specific",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/policyestimator_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/pool_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/pow_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/prevector_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/private_broadcast_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/raii_event_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/random_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/rbf_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/rest_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/result_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/reverselock_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/rpc_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/sanity_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/scheduler_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/script_assets_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/script_p2sh_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/script_parse_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/script_segwit_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/script_standard_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/script_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/scriptnum_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/serfloat_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/serialize_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/settings_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/sighash_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/sigopcount_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/skiplist_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/sock_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/span_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/streams_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/sync_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/system_ram_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/system_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/testnet4_miner_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/threadpool_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/timeoffsets_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/torcontrol_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/transaction_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/translation_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/txdownload_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/txgraph_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/txindex_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/txospenderindex_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/txpackage_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/txreconciliation_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/txrequest_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/txvalidation_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/txvalidationcache_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/uint256_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/util/blockfilter.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/util/coins.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/util/coverage.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/util/json.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/util/logging.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/util/mining.cpp",
+    "classification": "adapted",
+    "execution": "not run",
+    "gates": [
+      "#ifdef ENABLE_POCX",
+      "#ifdef ENABLE_POCX",
+      "#ifdef ENABLE_POCX",
+      "#ifndef ENABLE_POCX"
+    ],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/util/net.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/util/random.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/util/script.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/util/setup_common.cpp",
+    "classification": "adapted",
+    "execution": "not run",
+    "gates": [
+      "#ifdef ENABLE_POCX",
+      "#ifdef ENABLE_POCX",
+      "#ifndef ENABLE_POCX",
+      "#ifdef ENABLE_POCX"
+    ],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/util/str.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/util/time.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/util/transaction_utils.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/util/txmempool.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/util/validation.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/util_check_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/util_expected_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/util_string_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/util_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/util_threadnames_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/util_trace_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/validation_block_tests.cpp",
+    "classification": "adapted",
+    "execution": "not run",
+    "gates": [
+      "#ifndef ENABLE_POCX"
+    ],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/validation_chainstate_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/validation_chainstatemanager_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/validation_flush_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/validation_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/validationinterface_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/versionbits_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/wallet/test/coinselection_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/wallet/test/coinselector_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/wallet/test/db_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/wallet/test/feebumper_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/wallet/test/fuzz/coincontrol.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/wallet/test/fuzz/coinselection.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/wallet/test/fuzz/crypter.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/wallet/test/fuzz/fees.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/wallet/test/fuzz/scriptpubkeyman.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/wallet/test/fuzz/spend.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/wallet/test/fuzz/wallet_bdb_parser.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/wallet/test/group_outputs_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/wallet/test/init_test_fixture.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/wallet/test/init_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/wallet/test/ismine_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/wallet/test/psbt_wallet_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/wallet/test/scriptpubkeyman_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/wallet/test/spend_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/wallet/test/util.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/wallet/test/wallet_crypto_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/wallet/test/wallet_rpc_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/wallet/test/wallet_test_fixture.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/wallet/test/wallet_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/wallet/test/wallet_transaction_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/wallet/test/walletdb_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/wallet/test/walletload_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/qt/test/addressbooktests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/qt/test/apptests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/qt/test/optiontests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/qt/test/rpcnestedtests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/qt/test/test_main.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/qt/test/uritests.cpp",
+    "classification": "adapted",
+    "execution": "not run",
+    "gates": [
+      "#ifdef ENABLE_POCX"
+    ],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/qt/test/util.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/qt/test/wallettests.cpp",
+    "classification": "adapted",
+    "execution": "not run",
+    "gates": [
+      "#ifdef ENABLE_POCX"
+    ],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/ipc/test/ipc_test.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/ipc/test/ipc_tests.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "src/test/kernel/test_kernel.cpp",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/combine_logs.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/create_cache.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/data/__init__.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/data/invalid_txs.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/example_test.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/feature_abortnode.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/feature_addrman.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/feature_anchors.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/feature_asmap.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/feature_assumeutxo.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/feature_assumevalid.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/feature_bind_extra.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/feature_bind_port_discover.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/feature_bind_port_externalip.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/feature_bip68_sequence.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/feature_block.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/feature_blocksdir.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/feature_blocksxor.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/feature_chain_tiebreaks.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/feature_cltv.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/feature_coinstatsindex.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/feature_coinstatsindex_compatibility.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/feature_config_args.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/feature_csv_activation.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/feature_dbcrash.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/feature_dersig.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/feature_dirsymlinks.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/feature_discover.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/feature_fastprune.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/feature_fee_estimation.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/feature_filelock.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/feature_framework_miniwallet.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/feature_framework_startup_failures.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/feature_framework_testshell.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/feature_framework_unit_tests.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/feature_help.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/feature_includeconf.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/feature_index_prune.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/feature_init.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/feature_loadblock.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/feature_logging.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/feature_maxtipage.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/feature_maxuploadtarget.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/feature_minchainwork.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/feature_notifications.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/feature_nulldummy.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/feature_port.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/feature_posix_fs_permissions.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/feature_presegwit_node_upgrade.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/feature_proxy.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/feature_pruning.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/feature_rbf.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/feature_reindex.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/feature_reindex_init.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/feature_reindex_readonly.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/feature_remove_pruned_files_on_startup.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/feature_segwit.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/feature_settings.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/feature_shutdown.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/feature_signet.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/feature_startupnotify.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/feature_taproot.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/feature_uacomment.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/feature_unsupported_utxo_db.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/feature_utxo_set_hash.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/feature_versionbits_warning.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/interface_bitcoin_cli.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/interface_http.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/interface_ipc.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/interface_ipc_mining.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/interface_rest.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/interface_rpc.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/interface_usdt_coinselection.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/interface_usdt_mempool.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/interface_usdt_net.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/interface_usdt_utxocache.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/interface_usdt_validation.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/interface_zmq.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/mempool_accept.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/mempool_accept_wtxid.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/mempool_cluster.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/mempool_compatibility.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/mempool_datacarrier.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/mempool_dust.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/mempool_ephemeral_dust.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/mempool_expiry.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/mempool_limit.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/mempool_package_limits.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/mempool_package_rbf.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/mempool_packages.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/mempool_persist.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/mempool_reorg.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/mempool_resurrect.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/mempool_sigoplimit.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/mempool_spend_coinbase.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/mempool_truc.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/mempool_unbroadcast.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/mempool_updatefromblock.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/mining_basic.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/mining_getblocktemplate_longpoll.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/mining_mainnet.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/mining_prioritisetransaction.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/mining_template_verification.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/mocks/invalid_signer.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/mocks/multi_signers.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/mocks/no_signer.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/mocks/signer.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/p2p_1p1c_network.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/p2p_add_connections.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/p2p_addr_relay.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/p2p_addr_selfannouncement.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/p2p_addrfetch.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/p2p_addrv2_relay.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/p2p_block_sync.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/p2p_blockfilters.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/p2p_blocksonly.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/p2p_compactblocks.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/p2p_compactblocks_blocksonly.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/p2p_compactblocks_hb.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/p2p_disconnect_ban.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/p2p_dns_seeds.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/p2p_eviction.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/p2p_feefilter.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/p2p_filter.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/p2p_fingerprint.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/p2p_getaddr_caching.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/p2p_getdata.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/p2p_handshake.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/p2p_headers_sync_with_minchainwork.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/p2p_i2p_ports.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/p2p_i2p_sessions.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/p2p_ibd_stalling.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/p2p_ibd_txrelay.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/p2p_initial_headers_sync.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/p2p_invalid_block.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/p2p_invalid_locator.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/p2p_invalid_messages.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/p2p_invalid_tx.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/p2p_leak.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/p2p_leak_tx.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/p2p_message_capture.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/p2p_mutated_blocks.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/p2p_net_deadlock.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/p2p_nobloomfilter_messages.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/p2p_node_network_limited.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/p2p_opportunistic_1p1c.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/p2p_orphan_handling.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/p2p_outbound_eviction.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/p2p_permissions.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/p2p_ping.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/p2p_private_broadcast.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/p2p_private_broadcast_retry_v1.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/p2p_seednode.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/p2p_segwit.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/p2p_sendheaders.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/p2p_sendtxrcncl.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/p2p_timeouts.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/p2p_tx_download.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/p2p_tx_privacy.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/p2p_unrequested_blocks.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/p2p_v2_encrypted.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/p2p_v2_misbehaving.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/p2p_v2_transport.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/rpc_bind.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/rpc_blockchain.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/rpc_createmultisig.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/rpc_decodescript.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/rpc_deprecated.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/rpc_deriveaddresses.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/rpc_dumptxoutset.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/rpc_estimatefee.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/rpc_generate.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/rpc_getblockfilter.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/rpc_getblockfrompeer.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/rpc_getblockstats.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/rpc_getchaintips.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/rpc_getdescriptoractivity.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/rpc_getdescriptorinfo.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/rpc_gettxspendingprevout.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/rpc_help.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/rpc_invalid_address_message.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/rpc_invalidateblock.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/rpc_misc.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/rpc_named_arguments.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/rpc_net.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/rpc_orphans.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/rpc_packages.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/rpc_preciousblock.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/rpc_psbt.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/rpc_rawtransaction.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/rpc_scanblocks.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/rpc_scantxoutset.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/rpc_setban.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/rpc_signer.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/rpc_signmessagewithprivkey.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/rpc_signrawtransactionwithkey.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/rpc_txoutproof.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/rpc_uptime.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/rpc_users.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/rpc_validateaddress.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/rpc_whitelist.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/test_framework/__init__.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/test_framework/address.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/test_framework/authproxy.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/test_framework/blockfilter.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/test_framework/blocktools.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/test_framework/compressor.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/test_framework/coverage.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/test_framework/crypto/bip324_cipher.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/test_framework/crypto/chacha20.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/test_framework/crypto/ellswift.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/test_framework/crypto/hkdf.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/test_framework/crypto/muhash.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/test_framework/crypto/poly1305.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/test_framework/crypto/ripemd160.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/test_framework/crypto/secp256k1.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/test_framework/crypto/siphash.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/test_framework/descriptors.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/test_framework/ipc_util.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/test_framework/key.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/test_framework/mempool_util.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/test_framework/messages.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/test_framework/netutil.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/test_framework/p2p.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/test_framework/psbt.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/test_framework/script.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/test_framework/script_util.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/test_framework/segwit_addr.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/test_framework/socks5.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/test_framework/test_framework.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/test_framework/test_node.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/test_framework/test_shell.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/test_framework/util.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/test_framework/v2_p2p.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/test_framework/wallet.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/test_framework/wallet_util.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/test_runner.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/tool_bench_sanity_check.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/tool_bitcoin.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/tool_bitcoin_chainstate.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/tool_rpcauth.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/tool_signet_miner.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/tool_utils.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/tool_utxo_to_sqlite.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/tool_wallet.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/wallet_abandonconflict.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/wallet_address_types.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/wallet_anchor.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/wallet_assumeutxo.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/wallet_avoid_mixing_output_types.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/wallet_avoidreuse.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/wallet_backup.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/wallet_backwards_compatibility.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/wallet_balance.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/wallet_basic.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/wallet_blank.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/wallet_bumpfee.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/wallet_change_address.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/wallet_coinbase_category.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/wallet_conflicts.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/wallet_create_tx.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/wallet_createwallet.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/wallet_createwalletdescriptor.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/wallet_crosschain.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/wallet_descriptor.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/wallet_disable.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/wallet_encryption.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/wallet_fallbackfee.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/wallet_fast_rescan.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/wallet_fundrawtransaction.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/wallet_gethdkeys.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/wallet_groups.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/wallet_hd.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/wallet_importdescriptors.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/wallet_importprunedfunds.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/wallet_keypool.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/wallet_keypool_topup.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/wallet_labels.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/wallet_listdescriptors.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/wallet_listreceivedby.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/wallet_listsinceblock.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/wallet_listtransactions.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/wallet_migration.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/wallet_miniscript.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/wallet_miniscript_decaying_multisig_descriptor_psbt.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/wallet_multisig_descriptor_psbt.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/wallet_multiwallet.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/wallet_musig.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/wallet_orphanedreward.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/wallet_reindex.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/wallet_reorgsrestore.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/wallet_rescan_unconfirmed.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/wallet_resendwallettransactions.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/wallet_send.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/wallet_sendall.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/wallet_sendmany.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/wallet_signer.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/wallet_signmessagewithaddress.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/wallet_signrawtransactionwithwallet.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/wallet_simulaterawtx.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/wallet_spend_unconfirmed.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/wallet_startup.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/wallet_taproot.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/wallet_timelock.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/wallet_transactiontime_rescan.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/wallet_txn_clone.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/wallet_txn_doublespend.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "test/functional/wallet_v3_txs.py",
+    "classification": "reused",
+    "execution": "not run",
+    "gates": [],
+    "upstream": "9be056a8a72b624dae9623b2f7bded92c2a21c91"
+  },
+  {
+    "source": "/home/johnny/Code/bitcoin-pocx/scripts/assignments/setup-regtestv2.sh",
+    "classification": "deferred",
+    "execution": "not run",
+    "reason": "M2 scenario parity inventory; legacy harness unsafe to execute",
+    "assertions": []
+  },
+  {
+    "source": "/home/johnny/Code/bitcoin-pocx/scripts/assignments/test-assignment-block-validation-v2.sh",
+    "classification": "deferred",
+    "execution": "not run",
+    "reason": "M2 scenario parity inventory; legacy harness unsafe to execute",
+    "assertions": [
+      "fail() { echo -e \"${RED}\u2717 FAILED:${NC} $1\"; regtestv2_stop; exit 1; }",
+      "[ \"$got\" -ge \"$count\" ] || fail \"Expected $count UTXOs, got $got\"",
+      "$CLI getmempoolentry \"$TXID1\" >/dev/null 2>&1 || fail \"First assignment not in mempool\"",
+      "fail \"Mempool accepted double assignment\"",
+      "[ $? -eq 0 ] && fail \"Mempool accepted double assignment via sendrawtransaction\"",
+      "[ \"$TX2_IN\" = \"yes\" ] && fail \"Block accepted BOTH assignments\"",
+      "[ \"$TX1_IN\" = \"yes\" ] || fail \"Block rejected BOTH assignments\"",
+      "[ \"$STATE\" = \"ASSIGNED\" ] || fail \"Expected ASSIGNED, got $STATE\"",
+      "$CLI getmempoolentry \"$REV_TXID1\" >/dev/null 2>&1 || fail \"First revocation not in mempool\"",
+      "fail \"Mempool accepted double revocation\"",
+      "[ $? -eq 0 ] && fail \"Mempool accepted double revocation via sendrawtransaction\"",
+      "[ \"$R2\" = \"yes\" ] && fail \"Block accepted BOTH revocations\"",
+      "[ \"$R1\" = \"yes\" ] || fail \"Block rejected BOTH revocations\"",
+      "echo -e \"${GREEN}\u2713 ALL BLOCK-LEVEL VALIDATION TESTS PASSED${NC}\""
+    ]
+  },
+  {
+    "source": "/home/johnny/Code/bitcoin-pocx/scripts/assignments/test-assignment-bug-v2.sh",
+    "classification": "deferred",
+    "execution": "not run",
+    "reason": "M2 scenario parity inventory; legacy harness unsafe to execute",
+    "assertions": [
+      "fail() { echo -e \"${RED}\u2717 FAILED:${NC} $1\"; regtestv2_stop; exit 1; }",
+      "[ \"$UTXO_COUNT\" -eq 5 ] || fail \"Expected 5 UTXOs for funding, got $UTXO_COUNT\"",
+      "$CLI getmempoolentry \"$TXID\" >/dev/null 2>&1 || fail \"Assignment $num not in mempool\"",
+      "fail \"Assignment $num failed but daemon still running\"",
+      "$CLI getmempoolentry \"$TXID\" >/dev/null 2>&1 && fail \"Assignment $num still in mempool\"",
+      "TX_INFO=$($WCLI gettransaction \"$TXID\" 2>&1) || fail \"Assignment $num not found\"",
+      "[ \"$CONFIRMATIONS\" -ge 1 ] || fail \"Assignment $num has 0 confirmations\"",
+      "*) fail \"Plot $num state is '$STATE'\" ;;",
+      "[ \"$FORGE_CHECK\" = \"$FORGE_ADDR\" ] || fail \"Plot $num forge address mismatch\"",
+      "echo -e \"${GREEN}\u2713 REGRESSION TEST PASSED${NC}\""
+    ]
+  },
+  {
+    "source": "/home/johnny/Code/bitcoin-pocx/scripts/assignments/test-assignment-crash-revive-v2.sh",
+    "classification": "deferred",
+    "execution": "not run",
+    "reason": "M2 scenario parity inventory; legacy harness unsafe to execute",
+    "assertions": [
+      "# assignment is permanently lost; subsequent revoke validation fails and",
+      "fail() { echo -e \"  ${RED}\u2717 FAILED:${NC} $1\"; cleanup; exit 1; }",
+      "# Push blocks (start_h+1 .. node1 tip) to Node2, fail loudly on rejection.",
+      "fail \"Node2 REJECTED block $h ($hash) \u2014 this is the bug signal\"",
+      "start_node2 || fail \"Node2 failed to start\"",
+      "fail \"Node2 still alive after SIGKILL\"",
+      "start_node2 || fail \"Node2 failed to restart after SIGKILL\"",
+      "[ \"$h1\" = \"$h2\" ]       || fail \"tip height diverged\"",
+      "[ \"$hash1\" = \"$hash2\" ] || fail \"best block hash diverged\"",
+      "echo \"RESULT: PASS\"",
+      "fail \"Assignment state diverged after SIGKILL+revive\""
+    ]
+  },
+  {
+    "source": "/home/johnny/Code/bitcoin-pocx/scripts/assignments/test-assignment-double-cycle-v2.sh",
+    "classification": "deferred",
+    "execution": "not run",
+    "reason": "M2 scenario parity inventory; legacy harness unsafe to execute",
+    "assertions": [
+      "TESTS_PASSED=0",
+      "pass() { echo \"  \u2713 $1\"; TESTS_PASSED=$((TESTS_PASSED + 1)); }",
+      "fail() { echo \"  \u2717 FAILED: $1\"; regtestv2_stop; exit 1; }",
+      "verify_assignment_status() {",
+      "[ \"$state\" = \"$exp_state\" ] || fail \"Expected state '$exp_state', got '$state'\"",
+      "fail \"Expected forge '$exp_forge', got '$forge'\"",
+      "verify_assignment_status_at_height() {",
+      "[ \"$state\" = \"$exp_state\" ] || fail \"At height $height: Expected state '$exp_state', got '$state'\"",
+      "fail \"At height $height: Expected forge '$exp_forge', got '$forge'\"",
+      "verify_assignment_status \"$PLOT_ADDR\" \"UNASSIGNED\" \"\"",
+      "verify_assignment_status \"$PLOT_ADDR\" \"ASSIGNING\" \"$FORGE_ADDR_1\"",
+      "verify_assignment_status \"$PLOT_ADDR\" \"ASSIGNED\" \"$FORGE_ADDR_1\"",
+      "verify_assignment_status \"$PLOT_ADDR\" \"REVOKING\" \"$FORGE_ADDR_1\"",
+      "verify_assignment_status \"$PLOT_ADDR\" \"REVOKED\" \"$FORGE_ADDR_1\"",
+      "verify_assignment_status \"$PLOT_ADDR\" \"ASSIGNING\" \"$FORGE_ADDR_2\"",
+      "verify_assignment_status \"$PLOT_ADDR\" \"ASSIGNED\" \"$FORGE_ADDR_2\"",
+      "verify_assignment_status \"$PLOT_ADDR\" \"REVOKING\" \"$FORGE_ADDR_2\"",
+      "verify_assignment_status \"$PLOT_ADDR\" \"REVOKED\" \"$FORGE_ADDR_2\"",
+      "verify_assignment_status_at_height \"$PLOT_ADDR\" \"UNASSIGNED\" \"\" \"$c1u\";    pass \"C1 UNASSIGNED @ $c1u\"",
+      "verify_assignment_status_at_height \"$PLOT_ADDR\" \"ASSIGNING\" \"$FORGE_ADDR_1\" \"$c1as\"; pass \"C1 ASSIGNING @ $c1as\"",
+      "verify_assignment_status_at_height \"$PLOT_ADDR\" \"ASSIGNED\"  \"$FORGE_ADDR_1\" \"$c1ad\"; pass \"C1 ASSIGNED @ $c1ad\"",
+      "verify_assignment_status_at_height \"$PLOT_ADDR\" \"REVOKING\"  \"$FORGE_ADDR_1\" \"$c1rg\"; pass \"C1 REVOKING @ $c1rg\"",
+      "verify_assignment_status_at_height \"$PLOT_ADDR\" \"REVOKED\"   \"$FORGE_ADDR_1\" \"$c1rd\"; pass \"C1 REVOKED @ $c1rd\"",
+      "verify_assignment_status_at_height \"$PLOT_ADDR\" \"ASSIGNING\" \"$FORGE_ADDR_2\" \"$c2as\"; pass \"C2 ASSIGNING @ $c2as\"",
+      "verify_assignment_status_at_height \"$PLOT_ADDR\" \"ASSIGNED\"  \"$FORGE_ADDR_2\" \"$c2ad\"; pass \"C2 ASSIGNED @ $c2ad\"",
+      "verify_assignment_status_at_height \"$PLOT_ADDR\" \"REVOKING\"  \"$FORGE_ADDR_2\" \"$c2rg\"; pass \"C2 REVOKING @ $c2rg\"",
+      "verify_assignment_status_at_height \"$PLOT_ADDR\" \"REVOKED\"   \"$FORGE_ADDR_2\" \"$c2rd\"; pass \"C2 REVOKED @ $c2rd\"",
+      "echo \"Tests passed: $TESTS_PASSED\"",
+      "echo \"\u2713 ALL DOUBLE-CYCLE TESTS PASSED\""
+    ]
+  },
+  {
+    "source": "/home/johnny/Code/bitcoin-pocx/scripts/assignments/test-assignment-intrablock-conflicts-v2.sh",
+    "classification": "deferred",
+    "execution": "not run",
+    "reason": "M2 scenario parity inventory; legacy harness unsafe to execute",
+    "assertions": [
+      "fail() { echo -e \"${RED}\u2717 FAILED:${NC} $1\"; regtestv2_stop; exit 1; }",
+      "[ \"$UTXO_COUNT\" -ge 2 ] || fail \"Expected 2 UTXOs, got $UTXO_COUNT\"",
+      "$CLI getmempoolentry \"$TXID1\" >/dev/null 2>&1 || fail \"Assignment not in mempool\"",
+      "fail \"Mempool ACCEPTED revocation of unconfirmed assignment\"",
+      "[ $MEMPOOL_EXIT -eq 0 ] && fail \"Mempool accepted revocation via sendrawtransaction\"",
+      "[ \"$TX2_IN\" = \"yes\" ] && fail \"Block accepted revocation of unconfirmed assignment\"",
+      "[ \"$TX1_IN\" = \"yes\" ] || fail \"Block rejected BOTH transactions\"",
+      "[ \"$STATE\" = \"ASSIGNING\" ] || fail \"Expected ASSIGNING, got $STATE\"",
+      "[ \"$REV_IN\" = \"yes\" ] && fail \"Block accepted revocation before assignment\"",
+      "[ \"$ASN_IN\" = \"yes\" ] || fail \"Block rejected BOTH transactions\"",
+      "[ \"$STATE2\" = \"ASSIGNING\" ] || fail \"Expected ASSIGNING, got $STATE2\"",
+      "echo -e \"${GREEN}\u2713 ALL INTRA-BLOCK CONFLICT TESTS PASSED${NC}\""
+    ]
+  },
+  {
+    "source": "/home/johnny/Code/bitcoin-pocx/scripts/assignments/test-assignment-invalid-format-v2.sh",
+    "classification": "deferred",
+    "execution": "not run",
+    "reason": "M2 scenario parity inventory; legacy harness unsafe to execute",
+    "assertions": [
+      "fail() { echo -e \"${RED}\u2717 FAILED:${NC} $1\"; regtestv2_stop; exit 1; }",
+      "# mine it, and assert the plot remains UNASSIGNED (or no assignment).",
+      "fail \"$label: unexpected state $current_state\"",
+      "echo -e \"${GREEN}\u2713 ALL FORMAT VALIDATION TESTS PASSED${NC}\""
+    ]
+  },
+  {
+    "source": "/home/johnny/Code/bitcoin-pocx/scripts/assignments/test-assignment-lifecycle-v2.sh",
+    "classification": "adapted",
+    "execution": "not run",
+    "reason": "M1 required conversion",
+    "assertions": [
+      "TESTS_PASSED=0",
+      "pass() { echo \"  \u2713 $1\"; TESTS_PASSED=$((TESTS_PASSED + 1)); }",
+      "fail() { echo \"  \u2717 FAILED: $1\"; regtestv2_stop; exit 1; }",
+      "verify_assignment_status() {",
+      "[ \"$state\" = \"$exp_state\" ] || fail \"Expected state '$exp_state', got '$state'\"",
+      "fail \"Expected forge '$exp_forge', got '$forge'\"",
+      "verify_assignment_status_at_height() {",
+      "[ \"$state\" = \"$exp_state\" ] || fail \"At height $height: Expected '$exp_state', got '$state'\"",
+      "fail \"At height $height: Expected forge '$exp_forge', got '$forge'\"",
+      "verify_mempool_contains() {",
+      "echo \"$mempool\" | jq -e \". | index(\\\"$txid\\\")\" >/dev/null || fail \"Tx $txid not in mempool\"",
+      "verify_mempool_empty() {",
+      "[ \"$count\" = \"0\" ] || fail \"Mempool not empty (count=$count)\"",
+      "verify_assignment_status \"$PLOT_ADDR\" \"UNASSIGNED\" \"\"",
+      "verify_mempool_empty",
+      "verify_mempool_contains \"$ASSIGNMENT_TXID\"",
+      "verify_assignment_status \"$PLOT_ADDR\" \"ASSIGNING\" \"$FORGE_ADDR\"",
+      "verify_mempool_empty",
+      "verify_assignment_status \"$PLOT_ADDR\" \"ASSIGNING\" \"$FORGE_ADDR\"",
+      "verify_assignment_status \"$PLOT_ADDR\" \"ASSIGNED\" \"$FORGE_ADDR\"",
+      "fail \"Invalid OP_RETURN format (should start with OP_RETURN + POCX), got: ${opreturn:0:20}...\"",
+      "verify_mempool_contains \"$REVOCATION_TXID\"",
+      "verify_assignment_status \"$PLOT_ADDR\" \"REVOKING\" \"$FORGE_ADDR\"",
+      "verify_mempool_empty",
+      "verify_assignment_status \"$PLOT_ADDR\" \"REVOKING\" \"$FORGE_ADDR\"",
+      "verify_assignment_status \"$PLOT_ADDR\" \"REVOKED\" \"$FORGE_ADDR\"",
+      "fail \"Invalid OP_RETURN format (should start with OP_RETURN + XCOP)\"",
+      "verify_assignment_status \"$PLOT_ADDR\" \"REVOKING\" \"$FORGE_ADDR\"",
+      "verify_mempool_contains \"$REVOCATION_TXID\"",
+      "verify_assignment_status \"$PLOT_ADDR\" \"ASSIGNED\" \"$FORGE_ADDR\"",
+      "verify_assignment_status \"$PLOT_ADDR\" \"ASSIGNING\" \"$FORGE_ADDR\"",
+      "verify_mempool_contains \"$ASSIGNMENT_TXID\"",
+      "verify_assignment_status \"$PLOT_ADDR\" \"UNASSIGNED\" \"\"",
+      "verify_assignment_status \"$PLOT_ADDR\" \"REVOKED\" \"$FORGE_ADDR\"",
+      "verify_assignment_status \"$PLOT_ADDR\" \"ASSIGNED\" \"$FORGE_ADDR\"",
+      "verify_assignment_status \"$PLOT_ADDR\" \"UNASSIGNED\" \"\"",
+      "verify_assignment_status \"$PLOT_ADDR\" \"REVOKED\" \"$FORGE_ADDR\"",
+      "verify_assignment_status_at_height \"$PLOT_ADDR\" \"UNASSIGNED\" \"\"            \"$u\";  pass \"UNASSIGNED @ $u\"",
+      "verify_assignment_status_at_height \"$PLOT_ADDR\" \"ASSIGNING\"  \"$FORGE_ADDR\" \"$as\"; pass \"ASSIGNING @ $as\"",
+      "verify_assignment_status_at_height \"$PLOT_ADDR\" \"ASSIGNED\"   \"$FORGE_ADDR\" \"$ad\"; pass \"ASSIGNED @ $ad\"",
+      "verify_assignment_status_at_height \"$PLOT_ADDR\" \"REVOKING\"   \"$FORGE_ADDR\" \"$rg\"; pass \"REVOKING @ $rg\"",
+      "verify_assignment_status_at_height \"$PLOT_ADDR\" \"REVOKED\"    \"$FORGE_ADDR\" \"$rd\"; pass \"REVOKED @ $rd\"",
+      "echo \"Tests passed: $TESTS_PASSED\"",
+      "echo \"\u2713 ALL LIFECYCLE TESTS PASSED\""
+    ]
+  },
+  {
+    "source": "/home/johnny/Code/bitcoin-pocx/scripts/assignments/test-assignment-multinode-attacks-v2.sh",
+    "classification": "deferred",
+    "execution": "not run",
+    "reason": "M2 scenario parity inventory; legacy harness unsafe to execute",
+    "assertions": [
+      "fail() { echo -e \"${RED}\u2717 FAILED:${NC} $1\"; cleanup; exit 1; }",
+      "[ \"$PEERS\" -ge 1 ] || fail \"Nodes not connected\"",
+      "[ \"$(cli_node2 getblockcount)\" -eq \"$(cli_node1 getblockcount)\" ] || fail \"Node2 did not sync initial chain\"",
+      "*) fail \"Neither assignment made it into block\" ;;",
+      "[ \"$STATE\" = \"ASSIGNED\" ] || fail \"Expected ASSIGNED state, got $STATE\"",
+      "[ $ASSIGN_EXIT -eq 0 ] || fail \"Node1 failed to create assignment: $ASSIGN_RESULT1\"",
+      "echo \"$NODE1_MEMPOOL\" | grep -q \"$ASSIGN_TX1\" || fail \"Node1 missing transaction in mempool\"",
+      "fail \"Assignment not confirmed properly\"",
+      "echo -e \"${GREEN}\u2713 ALL MULTI-NODE COORDINATION TESTS PASSED${NC}\""
+    ]
+  },
+  {
+    "source": "/home/johnny/Code/bitcoin-pocx/scripts/assignments/test-assignment-multinode-v2.sh",
+    "classification": "deferred",
+    "execution": "not run",
+    "reason": "M2 scenario parity inventory; legacy harness unsafe to execute",
+    "assertions": [
+      "TESTS_PASSED=0",
+      "pass() { echo -e \"  ${GREEN}\u2713${NC} $1\"; TESTS_PASSED=$((TESTS_PASSED + 1)); }",
+      "fail() { echo -e \"  ${RED}\u2717 FAILED:${NC} $1\"; cleanup; exit 1; }",
+      "fail \"Nodes failed to sync (Node1=$h1, Node2=$(cli_node2 getblockcount))\"",
+      "verify_state_node2() {",
+      "[ \"$state\" = \"$exp_state\" ] || fail \"Node2: expected state $exp_state, got $state\"",
+      "fail \"Node2: expected forge $exp_forge, got $forge\"",
+      "verify_state_at_height_node2() {",
+      "[ \"$state\" = \"$exp_state\" ] || fail \"Node2 @ $height: expected $exp_state, got $state\"",
+      "fail \"Node2 @ $height: expected forge $exp_forge, got $forge\"",
+      "verify_mempool_contains() {",
+      "echo \"$mp\" | jq -e \". | index(\\\"$txid\\\")\" >/dev/null || fail \"Tx $txid not in Node1 mempool\"",
+      "verify_mempool_empty() {",
+      "[ \"$(echo \"$mp\" | jq length)\" -eq 0 ] || fail \"Node1 mempool not empty\"",
+      "[ \"$peer_count\" -ge 1 ] || fail \"Node1 failed to connect to Node2\"",
+      "verify_state_node2 \"$PLOT_ADDR\" \"UNASSIGNED\" \"\"",
+      "verify_mempool_empty",
+      "verify_mempool_contains \"$ASSIGNMENT_TXID\"",
+      "verify_state_node2 \"$PLOT_ADDR\" \"ASSIGNING\" \"$FORGE_ADDR\"",
+      "verify_mempool_empty",
+      "verify_state_node2 \"$PLOT_ADDR\" \"ASSIGNED\" \"$FORGE_ADDR\"",
+      "[[ \"$opreturn\" =~ ^6a2c504f4358 ]] || fail \"Invalid OP_RETURN: ${opreturn:0:20}...\"",
+      "verify_mempool_contains \"$REVOCATION_TXID\"",
+      "verify_state_node2 \"$PLOT_ADDR\" \"REVOKING\" \"$FORGE_ADDR\"",
+      "verify_mempool_empty",
+      "verify_state_node2 \"$PLOT_ADDR\" \"REVOKED\" \"$FORGE_ADDR\"",
+      "[[ \"$opreturn\" =~ ^6a1858434f50 ]] || fail \"Invalid OP_RETURN format\"",
+      "verify_state_node2 \"$PLOT_ADDR\" \"REVOKING\" \"$FORGE_ADDR\"",
+      "verify_mempool_contains \"$REVOCATION_TXID\"",
+      "verify_state_node2 \"$PLOT_ADDR\" \"ASSIGNED\" \"$FORGE_ADDR\"",
+      "verify_state_node2 \"$PLOT_ADDR\" \"ASSIGNING\" \"$FORGE_ADDR\"",
+      "verify_mempool_contains \"$ASSIGNMENT_TXID\"",
+      "verify_state_node2 \"$PLOT_ADDR\" \"UNASSIGNED\" \"\"",
+      "verify_state_node2 \"$PLOT_ADDR\" \"REVOKED\" \"$FORGE_ADDR\"",
+      "verify_state_node2 \"$PLOT_ADDR\" \"ASSIGNED\" \"$FORGE_ADDR\"",
+      "verify_state_node2 \"$PLOT_ADDR\" \"UNASSIGNED\" \"\"",
+      "verify_state_node2 \"$PLOT_ADDR\" \"REVOKED\" \"$FORGE_ADDR\"",
+      "verify_state_at_height_node2 \"$PLOT_ADDR\" \"UNASSIGNED\" \"\"             \"$u\";  pass \"Node2: UNASSIGNED @ $u\"",
+      "verify_state_at_height_node2 \"$PLOT_ADDR\" \"ASSIGNING\"  \"$FORGE_ADDR\"  \"$as\"; pass \"Node2: ASSIGNING @ $as\"",
+      "verify_state_at_height_node2 \"$PLOT_ADDR\" \"ASSIGNED\"   \"$FORGE_ADDR\"  \"$ad\"; pass \"Node2: ASSIGNED @ $ad\"",
+      "verify_state_at_height_node2 \"$PLOT_ADDR\" \"REVOKING\"   \"$FORGE_ADDR\"  \"$rg\"; pass \"Node2: REVOKING @ $rg\"",
+      "verify_state_at_height_node2 \"$PLOT_ADDR\" \"REVOKED\"    \"$FORGE_ADDR\"  \"$rd\"; pass \"Node2: REVOKED @ $rd\"",
+      "echo \"Tests passed: $TESTS_PASSED\"",
+      "echo -e \"${GREEN}\u2713 ALL MULTI-NODE TESTS PASSED${NC}\""
+    ]
+  },
+  {
+    "source": "/home/johnny/Code/bitcoin-pocx/scripts/assignments/test-assignment-reorg-height-shift-v2.sh",
+    "classification": "deferred",
+    "execution": "not run",
+    "reason": "M2 scenario parity inventory; legacy harness unsafe to execute",
+    "assertions": [
+      "# Pre-fix: the explicit checks fail. Post-fix: everything passes and the",
+      "#   CONTINUE_ON_FAIL=1      record assertion failures instead of exiting",
+      "TESTS_PASSED=0",
+      "TESTS_FAILED=0",
+      "GROUP_FAILED=0",
+      "if [ \"$GROUP_FAILED\" = \"1\" ]; then",
+      "echo \"  \u2013 $1 (not counted: failures above)\"",
+      "GROUP_FAILED=0",
+      "echo \"  \u2713 $1\"; TESTS_PASSED=$((TESTS_PASSED + 1))",
+      "# Assertion failure. Exits unless CONTINUE_ON_FAIL=1, which records it and",
+      "# carries on so the full pre-fix failure pattern is visible in one run.",
+      "fail() {",
+      "echo \"  \u2717 FAILED [$SCENARIO]: $1\"",
+      "TESTS_FAILED=$((TESTS_FAILED + 1))",
+      "GROUP_FAILED=1",
+      "[ \"${CONTINUE_ON_FAIL:-0}\" = \"1\" ] && return 0",
+      "# Harness failure (node down etc.): always exits.",
+      "verify_mempool_contains() {",
+      "$CLI getrawmempool | jq -e \". | index(\\\"$txid\\\")\" >/dev/null || fail \"Tx $txid not in mempool\"",
+      "verify_tx_in_block_at_height() {",
+      "|| fail \"Tx ${txid:0:16}... not in block at height $height\"",
+      "[ \"$actual\" = \"$expected\" ] || fail \"$desc: at $where expected $field=$expected, got $field=$actual\"",
+      "verify_against_reindex() {",
+      "fail \"assignment state differs from a fresh rebuild of the same chain\"",
+      "verify_mempool_contains \"$txid\"",
+      "verify_tx_in_block_at_height \"$txid\" \"$n\"",
+      "verify_mempool_contains \"$txid\"",
+      "verify_tx_in_block_at_height \"$txid\" $((n + 2))",
+      "verify_mempool_contains \"$txid\"",
+      "verify_against_reindex $((n - 1))",
+      "verify_tx_in_block_at_height \"$txid\" $((n + 1))",
+      "verify_mempool_contains \"$txid\"",
+      "verify_tx_in_block_at_height \"$txid\" \"$n\"",
+      "[ \"$(get_block_count)\" = $((n + ASSIGNMENT_DELAY)) ] || fail \"height bookkeeping\"",
+      "verify_against_reindex $((n - 1))",
+      "echo \"Tests passed: $TESTS_PASSED\"",
+      "if [ \"$TESTS_FAILED\" -gt 0 ]; then",
+      "echo \"\u2717 $TESTS_FAILED CHECK(S) FAILED\"",
+      "echo \"\u2713 ALL REORG HEIGHT-SHIFT TESTS PASSED\""
+    ]
+  },
+  {
+    "source": "/home/johnny/Code/bitcoin-pocx/scripts/assignments/test-assignment-state-violations-v2.sh",
+    "classification": "deferred",
+    "execution": "not run",
+    "reason": "M2 scenario parity inventory; legacy harness unsafe to execute",
+    "assertions": [
+      "fail() { echo -e \"${RED}\u2717 FAILED:${NC} $1\"; regtestv2_stop; exit 1; }",
+      "fail \"Could not fund $plot_addr\"",
+      "[ \"$got\" = \"$want\" ] || fail \"Expected state $want for $plot, got $got\"",
+      "assert_tx_rejected() {",
+      "[ $mempool_exit -eq 0 ] && fail \"$label: mempool accepted invalid tx\"",
+      "fail \"$label: block included invalid tx (tx_count=$tx_count)\"",
+      "assert_tx_rejected \"assignment-in-ASSIGNING\" \"$HEX\"",
+      "assert_tx_rejected \"assignment-in-ASSIGNED\" \"$HEX\"",
+      "assert_tx_rejected \"assignment-in-REVOKING\" \"$HEX\"",
+      "assert_tx_rejected \"revocation-in-UNASSIGNED\" \"$HEX\"",
+      "assert_tx_rejected \"revocation-in-ASSIGNING\" \"$HEX\"",
+      "assert_tx_rejected \"revocation-in-REVOKING\" \"$HEX\"",
+      "assert_tx_rejected \"revocation-in-REVOKED\" \"$HEX\"",
+      "echo -e \"${GREEN}\u2713 ALL 7 STATE MACHINE VIOLATION TESTS PASSED${NC}\""
+    ]
+  },
+  {
+    "source": "/home/johnny/Code/bitcoin-pocx/scripts/assignments/test-assignment-verifychain-v2.sh",
+    "classification": "deferred",
+    "execution": "not run",
+    "reason": "M2 scenario parity inventory; legacy harness unsafe to execute",
+    "assertions": [
+      "# by other blocks, so reconnecting a revocation block failed with",
+      "fail() { echo -e \"${RED}\u2717 FAILED:${NC} $1\"; regtestv2_stop; exit 1; }",
+      "[ \"$($CLI get_assignment \"$PLOT_ADDR\" | jq -r .state)\" = \"ASSIGNED\" ] || fail \"assignment did not activate\"",
+      "verify_span() {",
+      "echo \"$tail\" | grep -q \"Verifying last $depth blocks at level 4\" || fail \"$desc: level-4 verification did not start\"",
+      "fail \"$desc: verifychain 4 $depth returned $result\"",
+      "echo \"$tail\" | grep -q \"No coin database inconsistencies in last $depth blocks\" || fail \"$desc: level-4 reconnection did not complete\"",
+      "verify_span 1 \"Revocation block only\"",
+      "verify_span $(( $($CLI getblockcount) - H_ASSIGN + 1 )) \"Span covering assignment creation and revocation\"",
+      "for hex in \"$@\"; do [ -n \"$hex\" ] && [ \"$hex\" != \"null\" ] || fail \"$desc: raw transaction construction failed\"; done",
+      "if out=$($CLI generateblock \"$MINING_ADDR\" \"$list\" 2>&1); then fail \"$desc: block was accepted\"; fi",
+      "reason=$(echo \"$out\" | grep -o 'TestBlockValidity failed: [a-z-]*' | head -1)",
+      "[ -n \"$reason\" ] || fail \"$desc: block failed for another reason: $(echo \"$out\" | tr '\\n' ' ' | cut -c1-120)\"",
+      "[ \"$($CLI get_assignment \"$PLOT3\" | jq -r .state)\" = \"ASSIGNED\" ] || fail \"plot3 assignment did not activate\"",
+      "verify_span 3 \"Span after conflict tests\"",
+      "echo -e \"${GREEN}\u2713 ALL VERIFYCHAIN TESTS PASSED${NC}\""
+    ]
+  },
+  {
+    "source": "/home/johnny/Code/bitcoin-pocx/scripts/assignments/test-wallet-rpc-pocx-type-v2.sh",
+    "classification": "deferred",
+    "execution": "not run",
+    "reason": "M2 scenario parity inventory; legacy harness unsafe to execute",
+    "assertions": [
+      "TESTS_PASSED=0",
+      "pass() { echo \"  \u2713 $1\"; TESTS_PASSED=$((TESTS_PASSED + 1)); }",
+      "fail() { echo \"  \u2717 FAILED: $1\"; regtestv2_stop; exit 1; }",
+      "assert_gettransaction_pocx_type() {",
+      "fail \"gettransaction $txid: expected pocx_type absent, got '$got'\"",
+      "[ \"$got\" = \"$expected\" ] || fail \"gettransaction $txid: expected pocx_type='$expected', got '$got'\"",
+      "# Same assertion against every row that listtransactions emits for the txid.",
+      "assert_listtransactions_pocx_type() {",
+      "[ -n \"$rows\" ] || fail \"listtransactions: no row for $txid\"",
+      "fail \"listtransactions row for $txid: expected pocx_type absent, got '$got'\"",
+      "[ \"$got\" = \"$expected\" ] || fail \"listtransactions row for $txid: expected pocx_type='$expected', got '$got'\"",
+      "# Same assertion against every row listsinceblock emits for the txid.",
+      "assert_listsinceblock_pocx_type() {",
+      "[ -n \"$rows\" ] || fail \"listsinceblock: no row for $txid\"",
+      "fail \"listsinceblock row for $txid: expected pocx_type absent, got '$got'\"",
+      "[ \"$got\" = \"$expected\" ] || fail \"listsinceblock row for $txid: expected pocx_type='$expected', got '$got'\"",
+      "assert_all_three() {",
+      "assert_gettransaction_pocx_type   \"$txid\" \"$expected\"",
+      "assert_listtransactions_pocx_type \"$txid\" \"$expected\"",
+      "assert_listsinceblock_pocx_type   \"$txid\" \"$expected\"",
+      "assert_all_three \"$ORDINARY_TXID\" \"\" \"ordinary send\"",
+      "assert_all_three \"$ASSIGNMENT_TXID\" \"assignment\" \"assignment tx\"",
+      "assert_all_three \"$REVOCATION_TXID\" \"revocation\" \"revocation tx\"",
+      "assert_all_three \"$ORDINARY_TXID\" \"\" \"ordinary send (re-check)\"",
+      "echo \"Tests passed: $TESTS_PASSED\"",
+      "echo \"\u2713 ALL POCX_TYPE TESTS PASSED\""
+    ]
+  },
+  {
+    "source": "/home/johnny/Code/bitcoin-pocx/scripts/mining/test-regtest-mining-legacy-v2.sh",
+    "classification": "deferred",
+    "execution": "not run",
+    "reason": "M2 scenario parity inventory; legacy harness unsafe to execute",
+    "assertions": [
+      "echo \"ERROR: Import failed!\"",
+      "echo \"FAIL: expected height $BLOCKS, got $HEIGHT\"",
+      "echo \"PASS\""
+    ]
+  },
+  {
+    "source": "/home/johnny/Code/bitcoin-pocx/scripts/mining/test-regtest-mining-v2.sh",
+    "classification": "adapted",
+    "execution": "not run",
+    "reason": "M1 required conversion",
+    "assertions": [
+      "echo \"FAIL: expected height $BLOCKS, got $HEIGHT\"",
+      "echo \"PASS\""
+    ]
+  },
+  {
+    "source": "/home/johnny/Code/bitcoin-pocx/scripts/mining/test-regtest-submitblock-sign-v2.sh",
+    "classification": "deferred",
+    "execution": "not run",
+    "reason": "M2 scenario parity inventory; legacy harness unsafe to execute",
+    "assertions": [
+      "PASSPHRASE=\"hodor\"",
+      "fail() {",
+      "echo \"FAIL: $1\"",
+      "[ -n \"$FORGING_ADDR\" ] && [ \"$FORGING_ADDR\" != \"null\" ] || fail \"could not derive forging address\"",
+      "echo \"$imported\" | jq -e 'length == 1 and .[0].success == true' >/dev/null || fail \"forging key import failed: $imported\"",
+      "[ -n \"$SIGNED\" ] && [ \"$SIGNED\" != \"null\" ] || fail \"generateblock returned no hex\"",
+      "[ \"${SIGNED:442:130}\" != \"$ZSIG\" ] || fail \"generated block has no signature to strip\"",
+      "[ \"${UNSIGNED:442:130}\" = \"$ZSIG\" ] || fail \"strip_signature did not zero the signature\"",
+      "[ \"$SB_RC\" -eq 0 ] || fail \"submitblock errored on signable unsigned block: $SB_RAW\"",
+      "[ -z \"$SB_RAW\" ] || fail \"block not accepted cleanly (got '$SB_RAW')\"",
+      "[ \"$H1\" -eq \"$((H0 + 1))\" ] || fail \"tip did not advance ($H0 -> $H1)\"",
+      "[ \"$TIP\" = \"$GHASH\" ] || fail \"tip $TIP != expected block hash $GHASH\"",
+      "[ \"${TIPHEX:442:130}\" != \"$ZSIG\" ] || fail \"accepted block has zero signature \u2014 node did not sign\"",
+      "echo \"Case A PASS  (unsigned block signed by node and accepted; tip $TIP)\"",
+      "[ \"$SB_RC\" -eq 0 ] || fail \"submitblock errored on already-signed block: $SB_RAW\"",
+      "[ -z \"$SB_RAW\" ] || fail \"signed block not accepted cleanly (got '$SB_RAW')\"",
+      "[ \"$H1\" -eq \"$((H0 + 1))\" ] || fail \"tip did not advance for signed block ($H0 -> $H1)\"",
+      "[ \"$($CLI getbestblockhash)\" = \"$GHASH\" ] || fail \"tip != signed block hash\"",
+      "echo \"Case B PASS  (signed block processed as-is, feature did not interfere)\"",
+      "[ \"$SB_RC\" -ne 0 ] || fail \"submitblock accepted an unsignable unsigned block (gate broken)\"",
+      "[ \"$ERR_CODE\" = \"-5\" ] || fail \"expected error code -5 (RPC_INVALID_ADDRESS_OR_KEY), got '$ERR_CODE'\"",
+      "echo \"$SB_RAW\" | grep -q \"$FORGING_ADDR\" || fail \"error message lacks bech32 signer address $FORGING_ADDR\"",
+      "[ \"$($CLI getblockcount)\" -eq \"$H0\" ] || fail \"tip advanced on a rejected block\"",
+      "echo \"Case C PASS  (-5, bech32 signer rendered, tip unchanged)\"",
+      "$CLI -rpcwallet=keyed_locked encryptwallet \"$PASSPHRASE\" >/dev/null   # encrypt locks the wallet",
+      "[ \"$UNLOCKED_UNTIL\" = \"0\" ] || fail \"wallet not locked after encryptwallet (unlocked_until=$UNLOCKED_UNTIL)\"",
+      "[ \"$SB_RC\" -ne 0 ] || fail \"submitblock accepted unsigned block against a locked wallet\"",
+      "echo \"$SB_RAW\" | grep -qi \"walletpassphrase\" || fail \"error message lacks the walletpassphrase hint\"",
+      "echo \"$SB_RAW\" | grep -q \"$FORGING_ADDR\" || fail \"error message lacks bech32 signer address\"",
+      "[ \"$($CLI getblockcount)\" -eq \"$H0\" ] || fail \"tip advanced on a rejected (locked) block\"",
+      "echo \"Case D PASS  (locked wallet rejected with unlock hint, tip unchanged)\"",
+      "assert txcount == 1, \"expected a single coinbase tx, got %d\" % txcount",
+      "assert done, \"no splittable reward output found\"",
+      "assert hdr[:36] == b[:36] and hdr[68:221] == b[68:221], \"unrelated header fields changed\"",
+      "[ -n \"$SPLIT\" ] || fail \"python split-coinbase helper produced no output\"",
+      "[ \"${SPLIT:442:130}\" = \"$ZSIG\" ] || fail \"split block signature is not zeroed\"",
+      "[ \"$SB_RC\" -eq 0 ] || fail \"submitblock errored on split-coinbase block: $SB_RAW\"",
+      "[ -z \"$SB_RAW\" ] || fail \"split-coinbase block not accepted cleanly (got '$SB_RAW')\"",
+      "[ \"$H1\" -eq \"$((H0 + 1))\" ] || fail \"tip did not advance for split-coinbase block ($H0 -> $H1)\"",
+      "echo \"$CB_SPKS\" | grep -q \"0014$(printf '11%.0s' {1..20})\" || fail \"payout output A missing from accepted coinbase\"",
+      "echo \"$CB_SPKS\" | grep -q \"0014$(printf '22%.0s' {1..20})\" || fail \"payout output B missing from accepted coinbase\"",
+      "[ \"${TIPHEX:442:130}\" != \"$ZSIG\" ] || fail \"accepted split block has zero signature \u2014 node did not sign\"",
+      "echo \"Case E PASS  (2-output split coinbase signed and accepted; both payouts landed)\"",
+      "echo \"ALL CASES PASS\""
+    ]
+  },
+  {
+    "source": "/home/johnny/Code/bitcoin-pocx/scripts/mining/test-regtest-submitnonce-key-gate-v2.sh",
+    "classification": "deferred",
+    "execution": "not run",
+    "reason": "M2 scenario parity inventory; legacy harness unsafe to execute",
+    "assertions": [
+      "PASSPHRASE=\"hodor\"",
+      "fail() {",
+      "echo \"FAIL: $1\"",
+      "|| fail \"watch-only wallet sanity: ismine=$IS_MINE solvable=$IS_SOLVABLE (want both true)\"",
+      "[ \"$SN_RC\" -ne 0 ] || fail \"submit_nonce returned success \u2014 wallet-key gate is broken (issue #4 regression)\"",
+      "[ \"$ERR_CODE\" = \"-5\" ] || fail \"expected error code -5 (RPC_INVALID_ADDRESS_OR_KEY), got '$ERR_CODE'\"",
+      "echo \"$SN_RAW\" | grep -q \"$ADDRESS\" || fail \"error message does not contain bech32 address $ADDRESS\"",
+      "fail \"error message contains raw hash160 hex $WITNESS_PROGRAM (bech32 regression)\"",
+      "echo \"Case A PASS  (-5, bech32 rendered, no raw-hex regression)\"",
+      "# stays loaded. CanProvide still matches; GetPoCXPubKey fails because the",
+      "$CLI -rpcwallet=locked encryptwallet \"$PASSPHRASE\" >/dev/null",
+      "[ \"$UNLOCKED_UNTIL\" = \"0\" ] || fail \"expected wallet to be locked after encryptwallet (unlocked_until=$UNLOCKED_UNTIL)\"",
+      "[ \"$SN_RC\" -ne 0 ] || fail \"submit_nonce returned success \u2014 Locked branch is broken\"",
+      "[ \"$ERR_CODE\" = \"-13\" ] || fail \"expected error code -13 (RPC_WALLET_UNLOCK_NEEDED), got '$ERR_CODE'\"",
+      "|| fail \"error message does not mention walletpassphrase \u2014 operator hint regressed\"",
+      "echo \"$SN_RAW\" | grep -q \"$ADDRESS\" || fail \"error message does not contain bech32 address $ADDRESS\"",
+      "echo \"Case B PASS  (-13, walletpassphrase hint present)\"",
+      "[ \"$SN_RC\" -eq 0 ] || fail \"submit_nonce did not succeed for unlocked privkey wallet\"",
+      "[ -n \"$RAW_QUALITY\" ] || fail \"success response missing raw_quality\"",
+      "[ -n \"$POC_TIME\" ]    || fail \"success response missing poc_time\"",
+      "echo \"Case C PASS  (raw_quality=$RAW_QUALITY poc_time=${POC_TIME}s)\"",
+      "# ordering that exercises the failure mode.",
+      "$CLI -rpcwallet=locked_first encryptwallet \"$PASSPHRASE\" >/dev/null",
+      "[ \"$LF_UNLOCKED_UNTIL\" = \"0\" ] || fail \"locked_first did not lock (unlocked_until=$LF_UNLOCKED_UNTIL)\"",
+      "[ \"$SN_RC\" -eq 0 ] || fail \"multi-wallet probe failed: expected Available to win over Locked, got exit $SN_RC\"",
+      "[ -n \"$RAW_QUALITY\" ] || fail \"multi-wallet success response missing raw_quality\"",
+      "[ -n \"$POC_TIME\" ]    || fail \"multi-wallet success response missing poc_time\"",
+      "echo \"Case D PASS  (Available won across wallets; raw_quality=$RAW_QUALITY poc_time=${POC_TIME}s)\"",
+      "$CLI -rpcwallet=locked_second encryptwallet \"$PASSPHRASE\" >/dev/null",
+      "[ \"$LS_UNLOCKED_UNTIL\" = \"0\" ] || fail \"locked_second did not lock (unlocked_until=$LS_UNLOCKED_UNTIL)\"",
+      "[ \"$SN_RC\" -eq 0 ] || fail \"multi-wallet probe failed (Available first): expected exit 0, got $SN_RC\"",
+      "[ -n \"$RAW_QUALITY\" ] || fail \"Available-first success response missing raw_quality\"",
+      "[ -n \"$POC_TIME\" ]    || fail \"Available-first success response missing poc_time\"",
+      "echo \"Case E PASS  (Available won; order-independent; raw_quality=$RAW_QUALITY poc_time=${POC_TIME}s)\"",
+      "echo \"ALL CASES PASS\""
+    ]
+  },
+  {
+    "source": "/home/johnny/Code/bitcoin-pocx/scripts/mining/test-regtest-submitnonce-payout-v2.sh",
+    "classification": "deferred",
+    "execution": "not run",
+    "reason": "M2 scenario parity inventory; legacy harness unsafe to execute",
+    "assertions": [
+      "fail() {",
+      "echo \"FAIL: $1\"",
+      "echo \"$IMPORTED\" | jq -e 'length == 1 and .[0].success == true' >/dev/null || fail \"forging key import failed: $IMPORTED\"",
+      "[ -n \"$ACCOUNT\" ] && [ \"$ACCOUNT\" != \"null\" ] || fail \"could not derive account_id (witness_program)\"",
+      "[ \"$SN_RC\" -ne 0 ] || fail \"accepted a payout map with an invalid address\"",
+      "[ \"$(err_code)\" = \"-5\" ] || fail \"expected -5 (RPC_INVALID_ADDRESS_OR_KEY), got '$(err_code)'\"",
+      "echo \"Case C PASS\"",
+      "[ \"$SN_RC\" -ne 0 ] || fail \"accepted a negative amount_sat\"",
+      "[ \"$(err_code)\" = \"-3\" ] || fail \"expected -3 (RPC_TYPE_ERROR), got '$(err_code)'\"",
+      "echo \"Case D PASS\"",
+      "[ \"$SN_RC\" -ne 0 ] || fail \"accepted an out-of-range amount_sat\"",
+      "[ \"$(err_code)\" = \"-3\" ] || fail \"expected -3 (RPC_TYPE_ERROR), got '$(err_code)'\"",
+      "echo \"Case E PASS\"",
+      "[ \"$SN_RC\" -ne 0 ] || fail \"accepted a payout entry with no amount_sat\"",
+      "[ \"$(err_code)\" = \"-8\" ] || fail \"expected -8 (RPC_INVALID_PARAMETER), got '$(err_code)'\"",
+      "echo \"Case F PASS\"",
+      "[ \"$SN_RC\" -eq 0 ] || fail \"legacy submit_nonce errored: $SN_RAW\"",
+      "[ -n \"$(echo \"$SN_RAW\" | jq -r '.raw_quality // empty')\" ] || fail \"legacy ACK missing raw_quality (backward-compat broken)\"",
+      "echo \"Case A PASS  (backward compatible)\"",
+      "[ \"$SN_RC\" -eq 0 ] || fail \"submit_nonce rejected a valid payout map: $SN_RAW\"",
+      "[ -n \"$(echo \"$SN_RAW\" | jq -r '.raw_quality // empty')\" ] || fail \"payout-map ACK missing raw_quality\"",
+      "echo \"Case B PASS  (payout map parsed and accepted)\"",
+      "echo \"ALL CASES PASS\""
+    ]
+  }
+]

@@ -1,0 +1,314 @@
+{
+  "scope": "Incremental reviewed mappings; absence is outstanding work, never an exclusion.",
+  "scenarios": [
+    {
+      "source": "scripts/assignments/test-assignment-state-violations-v2.sh",
+      "source_sha256": "68f06d4a599bcacb6cb86c87287e7735b5d114fb9148fe1138cb160c6d200cc6",
+      "destination": "functional/feature_pocx_assignment_state_violations.py",
+      "assertions_and_preconditions": [
+        "assignment in ASSIGNING (two confirmed plot outputs before first assignment)",
+        "assignment in ASSIGNED",
+        "assignment in REVOKING",
+        "revocation in UNASSIGNED",
+        "revocation in ASSIGNING",
+        "revocation in REVOKING",
+        "revocation in REVOKED",
+        "each signed candidate rejected by sendrawtransaction and testmempoolaccept with specific state reason",
+        "generateblock rejection with specific state reason or coinbase-only exclusion",
+        "state unchanged after each candidate"
+      ],
+      "execution_log": "artifacts/m2-state-violations4.log",
+      "status": "converted and passed; legacy retained"
+    },
+    {
+      "source": "scripts/assignments/test-assignment-verifychain-v2.sh",
+      "source_sha256": "399294f02732de311928375fb866ee96b6521ac54f6d86f89171e6e28be14f6d",
+      "destination": "functional/feature_pocx_assignment_verifychain.py",
+      "assertions_and_preconditions": [
+        "assignment activation, then revocation confirmed",
+        "verifychain 4 1 on revocation block",
+        "verifychain 4 over full assignment-to-revocation span",
+        "start and completed-reconnection log messages checked for each verification",
+        "two independently funded assignments for same plot rejected in one block",
+        "revocation then reassignment of active plot rejected in one block",
+        "single valid assignment from same fixture accepted",
+        "verifychain 4 3 after conflict attempts",
+        "locked funding prevents wallet consuming reserved conflict inputs"
+      ],
+      "execution_log": "artifacts/m2-verifychain.log",
+      "status": "converted and passed; legacy retained"
+    },
+    {
+      "source": "scripts/assignments/test-assignment-crash-revive-v2.sh",
+      "source_sha256": "5d2c9e2a45a94364d99a35221c07566a738cef051bb92ef30efb2e17cf6f8ab8",
+      "destination": "functional/feature_pocx_assignment_crash_revive.py",
+      "assertions_and_preconditions": [
+        "two disconnected nodes, explicit sequential submitblock catch-up",
+        "110 mature blocks plus plot funding",
+        "assignment confirmation and five-block activation wait",
+        "source flushed, receiver not force-flushed before kill",
+        "SIGKILL receiver using its own process handle; verify crash exit",
+        "source mines ten blocks while receiver down",
+        "restart receiver and replay missing blocks from reopened height",
+        "flush recovered receiver; compare full assignment result and exact tips",
+        "additional second crash with revocation while down",
+        "current and historical parity after recovery, clean restart and reindex-chainstate"
+      ],
+      "execution_log": "artifacts/m2-crash-revive.log",
+      "status": "converted and passed; legacy retained"
+    },
+    {
+      "source": "scripts/assignments/test-assignment-invalid-format-v2.sh",
+      "source_sha256": "9a7d48172dcfd6204f384bbc69d94fd737cd75df2853311acfbf734b06ae30ed",
+      "destination": "functional/feature_pocx_assignment_invalid_format.py",
+      "assertions_and_preconditions": [
+        "all four original malformed payload byte strings preserved",
+        "confirmed one-coin plot input signs each candidate",
+        "forge output 0.0001 and change 0.9998 preserved",
+        "broadcast rejection or mined transaction with plot remaining UNASSIGNED",
+        "additional current assignment/revocation payload boundaries one byte short/long",
+        "valid current-format positive control activates expected signer"
+      ],
+      "execution_log": "artifacts/m2-invalid-format.log",
+      "status": "converted and passed; legacy retained"
+    },
+    {
+      "source": "scripts/assignments/test-assignment-reorg-height-shift-v2.sh",
+      "source_sha256": "02e2e3d3be773e758a2b148f8a07655ac48e8b5572b1008e7a004a4cbacce0e9",
+      "destination": "functional/feature_pocx_assignment_reorg_height_shift.py",
+      "assertions_and_preconditions": [
+        "four fresh independent chains: later/earlier times restart/no-restart",
+        "same txid confirmed and flushed before invalidateblock",
+        "optional restart between disk write and reorg",
+        "orphaned tx returns to mempool and assignment disappears",
+        "later: tx re-mined N to N+2; no row at N or N+1",
+        "earlier: tx re-mined N+1 to N; no row before N",
+        "warm and cold checks of assignment txid, height, activation height and signer",
+        "later: remove tx again, mine empty blocks beyond activation; remain UNASSIGNED",
+        "earlier: ASSIGNING at N+3 and ASSIGNED at N+4",
+        "full historical get_assignment comparison before and after reindex-chainstate; exact tip retained"
+      ],
+      "execution_log": "artifacts/m2-height-shift.log",
+      "status": "converted and passed; legacy retained"
+    },
+    {
+      "source": "scripts/assignments/test-assignment-bug-v2.sh",
+      "source_sha256": "e9ead34b3afbbd179c8054a41db6da6e6b6b5e2c46aa5ccaf820175827bbdf94",
+      "destination": "functional/feature_pocx_assignment_consecutive.py",
+      "assertions_and_preconditions": [
+        "one sendmany funds exactly five plot UTXOs",
+        "five consecutive assignment creations to same forge without block or flush",
+        "each tx is in mempool",
+        "all five mined in same block; no longer in mempool and confirmed",
+        "each plot ASSIGNING with correct forging address and txid",
+        "additional exact four-block activation checks for all five plots"
+      ],
+      "execution_log": "artifacts/m2-consecutive.log",
+      "status": "converted and passed; legacy retained"
+    },
+    {
+      "source": "scripts/assignments/test-assignment-intrablock-conflicts-v2.sh",
+      "source_sha256": "266609d6d51b56a852431419121cfa3b5bbd3073612e80150e0b95654da5adbb",
+      "destination": "functional/feature_pocx_assignment_block_conflicts.py",
+      "assertions_and_preconditions": [
+        "two confirmed distinct plot inputs protected from consolidation",
+        "unconfirmed assignment in mempool; revocation rejected in wallet and raw broadcast",
+        "assignment then revocation block rejected for assignment state reason",
+        "revocation then assignment block rejected for assignment state reason",
+        "advance six blocks between scenarios; valid assignment still activates"
+      ],
+      "execution_log": "artifacts/m2-block-conflicts2.log",
+      "status": "converted and passed; legacy retained",
+      "strengthening": "Recovered signed candidates from wallet after RPC broadcast rejection; block tests no longer bypassed by RPC refusal."
+    },
+    {
+      "source": "scripts/assignments/test-assignment-block-validation-v2.sh",
+      "source_sha256": "51a67297b99dffb4ab728070fe8c53f53df161add498b7610f8c22aa95638ae2",
+      "destination": "functional/feature_pocx_assignment_block_conflicts.py",
+      "assertions_and_preconditions": [
+        "two independent plot inputs, first assignment in mempool",
+        "second assignment to distinct signer rejected as assignment-conflict",
+        "block containing both signed candidates rejected for assignment state/duplicate rule",
+        "three plot inputs before activation and two additional revocation funding outputs",
+        "active ASSIGNED state before duplicate revocations",
+        "first revocation accepted into mempool; second rejected as revocation-conflict",
+        "block containing both revocations rejected for state/duplicate rule",
+        "unchanged tip and distinct inputs for every rejected block; valid single operation still mines"
+      ],
+      "execution_log": "artifacts/m2-block-conflicts2.log",
+      "status": "converted and passed; legacy retained",
+      "strengthening": "Recovered signed candidates from wallet after RPC broadcast rejection; block tests no longer bypassed by RPC refusal."
+    },
+    {
+      "source": "scripts/assignments/test-assignment-multinode-v2.sh",
+      "source_sha256": "5601cd8e80a20612397393fb5cef3883525c5a4da2b3299232e3f7a38fde0f61",
+      "destination": "functional/feature_pocx_assignment_multinode.py",
+      "reuses": "functional/feature_pocx_assignment_lifecycle.py",
+      "assertions_and_preconditions": [
+        "operator wallet and wallet-less validator connected by P2P",
+        "101 mature blocks, plot funding and initially empty mempool",
+        "assignment/revocation mempool propagation and confirmed inclusion",
+        "exact four/eight block activation boundaries and opcode formats",
+        "single-state and multi-state invalidate/reconsider on both nodes",
+        "full get_assignment parity at current and all five historical states",
+        "exact final bestblockhash after reconsideration"
+      ],
+      "execution_log": "artifacts/m2-multinode4.log",
+      "status": "converted and passed; legacy retained"
+    },
+    {
+      "source": "scripts/mining/test-regtest-submitblock-sign-v2.sh",
+      "source_sha256": "98c002d6e2ba22f5b82982d7210e3106c054e39303880682a3107469c78ffd2d",
+      "destination": "functional/feature_pocx_submitblock_sign.py",
+      "assertions_and_preconditions": [
+        "Unsubmitted synthetic regtest block uses exact wrapper forging WIF and advances mocktime by 600 seconds",
+        "A: unsigned block with unlocked signing wallet accepted, exact expected tip advances, persisted signature nonzero",
+        "B: already-signed block with no wallets loaded accepted byte-for-byte",
+        "C: unrelated loaded blank wallet cannot sign; error -5 contains bech32 signer and tip unchanged",
+        "D: encrypted locked key cannot sign; error contains signer and walletpassphrase hint, tip unchanged",
+        "E: single-transaction coinbase split into scripts 0014+11*20 and 0014+22*20 preserving total, witness, proof and unrelated header fields",
+        "E: merkle root recomputed, unsigned split block auto-signed and accepted, both exact payout amounts present",
+        "Auto-signing changes only signature bytes; full verifychain passes"
+      ],
+      "execution_log": "artifacts/m2-submitblock-sign1.log",
+      "status": "converted and passed; legacy retained"
+    },
+    {
+      "source": "scripts/mining/test-regtest-submitnonce-key-gate-v2.sh",
+      "source_sha256": "2d709abac45362f1882ce23c085bbfbb8bc91df5480552b57d16fb298c2ea29c",
+      "destination": "functional/feature_pocx_submitnonce_key_gate.py",
+      "assertions_and_preconditions": [
+        "Same static WIF and current mining context; nonce 1, zero seed, minimum compression and advisory quality 0",
+        "A: watch-only descriptor ismine and solvable with private keys disabled; error -5 contains bech32 signer without raw hash160",
+        "B: encrypted locked private key returns -13 with signer and walletpassphrase hint",
+        "C: unlocked private key returns raw_quality and poc_time",
+        "D: locked wallet loaded before available wallet still returns success",
+        "E: available wallet loaded before locked wallet still returns success",
+        "All cases isolate loaded wallets; rejected submissions preserve tip; successful acknowledgement is not eventual forging evidence"
+      ],
+      "execution_log": "artifacts/m2-submitnonce-key1.log",
+      "status": "converted and passed; legacy retained"
+    },
+    {
+      "source": "scripts/mining/test-regtest-submitnonce-payout-v2.sh",
+      "source_sha256": "fb20fd492c7f94b1b744772b18785d22c0ff64d9f70e0479f2897fc0e3c10508",
+      "destination": "functional/feature_pocx_submitnonce_payout.py",
+      "assertions_and_preconditions": [
+        "Original regtest forging WIF imported into a wallet retaining normal descriptors/keypool; distinct second payout address",
+        "Current mining context, zero seed, nonce 1, minimum compression and advisory quality 0",
+        "C: invalid payout address returns -5",
+        "D: negative amount returns -3",
+        "E: MAX_MONEY+1 returns -3",
+        "F: missing amount returns -8",
+        "Error cases run before acknowledgements and preserve tip; additional missing address/string amount cases and deliberately invalid height verify payout parsing precedes context validation",
+        "A: legacy nine-argument submit_nonce acknowledges with raw_quality",
+        "B: signer 100000000 sat and second address 50000000 sat payout map acknowledges with raw_quality",
+        "RPC acknowledgement does not establish actual scheduler forging; separate builder tests cover payout arithmetic"
+      ],
+      "execution_log": "artifacts/m2-submitnonce-payout1.log",
+      "status": "converted and passed; legacy retained"
+    },
+    {
+      "source": "scripts/assignments/test-assignment-multinode-attacks-v2.sh",
+      "source_sha256": "0be137be70b7aa21f5cf3daeaef3ff9d04885db6aba26373c8c674b6185a1c10",
+      "destination": "functional/feature_pocx_assignment_multinode_attacks.py",
+      "assertions_and_preconditions": [
+        "111-block funded chain, two wallets funded with ten coins each, first funding change locked to ensure independent second funding",
+        "Private descriptors restored on second node with range through 1000; shared balance, plot ownership and spendable UTXOs asserted",
+        "Conflicting assignments to distinct signers created while partitioned to deterministically exercise original both-created branch; common input asserted",
+        "First node mines its assignment; reconnect removes loser from second mempool and nodes agree on ASSIGNING and exact four-block ASSIGNED activation",
+        "Active assignment refunded, revocation succeeds while restored wallet reassignment fails specifically plot-not-available-for-assignment; REVOKING parity after reconnect",
+        "Partitioned funding and assignment mined only on first node; second sees UNASSIGNED and no plot coins, rejects for No coins available at the plot address; reconnect restores parity",
+        "Disconnected assignment initially exists only in first mempool; reconnect plus normal CScheduler unbroadcast retry and NodeClock inventory advancement propagates without direct submission to receiver",
+        "Final assignment confirms to expected signer on both nodes; full verifychain on both"
+      ],
+      "execution_log": "artifacts/m2-multinode-attacks6.log",
+      "status": "converted and passed; legacy retained"
+    },
+    {
+      "source": "scripts/assignments/test-assignment-lifecycle-v2.sh",
+      "source_sha256": "741e157449b352cc6607e119aa2d106e90c7b52f8432853c0ad4925d8e91d7c5",
+      "destination": "functional/feature_pocx_assignment_lifecycle.py",
+      "assertions_and_preconditions": [
+        "Phase 1: mature funds, plot funding, UNASSIGNED, empty mempool",
+        "Phase 2: assignment RPC, mempool txid, confirmation, ASSIGNING, empty mempool, all four activation boundaries, ASSIGNED, 6a2c504f4358 OP_RETURN prefix",
+        "Phase 3: refund, revocation RPC, mempool txid, REVOKING, empty mempool, all eight revocation boundaries, REVOKED, 6a1858434f50 OP_RETURN prefix",
+        "Phase 4: invalidate each state transition, state and signer checks, returned mempool transactions, reconsider original chain",
+        "Phase 5: REVOKED to ASSIGNED to UNASSIGNED, reconsider with descendants back to REVOKED",
+        "Phase 6: all five historical states with original heights and expected signer"
+      ],
+      "execution_log": "artifacts/m3-functional-wire-all14.log",
+      "status": "converted and passed; legacy retained"
+    },
+    {
+      "source": "scripts/mining/test-regtest-mining-v2.sh",
+      "source_sha256": "6beaff1ca0d225bd29476970cdc5aaae41a81e6eb79411d1618beba2a38decea",
+      "destination": "functional/feature_pocx_mining.py",
+      "assertions_and_preconditions": [
+        "100 blocks in one generatetoaddress call",
+        "height exactly 100",
+        "100 distinct accepted blocks",
+        "tip is last returned block",
+        "height/previous hash/confirmation continuity",
+        "coinbase pays requested address",
+        "verifychain(4,0)",
+        "Additional deterministic real-transaction arrival during proof preview; actual mining includes the transaction without changing original100block checks"
+      ],
+      "execution_log": "artifacts/m3-functional-wire-all14.log",
+      "status": "converted and passed; legacy retained"
+    },
+    {
+      "source": "scripts/assignments/test-assignment-double-cycle-v2.sh",
+      "source_sha256": "97fef35994c916b466596ed8b12d6f981e28131ab581be3d12548395f8c72840",
+      "destination": "functional/feature_pocx_assignment_double_cycle.py",
+      "assertions_and_preconditions": [
+        "101-block maturity, plot funded with 1 coin and confirmed",
+        "Two full cycles with distinct forging addresses; refund before second cycle and each revocation",
+        "ASSIGNING, four-block ASSIGNED activation, REVOKING, eight-block REVOKED completion in both cycles",
+        "All nine historical checkpoints retain expected states and signers"
+      ],
+      "execution_log": "artifacts/m3-functional-wire-all14.log",
+      "status": "converted and passed; legacy retained"
+    },
+    {
+      "source": "scripts/assignments/test-wallet-rpc-pocx-type-v2.sh",
+      "source_sha256": "140c8ca6df8765f32e5c685b9f1c9dc86ef5c643bb416b5b1c0746c3bcc97c55",
+      "destination": "functional/wallet_pocx_type.py",
+      "assertions_and_preconditions": [
+        "101-block maturity and three distinct addresses",
+        "Ordinary send before plot funding prevents funding UTXO consumption",
+        "Assignment and revocation pocx_type checked in gettransaction and every matching listtransactions/listsinceblock row",
+        "Refund plot and activate before revocation",
+        "Ordinary transaction has no pocx_type before and after assignment operations"
+      ],
+      "execution_log": "artifacts/m3-functional-wire-all14.log",
+      "status": "converted and passed; legacy retained"
+    },
+    {
+      "source": "scripts/mining/test-regtest-mining-legacy-v2.sh",
+      "source_sha256": "f34af6683610930e193a7a5bb3b6061d5510403514ef3bd3db40cd411a19d67b",
+      "destination": "functional/feature_pocx_imported_key_mining.py",
+      "assertions_and_preconditions": [
+        "Blank private-key descriptor wallet with exact original static WIF",
+        "Checks successful private descriptor import, derived bech32 address, ismine and solvable",
+        "100 blocks accepted at exact height100; immature wallet balance1000"
+      ],
+      "execution_log": "artifacts/m3-functional-wire-all14.log",
+      "status": "converted and passed; legacy retained"
+    },
+    {
+      "source": "scripts/assignments/setup-regtestv2.sh",
+      "source_sha256": "9380f12de9b6cd1aa8d76eb75e5e3af733289fdc95a23b320d204d8e71855d71",
+      "destination": "framework/test_framework.py",
+      "assertions_and_preconditions": [
+        "Shared harness helper, not an independent scenario",
+        "Fresh owned node processes and temporary directories, bounded startup readiness and cleanup",
+        "Mocktime set before wallet creation to preserve birthday visibility",
+        "Converted scenarios explicitly generate101 blocks where mature funds are required",
+        "Global pkill/rm replaced by process ownership; no cache needed"
+      ],
+      "execution_log": "artifacts/m3-functional-wire-all14.log",
+      "status": "shared helper replaced; exercised by converted scenarios"
+    }
+  ]
+}

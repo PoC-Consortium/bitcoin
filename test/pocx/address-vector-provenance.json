@@ -1,0 +1,110 @@
+{
+  "sources": {
+    "key_tests.cpp": {
+      "source": "src/test/key_tests.cpp",
+      "source_sha256": "3d3fdb78a67f386ef5faeb9892da09e222a8c1bb7cb7a5930bc8eaaa22947825",
+      "reason": "PoCX network address constants; scripts, keys and assertions preserved"
+    },
+    "script_standard_tests.cpp": {
+      "source": "src/test/script_standard_tests.cpp",
+      "source_sha256": "4f715477a8b42bcf5d21ee81cf617f1b7ab509b425c849db1a38470e4689250f",
+      "reason": "PoCX network address constants; scripts, keys and assertions preserved"
+    },
+    "util_tests.cpp": {
+      "source": "src/test/util_tests.cpp",
+      "source_sha256": "7dcc31af27791801c915a8ab4ac9ac052bace098cbeaf6954ec405cfcd0ba01d",
+      "reason": "PoCX network address constants; scripts, keys and assertions preserved"
+    },
+    "rpc_tests.cpp": {
+      "source": "src/test/rpc_tests.cpp",
+      "source_sha256": "62c467637a5043bd2ef3e7eff063738ed4cdb534bac80011f5340152d088f727",
+      "reason": "PoCX network address constants; scripts, keys and assertions preserved"
+    },
+    "descriptor_tests.cpp": {
+      "source": "src/test/descriptor_tests.cpp",
+      "source_sha256": "f5324a7ee441971c59eb1f693e1dd6db15494c4ca4130188997812432c31ccc5",
+      "reason": "PoCX network address constants; scripts, keys and assertions preserved"
+    },
+    "amount_tests.cpp": {
+      "source": "src/test/amount_tests.cpp",
+      "source_sha256": "89c58ac50deadf663898ca2c1063379e2f7250e91e444d409b84fb21641a1751",
+      "reason": "PoCX currency display is BTCX"
+    },
+    "data/key_io_valid.json": {
+      "source": "src/test/data/key_io_valid.json",
+      "source_sha256": "90bd1d35d12763e0d00c5400b2c9fe551e532a821e1e466c20cad3aced70a7fe",
+      "reason": "Network address envelopes only; scripts and cryptographic vectors unchanged"
+    },
+    "data/bip341_wallet_vectors.json": {
+      "source": "src/test/data/bip341_wallet_vectors.json",
+      "source_sha256": "403e19fb81dd1f31e745699216308f61fb403774b2aafa87b631b8f7c042d37f",
+      "reason": "Network address envelopes only; scripts and cryptographic vectors unchanged"
+    }
+  },
+  "addresses": {
+    "1QFqqMUD55ZV3PJEJZtaKCsQmjLT6JkjvJ": "bbz7XaohRQwxZE9bPECfXs1HGcEdVP9ozp",
+    "1F5y5E5FMc5YzdJtB9hLaUe43GDxEKXENJ": "bSpEmTQjhwU2WUAFFp1Ro8mvY988f37xR8",
+    "1NoJrossxPBKfCHuJXT4HadJrXRE9Fxiqs": "baXaZ3DNJiZoB39GPBm9WEmBMQKQd42jZe",
+    "1CRj2HyM1CXWzHAXLQtiGLyggNT9WQqsDs": "bQ9ziXJqMXuzW81tR5CoV17ZBFMKwLuYUd",
+    "1HV9Lc3sNHZxwj4Zk6fB38tEmBryq2cBiF": "bVDR2qPMicxSTZuvpkyGFo27G4mACrDTHf",
+    "bc1pj6gaw944fy0xpmzzu45ugqde4rz7mqj5kj0tg8kmr5f0pjq8vnaqgynnge": "pocx1pj6gaw944fy0xpmzzu45ugqde4rz7mqj5kj0tg8kmr5f0pjq8vnaq3qydm5",
+    "3B5fQsEXEaV8v6U3ejYc8XaKXAkyQj2MjV": "dNow76a1auscRwKQjPrhMBiC23f9rGqMmD",
+    "1KqbBpLy5FARmTPD4VZnDDpYjkUvkr82Pm": "bXZrt3gTRaYuHJEa99ssRsxREdP7DwMLb9",
+    "15CRxFdyRpGZLW9w8HnHvVduizdL5jKNbs": "bGvheUyTn9f2rM1JCx6P99mnDsXWU31uDS",
+    "11canuhp9X2NocwCq7xNrQYTmUgZAnLK3": "bCjtH2FCAUuVteUJHVS3bWYQxeNrzZ9oLL",
+    "3HqAe9LtNBjnsfM4CyYaWTnvCaUYT7v4oZ": "dVZSLNgNiX8GPWCRHdrfj7vnhTNirZtwVE",
+    "17P7ge56F2QcdHxxRBa2NyzmejFggPwBJ9": "bK7PNsQabMo698pKVqt7be8e9c9s7hNayZ",
+    "bc1qyt3k8ffrj3apzrv6n6c3fqsduxp6egcnk2r66j": "pocx1qyt3k8ffrj3apzrv6n6c3fqsduxp6egcnnqqn0n",
+    "1FsSia9rv4NeEwvJ2GvXrX7LyxYspbN2mo": "bTbiQoVMGPm7knmf6wEd5BFDUqT4GPZasw",
+    "36j4NfKv6Akva9amjWrLG6MuSQym1GuEmm": "dJTL4tfQSW9Q5zS8pBARUkVmwHswMovu7w",
+    "mzK2FFDEhxqHcmrJw1ysqFkVyhUULo45hZ": "tRifzyyr4rFJhi5hKjJybG763mbZjTsEL7",
+    "2NC2hEhe28ULKAJkW5MjZ3jtTMJdvXmByvK": "vSQ6DkZagvgEpZpxWWRA1iU7529YzLV2yR",
+    "bc1qvyq0cc6rahyvsazfdje0twl7ez82ndmuac2lhv": "pocx1qvyq0cc6rahyvsazfdje0twl7ez82ndmucjfkzd",
+    "bc1qyucykdlhp62tezs0hagqury402qwhk589q80tqs5myh3rxq34nwqhkdhv7": "pocx1qyucykdlhp62tezs0hagqury402qwhk589q80tqs5myh3rxq34nwqwj6fln",
+    "bc1p83n3au0rjylefxq2nc2xh2y4jzz4pm6zxj4mw5pagdjjr2a9f36s6jjnnu": "pocx1p83n3au0rjylefxq2nc2xh2y4jzz4pm6zxj4mw5pagdjjr2a9f36srk9dq3",
+    "bc1z2rksukkjr8": "pocx1z2rksmk99zw",
+    "tb1qcrh3yqn4nlleplcez2yndq2ry8h9ncg3qh7n54": "tpocx1qcrh3yqn4nlleplcez2yndq2ry8h9ncg3hq5ksa",
+    "tb1quyl9ujpgwr2chdzdnnalen48sup245vdfnh2jxhsuq3yx80rrwlq5hqfe4": "tpocx1quyl9ujpgwr2chdzdnnalen48sup245vdfnh2jxhsuq3yx80rrwlq964mhu",
+    "tb1p35n52jy6xkm4wd905tdy8qtagrn73kqdz73xe4zxpvq9t3fp50aqk3s6gz": "tpocx1p35n52jy6xkm4wd905tdy8qtagrn73kqdz73xe4zxpvq9t3fp50aq8u9gxt",
+    "tb1rgv5m6uvdk3kc7qsuz0c79v88ycr5w4wa": "tpocx1rgv5m6uvdk3kc7qsuz0c79v88ycrcffp2",
+    "tb1q3vya2h5435jkugq2few7dmktlrwq4ejmfaw7kr": "tpocx1q3vya2h5435jkugq2few7dmktlrwq4ejm72ymjt",
+    "tb1qxkhrl2s6ttrclckldruea0e8anhrehffl8xv7t0pdyrzm08v2hyqy408nf": "tpocx1qxkhrl2s6ttrclckldruea0e8anhrehffl8xv7t0pdyrzm08v2hyq4c64aq",
+    "tb1pae5um27ahn8n73pgexe3kcwlp8dhswpn684h2k2w6t9a7w3eq65qephd5y": "tpocx1pae5um27ahn8n73pgexe3kcwlp8dhswpn684h2k2w6t9a7w3eq65qgvzl6d",
+    "tb1rx9n9g37az8mu236e5jpxdt0m67y4fuq8rhs0ss3djnm0kscfrwvq0ntlyg": "tpocx1rx9n9g37az8mu236e5jpxdt0m67y4fuq8rhs0ss3djnm0kscfrwvq777d2p",
+    "bcrt1qdavt4j2sd7dlhqsavtnfxvzppw6k7qy97tmnu9": "rpocx1qdavt4j2sd7dlhqsavtnfxvzppw6k7qy94gycrv",
+    "bcrt1qan8gntac7z7me2ejt4hpru42ad2f759fmy0m3ejvs98656znv7eqga4uhv": "rpocx1qan8gntac7z7me2ejt4hpru42ad2f759fmy0m3ejvs98656znv7eq49l6uu",
+    "bcrt1pfwxjqvtt4tcxrtdluukfmy2dv7xd2qzdfy6kajv5nwn4yam3wxkq3553uh": "rpocx1pfwxjqvtt4tcxrtdluukfmy2dv7xd2qzdfy6kajv5nwn4yam3wxkqvv7hh8",
+    "bcrt1sx6p8njlx7h9mc2agz4yg82dzne23050ncq72cneeecez2pst8mahn8xecsf8g6hzx94420": "rpocx1sx6p8njlx7h9mc2agz4yg82dzne23050ncq72cneeecez2pst8mahn8xecsf8g6hzst8gym",
+    "1FjL87pn8ky6Vbavd1ZHeChRXtoxwRGCRd": "bTTbpMAGV6Ma1SSHhfsNrrqJ2mi9NWqdMC",
+    "3BZECeAH8gSKkjrTx8PwMrNQBLG18yHpvf": "dPHVtsVmV1poGahq2ni2aWWGgDABdfN5Ax",
+    "n4YNbYuFdPwFrxSP8sjHFbAhUbLMUiY9jE": "tVx2MHfrzHMGwtfmXb4P1bXHYfTStcpmLZ",
+    "2NAeQVZayzVFAtgeC3iYJsjpjWDmsDph71A": "vR1oUcWYYwb6YwieUsDuqiQPDwHViUa7tb",
+    "bc1qhxt04s5xnpy0kxw4x99n5hpdf5pmtzpqs52es2": "pocx1qhxt04s5xnpy0kxw4x99n5hpdf5pmtzpq47fs9t",
+    "bc1qgc9ljrvdf2e0zg9rmmq86xklqwfys7r6wptjlacdgrcdc7sa6ggqu4rrxf": "pocx1qgc9ljrvdf2e0zg9rmmq86xklqwfys7r6wptjlacdgrcdc7sa6ggq935a4y",
+    "bc1pve739yap4uxjvfk0jrey69078u0gasm2nwvv483ec6zkzulgw9xqu4w9fd": "pocx1pve739yap4uxjvfk0jrey69078u0gasm2nwvv483ec6zkzulgw9xq93em6q",
+    "bc1zmjtqxkzs89": "pocx1zmjtqpk38xv",
+    "tb1ql4k5ayv7p7w0t0ge7tpntgpkgw53g2payxkszr": "tpocx1ql4k5ayv7p7w0t0ge7tpntgpkgw53g2pan3u4xt",
+    "tb1q9jx3x2qqdpempxrcfgyrkjd5fzeacaqj4ua7cs7fe2sfd2wdaueq5wn26y": "tpocx1q9jx3x2qqdpempxrcfgyrkjd5fzeacaqj4ua7cs7fe2sfd2wdaueq9rxc5d",
+    "tb1pdswckwd9ym5yf5eyzg8j4jjwnzla8y0tf9cp7aasfkek0u29sz9qfr00yf": "tpocx1pdswckwd9ym5yf5eyzg8j4jjwnzla8y0tf9cp7aasfkek0u29sz9qcw6a2q",
+    "tb1r0ecpfxg2udhtc556gqrpwwhk4sw3f0kc": "tpocx1r0ecpfxg2udhtc556gqrpwwhk4swawne0",
+    "tb1q6mwf89hnqhlu8txjgjfs4s7p93ugffn3k062ll": "tpocx1q6mwf89hnqhlu8txjgjfs4s7p93ugffn3pcs0mh",
+    "tb1qafrjalu4d73dql0czau9j6z422434kef235mzljf48ckd5xz3sys09jm97": "tpocx1qafrjalu4d73dql0czau9j6z422434kef235mzljf48ckd5xz3sys7g8fth",
+    "tb1pwst9qszjrhuv2e7as0flcq9gm698v6gdxzz9e87p07s8rssdx3zqklm3vf": "tpocx1pwst9qszjrhuv2e7as0flcq9gm698v6gdxzz9e87p07s8rssdx3zq8jwrzq",
+    "tb1r3ss76jtsuxe8c8c8lxsehnpak55ylrgr345pww076l536ahjr6jsydamx3": "tpocx1r3ss76jtsuxe8c8c8lxsehnpak55ylrgr345pww076l536ahjr6js4qgfgc",
+    "bcrt1q65nhlm4hf2ptg3t264al57p7wjxj2c3s6kyt83": "rpocx1q65nhlm4hf2ptg3t264al57p7wjxj2c3s34mqcc",
+    "bcrt1qawvc90lpytw3z3k9etdx54l0exq5f5sqfzu5e45kjnl6slwayeeqx2dyac": "rpocx1qawvc90lpytw3z3k9etdx54l0exq5f5sqfzu5e45kjnl6slwayeeqmj8zkg",
+    "bcrt1p39a4s4vdcw9kqa8w2t0rp7aj8kfxyw7mce5sk5d70x6wnnmpvt7skf2kxy": "rpocx1p39a4s4vdcw9kqa8w2t0rp7aj8kfxyw7mce5sk5d70x6wnnmpvt7st3qsd5",
+    "bcrt1s489d9fhmyel0vzfqsrmew4x7r80asuqesm5hgqacy35daflcyufh3j8cgdtflvt99ph05m": "rpocx1s489d9fhmyel0vzfqsrmew4x7r80asuqesm5hgqacy35daflcyufh3j8cgdtflvt9n09j60",
+    "1G9A9j6W8TLuh6dEeVwWeyibK1Uc5MfVFV": "bTsRqxRzUnjPCwUbjAFbsdrTotNnZnQCpC",
+    "33GA3ZXbw5o5HeUrBEaqkWXFYYZmdxGRRP": "dEzRjns6HRBYoVLDFttvyAf83RTx5bExSS",
+    "mwgS2HRbjyfYxFnR1nF9VKLvmdgMfFBmGq": "tP65n2CD6s5a3C1oQVaFFKhWqhoT5UofDz",
+    "2MwBVrJQ76BdaGD76CTmou8cZzQYLpe4NqU": "vBYtqMKfedyVvUBYdcTQs7CDi83yJkJnwJ",
+    "bc1p2wsldez5mud2yam29q22wgfh9439spgduvct83k3pm50fcxa5dps59h4z5": "pocx1p2wsldez5mud2yam29q22wgfh9439spgduvct83k3pm50fcxa5dpsdpqt3e",
+    "bc1pz37fc4cn9ah8anwm4xqqhvxygjf9rjf2resrw8h8w4tmvcs0863sa2e586": "pocx1pz37fc4cn9ah8anwm4xqqhvxygjf9rjf2resrw8h8w4tmvcs0863syww25h",
+    "bc1punvppl2stp38f7kwv2u2spltjuvuaayuqsthe34hd2dyy5w4g58qqfuag5": "pocx1punvppl2stp38f7kwv2u2spltjuvuaayuqsthe34hd2dyy5w4g58qedtrme",
+    "bc1pwyjywgrd0ffr3tx8laflh6228dj98xkjj8rum0zfpd6h0e930h6saqxrrm": "pocx1pwyjywgrd0ffr3tx8laflh6228dj98xkjj8rum0zfpd6h0e930h6syy3ask",
+    "bc1pwl3s54fzmk0cjnpl3w9af39je7pv5ldg504x5guk2hpecpg2kgsqaqstjq": "pocx1pwl3s54fzmk0cjnpl3w9af39je7pv5ldg504x5guk2hpecpg2kgsqyy84pd",
+    "bc1pjxmy65eywgafs5tsunw95ruycpqcqnev6ynxp7jaasylcgtcxczs6n332e": "pocx1pjxmy65eywgafs5tsunw95ruycpqcqnev6ynxp7jaasylcgtcxczsrhx0e5",
+    "bc1pw5tf7sqp4f50zka7629jrr036znzew70zxyvvej3zrpf8jg8hqcssyuewe": "pocx1pw5tf7sqp4f50zka7629jrr036znzew70zxyvvej3zrpf8jg8hqcsfqt8a5"
+  }
+}
